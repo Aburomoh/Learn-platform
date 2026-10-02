@@ -1,0 +1,86 @@
+.main,
+.mainWide {
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+  width: 100%;
+}
+
+.main {
+  max-width: var(--content-max);
+}
+
+.mainWide {
+  max-width: 1400px;
+}
+
+.footer {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+}
+
+/* Cards and lists shared by shell pages */
+.grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.card {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: var(--shadow);
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.card:hover {
+  border-color: var(--accent);
+}
+
+.card h2,
+.card h3 {
+  margin-bottom: var(--space-2);
+}
+
+.meta {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.section {
+  margin-top: var(--space-6);
+}
+
+.lead {
+  color: var(--text-muted);
+  max-width: 70ch;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.objectives {
+  margin: var(--space-3) 0 0;
+  padding-inline-start: 1.2em;
+  color: var(--text-muted);
+}
