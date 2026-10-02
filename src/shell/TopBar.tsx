@@ -25,9 +25,9 @@ export function TopBar({ crumbs = [] }: { crumbs?: Crumb[] }) {
             </ol>
           </nav>
         )}
-        <span className={styles.guest} title="Progress is saved only in this browser">
-          Guest
-        </span>
+        <Link href="/settings/" className={styles.guest} title="Guest: progress is saved only in this browser. Open settings.">
+          Guest · Settings
+        </Link>
       </div>
     </header>
   );
