@@ -1,0 +1,36 @@
+name: Task
+description: One coherent change (one component, interaction, schema change, bug or test group).
+title: "TASK: "
+labels: ["task"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: One or two sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: "- [ ] ..."
+    validations:
+      required: true
+  - type: dropdown
+    id: level
+    attributes:
+      label: Review level
+      options: ["L1", "L2", "L3", "L4"]
+    validations:
+      required: true
+  - type: input
+    id: role
+    attributes:
+      label: Responsible role
+      placeholder: frontend-interaction-engineer
+  - type: input
+    id: deps
+    attributes:
+      label: Depends on
+      placeholder: "#12"

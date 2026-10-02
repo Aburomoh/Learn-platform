@@ -1,0 +1,30 @@
+name: Pedagogy veto
+description: Advisory veto from the Pedagogy Engineer (owner decides).
+title: "PEDAGOGY VETO — TASK-"
+labels: ["pedagogy-review"]
+body:
+  - type: textarea
+    id: concern
+    attributes:
+      label: Concern
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Recommended change
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options: ["Low", "Medium", "High"]
+    validations:
+      required: true

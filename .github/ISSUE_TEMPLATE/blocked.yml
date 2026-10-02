@@ -1,0 +1,36 @@
+name: Blocked
+description: Escalation after two genuinely different failed approaches.
+title: "BLOCKED: "
+labels: ["blocked"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+    validations:
+      required: true
+  - type: textarea
+    id: attempts
+    attributes:
+      label: Attempts (two different approaches)
+    validations:
+      required: true
+  - type: textarea
+    id: recommendation
+    attributes:
+      label: Recommended option
+    validations:
+      required: true
+  - type: dropdown
+    id: decider
+    attributes:
+      label: Decision needed from
+      options: ["Technical Lead", "Product Manager", "Director", "Owner"]
+    validations:
+      required: true
