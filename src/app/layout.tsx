@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { product } from "../../config/product";
 import "@/styles/globals.css";
+import "@/tutor/ui/tutor-effects.css";
 
 export const metadata: Metadata = {
   title: { default: product.name, template: `%s · ${product.name}` },

@@ -1,0 +1,50 @@
+.root {
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  width: 96px;
+}
+
+.sm {
+  width: 56px;
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.head {
+  fill: var(--surface-2);
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.line {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: d var(--dur-base) var(--ease);
+}
+
+.eye {
+  fill: var(--text);
+  transition: cx var(--dur-base) var(--ease), r var(--dur-base) var(--ease);
+}
+
+.hand {
+  fill: var(--accent);
+}
+
+.caption {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.sm .caption {
+  display: none;
+}

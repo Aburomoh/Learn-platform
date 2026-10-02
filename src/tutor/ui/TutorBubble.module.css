@@ -1,0 +1,60 @@
+.bubble {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  min-height: 48px;
+  box-shadow: var(--shadow);
+  cursor: default;
+  line-height: 1.5;
+}
+
+.bubble[data-complete="false"] {
+  cursor: pointer;
+}
+
+.bubble::before {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  transform: rotate(-45deg);
+  left: -7px;
+  top: 20px;
+}
+
+.below::before {
+  left: 28px;
+  top: -7px;
+  transform: rotate(45deg);
+}
+
+.typed {
+  white-space: pre-wrap;
+}
+
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-inline-start: 2px;
+  vertical-align: -0.15em;
+  background: var(--accent);
+  animation: blink 1s steps(2) infinite;
+}
+
+@keyframes blink {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret {
+    animation: none;
+  }
+}

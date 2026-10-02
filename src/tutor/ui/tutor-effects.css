@@ -1,0 +1,33 @@
+/* Global classes applied by useFocusEffects to data-focus-target elements. */
+.tutor-focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.tutor-highlight {
+  background-color: var(--highlight-soft) !important;
+  box-shadow: 0 0 0 2px var(--highlight);
+  border-radius: var(--radius-sm);
+}
+
+.tutor-pulse {
+  animation: tutor-pulse var(--dur-slow) var(--ease) 2;
+}
+
+@keyframes tutor-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tutor-pulse {
+    animation: none;
+    outline: 3px solid var(--highlight);
+  }
+}
