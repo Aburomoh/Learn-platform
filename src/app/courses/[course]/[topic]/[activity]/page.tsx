@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getActivity, listActivityParams } from "@/content";
 import { Shell } from "@/shell/Shell";
+import { ActivityRunner } from "@/stage/ActivityRunner";
 import styles from "@/shell/Shell.module.css";
 
 type Params = { course: string; topic: string; activity: string };
@@ -20,22 +21,20 @@ export default async function ActivityPage({ params }: { params: Promise<Params>
   const ref = getActivity(courseId, topicId, activityId);
   if (!ref) notFound();
   const { course, topic, activity } = ref;
+  const topicHref = `/courses/${course.id}/${topic.id}/`;
 
   return (
     <Shell
       wide
       crumbs={[
         { href: `/courses/${course.id}/`, label: course.title },
-        { href: `/courses/${course.id}/${topic.id}/`, label: topic.title },
-        { href: `/courses/${course.id}/${topic.id}/${activity.id}/`, label: activity.title },
+        { href: topicHref, label: topic.title },
+        { href: `${topicHref}${activity.id}/`, label: activity.title },
       ]}
     >
       <h1>{activity.title}</h1>
       <p className={styles.lead}>{activity.summary}</p>
-      {/* The Learning Stage (ActivityRunner) mounts here in task #8. */}
-      <p className={styles.meta} data-testid="stage-placeholder">
-        Learning Stage coming in the next task.
-      </p>
+      <ActivityRunner offeringId={course.offeringId} topic={topic} activity={activity} backHref={topicHref} />
     </Shell>
   );
 }

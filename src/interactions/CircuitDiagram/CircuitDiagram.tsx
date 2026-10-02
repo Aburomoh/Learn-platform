@@ -113,7 +113,7 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], reve
           return (
             <g key={g.id} transform={`translate(${p.x - 30}, ${p.y - 22})`} className={`${styles.gate} ${isLit ? styles.gateLit : ""}`} {...focusTarget(`gate-${g.id}`)}>
               <GateShape type={g.type} />
-              <text x="30" y="27" textAnchor="middle" className={styles.gateLabel}>
+              <text x={g.type === "NOT" ? 22 : 30} y={g.type === "NOT" ? 58 : 27} textAnchor="middle" className={styles.gateLabel}>
                 {g.type}
               </text>
               {isLit && (
