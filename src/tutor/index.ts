@@ -1,0 +1,9 @@
+export type { LearningEvent } from "./engine/events";
+export type { TutorAction, Expression } from "./engine/actions";
+export { EXPRESSIONS } from "./engine/actions";
+export type { TutorState, TutorStage, ActivityContext } from "./engine/state";
+export { initialTutorState, canRequestScaffold, nextHint, HESITATION_SECONDS } from "./engine/state";
+export { reduce, type ReduceResult } from "./engine/reduce";
+export { resolveMessage, hasMessage, messageKeys } from "./messages";
+export { RuleBasedTutor, createTutorAdapter, type ConversationalTutorAdapter, type TutorAdapterKind, type TutorTurnInput, type TutorTurnOutput } from "./adapter";
+export { contextFromVariant } from "./context";
