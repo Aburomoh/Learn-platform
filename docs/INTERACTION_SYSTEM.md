@@ -6,18 +6,20 @@ and a demo usage inside the demo course.
 
 ## Shared contract
 ```ts
-interface InteractionProps<Answer> {
-  id: string;                       // stable, used for progress + focus targets
-  disabled?: boolean;               // after correct answer or during explanation
-  onEvent: (e: LearningEvent) => void;   // see src/tutor/engine/events.ts
-  onAnswer: (answer: Answer) => void;    // fires on explicit submit, not on every change
+interface InteractionBaseProps {
+  id: string;                 // stable, used for progress keys + focus targets
+  disabled?: boolean;         // after a correct answer or during explanation
+  state?: "idle" | "correct" | "incorrect";   // feedback passed back by the runner
 }
+// Each component adds one explicit callback, e.g. onAnswer(optionId), onAnswer(text),
+// onRequest(), onPredict(index). Callbacks fire on explicit submit, never on every change.
 ```
 Components never grade themselves. They emit the answer; the `ActivityRunner` grades it against
-`src/content/` and feeds the result to the tutor engine.
+`src/content/` (`grade()`) and feeds the result to the tutor engine.
 
-Any element that the tutor may point at carries `data-focus-target="<id>"`. `TutorFocus`
-resolves these ids to apply focus / highlight / pulse styles.
+Any element that the tutor may point at carries `data-focus-target="<id>"` (helper
+`focusTarget(id)` in `src/interactions/shared/types.ts`). `TutorFocus` resolves these ids to
+apply focus / highlight / pulse styles.
 
 ## Component list and M1 status
 | Component | M1 | Notes |
