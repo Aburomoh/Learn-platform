@@ -1,0 +1,23 @@
+.panel {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.avatarSm {
+  display: none;
+}
+
+.quiet {
+  min-height: 48px;
+}
+
+@media (max-width: 900px) {
+  .avatar {
+    display: none;
+  }
+  .avatarSm {
+    display: block;
+  }
+}
