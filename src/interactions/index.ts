@@ -3,3 +3,6 @@ export { NumericInput, type NumericInputProps, type NumberBase } from "./Numeric
 export { HintReveal, type HintRevealProps, type RevealedHint } from "./HintReveal/HintReveal";
 export { PredictionBeforeReveal, type PredictionBeforeRevealProps, type PredictionResult } from "./PredictionBeforeReveal/PredictionBeforeReveal";
 export { FOCUS_ATTR, focusTarget, type InteractionBaseProps, type AnswerState } from "./shared/types";
+export { DragToTarget, type DragToTargetProps, type DragItem, type DropTarget, type TargetStatus } from "./DragToTarget/DragToTarget";
+export { PlaceValueDiagram, type PlaceValueDiagramProps, type Bit } from "./PlaceValueDiagram/PlaceValueDiagram";
+export { CircuitDiagram, type CircuitDiagramProps } from "./CircuitDiagram/CircuitDiagram";

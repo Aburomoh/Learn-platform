@@ -1,0 +1,76 @@
+.root {
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow-x: auto;
+}
+
+.svg {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+
+.wire {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 2;
+  transition: stroke var(--dur-base) var(--ease);
+}
+
+.wireOn {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.inputBox {
+  fill: var(--surface-2);
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.inputOn .inputBox {
+  fill: var(--highlight-soft);
+  stroke: var(--accent);
+}
+
+.toggleable {
+  cursor: pointer;
+}
+
+.toggleable:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.label {
+  fill: var(--text);
+}
+
+.value {
+  fill: var(--accent);
+  font-weight: 700;
+}
+
+.body {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 2;
+  transition: fill var(--dur-base) var(--ease), stroke var(--dur-base) var(--ease);
+}
+
+.gateLit .body {
+  fill: var(--highlight-soft);
+  stroke: var(--accent);
+}
+
+.gateLabel {
+  fill: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  pointer-events: none;
+}
