@@ -79,4 +79,32 @@ describe("ColumnAddition", () => {
     expect(screen.queryByRole("textbox")).toBeNull();
     expect(screen.getAllByText("?")).toHaveLength(1);
   });
+
+  describe("without a final carry step (end carry dropped, e.g. +1 for a 2's complement)", () => {
+    // 011010 + 000001 = 011011, six columns and no extra bit
+    const plusOne = [col(0, 1, 0, 1, 0), col(1, 0, 0, 1, 0), col(0, 0, 0, 0, 0), col(1, 0, 0, 1, 0), col(1, 0, 0, 1, 0), col(0, 0, 0, 0, 0)];
+    const props = { id: "c2", a: "011010", b: "000001", columns: plusOne };
+
+    it("sizes the grid to the operands: no empty column on the left", () => {
+      const { container } = render(<ColumnAddition {...props} stepIndex={0} onStep={() => {}} />);
+      const grid = container.querySelector("[style*='grid-template-columns']") as HTMLElement;
+      expect(grid.style.gridTemplateColumns).toContain("repeat(6,");
+      // rightmost bit sits in the last grid column, leftmost right after the sign column
+      expect(column(screen.getByLabelText(/first column from the right, 0 \+ 1: sum bit/))).toBe("7");
+    });
+
+    it("asks the leftmost column for its carry out above the sign, then shows it as dropped", async () => {
+      const onStep = vi.fn();
+      const { rerender } = render(<ColumnAddition {...props} stepIndex={5} onStep={onStep} />);
+      const carry = screen.getByLabelText("the sixth column from the right: carry out");
+      expect([row(carry), column(carry)]).toEqual(["1", "1"]);
+      await userEvent.setup().keyboard("0");
+      await userEvent.setup().type(carry, "0{Enter}");
+      expect(onStep).toHaveBeenCalledWith(0, 0);
+
+      rerender(<ColumnAddition {...props} stepIndex={6} />);
+      expect(document.querySelector("[data-focus-target='add-carry-dropped']")).toHaveTextContent("carry out, dropped: 0");
+      expect(document.querySelector("[data-focus-target='add-result']")).toHaveTextContent("011010 + 000001 = 011011");
+    });
+  });
 });

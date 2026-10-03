@@ -68,6 +68,10 @@
   color: var(--text-muted);
 }
 
+.dropped {
+  text-decoration: line-through;
+}
+
 .sum {
   font-weight: 700;
 }
