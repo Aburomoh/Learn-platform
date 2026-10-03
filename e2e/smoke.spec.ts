@@ -20,9 +20,13 @@ test("home lists the course and navigates to an activity", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByText("DEMO / NOT AUTHORITATIVE COURSE CONTENT")).toBeVisible();
+  // each hop waits for its URL so a slow transition fails at the hop, not on a stale page
   await page.getByRole("link", { name: /Introduction to Digital System Design/ }).click();
+  await expect(page).toHaveURL(/\/courses\/ecet111\/$/);
   await page.getByRole("link", { name: /Number-base conversions/ }).click();
+  await expect(page).toHaveURL(new RegExp(`${TOPIC}$`));
   await page.getByRole("link", { name: /Decimal → binary/ }).click();
+  await expect(page).toHaveURL(new RegExp(`${ACTIVITY}$`));
   await expect(page.getByTestId("learning-stage")).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
@@ -143,4 +147,27 @@ test("settings: clear local data resets progress", async ({ page }) => {
   await expect(page.getByRole("status")).toHaveText(/Cleared/);
   const keys = await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("cet-learn:v1:progress:")));
   expect(keys).toEqual([]);
+});
+
+test("reduced motion: no running animations, tutor text appears at once", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(ACTIVITY);
+  await expect(page.getByTestId("learning-stage")).toBeVisible();
+  const dur = () => page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--dur-base")));
+  expect(await dur()).toBe(0);
+
+  // a wrong step triggers tutor feedback, focus effects and the typing bubble
+  await divisionStep(page, 26, 12, 0);
+  await expect(page.getByRole("status").filter({ hasText: "Not correct yet." })).toBeVisible();
+  await page.getByRole("button", { name: "Hint", exact: true }).click();
+  await expect(page.getByText("Nudge")).toBeVisible();
+  const running = await page.evaluate(() =>
+    document.getAnimations().filter((a) => a.playState === "running").map((a) => (a.effect as KeyframeEffect | null)?.target?.getAttribute("class") ?? "?"),
+  );
+  expect(running).toEqual([]);
+  await expect(page.locator("[class*='caret']")).toHaveCount(0);
+
+  // control: without the preference, motion tokens are non-zero
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  expect(await dur()).toBeGreaterThan(0);
 });
