@@ -17,13 +17,15 @@ Recent evidence outweighs old evidence (exponential decay by attempt index, not 
 Client-side only. `localStorage` key `cet-learn:v1:progress:<offeringId>` (ADR-0005).
 Writes are batched (debounced) and small. A separate key `cet-learn:v1:prefs` holds account-level
 durable preferences only: language, reduced-motion override, theme, typewriter speed.
-Session-only state (current activity, tutor state) is never persisted.
+Session-only state (current activity, tutor state) is never persisted. `completedQuestions` is
+optional, so data saved before it existed loads unchanged (no version bump); Review does not clear it.
 
 ## Shape
 ```ts
 interface OfferingProgress {
   version: 1; offeringId: string;
-  activities: Record<ActivityId, { status: 'new'|'started'|'completed'; attempts: number; hintsUsed: number; independent: boolean; lastAt: number }>;
+  activities: Record<ActivityId, { status: 'new'|'started'|'completed'; attempts: number; hintsUsed: number; independent: boolean; lastAt: number;
+    completedQuestions?: QuestionId[] }>;  // finished challenges, for Continue and the progress dots (R1)
   concepts: Record<ConceptId, { evidence: MasteryEvidence[] }>;  // capped length
 }
 ```

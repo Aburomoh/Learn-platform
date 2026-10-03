@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { emptyProgress, recordAttempt, startActivity, completeActivity, masteryEstimate, recentMisconceptions, EVIDENCE_CAP } from "./progress";
+import { emptyProgress, recordAttempt, startActivity, completeActivity, completeQuestion, firstUnfinishedQuestion, masteryEstimate, recentMisconceptions, EVIDENCE_CAP } from "./progress";
 import { readJSON, writeJSON, _resetMemory } from "./storage";
 import { getProgressStore, clearLocalData, progressKey, _resetStores } from "./store";
 
@@ -34,6 +34,36 @@ describe("progress reducers", () => {
       { questionId: "q", correct: false, hintsUsed: 0, misconceptionId: "m1", at: 3 },
     ];
     expect(recentMisconceptions(ev)).toEqual(["m1", "m2"]);
+  });
+});
+
+describe("completed challenges (#117)", () => {
+  const activity = { questions: [{ id: "q1" }, { id: "q2" }, { id: "q3" }] };
+
+  it("records finished questions once and resumes at the first unfinished one", () => {
+    let p = startActivity(emptyProgress("off"), "a1", 1);
+    expect(firstUnfinishedQuestion(activity, p.activities.a1)).toBe(0);
+    p = completeQuestion(p, "a1", "q1", 2);
+    p = completeQuestion(p, "a1", "q3", 3);
+    const same = completeQuestion(p, "a1", "q1", 4);
+    expect(same).toBe(p);
+    expect(p.activities.a1).toMatchObject({ status: "started", completedQuestions: ["q1", "q3"] });
+    expect(firstUnfinishedQuestion(activity, p.activities.a1)).toBe(1);
+    p = completeQuestion(p, "a1", "q2", 5);
+    expect(firstUnfinishedQuestion(activity, p.activities.a1)).toBeNull();
+  });
+
+  it("keeps the list through completion and Review, and keeps completed status", () => {
+    let p = completeQuestion(emptyProgress("off"), "a1", "q1", 1);
+    p = completeActivity(p, "a1", true, 2);
+    p = recordAttempt(p, { activityId: "a1", questionId: "q1", conceptId: "c", correct: true, hintsUsed: 0 }, 3);
+    p = completeQuestion(p, "a1", "q2", 4);
+    expect(p.activities.a1).toMatchObject({ status: "completed", completedQuestions: ["q1", "q2"] });
+  });
+
+  it("treats a missing record or old data without the field as nothing finished", () => {
+    expect(firstUnfinishedQuestion(activity, undefined)).toBe(0);
+    expect(firstUnfinishedQuestion(activity, { status: "completed", attempts: 3, hintsUsed: 0, independent: true, lastAt: 1 })).toBe(0);
   });
 });
 
@@ -80,6 +110,16 @@ describe("progress store", () => {
     expect(getProgressStore("off-2").get().offeringId).toBe("off-2");
     window.localStorage.setItem(progressKey("off-3"), "{not json");
     expect(getProgressStore("off-3").get().activities).toEqual({});
+  });
+
+  it("loads progress saved before completedQuestions existed, unchanged (no version bump)", () => {
+    const old = { version: 1, offeringId: "off-5", activities: { a1: { status: "started", attempts: 2, hintsUsed: 1, independent: false, lastAt: 7 } }, concepts: {} };
+    window.localStorage.setItem(progressKey("off-5"), JSON.stringify(old));
+    const store = getProgressStore("off-5");
+    expect(store.get()).toEqual(old);
+    store.set((p) => completeQuestion(p, "a1", "q1", 8));
+    vi.advanceTimersByTime(1100);
+    expect(JSON.parse(window.localStorage.getItem(progressKey("off-5"))!).activities.a1).toMatchObject({ attempts: 2, completedQuestions: ["q1"] });
   });
 
   it("clearLocalData removes every product key", () => {
