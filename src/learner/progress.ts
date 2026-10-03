@@ -20,6 +20,8 @@ export interface ActivityProgress {
   /** Completed with no hints on the final variant. */
   independent: boolean;
   lastAt: number;
+  /** Question ids finished in this practice (R1, #117). Optional: older stored data has none. */
+  completedQuestions?: string[];
 }
 
 export interface OfferingProgress {
@@ -75,6 +77,25 @@ export function recordAttempt(p: OfferingProgress, input: AttemptInput, now = Da
 export function completeActivity(p: OfferingProgress, activityId: string, independent: boolean, now = Date.now()): OfferingProgress {
   const prev = p.activities[activityId] ?? { status: "started" as const, attempts: 0, hintsUsed: 0, independent: false, lastAt: now };
   return { ...p, activities: { ...p.activities, [activityId]: { ...prev, status: "completed", independent: prev.independent || independent, lastAt: now } } };
+}
+
+/** Records a finished question (challenge). Idempotent; never removes entries, so Review keeps them. */
+export function completeQuestion(p: OfferingProgress, activityId: string, questionId: string, now = Date.now()): OfferingProgress {
+  const prev = p.activities[activityId] ?? { status: "started" as const, attempts: 0, hintsUsed: 0, independent: false, lastAt: now };
+  const done = prev.completedQuestions ?? [];
+  if (done.includes(questionId)) return p;
+  const status = prev.status === "completed" ? "completed" : "started";
+  return { ...p, activities: { ...p.activities, [activityId]: { ...prev, status, completedQuestions: [...done, questionId], lastAt: now } } };
+}
+
+/**
+ * Index of the first question not yet finished, in activity order: where Continue resumes.
+ * 0 with no record; null when every question is finished (the caller offers Review / Next topic).
+ */
+export function firstUnfinishedQuestion(activity: { questions: { id: string }[] }, progress?: ActivityProgress): number | null {
+  const done = new Set(progress?.completedQuestions ?? []);
+  const i = activity.questions.findIndex((q) => !done.has(q.id));
+  return i < 0 ? null : i;
 }
 
 /**

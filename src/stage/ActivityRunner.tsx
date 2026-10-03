@@ -6,7 +6,7 @@ import { product } from "../../config/product";
 import { HintReveal } from "@/interactions";
 import { canRequestScaffold } from "@/tutor";
 import { TutorPanel, useFocusEffects } from "@/tutor/ui";
-import { useOfferingProgress, usePrefs, startActivity, recordAttempt, completeActivity } from "@/learner";
+import { useOfferingProgress, usePrefs, startActivity, recordAttempt, completeActivity, completeQuestion } from "@/learner";
 import { createRunnerReducer, initialRunnerState, currentVariant, hasAnotherVariant } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
@@ -66,6 +66,16 @@ export function ActivityRunner({ offeringId, topic, activity, backHref }: Activi
       recordAttempt(p, { activityId: activity.id, questionId: question.id, conceptId: question.conceptId, correct: result.correct, hintsUsed, misconceptionId: result.misconceptionId }),
     );
   }, [state.attemptSeq, state.last, state.tutor.hintLevel, activity.id, question.id, question.conceptId, updateProgress]);
+
+  // Record each newly finished challenge so Continue can resume at the first unfinished one (#117).
+  const recordedQuestions = useRef(new Set<number>());
+  useEffect(() => {
+    state.completed.forEach((done, i) => {
+      if (!done || recordedQuestions.current.has(i)) return;
+      recordedQuestions.current.add(i);
+      updateProgress((p) => completeQuestion(p, activity.id, activity.questions[i].id));
+    });
+  }, [state.completed, activity, updateProgress]);
 
   // Mark the activity complete once.
   const completedOnce = useRef(false);
