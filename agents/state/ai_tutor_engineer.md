@@ -1,7 +1,7 @@
 # Current State — AI Tutor Engineer
 
-Current assignment: #141 later challenges follow the worked variant (runner).
-Recent important decision: Follow by matching variant id (not raw index), only from a finished question; content test enforces aligned ids.
+Current assignment: None (all tutor tasks merged: #62, #79, #83, #102, #142, #70).
+Recent important decision: Step wording via catalog + ADR-0007 step tags; variants follow by id across questions; `ar` is a Partial catalog.
 Blocker: None
-Relevant issue/PR: #141, #70 (#68, ar slots, draft until Arabic is prioritised).
-Next expected action: Pedagogy + review on the #141 PR; then idle until woken.
+Relevant issue/PR: Grader gaps noted on #102 (backend) would each need one catalog key.
+Next expected action: Arabic wording when the owner supplies it; division `stepNext` could move from content to the catalog.
