@@ -22,14 +22,6 @@ Decision: supply 2–3 reference photos (or decide to keep a neutral illustrated
 Why it matters: the expression library is built against placeholders until then.
 Team recommendation: no urgency; placeholders are explicit and swappable.
 
-### 4. Branch protection on `main`
-Decision: GitHub refuses branch-protection rules on a private repo without GitHub Pro (HTTP 403).
-Why it matters: today the "only the Technical Lead merges, CI must pass" rule is procedural, not enforced.
-Option A: Keep the repo private and the rule procedural (current).
-Option B: Make the repo public (demo content only) so protection rules become available.
-Option C: GitHub Pro on the owner account (paid).
-Team recommendation: A until real course content lands; revisit at M2.
-
 ### 5. Walk through M1.1
 Decision: check that your 2026-10-03 feedback is fixed. Open the preview above (or `npm run dev`) → ECET 111 → Chapter 1.
 Look at: (a) divide-by-2 is now checked one division at a time; (b) the circuit is redrawn with standard symbols and right-angle wires.
@@ -37,6 +29,7 @@ Best after the close-out lands (#32 circuit walk, #42, #44, #45, phone fixes #52
 Why it matters: M2 (real course content) reuses these step sizes and diagrams.
 
 ## Resolved
+- 2026-10-03 — Branch protection (old item 4): owner chose Option B. The repo is public and `main` is protected (PR only, green CI, linear history); see #72. Never post secrets or slide content.
 - 2026-10-03 — Pedagogy vetoes #42, #44, #45: accepted (owner, in Technical Lead session; quoted on #44). New rule: each step of a multi-step answer is its own goal, shown only after the previous one is done; be patient with students.
 - 2026-10-03 — Session-start alarm hook in `.claude/settings.json` (PR #26): approved by owner, merged.
 - 2026-10-03 — M1 walkthrough given: steps too large, circuit unclear → M1.1.
