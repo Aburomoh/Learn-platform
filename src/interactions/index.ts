@@ -9,3 +9,4 @@ export { CircuitDiagram, type CircuitDiagramProps } from "./CircuitDiagram/Circu
 export { DivisionChain, type DivisionChainProps, type ChainStep } from "./DivisionChain/DivisionChain";
 export { BitGrouping, type BitGroupingProps } from "./BitGrouping/BitGrouping";
 export { ColumnAddition, type ColumnAdditionProps, type AdditionColumn } from "./ColumnAddition/ColumnAddition";
+export { BitRow, type BitRowProps } from "./BitRow/BitRow";
