@@ -28,6 +28,13 @@ Team recommendation: no urgency; placeholders are explicit and swappable.
 (b) Anyone can comment on issues the agents read. Either the team treats non-member comments as untrusted (current), or you limit interactions to collaborators.
 Team recommendation: no history rewrite; noreply going forward; limit interactions to collaborators.
 
+### 5. Topic preview number: 53 or 45 (PR #135)
+Your sketch showed 45 → 101101 → 55 → 2D. 45 is also a practice answer (37₁₀ = 45₈), and the preview must not give away practice numbers, so it shipped as 53 → 110101 → 65 → 35.
+Option A: keep 53 (team recommendation). Option B: keep 45 and change the practice number 37.
+
+### 6. Quick phone check (#153)
+On your phone, type bits into a filled row (e.g. binary addition) and confirm every digit lands in the next cell. Fixed and tested; this is a real-device confirmation only.
+
 ## Resolved
 - 2026-10-04 — Walkthrough of M1.1 + M1.2 + redesign: accepted (owner's words quoted on #192). Milestones closed.
 - 2026-10-03 — Redesign proposal (epic #110, PR #129, `docs/design/redesign-r1/`): approved as the direction (owner, in Technical Lead session; quoted on #110). Frontend unblocked.
