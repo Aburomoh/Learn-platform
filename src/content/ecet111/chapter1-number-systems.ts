@@ -6,6 +6,7 @@
  */
 import type { z } from "zod";
 import type { TopicSchema, HintSchema, VariantSchema } from "../schema";
+import { divisionSteps, groupBits } from "../grade";
 
 type TopicInput = z.input<typeof TopicSchema>;
 type HintInput = z.input<typeof HintSchema>;
@@ -95,6 +96,172 @@ const steps37 = [
 
 const vars26 = { value: 26, answerBits: "11010", msb: 1, answerOct: "32", answerHex: "1A" };
 const vars37 = { value: 37, answerBits: "100101", msb: 1, answerOct: "45", answerHex: "25" };
+
+/* ---------- Exercise 88 and 73 (#43): same walked steps, no worked example first ---------- */
+
+type ExplanationInput = VariantInput["explanation"];
+
+/** One explanation step per division, each with a remainder prediction (owner rule: every step a goal). */
+function divisionWalk(value: number): ExplanationInput {
+  const steps = divisionSteps(value);
+  return [
+    { id: "s1", say: "Divide {value} by 2 again and again. Each remainder becomes one bit.", stage: { revealed: 0 } },
+    ...steps.map((st, i) => {
+      const right = `${st.quotient}, remainder ${st.remainder}`;
+      const wrong = `${st.quotient}, remainder ${1 - st.remainder}`;
+      const correctIndex = i % 2;
+      return {
+        id: `s${i + 2}`,
+        say: i === 0 ? `Start with ${st.dividend} ÷ 2.` : `${st.dividend} goes in the next row. Now ${st.dividend} ÷ 2.`,
+        stage: { revealed: i, attention: i },
+        ask: {
+          prompt: `${st.dividend} ÷ 2 = ?`,
+          options: correctIndex === 0 ? [right, wrong] : [wrong, right],
+          correctIndex,
+          afterCorrect: st.remainder ? `Yes. ${st.dividend} is odd, so 1 is left over.` : `Yes. ${st.dividend} is even, so nothing is left over.`,
+          afterWrong: `${st.dividend} is ${st.remainder ? "odd" : "even"}: ${st.dividend} ÷ 2 = ${right}.`,
+        },
+      };
+    }),
+    { id: `s${steps.length + 2}`, say: "The result is 0, so we stop. The remainder column holds the bits.", stage: { revealed: steps.length } },
+  ];
+}
+
+/** Distinct options, correct first in the authored list, then shuffled by a fixed rotation. */
+function optionsWith(correct: string, distractors: string[], rotate: number): { options: string[]; correctIndex: number } {
+  const all = [correct, ...distractors.filter((d, i, a) => d !== correct && a.indexOf(d) === i)].slice(0, 4);
+  const k = rotate % all.length;
+  const options = [...all.slice(k), ...all.slice(0, k)];
+  return { options, correctIndex: options.indexOf(correct) };
+}
+
+/** Grouping walk: padding as a prediction, then each group's digit as a prediction, then the check. */
+function groupingWalk(bits: string, size: 3 | 4): ExplanationInput {
+  const groups = groupBits(bits, size);
+  const pad = groups.length * size - bits.length;
+  const base = size === 3 ? 8 : 16;
+  const padAsk = optionsWith(String(pad), [String(pad + 1), "0", "1"].filter((d) => d !== String(pad)).slice(0, 2), 0);
+  const zeros = (n: number) => `${n} bit${n === 1 ? "" : "s"}`;
+  const digitOf = (g: string) => parseInt(g, 2).toString(16).toUpperCase();
+  const answer = groups.map(digitOf).join("");
+  return [
+    { id: "s1", say: `One ${size === 3 ? "octal" : "hexadecimal"} digit stands for ${size} bits. Split {answerBits} from the right.`, stage: { groups: [] } },
+    {
+      id: "s2",
+      say: pad ? `The leftmost group is short by ${zeros(pad)}.` : `${bits.length} bits split exactly into groups of ${size}.`,
+      stage: { groups: [], attention: 0 },
+      ask: {
+        prompt: "How many zeros do we add on the left?",
+        ...padAsk,
+        afterCorrect: pad ? `Yes: the groups are ${groups.join(" ")}.` : "Right, none: every group is already full.",
+        afterWrong: `Each group needs ${size} bits, so we add ${pad}: ${groups.join(" ")}.`,
+      },
+    },
+    ...groups.map((g, i) => {
+      const value = parseInt(g, 2);
+      const reversed = String(parseInt([...g].reverse().join(""), 2));
+      const ones = String([...g].filter((b) => b === "1").length);
+      const asDecimal = g.replace(/^0+(?=.)/, "");
+      const digit = digitOf(g);
+      // Real misreadings: weights from the wrong end, counting the 1s, bits read as decimal, decimal value for a hex letter.
+      // A group such as 000 reads the same every way; only then do neighbouring values fill in.
+      const real = [String(value), reversed, ones, asDecimal].filter((d) => d !== digit);
+      const ask = optionsWith(digit, real.length ? real : [String(value + 1), String(value + 2)], i + 1);
+      return {
+        id: `s${i + 3}`,
+        say: `Group ${i + 1}: ${g}.`,
+        stage: { groups, attention: i },
+        ask: {
+          prompt: `Which digit is ${g}?`,
+          ...ask,
+          afterCorrect: `Yes: ${g} is ${value}${value >= 10 ? `, written ${digit}` : ""}.`,
+          afterWrong: `The weights are ${size === 3 ? "4, 2, 1" : "8, 4, 2, 1"}. ${g} is ${value}${value >= 10 ? `, written ${digit}` : ""}.`,
+        },
+      };
+    }),
+    { id: `s${groups.length + 3}`, say: `So ({value})₁₀ = (${answer})${base === 8 ? "₈" : "₁₆"}.`, stage: { groups, done: true } },
+  ];
+}
+
+function exerciseVars(value: number) {
+  const bits = value.toString(2);
+  return { value, answerBits: bits, msb: 1, answerOct: value.toString(8), answerHex: value.toString(16).toUpperCase() };
+}
+
+function divideVariant(value: number, prompt: string): VariantInput {
+  return {
+    id: `v${value}`,
+    prompt,
+    spec: { kind: "repeated-division", value, base: 2, steps: divisionSteps(value) },
+    vars: exerciseVars(value),
+    hints: divisionHints,
+    misconceptions: divisionMisconceptions,
+    reactions: { stepNext: "Good. Now {dividend} ÷ 2.", correct: "Good. The result is 0, so the division stops.", correctAfterHints: "Right. The result is 0, so the division stops." },
+    explanation: divisionWalk(value),
+  };
+}
+
+function readVariant(value: number): VariantInput {
+  const bits = value.toString(2);
+  const reversed = [...bits].reverse().join("");
+  return {
+    id: `v${value}`,
+    prompt: "The division of {value} is finished. Use the remainders to write ({value})₁₀ in binary.",
+    spec: { kind: "numeric", base: 2, answer: bits, context: { type: "division-chain", value, steps: divisionSteps(value) } },
+    vars: exerciseVars(value),
+    hints: readHints,
+    // A palindrome (73 = 1001001) reads the same both ways, so there is no reversed-order mistake to detect.
+    misconceptions: reversed === bits ? [] : [{ id: "ns.read-reversed", title: "Read LSB first", nudgeKey: "ns.read-reversed", detect: { type: "equals", value: reversed } }],
+    explanation: [
+      { id: "s1", say: "The first remainder is the LSB. The last remainder is the MSB.", stage: { showOrder: true } },
+      {
+        id: "s2",
+        say: "The MSB is written on the left.",
+        stage: { showOrder: true, attention: divisionSteps(value).length - 1 },
+        ask: { prompt: "Which remainder do we write first?", options: ["The bottom one (MSB)", "The top one (LSB)"], correctIndex: 0, afterCorrect: "Yes. Read from the bottom up.", afterWrong: "The MSB goes on the left, and it is the bottom remainder." },
+      },
+    ],
+  };
+}
+
+function groupingVariant(value: number, size: 3 | 4): VariantInput {
+  const bits = value.toString(2);
+  const answer = value.toString(size === 3 ? 8 : 16).toUpperCase();
+  return {
+    id: `v${value}`,
+    prompt: `({value})₁₀ = ({answerBits})₂. Write it in ${size === 3 ? "octal" : "hexadecimal"}: first mark groups of ${size === 3 ? "three" : "four"} bits from the right, then write one digit under each group.`,
+    spec: { kind: "bit-grouping", bits, groupSize: size, answer },
+    vars: { ...exerciseVars(value), groups: groupBits(bits, size).join(" ") },
+    hints: groupHints,
+    hintsByStep: { group: groupHints, digit: size === 3 ? octalDigitHints : hexDigitHints },
+    misconceptions: groupingMisconceptions,
+    reactions: groupingReactions,
+    explanation: groupingWalk(bits, size),
+  };
+}
+
+const conversionExercise: TopicInput["activities"][number] = {
+  id: "conversion-exercise",
+  title: "Exercise: 88 and 73",
+  summary: "The same four steps on new numbers: divide, read off, then octal and hexadecimal by grouping.",
+  authority: "DEMO",
+  minutes: 12,
+  questions: [
+    {
+      id: "ns.x.divide",
+      label: "Divide by 2",
+      conceptId: "ns.repeated-division",
+      objectiveId: "ns.obj.divide",
+      variants: [
+        divideVariant(88, "Exercise: convert ({value})₁₀ to binary. Divide by 2, one step at a time: the result goes below, the remainder beside it."),
+        divideVariant(73, "Now ({value})₁₀. Divide by 2, one step at a time."),
+      ],
+    },
+    { id: "ns.x.read", label: "Read off", conceptId: "ns.bit-order", objectiveId: "ns.obj.read", variants: [readVariant(88), readVariant(73)] },
+    { id: "ns.x.octal", label: "Octal", conceptId: "ns.octal-grouping", objectiveId: "ns.obj.octal", variants: [groupingVariant(88, 3), groupingVariant(73, 3)] },
+    { id: "ns.x.hex", label: "Hex", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [groupingVariant(88, 4), groupingVariant(73, 4)] },
+  ],
+};
 
 export const numberSystemsTopic: TopicInput = {
   id: "number-systems",
@@ -395,5 +562,6 @@ export const numberSystemsTopic: TopicInput = {
         },
       ],
     },
+    conversionExercise,
   ],
 };
