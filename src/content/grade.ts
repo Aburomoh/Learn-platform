@@ -20,6 +20,8 @@ export interface GradeResult {
   normalized: string;
   /** True when a step was right but the question has more steps (repeated-division, column-addition). */
   partial?: boolean;
+  /** Leftmost wrong bit, 0-based from the left (set with a `first-wrong-bit` misconception). */
+  wrongBit?: number;
 }
 
 export function grade(variant: Variant, answer: Answer): GradeResult {
@@ -40,7 +42,10 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
       const correct = text === normaliseNumeric(spec.answer);
       // Compare normalised forms on both sides so "01011" still matches an authored "01011".
       const hit = variant.misconceptions.find((m) => m.detect.type === "equals" && normaliseNumeric(String(m.detect.value)) === text);
-      return { correct, normalized: text, misconceptionId: correct ? undefined : hit?.id };
+      if (correct || hit) return { correct, normalized: text, misconceptionId: correct ? undefined : hit?.id };
+      const firstWrong = variant.misconceptions.find((m) => m.detect.type === "first-wrong-bit");
+      const wrongBit = firstWrong && spec.base === 2 ? firstWrongBit(spec.answer, a.text.trim()) : undefined;
+      return wrongBit === undefined ? { correct, normalized: text } : { correct, normalized: text, misconceptionId: firstWrong!.id, wrongBit };
     }
     case "multiple-choice": {
       const a = answer as Extract<Answer, { kind: "multiple-choice" }>;
@@ -104,6 +109,14 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
 
 function normaliseNumeric(text: string): string {
   return text.trim().toUpperCase().replace(/^0+(?=.)/, "").replace(/^0[XB]/, "");
+}
+
+/** Leftmost differing bit after left-padding to the answer's width; undefined if not comparable. */
+function firstWrongBit(answer: string, text: string): number | undefined {
+  if (!/^[01]+$/.test(text) || text.length > answer.length) return undefined;
+  const padded = text.padStart(answer.length, "0");
+  const i = [...padded].findIndex((d, k) => d !== answer[k]);
+  return i >= 0 ? i : undefined;
 }
 
 function detectEquals(list: Misconception[], value: string | number): string | undefined {
@@ -222,4 +235,9 @@ export function additionStepVars(step: AdditionStep): Record<string, number> {
 /** Result bits of a column addition, final carry first (width + 1 bits). */
 export function additionResult(a: string, b: string): string {
   return additionSteps(a, b).map((s) => s.sum).reverse().join("");
+}
+
+/** 1's complement: every 1 becomes 0 and every 0 becomes 1 (width kept). */
+export function complementBits(bits: string): string {
+  return [...bits].map((d) => (d === "1" ? "0" : "1")).join("");
 }

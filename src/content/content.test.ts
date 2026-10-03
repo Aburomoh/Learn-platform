@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { courses, getActivity, listActivityParams } from "./index";
-import { evaluateCircuit, grade, valueToBits, bitsToValue, divisionSteps, groupBits, additionSteps, additionResult, additionStepVars } from "./grade";
+import { evaluateCircuit, grade, valueToBits, bitsToValue, divisionSteps, groupBits, additionSteps, additionResult, additionStepVars, complementBits } from "./grade";
 import { InteractionSpec, MultipleChoiceSpec, NumericSpec } from "./schema";
 import { addition1101 } from "./fixtures/columnAddition";
+import { complement100101, complement110010 } from "./fixtures/onesComplement";
 import { fill } from "./template";
 import type { Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
@@ -259,5 +260,50 @@ describe("column addition (#33)", () => {
     expect(NumericSpec.safeParse({ kind: "numeric", base: 10, answer: "20", context }).success).toBe(true);
     expect(MultipleChoiceSpec.safeParse({ kind: "multiple-choice", options: [{ id: "a", text: "20" }, { id: "b", text: "13" }], correctOptionId: "a", context }).success).toBe(true);
     expect(NumericSpec.safeParse({ kind: "numeric", base: 10, answer: "20", context: { ...context, operands: { a: "1101", b: "111" } } }).success).toBe(false);
+  });
+});
+
+describe("1's complement on numeric + bit-row (#35)", () => {
+  const ans = (v: Variant, text: string) => grade(v, { kind: "numeric", text });
+
+  it("fixtures match the slide examples and the computed complement", () => {
+    for (const v of [complement100101, complement110010]) {
+      if (v.spec.kind !== "numeric" || v.spec.context?.type !== "bit-row") throw new Error("fixture shape");
+      expect(v.spec.answer).toBe(complementBits(v.spec.context.bits));
+    }
+    expect(complementBits("100101")).toBe("011010");
+    expect(complementBits("110010")).toBe("001101");
+  });
+
+  it("accepts the complement, with or without its leading zero", () => {
+    expect(ans(complement100101, "011010").correct).toBe(true);
+    expect(ans(complement110010, " 001101 ").correct).toBe(true);
+    expect(ans(complement110010, "1101").correct).toBe(true);
+  });
+
+  it("detects a copied source and the 2's complement before the first wrong bit", () => {
+    expect(ans(complement100101, "100101")).toMatchObject({ correct: false, misconceptionId: "c1.copied" });
+    expect(ans(complement100101, "011011")).toMatchObject({ correct: false, misconceptionId: "c1.gave-twos" });
+    expect(ans(complement100101, "100101").wrongBit).toBeUndefined();
+  });
+
+  it("reports the leftmost wrong bit, counting a dropped leading zero as 0", () => {
+    expect(ans(complement100101, "010010")).toMatchObject({ correct: false, misconceptionId: "c1.first-wrong-bit", wrongBit: 2 });
+    expect(ans(complement110010, "000001")).toMatchObject({ misconceptionId: "c1.first-wrong-bit", wrongBit: 2 });
+    expect(ans(complement110010, "1111")).toMatchObject({ misconceptionId: "c1.first-wrong-bit", wrongBit: 4 });
+  });
+
+  it("does not guess a position for non-bit or over-long answers", () => {
+    expect(ans(complement100101, "0110102")).toEqual({ correct: false, normalized: "110102" });
+    expect(ans(complement100101, "1011010")).toEqual({ correct: false, normalized: "1011010" });
+  });
+
+  it("validates the bit-row context: 2–8 bits of 0/1", () => {
+    const spec = (bits: string) => NumericSpec.safeParse({ kind: "numeric", base: 2, answer: "1", context: { type: "bit-row", bits } }).success;
+    expect(spec("10")).toBe(true);
+    expect(spec("10101010")).toBe(true);
+    expect(spec("1")).toBe(false);
+    expect(spec("101010101")).toBe(false);
+    expect(spec("1021")).toBe(false);
   });
 });

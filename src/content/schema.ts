@@ -74,6 +74,8 @@ export const MisconceptionDetector = z.discriminatedUnion("type", [
   z.object({ type: z.literal("addition-carry-ignored") }),
   /** Column addition: sum bit and carry out entered in each other's place. */
   z.object({ type: z.literal("addition-swapped") }),
+  /** Base-2 numeric answer: fires on any other wrong bit string and reports the leftmost wrong bit. */
+  z.object({ type: z.literal("first-wrong-bit") }),
 ]);
 
 export const MisconceptionSchema = z.object({
@@ -146,6 +148,8 @@ export const NumericContext = z.discriminatedUnion("type", [
   z.object({ type: z.literal("bits"), bits: z.string().regex(/^[01]+$/), groupSize: z.union([z.literal(3), z.literal(4)]) }),
   /** A completed column addition (operands, carry row and result). */
   z.object({ type: z.literal("addition"), operands: AdditionOperands }),
+  /** A source bit string shown in aligned cells, with one answer cell under each bit (e.g. 1's complement). */
+  z.object({ type: z.literal("bit-row"), bits: z.string().regex(/^[01]+$/).min(2).max(8) }),
 ]);
 
 /** Numeric entry in a given base. */
