@@ -48,7 +48,7 @@ phone fixes #52–#54. M1.2 approved with conditions on #47.
 (Frontend); pedagogy vetoes on #25 (accepted by the owner, 2026-10-03): #42 retry on another variant after Explain Slowly (AI Tutor,
 High), #45 content fixes (Backend), #44 octal/hex grouping as two checked steps (Frontend, after #32).
 
-## M1.2 — ECET 111 Chapter 1 complete (approved by Director with conditions, 2026-10-03)
+## M1.2 — ECET 111 Chapter 1 complete (done 2026-10-03, awaiting owner walkthrough)
 Rest of Chapter 1 after M1.1 closes (#32 gate-by-gate circuit walk): binary addition, 1's and 2's
 complement, subtraction by 2's complement, and the slide exercises. Every question is walked in
 checked steps (owner feedback of 2026-10-03); all content DEMO until instructor approval.
@@ -79,6 +79,7 @@ Owner supplies slides/questions for one CET course; Backend/Data + Pedagogy stru
 the M1 schema and record what the schema lacks (input to the Instructor Studio design).
 
 ## Status log (newest first)
+- 2026-10-03 — M1.2 complete on `main`: binary addition, 1's/2's complement, subtraction (positive and negative), exercises 88/73 and 15−4/10−14, base subscripts (#55); follow-ups #141, #158, #170 closed. All content DEMO until instructor approval.
 - 2026-10-03 — Owner accepted vetoes #42/#44/#45; rule: each step is its own goal. M1.1 close-out = #32, #42, #44, #45, #52–#54.
 - 2026-10-03 — Director: M1.1 close-out = #32; vetoes #42/#44/#45 pending owner; M1.2 approved with conditions (#47); PR #26 resolved (owner approved).
 - 2026-10-03 — M1.1 opened from owner feedback; course renamed to ECET 111, Chapter 1 method adopted.
