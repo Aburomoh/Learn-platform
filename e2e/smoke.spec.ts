@@ -44,7 +44,7 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await page.goto(ACTIVITY);
   const stage = page.getByTestId("learning-stage");
   await expect(stage).toBeVisible();
-  page.on("request", (r) => requests.push(r.url()));
+  page.on("request", (r) => requests.push(`${r.method()} ${r.url()}`));
 
   // the chain length is not given away: only the first number is visible
   await expect(page.getByLabel("26 divided by 2: result")).toBeVisible();
@@ -100,10 +100,10 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await page.getByRole("button", { name: "Check" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
 
-  // 7. only same-origin static assets were requested (no server or third-party calls)
+  // 7. no server or third-party calls: the site is a static export, so the only requests allowed
+  //    are GETs of its own files (assets, the brand mark, and pages that links pre-load).
   const origin = new URL(page.url()).origin;
-  // static files of this site: Next.js assets and the brand mark (which a prefetched page may preload)
-  const nonStatic = requests.filter((u) => !u.startsWith("data:") && !(u.startsWith(origin) && /\/_next\/|\/__next\.|\/brand\/[\w.-]+\.svg$/.test(u)));
+  const nonStatic = requests.filter((r) => !r.startsWith("GET data:") && !r.startsWith(`GET ${origin}/`));
   expect(nonStatic).toEqual([]);
 
   // 8. progress persisted locally and visible after navigation
