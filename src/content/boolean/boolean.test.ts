@@ -253,3 +253,42 @@ describe("minimal SOP is exact (brute force)", () => {
     }
   });
 });
+
+describe("student input (#258)", () => {
+  it("limits length and nesting with a parse error, not a crash", () => {
+    expect(() => parseBool("A+".repeat(100) + "B")).toThrow(/longer than 200/);
+    expect(() => parseBool("(".repeat(51) + "A" + ")".repeat(51))).toThrow(/nested parentheses/);
+    expect(() => parseBool("(".repeat(50) + "A" + ")".repeat(50))).not.toThrow();
+    expect(() => parseBool("(".repeat(5000) + "A")).toThrow(BooleanParseError); // length first, never RangeError
+  });
+
+  it("matches the question's variables regardless of case, and rejects others", () => {
+    const vars = ["A", "B", "C"];
+    expect(equivalent(parseBool("a + b'c", { vars }), parseBool("A + B'C"))).toBe(true);
+    expect(variablesOf(parseBool("ab", { vars }))).toEqual(["A", "B"]);
+    expect(() => parseBool("A + D", { vars })).toThrow(/Unknown variable "D"/);
+    expect(variablesOf(parseBool("x'y + XZ", { vars: ["x", "y", "z"] }))).toEqual(["x", "y", "z"]);
+    // multi-letter variables match case-insensitively too
+    expect(variablesOf(parseBool("a ⊕ b ⊕ ci", { vars: ["A", "B", "Ci"] }))).toEqual(["A", "B", "Ci"]);
+    // without `vars`, case is kept: a and A are different variables
+    expect(variablesOf(parseBool("a + A"))).toEqual(["A", "a"]);
+  });
+
+  it("caps the minimiser at 5 variables and stays fast at 5", () => {
+    expect(() => minimalCovers(6, [1])).toThrow(/at most 5/);
+    const all = Array.from({ length: 32 }, (_, m) => m);
+    const parity = all.filter((m) => popcount5(m) % 2 === 1); // 16 isolated minterms: nothing merges
+    const t0 = Date.now();
+    expect(minimalCovers(5, parity)[0]).toHaveLength(16);
+    const dense = all.filter((m) => m % 3 !== 0 && m % 7 !== 0);
+    const covers5 = minimalCovers(5, dense, [0, 21]);
+    expect(covers5.length).toBeGreaterThan(0);
+    expect(Date.now() - t0).toBeLessThan(5000);
+  });
+});
+
+function popcount5(m: number) {
+  let n = 0;
+  for (let x = m; x; x >>= 1) n += x & 1;
+  return n;
+}

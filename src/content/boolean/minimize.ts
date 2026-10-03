@@ -55,7 +55,11 @@ export function primeImplicants(minterms: number[], dontCares: number[] = []): C
  * Every minimal cover of the 1s (don't-cares may be used, never required).
  * Prime implicants only, as on a K-map: no group can grow without leaving the 1s and Xs.
  */
+/** Course maps go up to 4 variables; 5 is allowed for headroom, more is refused (#258). */
+export const MAX_VARIABLES = 5;
+
 export function minimalCovers(n: number, minterms: number[], dontCares: number[] = []): Cube[][] {
+  if (n > MAX_VARIABLES) throw new Error(`minimalCovers supports at most ${MAX_VARIABLES} variables, got ${n}`);
   const ons = [...new Set(minterms)].filter((m) => !dontCares.includes(m)).sort((a, b) => a - b);
   if (!ons.length) return [[]];
   const primes = primeImplicants(ons, dontCares);
@@ -127,5 +131,5 @@ export function formatCover(cs: Cube[], vars: string[]): string {
 export function minimalSOP(vars: string[], minterms: number[], dontCares: number[] = []): { text: string; expr: BoolExpr; cover: Cube[] } {
   const cover = minimalCovers(vars.length, minterms, dontCares)[0];
   const text = formatCover(cover, vars);
-  return { text, expr: parseBool(text, vars), cover };
+  return { text, expr: parseBool(text, { names: vars.filter((v) => v.length > 1) }), cover };
 }
