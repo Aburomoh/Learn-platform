@@ -50,6 +50,8 @@ export function Footer({ demo }: { demo: boolean }) {
 
 export interface TopicRowProps {
   title: string;
+  /** Makes the title a quiet text link to the topic page. */
+  href?: string;
   /** One line under the title, e.g. "Decimal → Binary → Octal → Hex". */
   route?: string;
   /** Status or effort line, e.g. "2 of 4 challenges done" or "3 short challenges · about 6 min". */
@@ -67,12 +69,20 @@ export interface TopicRowProps {
  * One topic on the course page: a plain surface with a visual, the title and route, a status
  * line and one button. The row itself is never the click target.
  */
-export function TopicRow({ title, route, status, completed = false, visual, action, emphasis = "quiet" }: TopicRowProps) {
+export function TopicRow({ title, href, route, status, completed = false, visual, action, emphasis = "quiet" }: TopicRowProps) {
   return (
     <li className={styles.topicRow}>
       {visual && <div className={styles.topicVisual}>{visual}</div>}
       <div className={styles.topicText}>
-        <h3 className={styles.topicTitle}>{title}</h3>
+        <h3 className={styles.topicTitle}>
+          {href ? (
+            <Link href={href} className={styles.titleLink}>
+              {title}
+            </Link>
+          ) : (
+            title
+          )}
+        </h3>
         {route && <p className={styles.topicRoute}>{route}</p>}
         {status && (
           <p className={`${styles.topicStatus} ${completed ? styles.topicDone : ""}`}>
@@ -89,7 +99,7 @@ export function TopicRow({ title, route, status, completed = false, visual, acti
         {emphasis === "primary" ? (
           <PrimaryAction primary={action} size="row" />
         ) : (
-          <Link href={action.href} className={styles.quiet}>
+          <Link href={action.href} className={styles.quiet} aria-label={`${action.label}: ${title}`}>
             {action.label} <span aria-hidden="true">→</span>
           </Link>
         )}
