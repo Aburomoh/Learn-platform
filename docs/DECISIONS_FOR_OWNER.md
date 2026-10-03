@@ -5,11 +5,12 @@ Only items that genuinely need Dr. Mohannad. Routine engineering choices are in 
 ## Open
 
 ### 1. Vercel: grant GitHub access for automatic previews
-Status: project `learn-platform` is linked (team `aburomohs-projects`). Latest manual preview (main @ 6dd0304: vertical division ladder #84, retry on a new number #79, hint fixes #69, 0x/0b prefixes #76):
-https://learn-platform-azmyz1tfk-aburomohs-projects.vercel.app (behind Vercel login; custom domain not attached).
-Decision: `vercel git connect` was refused because the Vercel GitHub app cannot see the private repo.
+Status: project `learn-platform` is linked (team `aburomohs-projects`). Latest manual preview (main @ 5340f6a, the M1.1 close-out — see #107 for its contents):
+https://learn-platform-5szbf25wz-aburomohs-projects.vercel.app (behind Vercel login; custom domain not attached).
+Decision: `vercel git connect` is still refused after the repo went public (#72, retried 2026-10-03):
+connecting needs the Vercel GitHub app installed with access to the repo, not just a visible repo.
 Owner action: GitHub → Settings → Applications → Vercel → Configure → Repository access → add
-`Aburomoh/Learn-platform`. Then the Release engineer runs `vercel git connect` and every PR gets a preview URL.
+`Aburomoh/Learn-platform` (or install the Vercel app from vercel.com → Add New → Project). Then the Release engineer runs `vercel git connect` and every PR gets a preview URL.
 Until then: previews are deployed manually with `vercel deploy`.
 
 ### 2. Production release of M1
