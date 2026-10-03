@@ -43,30 +43,38 @@ rectangles, half-ovals when they wrap; the term for each group is written beside
 | Topic | Activities | Interactions |
 |---|---|---|
 | Half adder | fill table A,B → S,C; write S = A⊕B, C = AB; walk the circuit | N-truth-table, N-expression, E-circuit-predict |
-| Full adder | 8-row table → Σ for S and Co → 3-var K-map → expressions (S needs algebra to A⊕B⊕Ci); link to Ch1 column addition | N-truth-table, N-kmap, N-derivation |
-| Decoders and encoders | 3→8 one-hot table; 8→3 encoder table | N-truth-table |
+| Full adder | separate activities, progress kept between them: 8-row table; Σ for S and Co; K-map for Co; S → A⊕B⊕Ci by algebra (optional challenge). Link to Ch1 column addition | N-truth-table, N-kmap, N-derivation |
+| Decoders and encoders | predict one output first; then the 3→8 one-hot table; 8→3 encoder table | N-truth-table |
 | Functions with a decoder | pick the decoder outputs each OR gate needs (S: D1,D2,D4,D7; Co: D3,D5,D6,D7) | N-row-select |
-| Multiplexers | which input reaches Y for each select value | E-circuit-predict (mux mode) or E-multiple-choice |
+| Multiplexers | predict one output first: which input reaches Y for each select value | E-circuit-predict (mux mode) or E-multiple-choice |
 | Functions with a MUX | n−1 selectors; per row pair choose 0 / 1 / z / z' (Σ(1,2,6,7) → z, z', 0, 1) | N-row-select (choice per row) |
 
 ## Chapter 5 — Sequential circuits
 | Topic | Activities | Interactions |
 |---|---|---|
-| Latches | NAND SR latch outputs per input pair | N-truth-table |
+| Latches | predict one output first; then NAND SR latch outputs per input pair | N-truth-table |
 | Flip-flops (SR, JK, D, T) | characteristic table → characteristic equation (Q⁺ = JQ'+K'Q, D, T⊕Q) → next state on one clock edge | N-truth-table, N-expression |
 | Timing diagrams | place Q edge by edge, positive and negative edge versions (initial Q stated) | N-timing |
-| Analysis | input equations → state equations → state table one column group per step → state diagram (D: A⁺=Ax+Bx, B⁺=A'x; JK; T; 3-flip-flop JK) | N-expression, N-truth-table (column groups), N-state-diagram |
-| Design | spec → state table → excitation columns (with X) → one K-map per input → equations (counter 00→01→11→10 with D, T, JK) | N-truth-table, N-kmap, N-expression |
+| Analysis | separate activities per stage: input equations → state equations → state table one column group per step → state diagram (D: A⁺=Ax+Bx, B⁺=A'x; JK; T; 3-flip-flop JK) | N-expression, N-truth-table (column groups), N-state-diagram |
+| Design | separate activities per stage: spec → state table → excitation columns (with X) → one K-map per input → equations (counter 00→01→11→10 with D, T, JK) | N-truth-table, N-kmap, N-expression |
 
 ## New interactions, in build order
+0. **Boolean module** (Backend, no dependency) in `src/content/`: parse our notation (`'`, implicit
+   AND, `+`, `⊕`), evaluate, truth table, minterms, equivalence, minimal SOP up to 4 variables. Every
+   kind below computes its truth from it; expressions are strings checked at load.
 1. **N-truth-table** — fill one column at a time (intermediate columns, column groups, X entries). Ch2, 4, 5.
-2. **N-expression** — Boolean expression entry, graded by truth-table equivalence. Ch2–5.
-3. **N-derivation** — one line per step: pick the next line or the law used. Ch2, 3, 4.
+2. **N-expression** — Boolean expression entry, graded by equivalence plus a form check (`form: sop | pos | any`, optional `maxLiterals`); a correct but unsimplified answer gets its own nudge. Ch2–5.
+3. **N-derivation** — two goals per line, in order: name the law, then give or choose the line it produces. Authored lines and law ids; a content test checks each line is equivalent to the one before. Ch2, 3, 4.
 4. **N-row-select** — tick rows / outputs, or choose a value per row. Ch2, 4.
-5. **N-kmap** — fill cells, then add groups one per step with their term; wrap-around and don't-cares. Ch3, 4, 5.
+5. **N-kmap** — fill from Σ (one goal); then per group two goals: mark the group, write its term; F is the last goal. Groups are checked as wrapping 2^k rectangles covering only 1s and X cells, and F for minimality — any minimal grouping is accepted. Step count is fixed per spec from the minimal cover. Ch3, 4, 5.
 6. **N-timing** — place Q at each active clock edge. Ch5.
 7. **N-state-diagram** — label edges / complete a pre-drawn diagram (no free drawing at first). Ch5.
 Free-form circuit building is out of scope; use "pick the matching circuit" and gate-by-gate walks.
+
+## Rules for all chapters (Pedagogy review, #131)
+- A long chain (table → Σ → K-map → expression; flip-flop analysis and design) is several activities
+  with progress kept between them, never one activity.
+- When a device is new (mux, decoder, latch), start with one "predict one output" step before the full table.
 
 ## For the owner
 - Slide exercises without printed answers (Ch3 slides 44, 45, 92–95, 102–108) have answers worked
