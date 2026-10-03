@@ -93,7 +93,9 @@ button {
   color: var(--accent-contrast);
 }
 .btn-primary:hover { filter: brightness(1.08); background: var(--accent); }
-.btn-quiet { border-color: transparent; background: transparent; }
+.btn-quiet { border-color: transparent; background: transparent; color: var(--accent); font-weight: 650; }
+/* a disabled quiet action stays readable: muted text at full opacity */
+.btn-quiet:disabled { opacity: 1; color: var(--text-muted); font-weight: 400; }
 .btn-quiet:hover { background: var(--surface-2); }
 
 .demo-badge {

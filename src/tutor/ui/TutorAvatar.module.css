@@ -1,50 +1,25 @@
 .root {
+  --avatar: 56px;
   margin: 0;
-  display: grid;
-  justify-items: center;
-  gap: var(--space-1);
-  width: 96px;
+  width: var(--avatar);
 }
 
 .sm {
-  width: 56px;
+  --avatar: 40px;
 }
 
-.svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.head {
-  fill: var(--surface-2);
-  stroke: var(--border);
-  stroke-width: 2;
-}
-
-.line {
-  fill: none;
-  stroke: var(--text);
-  stroke-width: 3;
-  stroke-linecap: round;
-  transition: d var(--dur-base) var(--ease);
-}
-
-.eye {
-  fill: var(--text);
-  transition: cx var(--dur-base) var(--ease), r var(--dur-base) var(--ease);
-}
-
-.hand {
-  fill: var(--accent);
-}
-
-.caption {
-  font-size: 11px;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.sm .caption {
-  display: none;
+/* warm monogram disc, same look as TutorCard outside the stage */
+.disc {
+  display: grid;
+  place-items: center;
+  width: var(--avatar);
+  height: var(--avatar);
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: calc(var(--avatar) * 0.34);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  box-shadow: inset 0 0 0 2px var(--surface), 0 0 0 1px var(--border);
+  object-fit: cover;
 }
