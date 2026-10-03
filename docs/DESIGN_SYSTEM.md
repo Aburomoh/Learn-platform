@@ -22,6 +22,20 @@ the stage; below `md` it stacks under the stage (bubble stays visible, avatar sh
 --success --error --warning --highlight`. Light and dark via `prefers-color-scheme`.
 Text contrast at least 4.5:1.
 
+## Theme and palette (R1 redesign, #133)
+`src/styles/tokens.css` holds the R1 values (`docs/design/redesign-r1/README.md` §10): warm paper
+neutrals, ink-blue `--accent` for the primary action, terracotta `--brand` for identity (as text
+only at 13 px bold or larger). New: `--surface-sunk`, `--accent-hover/-soft`, `--brand/-soft`,
+`--success-soft`, `--shadow-1/-2` (`--shadow` is an alias of `--shadow-1` while modules migrate),
+`--text-xs`, `--text-display`, `--tracking-*`, `--radius-pill`; `--content-max` is 1120 px.
+
+**Light is the default.** Dark applies only when the student chooses it in Settings → Appearance
+(Light · Dark · Match device). The choice is stored in the prefs record and applied as `data-theme`
+on `<html>`: `dark` always, `system` under `prefers-color-scheme: dark`. A tiny inline script in
+`<head>` (`src/shell/theme.ts`) sets the attribute before first paint; by rule it only reads the
+prefs key and sets `data-theme`. The two dark blocks in `tokens.css` must stay identical
+(`tokens.test.ts` checks this and the WCAG AA contrast pairs in both themes).
+
 ## States
 - Question: idle / answering / checking / correct / incorrect / explaining.
 - Option: default / hover / selected / correct / incorrect / disabled.
