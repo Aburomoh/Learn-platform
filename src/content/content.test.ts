@@ -105,6 +105,13 @@ describe("content registry", () => {
     expect(answers).toEqual([[7, 7], ["1011000", "1001001"], ["130", "111"], ["58", "49"]]);
   });
 
+  it("has activity ids unique within each course: local progress is keyed by activity id (#145)", () => {
+    for (const c of courses) {
+      const ids = c.modules.flatMap((m) => m.topics.flatMap((t) => t.activities.map((a) => a.id)));
+      expect(ids.filter((x, i) => ids.indexOf(x) !== i), c.id).toEqual([]);
+    }
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
