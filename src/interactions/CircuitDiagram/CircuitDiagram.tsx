@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CircuitSpec } from "@/content/schema";
 import { evaluateCircuit } from "@/content/grade";
 import { focusTarget } from "../shared/types";
@@ -26,8 +26,8 @@ export interface CircuitDiagramProps {
   disabled?: boolean;
 }
 
-/** Smallest rendered scale: keeps 14px labels at 12px or more; narrower screens scroll sideways. */
-const MIN_SCALE = 0.88;
+/** Smallest rendered scale (docs/DESIGN_SYSTEM.md): a three-column circuit fits a 390 px phone; below that the box scrolls sideways. */
+const MIN_SCALE = 0.6;
 
 /**
  * Small SVG circuit (up to 3 inputs, 4 gates) drawn like a textbook schematic: standard gate
@@ -57,8 +57,27 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
     root.scrollLeft += g.left + g.width / 2 - (r.left + r.width / 2);
   }, [activeGateId]);
 
+  // Fade the edge(s) where more of the diagram is hidden, so sideways scrolling is discoverable.
+  const [fade, setFade] = useState<"none" | "start" | "end" | "both">("none");
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const update = () => {
+      const max = root.scrollWidth - root.clientWidth;
+      setFade(max <= 1 ? "none" : root.scrollLeft <= 1 ? "end" : root.scrollLeft >= max - 1 ? "start" : "both");
+    };
+    update();
+    root.addEventListener("scroll", update, { passive: true });
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(update);
+    observer?.observe(root);
+    return () => {
+      root.removeEventListener("scroll", update);
+      observer?.disconnect();
+    };
+  }, []);
+
   return (
-    <div className={styles.root} data-diagram={id} ref={rootRef}>
+    <div className={styles.root} data-diagram={id} data-fade={fade} ref={rootRef} {...(fade === "none" ? {} : { tabIndex: 0, role: "group", "aria-label": "Circuit diagram, scrolls sideways" })}>
       <svg viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`} className={styles.svg} style={{ maxWidth: viewBox.width, minWidth: Math.round(viewBox.width * MIN_SCALE) }} role="img" aria-labelledby={`${id}-title`}>
         <title id={`${id}-title`}>Circuit with {spec.gates.map((g) => g.type).join(", ")} gates</title>
         {/* wires: a signal is coloured only once its value is known and its gate has been reached */}
@@ -113,6 +132,7 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
                 : { "aria-hidden": true })}
               {...focusTarget(`input-${inp.id}`)}
             >
+              {toggleable && <rect x="-12" y="-12" width={INPUT_W + 24} height={INPUT_H + 24} className={styles.hitArea} />}
               <rect width={INPUT_W} height={INPUT_H} rx="8" className={styles.inputBox} />
               <text x="12" y="25" className={styles.label}>
                 {inp.label}
