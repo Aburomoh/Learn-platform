@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DragToTarget } from "./DragToTarget";
 
@@ -47,5 +47,50 @@ describe("DragToTarget keyboard path", () => {
     render(<DragToTarget id="d" items={items} targets={targets} onPlace={onPlace} disabled />);
     const piece = screen.getByRole("button", { name: "1" });
     expect(piece).toBeDisabled();
+  });
+});
+
+// jsdom has no layout: elementFromPoint and pointer capture are stubbed; the real-browser path is e2e.
+describe("DragToTarget pointer path", () => {
+  let under: Element | null = null;
+  beforeEach(() => {
+    document.elementFromPoint = () => under;
+    HTMLElement.prototype.setPointerCapture = () => {};
+    HTMLElement.prototype.releasePointerCapture = () => {};
+  });
+  afterEach(() => {
+    under = null;
+  });
+
+  function drag(piece: HTMLElement, overSelector: string | null) {
+    fireEvent.pointerDown(piece, { button: 0, pointerId: 1, clientX: 5, clientY: 5 });
+    under = overSelector ? document.querySelector(overSelector) : document.body;
+    fireEvent.pointerMove(piece, { pointerId: 1, clientX: 50, clientY: 50 });
+    fireEvent.pointerUp(piece, { pointerId: 1, clientX: 50, clientY: 50 });
+  }
+
+  it("places an item released over a target", () => {
+    const onPlace = vi.fn();
+    render(<DragToTarget id="d" items={items} targets={targets} onPlace={onPlace} />);
+    drag(screen.getByRole("button", { name: "1" }), "[data-drop-target='s16']");
+    expect(onPlace).toHaveBeenCalledWith("one", "s16");
+  });
+
+  it("cancels when released outside any target", () => {
+    const onPlace = vi.fn();
+    render(<DragToTarget id="d" items={items} targets={targets} onPlace={onPlace} />);
+    drag(screen.getByRole("button", { name: "1" }), null);
+    expect(onPlace).not.toHaveBeenCalled();
+    expect(screen.getByText("Cancelled.")).toBeInTheDocument();
+  });
+
+  it("ignores a non-primary button", () => {
+    const onPlace = vi.fn();
+    render(<DragToTarget id="d" items={items} targets={targets} onPlace={onPlace} />);
+    const piece = screen.getByRole("button", { name: "1" });
+    fireEvent.pointerDown(piece, { button: 2, pointerId: 1 });
+    under = document.querySelector("[data-drop-target='s16']");
+    fireEvent.pointerUp(piece, { pointerId: 1 });
+    expect(onPlace).not.toHaveBeenCalled();
   });
 });
