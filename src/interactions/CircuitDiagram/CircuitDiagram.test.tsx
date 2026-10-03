@@ -77,4 +77,11 @@ describe("CircuitDiagram", () => {
     expect(document.querySelector("[data-wire='n1-g1']")).toHaveAttribute("data-signal", "1");
     expect(document.querySelector("[data-wire='output']")).toHaveAttribute("data-signal", "1");
   });
+
+  it("renders the title as a single text node, so the pre-rendered page hydrates cleanly (#100)", () => {
+    render(<CircuitDiagram id="c" spec={spec} />);
+    const title = document.querySelector("svg title")!;
+    expect(title.childNodes).toHaveLength(1);
+    expect(title).toHaveTextContent("Circuit with NOT, AND, OR gates");
+  });
 });
