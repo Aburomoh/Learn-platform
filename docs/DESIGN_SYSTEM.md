@@ -41,3 +41,25 @@ the only carrier of state.
 ## Tutor area
 Avatar (placeholder expression set until photographs arrive), speech bubble with skippable
 typewriter, small and quiet by default.
+
+## Proposed token changes (UX review 2026-10-03, not yet in `tokens.css`)
+Evidence: `docs/design/review-2026-10-03/`. Each row is adopted by the issue that implements it.
+
+| Token | Value (light / dark) | Use |
+|---|---|---|
+| `--signal-high` | `#0f766e` / `#5eead4` | Wire, junction and value label carrying logic 1. Frees `--accent` to mean only "where you are / what to do". |
+| `--signal-low` | `var(--text-muted)` | Wire carrying logic 0 (once its value is known). |
+| `--pending-opacity` | `0.45` | Circuit gates and wires not yet reached in a gate walk. |
+| `--focus-halo` | `var(--highlight-soft)` | Rounded halo behind the active gate or active cell group. |
+| `--sub-size` | `0.7em` | Base subscript in number notation, e.g. (26)<sub>10</sub>. |
+| `--topbar-h` | `52px` | Height of the sticky top bar; replaces literal `52px` / `68px` offsets. |
+| `--tutor-strip-h` | `64px` | Max height of the compact sticky tutor strip below `lg`. |
+| `--sticky-offset` | `calc(var(--topbar-h) + var(--tutor-strip-h))` | `scroll-padding-top` so focus/highlight scrolling never lands under sticky UI. |
+| `--content-wide` | `1400px` | Activity pages; top bar and footer use the same width so edges align. |
+
+### Rules that come with them
+- **Accent means attention, not value.** Logic levels use `--signal-*` plus a printed 0/1; the active gate gets `--focus-halo`, a 3.5 px `--accent` outline and a `?` at its output. Gates after it use `--pending-opacity`.
+- **Sticky tutor below `lg`:** a one- or two-line strip (avatar 32 px, text clamped, tap to expand) capped at `--tutor-strip-h`. When the viewport is under 500 px tall the tutor is not sticky at all.
+- **Horizontal steppers on phones** (DivisionChain, future bit rows): the active column is always scrolled into view, and a fade edge shows there is more content.
+- **Diagrams must fit at 390 px** down to 0.6× scale before horizontal scrolling is allowed; the output (Y) must always be visible.
+- **Base notation** is marked up as `<sub>` with `--sub-size`, never Unicode subscript digits, so screen readers and fallback fonts read it correctly.
