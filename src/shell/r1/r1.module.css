@@ -231,6 +231,11 @@
   font-size: var(--text-md);
 }
 
+/* a tile is one value: it never breaks inside */
+.tile {
+  white-space: nowrap;
+}
+
 @media (max-width: 640px) {
   .board {
     padding: var(--space-4);
@@ -270,6 +275,7 @@
 .brandLink {
   display: flex;
   align-items: center;
+  min-height: var(--touch-min);
   gap: var(--space-2);
   color: var(--text);
   font-size: var(--text-md);
@@ -436,7 +442,22 @@
 
 .topicVisual {
   flex: none;
-  width: 170px;
+  width: 200px;
+}
+
+/* the row's mini preview stays on one line: small tiles, no wrapping */
+.topicVisual .chain {
+  flex-wrap: nowrap;
+}
+
+.topicVisual .chain,
+.topicVisual .chainItem {
+  gap: 4px;
+}
+
+.topicVisual .tile {
+  padding: 4px 8px;
+  font-size: var(--text-sm);
 }
 
 .topicText {

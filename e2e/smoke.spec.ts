@@ -334,6 +334,8 @@ for (const route of [
 
 test("profile menu: reachable by keyboard, explains Guest, leads to Settings", async ({ page }) => {
   await page.goto("/");
+  // the brand home link is a full touch target (#189)
+  expect((await page.getByRole("banner").getByRole("link").first().boundingBox())!.height).toBeGreaterThanOrEqual(44);
   const button = page.getByRole("button", { name: "Profile and settings" });
   await button.focus();
   await page.keyboard.press("Enter");
