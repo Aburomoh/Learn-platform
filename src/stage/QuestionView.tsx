@@ -33,7 +33,7 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
     return (
       <section className={styles.question} aria-label="Explanation">
         <p className={styles.prompt}>{prompt}</p>
-        <ExplainVisual variant={variant} stage={step.stage ?? {}} isLast={isLast} answered={!step.ask || !!explanation.prediction} />
+        <ExplainVisual variant={variant} stage={step.stage ?? {}} isLast={isLast} answered={!step.ask || !!explanation.prediction} hasAsk={!!step.ask} />
         {step.ask && (
           <PredictionBeforeReveal id={step.id} prompt={fill(step.ask.prompt, variant.vars)} options={step.ask.options} onPredict={onPredict} result={explanation.prediction} />
         )}
@@ -240,7 +240,7 @@ function CircuitWalk({
   );
 }
 
-function ExplainVisual({ variant, stage, isLast, answered }: { variant: Variant; stage: Record<string, unknown>; isLast: boolean; answered: boolean }) {
+function ExplainVisual({ variant, stage, isLast, answered, hasAsk }: { variant: Variant; stage: Record<string, unknown>; isLast: boolean; answered: boolean; hasAsk: boolean }) {
   const spec = variant.spec;
   switch (spec.kind) {
     case "place-value":
@@ -263,17 +263,22 @@ function ExplainVisual({ variant, stage, isLast, answered }: { variant: Variant;
         return <BitGroups bits={spec.context.bits} groups={(stage.groups as string[] | undefined) ?? []} attention={stage.attention as number | undefined} done={!!stage.done} />;
       return null;
     case "bit-grouping": {
-      // stage.step: 0 = the bits before grouping; k ≥ 1 = groups shown, digits known for groups before k.
-      const digitSteps = Array.from({ length: stepCount(spec) - 1 }, (_, i) => stepVars(spec, i + 1));
+      // Content stages: `groups: []` = the bits before grouping; groups shown = `attention` is the
+      // group whose digit is being asked (its digit appears once predicted); `done` = everything.
+      const count = stepCount(spec);
+      const digitSteps = Array.from({ length: count - 1 }, (_, i) => stepVars(spec, i + 1));
+      const grouped = ((stage.groups as string[] | undefined) ?? []).length > 0;
+      const asked = stage.attention as number | undefined;
+      const step = stage.done ? count : !grouped ? 0 : asked === undefined ? 1 : asked + 1 + (answered && hasAsk ? 1 : 0);
       return (
         <BitGrouping
           id={variant.id}
           bits={spec.bits}
           groupSize={spec.groupSize}
-          stepIndex={(stage.step as number | undefined) ?? 0}
+          stepIndex={Math.min(step, count)}
           groups={digitSteps.map((v) => String(v.groupBits))}
           digits={digitSteps.map((v) => String(v.digit))}
-          attention={stage.attention as number | undefined}
+          attention={grouped ? asked : undefined}
         />
       );
     }
