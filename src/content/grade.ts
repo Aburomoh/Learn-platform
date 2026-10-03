@@ -133,10 +133,6 @@ function firstWrongBit(answer: string, text: string): number | undefined {
   return i >= 0 ? i : undefined;
 }
 
-function detectEquals(list: Misconception[], value: string | number): string | undefined {
-  return list.find((m) => m.detect.type === "equals" && String(m.detect.value).toUpperCase() === String(value).toUpperCase())?.id;
-}
-
 function detectBits(variant: Variant, digits: number[]): string | undefined {
   const spec = variant.spec as Extract<InteractionSpec, { kind: "place-value" }>;
   const places = spec.answer.map((_, i) => 2 ** (spec.answer.length - 1 - i));

@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CircuitSpec, Variant } from "@/content/schema";
-import { gateOrder, type Answer, type GradeResult } from "@/content/grade";
+import type { Answer, GradeResult } from "@/content/grade";
+import { stepCount, stepVars } from "@/content/steps";
 import { fill } from "@/content/template";
 import { MultipleChoice, NumericInput, PlaceValueDiagram, CircuitDiagram, DivisionChain, PredictionBeforeReveal, type Bit, type PredictionResult } from "@/interactions";
 import { BitGroups } from "./BitGroups";
@@ -164,7 +165,8 @@ function CircuitWalk({
   onSubmit: (a: Answer) => void;
 }) {
   const [inputs, setInputs] = useState<Record<string, 0 | 1>>({});
-  const order = useMemo(() => gateOrder(spec), [spec]);
+  // Gate order comes from the step contract (ADR-0007): step i asks about one gate.
+  const order = useMemo(() => Array.from({ length: stepCount(spec) }, (_, i) => String(stepVars(spec, i).gateId)), [spec]);
   const step = Math.min(stepIndex, order.length - 1);
   const gate = spec.gates.find((g) => g.id === order[step])!;
   const isOutput = step === order.length - 1;

@@ -6,7 +6,7 @@
 import type { Activity, Variant } from "@/content/schema";
 import { grade, type Answer, type GradeResult } from "@/content/grade";
 import { fill } from "@/content/template";
-import { circuitStepVars } from "@/content/circuitWalk";
+import { stepVars as specStepVars } from "@/content/steps";
 import { reduce, initialTutorState, contextFromVariant, type TutorState, type TutorAction, type Expression, type LearningEvent } from "@/tutor";
 import type { RevealedHint, PredictionResult } from "@/interactions";
 
@@ -53,12 +53,9 @@ export type RunnerAction =
 
 const EFFECT_TYPES = new Set<TutorAction["type"]>(["FOCUS", "HIGHLIGHT", "PULSE", "RESET_INTERACTION", "ADVANCE_EXPLANATION", "COMPLETE", "STEP_DONE"]);
 
-/** Template variables for the step currently being worked on (multi-step questions). */
+/** Template variables for the step currently being worked on (ADR-0007: asked of the step contract). */
 export function stepVars(variant: Variant, stepIndex: number): Record<string, string | number> {
-  if (variant.spec.kind === "circuit-predict") return circuitStepVars(variant.spec, stepIndex);
-  if (variant.spec.kind !== "repeated-division") return {};
-  const step = variant.spec.steps[Math.min(stepIndex, variant.spec.steps.length - 1)];
-  return { dividend: step.dividend, quotient: step.quotient, remainder: step.remainder, stepNumber: stepIndex + 1 };
+  return specStepVars(variant.spec, stepIndex);
 }
 
 export function currentVariant(activity: Activity, s: Pick<RunnerState, "qIndex" | "vIndex">): Variant {
@@ -145,8 +142,7 @@ export function createRunnerReducer(activity: Activity) {
         default:
           break;
       }
-      // Pointer targets may name the current step's element, e.g. "gate-{gateId}".
-      if (EFFECT_TYPES.has(a.type)) effects.push("target" in a ? { ...a, target: fill(a.target, ctx.vars) } : a);
+      if (EFFECT_TYPES.has(a.type)) effects.push(a);
     }
     if (tutor.stage !== "explaining" && next.explanation && next.tutor.stage !== "explaining") next.explanation = null;
     if (effects.length) next = { ...next, effects, effectSeq: next.effectSeq + 1 };

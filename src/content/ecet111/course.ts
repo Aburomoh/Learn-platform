@@ -102,7 +102,6 @@ export const ecet111: CourseInput = {
                         { id: "s4", say: "The OR gate receives {g1} and C = {C}. OR outputs 1 when at least one input is 1. So Y = {answer}.", stage: { lit: ["n1", "g1", "g2"] } },
                       ],
                       misconceptions: gateWalkMisconceptions,
-                      reactions: { stepNext: "Good. Now the {gateName} gate." },
                     },
                     {
                       id: "v000",
@@ -137,7 +136,6 @@ export const ecet111: CourseInput = {
                         { id: "s4", say: "OR receives {g1} and C = {C}. Both are 0, so Y = {answer}.", stage: { lit: ["n1", "g1", "g2"] } },
                       ],
                       misconceptions: gateWalkMisconceptions,
-                      reactions: { stepNext: "Good. Now the {gateName} gate." },
                     },
                   ],
                 },

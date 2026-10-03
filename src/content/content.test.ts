@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { courses, getActivity, listActivityParams } from "./index";
 import { evaluateCircuit, gateOrder, grade, valueToBits, bitsToValue, divisionSteps, groupBits, additionSteps, additionResult, additionStepVars, complementBits } from "./grade";
-import { circuitStepVars } from "./circuitWalk";
+import { MULTI_STEP_KINDS, stepCount, stepTag, stepVars } from "./steps";
+import { contextFromVariant } from "@/tutor";
 import { InteractionSpec, MultipleChoiceSpec, NumericSpec } from "./schema";
 import { addition1101 } from "./fixtures/columnAddition";
 import { complement100101, complement110010 } from "./fixtures/onesComplement";
@@ -25,13 +26,7 @@ function allVariants(): { path: string; variant: Variant }[] {
 
 /** Every set of template variables a variant can be rendered with (one per step if multi-step). */
 function varSets(v: Variant): Record<string, string | number>[] {
-  if (v.spec.kind === "column-addition") return additionSteps(v.spec.a, v.spec.b).map((s) => ({ ...v.vars, ...additionStepVars(s) }));
-  if (v.spec.kind === "circuit-predict") {
-    const spec = v.spec;
-    return gateOrder(spec).map((_, i) => ({ ...v.vars, ...circuitStepVars(spec, i) }));
-  }
-  if (v.spec.kind !== "repeated-division") return [v.vars];
-  return v.spec.steps.map((s, i) => ({ ...v.vars, dividend: s.dividend, quotient: s.quotient, remainder: s.remainder, stepNumber: i + 1 }));
+  return Array.from({ length: stepCount(v.spec) }, (_, i) => contextFromVariant(v, "en", stepVars(v.spec, i)).vars);
 }
 
 describe("content registry", () => {
@@ -152,15 +147,44 @@ describe("authored truth is internally consistent", () => {
     for (const v of [v101, v000]) {
       if (v.spec.kind !== "circuit-predict") throw new Error("expected a circuit");
       expect(gateOrder(v.spec)).toEqual(["n1", "g1", "g2"]);
+      expect(stepCount(v.spec)).toBe(3);
+      expect([0, 1, 2].map((i) => [stepTag(v.spec, i), stepVars(v.spec, i).gateId])).toEqual([["gate", "n1"], ["gate", "g1"], ["gate", "g2"]]);
     }
-    const outs = (v: Variant) => (v.spec.kind === "circuit-predict" ? [0, 1, 2].map((i) => circuitStepVars(v.spec as CircuitSpec, i).gateOut) : []);
+    const outs = (v: Variant) => [0, 1, 2].map((i) => stepVars(v.spec, i).gateOut);
     expect(outs(v101)).toEqual([1, 1, 1]);
     expect(outs(v000)).toEqual([1, 0, 0]);
-    if (v101.spec.kind !== "circuit-predict") throw new Error("expected a circuit");
-    expect(circuitStepVars(v101.spec, 1)).toMatchObject({ gateName: "AND", gateInputs: "A = 1 and the NOT output = 1", stepNumber: 2, gateCount: 3 });
+    // structural values only: wording is added by the tutor from its catalog
+    expect(stepVars(v101.spec, 1)).toEqual({ stepNumber: 2, gateCount: 3, gateId: "g1", gateName: "AND", gateOut: 1, in1: 1, in1Label: "A", in2: 1, in2Gate: "NOT" });
+    expect(contextFromVariant(v101, "en", stepVars(v101.spec, 1)).vars.gateInputs).toBe("A = 1 and the NOT output = 1");
     // A gate declared before its sources is still asked after them; the output gate is last.
+    if (v101.spec.kind !== "circuit-predict") throw new Error("expected a circuit");
     const shuffled: CircuitSpec = { ...v101.spec, gates: [...v101.spec.gates].reverse() };
     expect(gateOrder(shuffled)).toEqual(["n1", "g1", "g2"]);
+  });
+
+  it("every multi-step kind follows the step contract: partial until the last step (ADR-0007)", () => {
+    expect([...MULTI_STEP_KINDS].sort()).toEqual(["circuit-predict", "column-addition", "repeated-division"]);
+    for (const { path, variant } of allVariants()) {
+      const spec = variant.spec;
+      const n = stepCount(spec);
+      for (let i = 0; i < n; i++) {
+        const v = stepVars(spec, i);
+        const answer =
+          spec.kind === "circuit-predict"
+            ? ({ kind: spec.kind, step: i, output: v.gateOut as 0 | 1 } as const)
+            : spec.kind === "repeated-division"
+              ? ({ kind: spec.kind, step: i, quotient: v.quotient as number, remainder: v.remainder as number } as const)
+              : undefined;
+        if (!answer) continue;
+        expect(grade(variant, answer), `${path} step ${i}`).toMatchObject({ correct: true, partial: i < n - 1 });
+      }
+    }
+    const add = addition1101.spec;
+    if (add.kind !== "column-addition") throw new Error("expected column addition");
+    expect(stepCount(add)).toBe(additionSteps(add.a, add.b).length);
+    expect(stepTag(add, 0)).toBe("column");
+    expect(stepTag(add, stepCount(add) - 1)).toBe("carry");
+    expect(stepVars(add, 2)).toEqual(additionStepVars(additionSteps(add.a, add.b)[2]));
   });
 
   it("every circuit walk has a nudge for each gate type it contains", () => {
