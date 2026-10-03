@@ -11,7 +11,6 @@ describe("BitGrouping: mark the groups (step 0)", () => {
     const onGroups = vi.fn();
     render(<BitGrouping {...base} stepIndex={0} onGroups={onGroups} />);
     const user = userEvent.setup();
-    expect(screen.getByRole("button", { name: "Check groups" })).toBeDisabled();
     await user.click(screen.getByRole("button", { name: "Add a leading zero" }));
     // padded: 0 1 1 0 1 0 → cut before bit 4
     await user.click(screen.getByRole("button", { name: /Bit 4 of 6: 0\. Start a new group here/ }));
@@ -42,6 +41,15 @@ describe("BitGrouping: mark the groups (step 0)", () => {
     screen.getByRole("button", { name: /Bit 3 of 5: 0\. Start a new group here/ }).focus();
     await user.keyboard(" ");
     expect(screen.queryByRole("button", { pressed: true })).toBeNull();
+  });
+
+  it("accepts a number that is a single group: no cut, only padding", async () => {
+    const onGroups = vi.fn();
+    render(<BitGrouping id="s" bits="101" groupSize={4} groups={["0101"]} digits={["5"]} stepIndex={0} onGroups={onGroups} />);
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: "Add a leading zero" }));
+    await user.click(screen.getByRole("button", { name: "Check groups" }));
+    expect(onGroups).toHaveBeenCalledWith(["0101"]);
   });
 
   it("does not show the groups or any digit before the grouping is done", () => {

@@ -95,7 +95,8 @@ function MarkGroups({ bits, groupSize, onGroups, wrong }: { bits: string; groupS
       aria-label={`Mark groups of ${groupSize} bits`}
       onSubmit={(e) => {
         e.preventDefault();
-        if (interactive && cuts.length > 0) onGroups(marked());
+        // No cut is a valid answer: a number that is a single group.
+        if (interactive) onGroups(marked());
       }}
     >
       <p className={styles.ask}>
@@ -137,7 +138,7 @@ function MarkGroups({ bits, groupSize, onGroups, wrong }: { bits: string; groupS
       </div>
       {interactive && (
         <div className={styles.actions}>
-          <button type="submit" className="btn btn-primary" disabled={cuts.length === 0}>
+          <button type="submit" className="btn btn-primary">
             Check groups
           </button>
         </div>
