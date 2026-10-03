@@ -199,13 +199,18 @@ describe("content registry", () => {
 
   it("laws and rules (#228): every example is a true identity, every simplification checks, every wrong option is wrong", () => {
     const x = getActivity(COURSE, "laws-and-rules", "laws-and-rules")!.activity;
-    const [law, rule, simplify] = x.questions;
+    const law = x.questions[0];
+    const ruleQs = x.questions.filter((q) => q.id.startsWith("br.q.rule-"));
+    const simplify = x.questions.find((q) => q.id === "br.q.simplify")!;
+    // Pedagogy on #273: every one of the 11 rules is the answer somewhere, by slide column
+    const answered = ruleQs.flatMap((q) => q.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.correctOptionId : "")));
+    expect(new Set(answered).size).toBe(11);
     const sides = (text: string) => text.split(" = ").map((t) => parseBool(t));
     for (const v of law.variants) {
       const [l, r] = [String(v.vars.left), String(v.vars.right)].map((t) => parseBool(t));
       expect(equivalent(l, r), v.id).toBe(true);
     }
-    for (const v of rule.variants) {
+    for (const v of ruleQs.flatMap((q) => q.variants)) {
       const [l, r] = sides(String(v.vars.example));
       expect(equivalent(l, r), v.id).toBe(true);
       if (v.spec.kind !== "multiple-choice") throw new Error("expected multiple choice");

@@ -52,6 +52,8 @@ export const en = {
   "add.wrote-two.carry": "This last step has no bits of its own. Look at the carry out of the column on its right.",
   "ba.copied-bits": "That is the binary number itself. Add up the weights of its 1s: 1, 2, 4, 8, … from the right.",
   "law.assoc-commut": "Close, but not quite. Commutative changes the order of the terms; associative keeps the order and moves the brackets.",
+  "rule.absorption": "Look at the second term. A + AB has A itself and gives A; A + A′B has the complement A′ and gives A + B.",
+  "rule.dropped-bar": "Count the bars. Two bars cancel: (W′)′ = W.",
   "rule.or-and": "Check the operator. That rule is the other form: the OR rule and the AND rule give different results.",
   "ba.weights-reversed": "The weights start at 1 on the right-hand end. Read them from the right.",
   "sub.missed-negative": "There is no end carry, so the result is negative. The sum bits are its 2's complement: complement them again to read its size.",

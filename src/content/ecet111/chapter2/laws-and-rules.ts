@@ -7,6 +7,7 @@
  */
 import type { z } from "zod";
 import type { HintSchema, TopicSchema, VariantSchema } from "../../schema";
+import { evaluate, parseBool, variablesOf } from "../../boolean";
 
 type TopicInput = z.input<typeof TopicSchema>;
 type HintInput = z.input<typeof HintSchema>;
@@ -29,7 +30,8 @@ type Law = (typeof LAWS)[number]["id"];
 
 const lawHints: HintInput[] = [
   { rung: 2, text: "Not yet. Compare the two sides: what changed?" },
-  { rung: 3, text: "Same letters in a new order: commutative. Same order, brackets moved: associative. A factor multiplied into a bracket: distributive." },
+  { rung: 3, text: "Did the order of the terms change, did the brackets move, or was a factor multiplied into a bracket?" },
+  { rung: 4, text: "Same letters in a new order: commutative. Same order, brackets moved: associative. A factor multiplied into a bracket: distributive." },
   { rung: 9, text: "{left} = {right} is the {law} law." },
 ];
 
@@ -87,29 +89,41 @@ const ruleHints: HintInput[] = [
   { rung: 9, text: "{example} uses {ruleText}." },
 ];
 
+/** The nudge for picking a rule's look-alike: the other operator, or the other absorption rule. */
+const LOOKALIKE = {
+  "rule.or-and": "Took the OR form for the AND form (or back)",
+  "rule.absorption": "Mixed up A + AB = A and A + A′B = A + B",
+} as const;
+
 /**
- * `example` uses `rule`; `counterpart` is the same rule's other form (OR ↔ AND), the usual mix-up,
- * and `others` are further rules with a similar look.
+ * `example` uses `rule`; `counterpart` is its usual look-alike (the other operator's form, or the
+ * other absorption rule) and carries a nudge; `others` are further rules with a similar look.
+ * Explain Slowly tries a value: every variable 1, then the left side is evaluated.
  */
-function ruleVariant(id: string, example: string, rule: Rule, counterpart: Rule, others: Rule[], tryValue: { name: string; value: 0 | 1; out: 0 | 1; expr: string }, k: number): VariantInput {
-  const ids = [rule, counterpart, ...others];
+function ruleVariant(id: string, example: string, rule: Rule, counterpart: { rule: Rule; nudge: keyof typeof LOOKALIKE } | undefined, others: Rule[], k: number): VariantInput {
+  const ids = counterpart ? [rule, counterpart.rule, ...others] : [rule, ...others];
+  const left = example.split(" = ")[0];
+  const expr = parseBool(left);
+  const names = variablesOf(expr);
+  const env = Object.fromEntries(names.map((n) => [n, 1 as const]));
+  const out = evaluate(expr, env);
   return {
     id,
     prompt: `${example}. Which rule is this?`,
     spec: {
       kind: "multiple-choice",
-      options: rotated(ids.map((r) => ({ id: r, text: RULES[r], misconceptionId: r === counterpart ? "rule.or-and" : undefined })), k),
+      options: rotated(ids.map((r) => ({ id: r, text: RULES[r], misconceptionId: counterpart && r === counterpart.rule ? counterpart.nudge : undefined })), k),
       correctOptionId: rule,
     },
     vars: { example, ruleText: RULES[rule] },
     hints: ruleHints,
-    misconceptions: [{ id: "rule.or-and", title: "Took the OR form for the AND form (or back)", nudgeKey: "rule.or-and", detect: { type: "option", optionId: counterpart } }],
+    misconceptions: counterpart ? [{ id: counterpart.nudge, title: LOOKALIKE[counterpart.nudge], nudgeKey: counterpart.nudge, detect: { type: "option", optionId: counterpart.rule } }] : [],
     explanation: [
-      { id: "s1", say: `Each rule is written with A, but it works for any variable. Here the variable is ${tryValue.name}.` },
+      { id: "s1", say: `Each rule is written with A, but it works for any variable. Here it is ${names.join(" and ")}.` },
       {
         id: "s2",
-        say: `Try a value: let ${tryValue.name} = ${tryValue.value}.`,
-        ask: { prompt: `Then ${tryValue.expr} = ?`, options: ["0", "1"], correctIndex: tryValue.out, afterCorrect: `Yes. It matches ${RULES[rule]}.`, afterWrong: `${tryValue.expr} = ${tryValue.out} when ${tryValue.name} = ${tryValue.value}, as ${RULES[rule]} says.` },
+        say: `Try a value: let ${names.map((n) => `${n} = 1`).join(", ")}.`,
+        ask: { prompt: `Then ${left} = ?`, options: ["0", "1"], correctIndex: out, afterCorrect: `Yes. It matches ${RULES[rule]}.`, afterWrong: `${left} = ${out} there, as ${RULES[rule]} says.` },
       },
     ],
   };
@@ -118,25 +132,32 @@ function ruleVariant(id: string, example: string, rule: Rule, counterpart: Rule,
 /* ---------- Q3: simplify with one rule ---------- */
 
 const simplifyHints: HintInput[] = [
-  { rung: 2, text: "Not yet. Which rule from the list fits this expression?" },
+  { rung: 2, text: "Not yet. Which of the rules you just matched fits this expression?" },
   { rung: 3, text: "A + AB = A (absorption), A + A′B = A + B, and A″ = A are the ones with two or more variables." },
   { rung: 9, text: "{expr} = {answer}, by {ruleText}." },
 ];
 
-function simplifyVariant(id: string, expr: string, answer: string, wrong: string[], rule: Rule, k: number): VariantInput {
-  const options = rotated([answer, ...wrong].map((t, i) => ({ id: `o${i}`, text: t })), k);
+/** `wrong[i]` may carry a nudge for a real mix-up; the rest are filler. */
+function simplifyVariant(id: string, expr: string, answer: string, wrong: { text: string; nudge?: "rule.absorption" | "rule.dropped-bar" }[], rule: Rule, k: number): VariantInput {
+  const options = rotated([{ id: "o0", text: answer }, ...wrong.map((w, i) => ({ id: `o${i + 1}`, text: w.text, misconceptionId: w.nudge }))], k);
+  const tagged = wrong.flatMap((w, i) =>
+    w.nudge ? [{ id: w.nudge, title: w.nudge === "rule.absorption" ? LOOKALIKE["rule.absorption"] : "Dropped a bar", nudgeKey: w.nudge, detect: { type: "option" as const, optionId: `o${i + 1}` } }] : [],
+  );
+  // the prediction is rotated like the question, so the right answer is not always first (Pedagogy on #273)
+  const predict = rotated([answer, wrong[0].text], k);
   return {
     id,
     prompt: `Simplify ${expr} with one rule.`,
     spec: { kind: "multiple-choice", options, correctOptionId: "o0" },
     vars: { expr, answer, ruleText: RULES[rule] },
     hints: simplifyHints,
+    misconceptions: tagged,
     explanation: [
       { id: "s1", say: `Look for a rule whose left side has the shape of ${expr}.` },
       {
         id: "s2",
         say: `${expr} has the shape of ${RULES[rule].split(" = ")[0]}.`,
-        ask: { prompt: "So it simplifies to…", options: [answer, wrong[0]], correctIndex: 0, afterCorrect: `Yes: ${expr} = ${answer}.`, afterWrong: `By ${RULES[rule]}: ${expr} = ${answer}.` },
+        ask: { prompt: "So it simplifies to…", options: predict, correctIndex: predict.indexOf(answer), afterCorrect: `Yes: ${expr} = ${answer}.`, afterWrong: `By ${RULES[rule]}: ${expr} = ${answer}.` },
       },
     ],
   };
@@ -160,9 +181,9 @@ export const lawsAndRulesTopic: TopicInput = {
     {
       id: "laws-and-rules",
       title: "Laws and rules",
-      summary: "Name the law, match the rule, then use a rule to simplify.",
+      summary: "Name the law, match the OR, AND and other rules, then use a rule to simplify.",
       authority: "DEMO",
-      minutes: 8,
+      minutes: 12,
       questions: [
         {
           id: "br.q.law",
@@ -176,14 +197,38 @@ export const lawsAndRulesTopic: TopicInput = {
           ],
         },
         {
-          id: "br.q.rule",
-          label: "Match the rule",
+          id: "br.q.rule-or",
+          label: "OR rules",
           conceptId: "br.rules",
           objectiveId: "br.obj.rule",
           variants: [
-            ruleVariant("vrule-1", "X + X′ = 1", "or-not", "and-not", ["or-1", "or-self"], { name: "X", value: 0, out: 1, expr: "X + X′" }, 0),
-            ruleVariant("vrule-2", "Y · 0 = 0", "and-0", "or-1", ["or-0", "and-1"], { name: "Y", value: 1, out: 0, expr: "Y · 0" }, 1),
-            ruleVariant("vrule-3", "Z + Z = Z", "or-self", "and-self", ["or-not", "or-1"], { name: "Z", value: 1, out: 1, expr: "Z + Z" }, 2),
+            ruleVariant("vor-0", "K + 0 = K", "or-0", { rule: "and-0", nudge: "rule.or-and" }, ["or-1", "and-1"], 0),
+            ruleVariant("vor-1", "L + 1 = 1", "or-1", { rule: "and-1", nudge: "rule.or-and" }, ["or-0", "or-self"], 1),
+            ruleVariant("vor-not", "X + X′ = 1", "or-not", { rule: "and-not", nudge: "rule.or-and" }, ["or-1", "or-self"], 2),
+            ruleVariant("vor-self", "Z + Z = Z", "or-self", { rule: "and-self", nudge: "rule.or-and" }, ["or-not", "or-1"], 3),
+          ],
+        },
+        {
+          id: "br.q.rule-and",
+          label: "AND rules",
+          conceptId: "br.rules",
+          objectiveId: "br.obj.rule",
+          variants: [
+            ruleVariant("vand-not", "Y · Y′ = 0", "and-not", { rule: "or-not", nudge: "rule.or-and" }, ["and-0", "and-self"], 0),
+            ruleVariant("vand-1", "N · 1 = N", "and-1", { rule: "or-1", nudge: "rule.or-and" }, ["and-0", "or-0"], 1),
+            ruleVariant("vand-0", "V · 0 = 0", "and-0", { rule: "or-0", nudge: "rule.or-and" }, ["and-1", "and-not"], 2),
+            ruleVariant("vand-self", "U · U = U", "and-self", { rule: "or-self", nudge: "rule.or-and" }, ["and-not", "and-1"], 3),
+          ],
+        },
+        {
+          id: "br.q.rule-more",
+          label: "More rules",
+          conceptId: "br.rules",
+          objectiveId: "br.obj.rule",
+          variants: [
+            ruleVariant("vmore-double", "(T′)′ = T", "double", undefined, ["or-not", "and-not"], 0),
+            ruleVariant("vmore-absorb", "M + MN = M", "absorb", { rule: "absorb-not", nudge: "rule.absorption" }, ["or-self"], 1),
+            ruleVariant("vmore-absorb-not", "R + R′S = R + S", "absorb-not", { rule: "absorb", nudge: "rule.absorption" }, ["or-not"], 2),
           ],
         },
         {
@@ -192,9 +237,9 @@ export const lawsAndRulesTopic: TopicInput = {
           conceptId: "br.rules",
           objectiveId: "br.obj.simplify",
           variants: [
-            simplifyVariant("vsimp-1", "P + P′Q", "P + Q", ["Q", "P", "PQ"], "absorb-not", 0),
-            simplifyVariant("vsimp-2", "X + XY", "X", ["X + Y", "XY", "Y"], "absorb", 1),
-            simplifyVariant("vsimp-3", "(W′)′", "W", ["W′", "1", "0"], "double", 2),
+            simplifyVariant("vsimp-1", "P + P′Q", "P + Q", [{ text: "P", nudge: "rule.absorption" }, { text: "Q" }, { text: "PQ" }], "absorb-not", 0),
+            simplifyVariant("vsimp-2", "X + XY", "X", [{ text: "X + Y", nudge: "rule.absorption" }, { text: "XY" }, { text: "Y" }], "absorb", 1),
+            simplifyVariant("vsimp-3", "(W′)′", "W", [{ text: "W′", nudge: "rule.dropped-bar" }, { text: "1" }, { text: "0" }], "double", 2),
           ],
         },
       ],
