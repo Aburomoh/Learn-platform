@@ -7,6 +7,7 @@ import { complement100101, complement110010 } from "./fixtures/onesComplement";
 import { fill } from "./template";
 import type { Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
+import { resolveMessage } from "@/tutor/messages";
 
 const COURSE = "ecet111";
 
@@ -159,6 +160,13 @@ describe("authored truth is internally consistent", () => {
     }
   });
 
+  it("every misconception nudge resolves all its slots in the variant it fires in", () => {
+    // Pedagogy #45: a nudge must be right for its question (e.g. octal vs hex group size).
+    for (const { path, variant } of allVariants())
+      for (const m of variant.misconceptions)
+        for (const vars of varSets(variant)) expect(resolveMessage(m.nudgeKey, vars), `${path}: ${m.id}`).not.toMatch(/\{[a-zA-Z0-9_]+\}/);
+  });
+
   it("prediction questions have a valid correctIndex", () => {
     for (const { path, variant } of allVariants())
       for (const s of variant.explanation) if (s.ask) expect(s.ask.correctIndex, `${path}/${s.id}`).toBeLessThan(s.ask.options.length);
@@ -196,6 +204,7 @@ describe("grade()", () => {
     expect(grade(hex, { kind: "numeric", text: " 01A " }).correct).toBe(true);
     expect(grade(hex, { kind: "numeric", text: "110" })).toMatchObject({ correct: false, misconceptionId: "ns.hex-digit-decimal" });
     expect(grade(hex, { kind: "numeric", text: "26" })).toMatchObject({ correct: false, misconceptionId: "ns.copied-decimal" });
+    expect(grade(hex, { kind: "numeric", text: "d0" })).toMatchObject({ correct: false, misconceptionId: "ns.group-from-left" });
   });
 
   it("grades place-value answers and detects misconceptions (fixture)", () => {
