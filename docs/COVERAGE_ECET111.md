@@ -6,7 +6,16 @@ visually, never committed or quoted). Walked procedures: `docs/design/course-map
 **Class:** CORE (assessed skill) · WORKED (worked example, used as the walked variant) · CONTEXT (not
 assessed) · PRACTICE (slide exercise). Conservative when unclear.
 **Covered:** COMPLETE · PARTIAL · MISSING · N/A (context). **Status:** the task that closes the row.
-Chapter epics: C1 #201 · C2 #202 · C3 #203 · C4 #204 · C5 #205 · C6 #206. Gates: #216 (C1), #233 (C2).
+**Plan approved by the Director with conditions (#244):**
+1. Every content question has three variants, sometimes four (owner, #192); Chapter 1 backfill #247 lands before C1 closes.
+2. A chapter is COMPLETE only after its quality gate passes; gates exist before content merges (#216, #233, #250, #251, #252).
+3. The demo Logic gates topic stays live until its replacement #224 has merged and passed QA.
+4. Performance checks the 200 kB activity budget and a phone when each new kind lands (ADR-0008).
+5. Preview only: ECET 111 completing does not trigger production (owner bar: at least three courses).
+6. Slide errors and ambiguities go to the owner privately, never into issues or PRs.
+Order: C1 → C5, then the C6 audit.
+
+Chapter epics: C1 #201 · C2 #202 · C3 #203 · C4 #204 · C5 #205 · C6 #206. Gates: #216 (C1), #233 (C2), #250 (C3), #251 (C4), #252 (C5).
 Prerequisites for new kinds: registry #196 (ADR-0008), Boolean module #197, UX representations #198.
 
 ## Chapter 1 — Digital systems and binary numbers (Ch.1 deck, 76 slides)
@@ -91,6 +100,6 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 | Three variants per question, sometimes four (owner, #192): Chapter 1 backfill | #247 |
 | Curated random numbers per attempt (later stage) | #248 backlog |
 | Five-chapter navigation with Not started / In progress / Completed | #232 |
-| Per-chapter quality gates (#192 item 11) | #216, #233; C3–C5 gates filed with their content |
+| Per-chapter quality gates (#192 item 11) | #216, #233, #250, #251, #252 |
 | Final audit and owner report | #242 |
 | Slide details needing the instructor | sent to the owner privately |
