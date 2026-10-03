@@ -2,6 +2,8 @@
 
 Execution checklist, updated at every merge. Source: the owner's decks in `ECET111 materials/` (read
 visually, never committed or quoted). Walked procedures: `docs/design/course-map-ecet111.md`.
+Scaffolds, likely mistakes (= detectors) and slide-method constraints per subtopic:
+`docs/design/ecet111-learning-requirements.md` (#253); every kind and content task follows it.
 
 **Class:** CORE (assessed skill) · WORKED (worked example, used as the walked variant) · CONTEXT (not
 assessed) · PRACTICE (slide exercise). Conservative when unclear.
