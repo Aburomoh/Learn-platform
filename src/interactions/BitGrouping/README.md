@@ -13,7 +13,8 @@ per group, left to right.
 ```
 
 - `stepIndex` 0: a row of bit cells. Tapping a bit starts a new group there (toggle button,
-  `aria-pressed`); `+0` / `−0` add or remove a leading zero. "Check groups" reports the marked
+  `aria-pressed`, at least 36 × 44 px) and shows a 2 px divider in a gap; "Add 0" / "Remove 0" pad
+  on the left. A row too long for its box scrolls inside it with a faded edge. "Check groups" reports the marked
   groups, padding included, left to right. The correct groups are not rendered in this step.
 - `stepIndex` k ≥ 1: every group in a box; only group k has an input (two characters allowed so
   "13" for D can be recognised; hex is upper-cased). Earlier groups show their digit, later
@@ -22,4 +23,4 @@ per group, left to right.
 - Never grades. Remount (change `key`) when `stepIndex` advances.
 - Without `onGroups` / `onDigit` it is read-only (explanations); `attention` outlines a group.
 - Focus targets: `bits`, `pad-zero`, `group-<i>`, `group-digit`, `group-result`.
-- Fits a 390 px phone for up to 9 bits (cells 26 px below 400 px); no animation beyond the cut gap.
+- At 390 px, 8 cells fit without scrolling; longer rows scroll inside the box.

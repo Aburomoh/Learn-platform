@@ -31,20 +31,36 @@
 }
 
 .pad {
-  min-width: var(--touch-min);
   min-height: var(--touch-min);
-  padding: 0 var(--space-2);
-  font-family: var(--font-mono);
+  padding: 0 var(--space-3);
 }
 
 .cells {
-  --cell: 30px;
+  --cell: 36px;
   display: flex;
   align-items: stretch;
+  max-width: 100%;
+  overflow-x: auto;
+  /* room for the focus ring inside the scroll box */
+  padding: 2px;
 }
 
+.cells[data-fade="end"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}
+
+.cells[data-fade="start"] {
+  mask-image: linear-gradient(to left, #000 calc(100% - 28px), transparent);
+}
+
+.cells[data-fade="both"] {
+  mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+}
+
+/* tap targets: at least 36 x 44 px */
 .cell {
-  box-sizing: content-box;
+  box-sizing: border-box;
+  flex: 0 0 var(--cell);
   display: grid;
   place-items: center;
   width: var(--cell);
@@ -83,13 +99,20 @@
   z-index: 1;
 }
 
-/* a new group starts at this bit: a clear gap and bar on its left */
+/* A new group starts at this bit: a gap with a 2 px divider in it, as the slide draws it. */
 .cut {
-  margin-inline-start: var(--space-3);
-  border-inline-start: 3px solid var(--accent);
-  border-start-start-radius: var(--radius-sm);
-  border-end-start-radius: var(--radius-sm);
-  transition: margin var(--dur-fast) var(--ease);
+  position: relative;
+  margin-inline-start: calc(2 * var(--space-2) + 2px);
+  border-inline-start-width: 1px;
+}
+
+.cut::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(-1 * var(--space-2) - 3px);
+  width: 2px;
+  background: var(--accent);
 }
 
 .added {
@@ -172,13 +195,4 @@
 
 .result {
   margin: 0;
-}
-
-@media (max-width: 400px) {
-  .cells {
-    --cell: 26px;
-  }
-  .cell {
-    font-size: var(--text-md);
-  }
 }

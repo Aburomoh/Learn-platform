@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { focusTarget } from "../shared/types";
+import { useScrollFade } from "../shared/useScrollFade";
 import styles from "./BitGrouping.module.css";
 
 export interface BitGroupingProps {
@@ -71,6 +72,9 @@ function MarkGroups({ bits, groupSize, onGroups, wrong }: { bits: string; groupS
   const [cuts, setCuts] = useState<number[]>([]);
   const padded = "0".repeat(pad) + bits;
   const interactive = !!onGroups;
+  // A long row scrolls inside its own box; the faded edge shows there is more.
+  const cellsRef = useRef<HTMLDivElement>(null);
+  const fade = useScrollFade(cellsRef);
 
   const toggle = (fromRight: number) => setCuts((c) => (c.includes(fromRight) ? c.filter((x) => x !== fromRight) : [...c, fromRight]));
   const marked = (): string[] => {
@@ -99,14 +103,14 @@ function MarkGroups({ bits, groupSize, onGroups, wrong }: { bits: string; groupS
       </p>
       <div className={styles.row} {...focusTarget("bits")}>
         <div className={styles.padButtons}>
-          <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad >= groupSize} onClick={() => setPad((p) => p + 1)} aria-label="Add a zero on the left" {...focusTarget("pad-zero")}>
-            +0
+          <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad >= groupSize} onClick={() => setPad((p) => p + 1)} aria-label="Add a leading zero" {...focusTarget("pad-zero")}>
+            Add 0
           </button>
-          <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad === 0} onClick={() => setPad((p) => p - 1)} aria-label="Remove a zero from the left">
-            −0
+          <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad === 0} onClick={() => setPad((p) => p - 1)} aria-label="Remove a leading zero">
+            Remove 0
           </button>
         </div>
-        <div className={styles.cells}>
+        <div className={styles.cells} ref={cellsRef} data-fade={fade}>
           {[...padded].map((bit, i) => {
             const fromRight = padded.length - i;
             const cut = i > 0 && cuts.includes(fromRight);

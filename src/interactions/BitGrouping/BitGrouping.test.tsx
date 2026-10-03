@@ -12,7 +12,7 @@ describe("BitGrouping: mark the groups (step 0)", () => {
     render(<BitGrouping {...base} stepIndex={0} onGroups={onGroups} />);
     const user = userEvent.setup();
     expect(screen.getByRole("button", { name: "Check groups" })).toBeDisabled();
-    await user.click(screen.getByRole("button", { name: "Add a zero on the left" }));
+    await user.click(screen.getByRole("button", { name: "Add a leading zero" }));
     // padded: 0 1 1 0 1 0 → cut before bit 4
     await user.click(screen.getByRole("button", { name: /Bit 4 of 6: 0\. Start a new group here/ }));
     await user.click(screen.getByRole("button", { name: "Check groups" }));
@@ -36,9 +36,9 @@ describe("BitGrouping: mark the groups (step 0)", () => {
     cut.focus();
     await user.keyboard("{Enter}");
     expect(cut).toHaveAttribute("aria-pressed", "true");
-    await user.click(screen.getByRole("button", { name: "Add a zero on the left" }));
+    await user.click(screen.getByRole("button", { name: "Add a leading zero" }));
     expect(screen.getByRole("button", { name: /Bit 4 of 6: 0\. Start a new group here/ })).toHaveAttribute("aria-pressed", "true");
-    await user.click(screen.getByRole("button", { name: "Remove a zero from the left" }));
+    await user.click(screen.getByRole("button", { name: "Remove a leading zero" }));
     screen.getByRole("button", { name: /Bit 3 of 5: 0\. Start a new group here/ }).focus();
     await user.keyboard(" ");
     expect(screen.queryByRole("button", { pressed: true })).toBeNull();
