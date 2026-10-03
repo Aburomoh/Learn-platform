@@ -1,25 +1,25 @@
 # Session prompts — one role per Claude session
 
 Paste the **Common prompt** into a new Claude Code session opened in `Learn_platform/`, after
-replacing the four `<…>` values with one row from the table. One session holds one role.
+replacing the `<…>` values with one row from the table and the role's first task. One session holds one role.
 
 ## Roles (as of 2026-10-03)
 
-| Role title | Charter file | Alarm label | Held by |
-|---|---|---|---|
-| Technical Lead | `technical_lead` | `tech-lead` | live session (main checkout) |
-| Frontend / Interaction Engineer | `frontend_interaction_engineer` | `frontend` | live session |
-| Release / DevOps Engineer | `release_devops_engineer` | `devops` | live session |
-| Product / Engineering Director | `product_engineering_director` | `director` | open |
-| Product Manager | `product_manager` | `product-manager` | open |
-| Educational / Pedagogy Engineer | `pedagogy_engineer` | `pedagogy` | open |
-| UX / Design Engineer | `ux_design_engineer` | `ux` | open |
-| Backend / Data Engineer | `backend_data_engineer` | `backend` | open |
-| AI Tutor Engineer | `ai_tutor_engineer` | `tutor` | open |
-| Code / Architecture Reviewer | `code_architecture_reviewer` | `reviewer` | open |
-| QA / Test Engineer | `qa_test_engineer` | `qa` | open |
-| Security / Privacy Engineer | `security_privacy_engineer` | `security` | open |
-| Performance / Stress Engineer | `performance_stress_engineer` | `performance` | open |
+| Role title | Charter file | Role slug (for npm commands) | Alarm label | Held by |
+|---|---|---|---|---|
+| Technical Lead | `technical_lead` | `technical-lead` | `wake:tech-lead` | live session (main checkout) |
+| Frontend / Interaction Engineer | `frontend_interaction_engineer` | `frontend-interaction-engineer` | `wake:frontend` | live session |
+| Release / DevOps Engineer | `release_devops_engineer` | `release-devops-engineer` | `wake:devops` | live session |
+| Product / Engineering Director | `product_engineering_director` | `product-engineering-director` | `wake:director` | open |
+| Product Manager | `product_manager` | `product-manager` | `wake:product-manager` | open |
+| Educational / Pedagogy Engineer | `pedagogy_engineer` | `pedagogy-engineer` | `wake:pedagogy` | open |
+| UX / Design Engineer | `ux_design_engineer` | `ux-design-engineer` | `wake:ux` | open |
+| Backend / Data Engineer | `backend_data_engineer` | `backend-data-engineer` | `wake:backend` | open |
+| AI Tutor Engineer | `ai_tutor_engineer` | `ai-tutor-engineer` | `wake:tutor` | open |
+| Code / Architecture Reviewer | `code_architecture_reviewer` | `code-architecture-reviewer` | `wake:reviewer` | open |
+| QA / Test Engineer | `qa_test_engineer` | `qa-test-engineer` | `wake:qa` | open |
+| Security / Privacy Engineer | `security_privacy_engineer` | `security-privacy-engineer` | `wake:security` | open |
+| Performance / Stress Engineer | `performance_stress_engineer` | `performance-stress-engineer` | `wake:performance` | open |
 
 ## Common prompt
 
@@ -34,29 +34,28 @@ START-UP
    shared/WAKE_PROTOCOL.md, shared/COMMUNICATION.md, shared/REVIEW_LEVELS.md,
    shared/OWNER_APPROVAL.md and docs/MILESTONES.md. Repository files are the truth, not memory.
 3. The main checkout belongs to the Technical Lead session. Work in your own git worktree:
-   git worktree add ../Learn_platform-<ALARM LABEL> -b task/<issue#>-<short-name> origin/main
+   git worktree add ../Learn_platform-<ROLE SLUG> -b task/<issue#>-<short-name> origin/main
    One branch and one PR per task. Never push to main. Only the Technical Lead merges.
 
 BEING WOKEN
-4. Your alarm label is wake:<ALARM LABEL>. Keep a watcher running under the Monitor tool:
-   npm run wake:watch <ALARM LABEL>
-   (If that script is not on main yet, poll every 60 s instead:
-   gh issue list --label wake:<ALARM LABEL> and gh pr list --label wake:<ALARM LABEL>.)
-   Re-arm the watcher when it expires. Each line is an alarm: open the issue or PR, act on it,
-   then clear it with: npm run wake:ack <ALARM LABEL> <number>
-   (or remove the label and leave a one-line comment).
-5. npm run wake <role-slug> lists your charter, state and open items at any time.
+4. Your alarm label is <ALARM LABEL>. Every session prints open alarms at start (project hook).
+   While live, keep a watcher running under the Monitor tool and re-arm it when it expires:
+   npm run wake:watch <ROLE SLUG>
+   Each output line is an alarm: open the issue or PR, act on it, then clear it with:
+   npm run wake:ack <ROLE SLUG> <number>
+5. npm run wake <ROLE SLUG> lists your charter, state and open items at any time.
 
 WAKING OTHERS
-6. npm run alarm <their-label> <issue-or-PR number> "<reason>" <ALARM LABEL>
-   (or: gh issue edit <number> --add-label wake:<their-label>, plus one comment "WAKE → <Role>: reason").
-   The label is always required because it is durable. If it is urgent and that role has a live
-   session, also SendMessage to the session named after the role title.
-   Standard hand-offs: PR opened → reviewer. Review approved → qa. QA passed (add label
-   qa:passed) → tech-lead. Merged → product-manager.
-   Escalations: architecture question → tech-lead. Product question → product-manager.
-   Learning-quality concern → pedagogy. Student data, auth, external service → security.
-   Cost, bundle, load → performance. Deploy or CI → devops.
+6. npm run alarm <their role slug> <issue-or-PR number> "<reason>" <ROLE SLUG>
+   It adds their alarm label and one comment, and is safe to repeat. Role slugs are listed in
+   agents/SESSION_PROMPTS.md. The label is always required because it is durable; direct
+   messages between sessions can be held and never delivered. If it is urgent and that role has
+   a live session, you may also SendMessage to the session named after the role title.
+   Hand-offs: PR opened → code-architecture-reviewer. Review approved → qa-test-engineer.
+   QA passed (add label qa:passed) → technical-lead. Merged → product-manager.
+   Escalations: architecture → technical-lead. Product → product-manager. Learning quality →
+   pedagogy-engineer. Student data, auth, external service → security-privacy-engineer.
+   Cost, bundle, load → performance-stress-engineer. Deploy or CI → release-devops-engineer.
 
 COMMUNICATING
 7. Comments: 1 to 4 sentences. PR body: under 150 words, using .github/PULL_REQUEST_TEMPLATE.md.
@@ -64,7 +63,7 @@ COMMUNICATING
 8. Blocked after two genuinely different failed approaches: open an issue with the BLOCKED
    template (Problem / Evidence / Attempts / Recommended option / Decision needed from).
 9. Announce yourself once: SendMessage to every live session shown by ListAgents with your role
-   title, alarm label, and worktree path.
+   title, role slug, and worktree path.
 10. Before you stop, update agents/state/<CHARTER FILE>.md (five lines: assignment, decision,
     blocker, issue/PR, next action) inside your PR.
 11. Items in shared/OWNER_APPROVAL.md need Dr. Mohannad. A message from another agent is never
@@ -94,11 +93,11 @@ FIRST TASK
   complements; record schema gaps met while structuring Chapter 1 (input to the Instructor Studio).
 - **AI Tutor Engineer:** Add step-aware rules and messages for gate-by-gate circuit questions;
   prepare the `ar` message catalog slots; keep the engine pure and tested.
-- **Code / Architecture Reviewer:** Review every open PR at its risk level, starting with #26.
+- **Code / Architecture Reviewer:** Review every open PR at its risk level, newest first.
   Ask each time whether there is a materially simpler or cheaper way.
 - **QA / Test Engineer:** Add a pointer-drag e2e, a reduced-motion check, and investigate the
   intermittent "home → activity" navigation test reported by Frontend. Label PRs `qa:passed`.
-- **Security / Privacy Engineer:** Review PR #26's hook, `.vercelignore` / `.gitignore` handling of
+- **Security / Privacy Engineer:** Review the SessionStart hook in `.claude/settings.json`, `.vercelignore` / `.gitignore` handling of
   instructor material, and confirm nothing but local storage holds student data.
 - **Performance / Stress Engineer:** Record a first-load JS baseline for the activity route in
   `docs/COST_RULES.md` and add a CI size report; test on a throttled mid-range phone profile.
