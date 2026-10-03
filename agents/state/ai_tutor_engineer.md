@@ -1,7 +1,7 @@
 # Current State — AI Tutor Engineer
 
-Current assignment: None
-Recent important decision: None
+Current assignment: None (engine delivered).
+Recent important decision: Pure reducer; catalog with locale fallback; adapter kinds declared, only rule-based implemented.
 Blocker: None
-Relevant issue/PR: None
-Next expected action: Wait for activation.
+Relevant issue/PR: PR #14
+Next expected action: Add `ar` catalog slots when localisation is prioritised; extend rules from M2 misconception data.

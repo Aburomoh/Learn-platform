@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getTopic, listTopicParams } from "@/content";
 import { Shell } from "@/shell/Shell";
 import styles from "@/shell/Shell.module.css";
+import { ActivityStatus } from "@/shell/ActivityStatus";
 
 type Params = { course: string; topic: string };
 
@@ -53,6 +54,7 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
                   <span>{a.minutes} min</span>
                   <span>{a.questions.length} questions</span>
                   {a.authority === "DEMO" && <span className="demo-badge">DEMO</span>}
+                  <ActivityStatus offeringId={course.offeringId} activityId={a.id} />
                 </div>
               </Link>
             </li>
