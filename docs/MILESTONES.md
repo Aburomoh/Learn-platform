@@ -42,6 +42,27 @@ walk the circuit gate by gate.
 Owner supplies slides/questions for one CET course; Backend/Data + Pedagogy structure it with
 the M1 schema and record what the schema lacks (input to the Instructor Studio design).
 
+## M1.2 — ECET 111 Chapter 1 complete (proposed, awaiting Director approval)
+Rest of Chapter 1 after M1.1 closes (#32 gate-by-gate circuit walk): binary addition, 1's and 2's
+complement, subtraction by 2's complement, and the slide exercises. Every question is walked in
+checked steps (owner feedback of 2026-10-03); all content DEMO until instructor approval.
+
+| # | Task | Role | Depends on |
+|---|---|---|---|
+| #33 | `column-addition` schema + grader | Backend | — |
+| #35 | `bit-complement` schema + grader | Backend | — |
+| #43 | Exercise: 88 and 73 conversions (existing kinds) | Backend | — |
+| #34 | ColumnAddition interaction | Frontend | #33 |
+| #36 | Bit-complement interaction | Frontend | #35 |
+| #37 | Tutor messages for both | AI Tutor | #33, #35 |
+| #38 | Binary addition activity (1101 + 0111) | Backend | #34, #37 |
+| #39 | 1's and 2's complement activity | Backend | #34, #36, #37 |
+| #40 | Subtraction by 2's complement, positive (13−9, 12−6) | Backend | #39 |
+| #41 | Exercise: 15−4 and 10−14 (negative result) | Backend | #40 |
+
+Content and interaction tasks carry pedagogy review. Tasks become `ready` when approved and their
+dependencies are merged; #33, #35 and #43 can start in parallel with #32.
+
 ## Status log (newest first)
 - 2026-10-03 — M1.1 opened from owner feedback; course renamed to ECET 111, Chapter 1 method adopted.
 - 2026-10-03 — M1 complete on `main`; 9 tasks closed via PRs #10–#18; 73 unit + 8 e2e tests green.
