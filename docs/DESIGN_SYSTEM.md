@@ -1,5 +1,7 @@
 # Design System
 
+> **Redesign R1 proposed:** `docs/design/redesign-r1/README.md` (#113). Until it is accepted on #110, this document is current.
+
 Tokens live in `src/styles/tokens.css` (CSS custom properties). Components use CSS Modules.
 No UI framework, no animation library, no web-font request.
 
