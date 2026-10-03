@@ -7,3 +7,4 @@ export { DragToTarget, type DragToTargetProps, type DragItem, type DropTarget, t
 export { PlaceValueDiagram, type PlaceValueDiagramProps, type Bit } from "./PlaceValueDiagram/PlaceValueDiagram";
 export { CircuitDiagram, type CircuitDiagramProps } from "./CircuitDiagram/CircuitDiagram";
 export { DivisionChain, type DivisionChainProps, type ChainStep } from "./DivisionChain/DivisionChain";
+export { BitGrouping, type BitGroupingProps } from "./BitGrouping/BitGrouping";

@@ -1,0 +1,184 @@
+.root {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.step {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.ask {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* step 0: pad buttons + a row of bit cells */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.padButtons {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.pad {
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: 0 var(--space-2);
+  font-family: var(--font-mono);
+}
+
+.cells {
+  --cell: 30px;
+  display: flex;
+  align-items: stretch;
+}
+
+.cell {
+  box-sizing: content-box;
+  display: grid;
+  place-items: center;
+  width: var(--cell);
+  min-height: var(--touch-min);
+  padding: 0;
+  border: 1px solid var(--border);
+  border-inline-start-width: 0;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: var(--text-lg);
+}
+
+.cell:first-child {
+  border-inline-start-width: 1px;
+  border-start-start-radius: var(--radius-sm);
+  border-end-start-radius: var(--radius-sm);
+}
+
+.cell:last-child {
+  border-start-end-radius: var(--radius-sm);
+  border-end-end-radius: var(--radius-sm);
+}
+
+.cellButton {
+  cursor: pointer;
+}
+
+.cellButton:disabled {
+  cursor: default;
+}
+
+.cellButton:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+  position: relative;
+  z-index: 1;
+}
+
+/* a new group starts at this bit: a clear gap and bar on its left */
+.cut {
+  margin-inline-start: var(--space-3);
+  border-inline-start: 3px solid var(--accent);
+  border-start-start-radius: var(--radius-sm);
+  border-end-start-radius: var(--radius-sm);
+  transition: margin var(--dur-fast) var(--ease);
+}
+
+.added {
+  color: var(--text-muted);
+  background: var(--surface);
+  border-style: dashed;
+}
+
+/* digit steps: one box per group, digit slot underneath */
+.groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.group {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.groupActive {
+  border-color: var(--accent);
+  background: var(--focus-halo, var(--highlight-soft));
+}
+
+.attention {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.groupBits {
+  font-size: var(--text-lg);
+  letter-spacing: 0.1em;
+}
+
+.slot {
+  display: grid;
+  place-items: center;
+  min-width: 48px;
+  height: var(--touch-min);
+  border-top: 2px solid var(--border);
+  font-size: var(--text-lg);
+}
+
+.unknown {
+  color: var(--text-muted);
+}
+
+.input {
+  width: 48px;
+  height: 38px;
+  text-align: center;
+  font-size: var(--text-lg);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.wrong {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.result {
+  margin: 0;
+}
+
+@media (max-width: 400px) {
+  .cells {
+    --cell: 26px;
+  }
+  .cell {
+    font-size: var(--text-md);
+  }
+}
