@@ -1,7 +1,7 @@
 # Current State — Product / Engineering Director
 
-Current assignment: M1 reviewed and accepted on repository evidence; awaiting owner walkthrough.
-Recent important decision: Approved M1 proposal with conditions (docs/MILESTONES.md).
+Current assignment: M1.1 review against owner feedback of 2026-10-03.
+Recent important decision: divide-by-2 accepted; M1.1 stays open until a gate-by-gate circuit walk lands (docs/MILESTONES.md).
 Blocker: None
-Relevant issue/PR: PRs #10–#18
-Next expected action: Present M1 to owner; approve M2 proposal once owner supplies content.
+Relevant issue/PR: #23, #25, #26 (resolved); Director review PR (this branch).
+Next expected action: approve PM's circuit-walk task; then request owner re-walk on the preview.
