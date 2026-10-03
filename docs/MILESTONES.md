@@ -39,12 +39,8 @@ with standard symbols and right-angle wires (Frontend session); #21 Vercel proje
 walk the circuit gate by gate.
 
 **M1.1 close-out (before M1.2 frontend, tutor and content work).** #32 gate-by-gate circuit walk
-(Frontend); pedagogy vetoes on #25: #42 retry on another variant after Explain Slowly (AI Tutor,
+(Frontend); pedagogy vetoes on #25 (pending owner decision, #48): #42 retry on another variant after Explain Slowly (AI Tutor,
 High), #45 content fixes (Backend), #44 octal/hex grouping as two checked steps (Frontend, after #32).
-
-## M2 — Real content for one course (proposed, not started)
-Owner supplies slides/questions for one CET course; Backend/Data + Pedagogy structure it with
-the M1 schema and record what the schema lacks (input to the Instructor Studio design).
 
 ## M1.2 — ECET 111 Chapter 1 complete (approved by Director with conditions, 2026-10-03)
 Rest of Chapter 1 after M1.1 closes (#32 gate-by-gate circuit walk): binary addition, 1's and 2's
@@ -54,10 +50,10 @@ checked steps (owner feedback of 2026-10-03); all content DEMO until instructor 
 | # | Task | Role | Depends on |
 |---|---|---|---|
 | #33 | `column-addition` schema + grader | Backend | — |
-| #35 | `bit-complement` schema + grader | Backend | — |
+| #35 | 1's complement: `bit-row` context + first-wrong-bit detector | Backend | — |
 | #43 | Exercise: 88 and 73 conversions (existing kinds) | Backend | #42, #44 |
 | #34 | ColumnAddition interaction | Frontend | #33 |
-| #36 | Bit-complement interaction | Frontend | #35 |
+| #36 | `bit-row` aligned-cells presentation | Frontend | #35 |
 | #37 | Tutor messages for both | AI Tutor | #33, #35 |
 | #38 | Binary addition activity (1101 + 0111) | Backend | #34, #37 |
 | #39 | 1's and 2's complement activity | Backend | #34, #36, #37 |
@@ -66,11 +62,15 @@ checked steps (owner feedback of 2026-10-03); all content DEMO until instructor 
 
 Content and interaction tasks carry pedagogy review. Only #33 and #35 (schema + grader, nothing
 learner-facing) are `ready` now; the rest go `ready` as their dependencies merge, after the M1.1
-close-out. #35 first checks whether the existing `numeric` kind with `bits` context and a
-first-wrong-bit detector is enough; if so, no new kind is added and #36 shrinks or closes.
+close-out. Technical Lead decision (#47): no new kind for 1's complement — `numeric` with a `bit-row`
+context; 2's complement is that plus +1 through `column-addition`.
 
 **Variant rule (from #42).** Every content question has at least two variants: the walked example
 (Explain Slowly) uses one, the retry uses another, so an explained answer can never complete it.
+
+## M2 — Real content for one course (proposed, not started)
+Owner supplies slides/questions for one CET course; Backend/Data + Pedagogy structure it with
+the M1 schema and record what the schema lacks (input to the Instructor Studio design).
 
 ## Status log (newest first)
 - 2026-10-03 — M1.1 opened from owner feedback; course renamed to ECET 111, Chapter 1 method adopted.
