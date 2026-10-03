@@ -60,6 +60,7 @@ Evidence: `docs/design/review-2026-10-03/`. Each row is adopted by the issue tha
 ### Rules that come with them
 - **Accent means attention, not value.** Logic levels use `--signal-*` plus a printed 0/1; the active gate gets `--focus-halo`, a 3.5 px `--accent` outline and a `?` at its output. Gates after it use `--pending-opacity`.
 - **Sticky tutor below `lg`:** a one- or two-line strip (avatar 32 px, text clamped, tap to expand) capped at `--tutor-strip-h`. When the viewport is under 500 px tall the tutor is not sticky at all.
-- **Horizontal steppers on phones** (DivisionChain, future bit rows): the active column is always scrolled into view, and a fade edge shows there is more content.
+- **DivisionChain is a vertical ladder at all widths** (matches the Chapter 1 slide; #53). Each row has `2 |`, the number and its remainder; the quotient is typed into the next row down. The active row gets `--focus-halo`. In the read-off step an upward arrow beside the remainders runs from MSB (bottom) to LSB (top).
+- **Horizontal steppers on phones** (future bit rows): the active column is always scrolled into view, and a fade edge shows there is more content.
 - **Diagrams must fit at 390 px** down to 0.6× scale before horizontal scrolling is allowed; the output (Y) must always be visible.
 - **Base notation** is marked up as `<sub>` with `--sub-size`, never Unicode subscript digits, so screen readers and fallback fonts read it correctly.
