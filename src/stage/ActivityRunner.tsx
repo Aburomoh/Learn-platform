@@ -1,13 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore } from "react";
 import type { Activity, Topic } from "@/content/schema";
 import { product } from "../../config/product";
 import { HintReveal } from "@/interactions";
 import { canRequestScaffold } from "@/tutor";
 import { TutorPanel, useFocusEffects } from "@/tutor/ui";
-import { useOfferingProgress, usePrefs, startActivity, recordAttempt, completeActivity, completeQuestion } from "@/learner";
-import { createRunnerReducer, initialRunnerState, currentVariant, hasAnotherVariant } from "./runnerReducer";
+import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordAttempt, completeActivity, completeQuestion } from "@/learner";
+import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
 import styles from "./Stage.module.css";
@@ -21,14 +21,45 @@ export interface ActivityRunnerProps {
 
 const HESITATION_TICK_MS = 15_000;
 
+const noSubscription = () => () => {};
+
+/** Review links carry `?review=1`: restart at challenge 1 instead of resuming. */
+function isReview(): boolean {
+  return new URLSearchParams(window.location.search).has("review");
+}
+
+/**
+ * Learning Stage entry. Local progress lives in the browser, so the first challenge to show is
+ * only known after hydration. Until then an empty stage frame is rendered (also in the
+ * pre-rendered HTML), so a returning student never sees challenge 1 flash before the one they
+ * continue with.
+ */
+export function ActivityRunner(props: ActivityRunnerProps) {
+  const hydrated = useSyncExternalStore(noSubscription, () => true, () => false);
+  if (!hydrated) {
+    return (
+      <div className={styles.layout}>
+        <div className={`${styles.stage} ${styles.stageLoading}`} data-testid="learning-stage" data-stage="loading" aria-busy="true" />
+      </div>
+    );
+  }
+  return <Runner {...props} />;
+}
+
 /**
  * Learning Stage (layer B). Owns runner state, feeds events to the tutor engine, applies
  * structured actions to the UI, and records compact evidence in the local learner store.
  * Everything here runs in the browser; there are no network calls.
  */
-export function ActivityRunner({ offeringId, topic, activity, backHref }: ActivityRunnerProps) {
+function Runner({ offeringId, topic, activity, backHref }: ActivityRunnerProps) {
   const reducer = useMemo(() => createRunnerReducer(activity), [activity]);
-  const [state, dispatch] = useReducer(reducer, activity, initialRunnerState);
+  // Continue resumes at the first unfinished challenge; Review, or a finished practice, starts at challenge 1.
+  const [initial] = useState<RunnerState>(() => {
+    const record = getProgressStore(offeringId).get().activities[activity.id];
+    if (isReview() || !record || record.status === "completed") return initialRunnerState(activity);
+    return resumeRunnerState(activity, record.completedQuestions ?? []);
+  });
+  const [state, dispatch] = useReducer(reducer, initial);
   const [progress, updateProgress] = useOfferingProgress(offeringId);
   const [prefs] = usePrefs();
   const stageRef = useRef<HTMLDivElement>(null);
@@ -68,7 +99,7 @@ export function ActivityRunner({ offeringId, topic, activity, backHref }: Activi
   }, [state.attemptSeq, state.last, state.tutor.hintLevel, activity.id, question.id, question.conceptId, updateProgress]);
 
   // Record each newly finished challenge so Continue can resume at the first unfinished one (#117).
-  const recordedQuestions = useRef(new Set<number>());
+  const recordedQuestions = useRef(new Set<number>(initial.completed.flatMap((done, i) => (done ? [i] : []))));
   useEffect(() => {
     state.completed.forEach((done, i) => {
       if (!done || recordedQuestions.current.has(i)) return;

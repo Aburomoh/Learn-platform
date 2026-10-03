@@ -118,6 +118,21 @@ export function initialRunnerState(activity: Activity): RunnerState {
   };
 }
 
+/**
+ * Where Continue resumes (R1, #119): challenges already finished stay finished and the runner
+ * opens on the first unfinished one, on its first variant and first step. With nothing left to
+ * do (or nothing done yet) this is a fresh start at challenge 1, which is also what Review uses.
+ */
+export function resumeRunnerState(activity: Activity, completedQuestionIds: readonly string[]): RunnerState {
+  const fresh = initialRunnerState(activity);
+  const completed = activity.questions.map((q) => completedQuestionIds.includes(q.id));
+  const qIndex = completed.indexOf(false);
+  // everything finished: a fresh start. Otherwise keep what is finished, even past a gap, so
+  // "Next" after an early unfinished challenge skips the ones already done.
+  if (qIndex < 0) return fresh;
+  return { ...fresh, qIndex, completed };
+}
+
 export function createRunnerReducer(activity: Activity) {
   function runTutor(s: RunnerState, event: LearningEvent): RunnerState {
     const variant = currentVariant(activity, s);

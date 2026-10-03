@@ -43,6 +43,11 @@
   min-width: 0;
 }
 
+/* empty frame shown until local progress is read after hydration */
+.stageLoading {
+  min-height: 320px;
+}
+
 .header {
   display: flex;
   flex-wrap: wrap;
