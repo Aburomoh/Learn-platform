@@ -97,6 +97,14 @@ describe("content registry", () => {
     expect([(53).toString(2), (53).toString(8), (53).toString(16)]).toEqual(["110101", "65", "35"]);
   });
 
+  it("walks the 88 and 73 exercise (#43) with the slide answers, two variants per question", () => {
+    const x = getActivity(COURSE, "number-systems", "conversion-exercise")!.activity;
+    expect(x.questions.map((q) => q.label)).toEqual(["Divide by 2", "Read off", "Octal", "Hex"]);
+    for (const q of x.questions) expect(q.variants.map((v) => v.id), q.id).toEqual(["v88", "v73"]);
+    const answers = x.questions.map((q) => q.variants.map((v) => ("answer" in v.spec ? v.spec.answer : v.spec.kind === "repeated-division" ? v.spec.steps.length : "")));
+    expect(answers).toEqual([[7, 7], ["1011000", "1001001"], ["130", "111"], ["58", "49"]]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
