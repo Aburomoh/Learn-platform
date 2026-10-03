@@ -24,8 +24,7 @@ Pure function: same inputs → same outputs. Unit-tested without React.
 
 ## Messages
 `src/tutor/messages/en.ts` maps `messageKey` → template with `{variable}` slots. Activities may
-add activity-scoped keys. `ar.ts` lists every `en` key (type-enforced); an empty slot is
-untranslated and falls back to `en`. A filled slot must keep the English `{slots}` (tested).
+add activity-scoped keys. A future `ar.ts` can override any key; missing keys fall back to `en`.
 Words the tutor says belong in the catalog, not in content, so a locale can override them.
 Expressions: `neutral, explaining, thinking, curious, encouraging, concern, pleased, pointing,
 attention-left, attention-right` (placeholders until approved assets exist).

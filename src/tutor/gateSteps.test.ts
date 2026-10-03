@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { getActivity } from "@/content";
 import type { CircuitSpec, Variant } from "@/content/schema";
 import { reduce } from "./engine/reduce";
@@ -8,8 +8,7 @@ import type { TutorAction } from "./engine/actions";
 import { contextFromVariant } from "./context";
 import { gateVars } from "./gateVars";
 import { en } from "./messages/en";
-import { ar } from "./messages/ar";
-import { messageKeys, resolveMessage, untranslatedKeys } from "./messages";
+import { resolveMessage } from "./messages";
 
 const [v101] = getActivity("ecet111", "logic-gates", "predict-gate-output")!.activity.questions[0].variants;
 const spec = v101.spec as CircuitSpec;
@@ -91,29 +90,9 @@ describe("gate walk: step-aware rules", () => {
   });
 });
 
-describe("ar catalog slots", () => {
-  afterEach(() => {
-    ar["gate.rule.AND"] = "";
-  });
-
-  it("has exactly the en keys", () => {
-    expect(Object.keys(ar).sort()).toEqual(messageKeys().sort());
-  });
-
-  it("any filled translation keeps every {slot} of the English text", () => {
-    const slots = (t: string) => (t.match(/\{[a-zA-Z0-9_]+\}/g) ?? []).sort();
-    for (const k of messageKeys()) {
-      const t = (ar as Record<string, string>)[k];
-      if (t) expect(slots(t), k).toEqual(slots((en as Record<string, string>)[k]));
-    }
-  });
-
-  it("untranslated slots fall back to en; filled slots win, including gate wording", () => {
-    expect(resolveMessage("open", {}, "ar")).toBe(en.open);
-    expect(untranslatedKeys("ar")).toContain("gate.rule.AND");
-    ar["gate.rule.AND"] = "AND-ar";
-    expect(gateVars(spec, "g1", "ar").gateRule).toBe("AND-ar");
-    expect(resolveMessage("gate.rule.AND", {}, "en")).toBe(en["gate.rule.AND"]);
-    expect(resolveMessage("open", {}, "xx")).toBe(en.open);
+describe("catalog locale fallback", () => {
+  it("an unknown locale or missing key falls back to en", () => {
+    expect(resolveMessage("gate.rule.AND", {}, "xx")).toBe(en["gate.rule.AND"]);
+    expect(gateVars(spec, "g1", "xx").gateRule).toBe(en["gate.rule.AND"]);
   });
 });
