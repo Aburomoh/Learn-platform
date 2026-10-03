@@ -82,13 +82,14 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
   await expect(page.locator("[data-expression='pleased']:visible")).toBeVisible();
 
-  // 6. read the remainders: LSB-first is recognised, MSB-first is right
+  // 6. read the remainders of the set just worked on (37, #141): LSB-first is recognised, MSB-first is right
   await page.getByRole("button", { name: "Next question" }).click();
   await expect(page.getByText("Question 2 of 4")).toBeVisible();
-  await page.getByRole("textbox").fill("01011");
+  await expect(page.getByText("The division of 37 is finished", { exact: false })).toBeVisible();
+  await page.getByRole("textbox").fill("101001");
   await page.getByRole("button", { name: "Check" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Not correct yet." })).toBeVisible();
-  await page.getByRole("textbox").fill("11010");
+  await page.getByRole("textbox").fill("100101");
   await page.getByRole("button", { name: "Check" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
 
