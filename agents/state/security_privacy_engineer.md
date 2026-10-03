@@ -1,7 +1,7 @@
 # Current State — Security / Privacy Engineer
 
-Current assignment: Reviewed learner store (#16). Approved.
-Recent important decision: Local-only storage, namespaced keys, student clear action.
+Current assignment: Audit of SessionStart hook, ignore files and student-data locations (#49).
+Recent important decision: Student data is localStorage only (static export, no fetch/analytics); .vercelignore now lists .tmp, .env*, .claude.
 Blocker: None
-Relevant issue/PR: PR #16
-Next expected action: Review any account/sync proposal at Level 4.
+Relevant issue/PR: #49
+Next expected action: Review any account/sync, analytics or external-service proposal at Level 4.

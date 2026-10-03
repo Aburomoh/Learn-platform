@@ -1,7 +1,11 @@
+# Vercel CLI does not read .gitignore once this file exists; list private paths here too.
 *.pptx
 *.ppt
 *.pdf
 source-material
+.tmp
+.env*
+.claude
 agents
 docs
 e2e
