@@ -221,8 +221,9 @@
   box-shadow: none;
 }
 
+/* wraps when the surface is narrower than the chain (home panel on a 320 px phone) */
 .bare .chain {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .boardSm .tile {
