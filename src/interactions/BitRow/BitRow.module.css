@@ -1,0 +1,91 @@
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+/* Source and answer rows share one grid, so the cells line up at every width. */
+.grid {
+  display: grid;
+  column-gap: var(--space-1);
+  row-gap: var(--space-1);
+  align-items: center;
+  justify-content: start;
+}
+
+.rowLabel {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.cell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-height: var(--touch-min);
+  font-size: var(--text-lg);
+  border-radius: var(--radius-sm);
+}
+
+.source {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.unknown {
+  color: var(--text-muted);
+}
+
+.answer:not(:has(input)) {
+  border-bottom: 2px solid var(--border);
+  font-weight: 700;
+}
+
+.input {
+  width: 100%;
+  height: var(--touch-min);
+  padding: 0;
+  text-align: center;
+  font-size: var(--text-lg);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.input:disabled {
+  border-color: var(--border);
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+/* the first wrong cell: colour plus a thicker border, never colour alone */
+.wrong {
+  border: 2px solid var(--error);
+  background: var(--error-bg);
+}
+
+.correct {
+  border-color: var(--success);
+  background: var(--success-bg);
+}
+
+.attention {
+  align-self: stretch;
+  margin: -3px;
+  border-radius: var(--radius-md);
+  outline: 2px solid var(--accent);
+}
+
+.actions {
+  display: flex;
+}

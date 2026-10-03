@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { CircuitSpec, Variant } from "@/content/schema";
+import type { CircuitSpec, ColumnAdditionSpec, NumericContext, Variant } from "@/content/schema";
 import type { Answer, GradeResult } from "@/content/grade";
-import { stepCount, stepVars } from "@/content/steps";
+import { stepCount, stepTag, stepVars } from "@/content/steps";
 import { fill } from "@/content/template";
-import { MultipleChoice, NumericInput, PlaceValueDiagram, CircuitDiagram, DivisionChain, BitGrouping, PredictionBeforeReveal, type Bit, type PredictionResult } from "@/interactions";
+import { MultipleChoice, NumericInput, PlaceValueDiagram, CircuitDiagram, DivisionChain, BitGrouping, ColumnAddition, BitRow, type AdditionColumn, PredictionBeforeReveal, type Bit, type PredictionResult } from "@/interactions";
 import { BitGroups } from "./BitGroups";
 import styles from "./Stage.module.css";
 
@@ -61,6 +61,35 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
   );
 }
 
+/** Every step of a column addition as the component draws it, read from the step contract. */
+function additionColumns(spec: ColumnAdditionSpec): AdditionColumn[] {
+  return Array.from({ length: stepCount(spec) }, (_, i) => {
+    const v = stepVars(spec, i) as Record<string, 0 | 1>;
+    return { a: v.aBit, b: v.bBit, carryIn: v.carryIn, sum: v.sum, carryOut: v.carryOut, final: stepTag(spec, i) === "carry" };
+  });
+}
+
+/** A worked result shown above a numeric or multiple-choice question; `stage` drives it in Explain Slowly. */
+function ContextView({ id, context, stage }: { id: string; context: NumericContext | undefined; stage?: Record<string, unknown> }) {
+  if (!context) return null;
+  switch (context.type) {
+    case "division-chain":
+      return <DivisionChain id={id} steps={context.steps} stepIndex={context.steps.length} showOrder={!!stage?.showOrder} attention={stage?.attention as number | undefined} />;
+    case "bits":
+      return <BitGroups bits={context.bits} groups={(stage?.groups as string[] | undefined) ?? []} attention={stage?.attention as number | undefined} done={!!stage?.done} />;
+    case "addition": {
+      const columns = additionColumns({ kind: "column-addition", ...context.operands });
+      return <ColumnAddition id={id} a={context.operands.a} b={context.operands.b} columns={columns} stepIndex={columns.length} attention={stage?.attention as number | undefined} />;
+    }
+    case "bit-row":
+      return <BitRow id={id} bits={context.bits} sourceOnly />;
+    default: {
+      const unhandled: never = context;
+      throw new Error(`No renderer for context ${JSON.stringify(unhandled)}`);
+    }
+  }
+}
+
 function PracticeInput({
   variant,
   prompt,
@@ -109,10 +138,24 @@ function PracticeInput({
       );
     }
     case "numeric":
+      // A bit-row question is answered in the aligned cells themselves: the whole row is one answer.
+      if (spec.context?.type === "bit-row")
+        return (
+          <>
+            <p className={styles.prompt}>{prompt}</p>
+            <BitRow
+              id={variant.id}
+              bits={spec.context.bits}
+              state={state}
+              wrongBit={last?.result.wrongBit}
+              disabled={locked}
+              onAnswer={(text) => onSubmit({ kind: "numeric", text })}
+            />
+          </>
+        );
       return (
         <>
-          {spec.context?.type === "division-chain" && <DivisionChain id={`${variant.id}-ctx`} steps={spec.context.steps} stepIndex={spec.context.steps.length} />}
-          {spec.context?.type === "bits" && <BitGroups bits={spec.context.bits} groups={[]} />}
+          <ContextView id={`${variant.id}-ctx`} context={spec.context} />
         <NumericInput
           id={variant.id}
           prompt={prompt}
@@ -126,6 +169,8 @@ function PracticeInput({
       );
     case "multiple-choice":
       return (
+        <>
+          <ContextView id={`${variant.id}-ctx`} context={spec.context} />
         <MultipleChoice
           id={variant.id}
           prompt={prompt}
@@ -135,6 +180,7 @@ function PracticeInput({
           submittedOptionId={last?.answer.kind === "multiple-choice" ? last.answer.optionId : undefined}
           onAnswer={(optionId) => onSubmit({ kind: "multiple-choice", optionId })}
         />
+        </>
       );
     case "bit-grouping": {
       // Groups and digits come from the step contract: step k ≥ 1 is the digit of group k.
@@ -160,8 +206,32 @@ function PracticeInput({
         </>
       );
     }
+    case "column-addition": {
+      const columns = additionColumns(spec);
+      return (
+        <>
+          <p className={styles.prompt}>{prompt}</p>
+          <ColumnAddition
+            key={stepIndex}
+            id={variant.id}
+            a={spec.a}
+            b={spec.b}
+            columns={columns}
+            stepIndex={state === "correct" ? columns.length : stepIndex}
+            state={state === "incorrect" ? "incorrect" : "idle"}
+            disabled={locked}
+            onStep={(sum, carry) => onSubmit({ kind: "column-addition", step: stepIndex, sum, carry })}
+          />
+        </>
+      );
+    }
     case "circuit-predict":
       return <CircuitWalk variant={variant} spec={spec} prompt={prompt} state={state} last={last} stepIndex={stepIndex} locked={locked} onSubmit={onSubmit} />;
+    default: {
+      // A new spec kind must get a renderer here: an unhandled kind is a compile error.
+      const unhandled: never = spec;
+      throw new Error(`No renderer for ${JSON.stringify(unhandled)}`);
+    }
   }
 }
 
@@ -257,11 +327,10 @@ function ExplainVisual({ variant, stage, isLast, answered, hasAsk }: { variant: 
     case "repeated-division":
       return <DivisionChain id={variant.id} steps={spec.steps} stepIndex={(stage.revealed as number | undefined) ?? 0} attention={stage.attention as number | undefined} />;
     case "numeric":
-      if (spec.context?.type === "division-chain")
-        return <DivisionChain id={variant.id} steps={spec.context.steps} stepIndex={spec.context.steps.length} showOrder={!!stage.showOrder} attention={stage.attention as number | undefined} />;
-      if (spec.context?.type === "bits")
-        return <BitGroups bits={spec.context.bits} groups={(stage.groups as string[] | undefined) ?? []} attention={stage.attention as number | undefined} done={!!stage.done} />;
-      return null;
+      // stage.revealed = answer cells filled in so far (from the left); stage.attention = column outlined.
+      if (spec.context?.type === "bit-row")
+        return <BitRow id={variant.id} bits={spec.context.bits} answer={spec.answer.padStart(spec.context.bits.length, "0")} revealed={(stage.revealed as number | undefined) ?? 0} attention={stage.attention as number | undefined} />;
+      return <ContextView id={variant.id} context={spec.context} stage={stage} />;
     case "bit-grouping": {
       // Content stages: `groups: []` = the bits before grouping; groups shown = `attention` is the
       // group whose digit is being asked (its digit appears once predicted); `done` = everything.
@@ -287,7 +356,16 @@ function ExplainVisual({ variant, stage, isLast, answered, hasAsk }: { variant: 
       const lit = (stage.lit as string[] | undefined) ?? [];
       return <CircuitDiagram id={variant.id} spec={spec} lit={active && answered ? [...lit, active] : lit} activeGateId={active} revealOutput={isLast} />;
     }
+    case "column-addition": {
+      // stage.revealed = completed steps shown; stage.attention = step to outline.
+      const columns = additionColumns(spec);
+      return <ColumnAddition id={variant.id} a={spec.a} b={spec.b} columns={columns} stepIndex={(stage.revealed as number | undefined) ?? 0} attention={stage.attention as number | undefined} />;
+    }
     case "multiple-choice":
-      return null;
+      return <ContextView id={variant.id} context={spec.context} stage={stage} />;
+    default: {
+      const unhandled: never = spec;
+      throw new Error(`No explanation visual for ${JSON.stringify(unhandled)}`);
+    }
   }
 }

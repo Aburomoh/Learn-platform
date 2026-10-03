@@ -1,0 +1,145 @@
+.root {
+  display: grid;
+  /* keep a wide addition from widening the page: it scrolls inside .scroll instead */
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+/* a wide addition scrolls inside its own box, with the hidden edge faded */
+.scroll {
+  position: relative;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 3px;
+}
+
+.scroll[data-fade="end"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}
+
+.scroll[data-fade="start"] {
+  mask-image: linear-gradient(to left, #000 calc(100% - 28px), transparent);
+}
+
+.scroll[data-fade="both"] {
+  mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+}
+
+/* rows: carries, operand a, operand b, line, sum */
+.grid {
+  --cell: 44px;
+  display: grid;
+  grid-template-rows: 36px var(--touch-min) var(--touch-min) auto var(--touch-min);
+  column-gap: var(--space-1);
+  justify-content: start;
+  align-items: center;
+}
+
+.cell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--cell);
+  height: 100%;
+  font-size: var(--text-lg);
+}
+
+.sign {
+  padding-inline: var(--space-2);
+  font-size: var(--text-lg);
+  color: var(--text-muted);
+}
+
+.line {
+  height: 2px;
+  margin-block: var(--space-1);
+  background: var(--text);
+}
+
+.carry {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+}
+
+.sum {
+  font-weight: 700;
+}
+
+.halo {
+  align-self: stretch;
+  margin: -2px;
+  border-radius: var(--radius-md);
+  background: var(--focus-halo, var(--highlight-soft));
+}
+
+.attention {
+  align-self: stretch;
+  border-radius: var(--radius-md);
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.unknown {
+  color: var(--text-muted);
+}
+
+.input {
+  width: calc(var(--cell) - 6px);
+  height: 38px;
+  text-align: center;
+  font-size: var(--text-lg);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.carryInput {
+  height: 32px;
+  font-size: var(--text-base);
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.wrong {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.ask {
+  color: var(--text-muted);
+}
+
+.result {
+  margin: 0;
+  font-size: var(--text-md);
+}
+
+/* nine columns (8 bits + the final carry) still fit a 320 px phone */
+@media (max-width: 480px) {
+  .grid {
+    --cell: 28px;
+    column-gap: 2px;
+  }
+  .cell,
+  .input {
+    font-size: var(--text-md);
+  }
+}
