@@ -1,6 +1,5 @@
+import { splitNotation } from "@/content/notation";
 import styles from "./r1.module.css";
-
-const SUBSCRIPTS: Record<string, string> = { "₀": "0", "₁": "1", "₂": "2", "₃": "3", "₄": "4", "₅": "5", "₆": "6", "₇": "7", "₈": "8", "₉": "9" };
 
 export interface PreviewTile {
   value: string;
@@ -8,16 +7,15 @@ export interface PreviewTile {
   base?: string;
 }
 
-/** Splits a content preview such as "53₁₀ → 110101₂ → 65₈ → 35₁₆" into tiles. */
+/** Splits a content preview such as "53_10 → 110101_2 → 65_8 → 35_16" into tiles. */
 export function parsePreview(preview: string): PreviewTile[] {
   return preview
     .split("→")
     .map((part) => part.trim())
     .filter(Boolean)
     .map((part) => {
-      const m = part.match(/^(.*?)([₀-₉]+)$/);
-      if (!m) return { value: part };
-      return { value: m[1].trim(), base: [...m[2]].map((c) => SUBSCRIPTS[c]).join("") };
+      const [token] = splitNotation(part);
+      return token && !("text" in token) && token.raw === part ? { value: token.value, base: token.base } : { value: part };
     });
 }
 

@@ -39,6 +39,11 @@ h1 { font-size: var(--text-xl); }
 h2 { font-size: var(--text-lg); }
 h3 { font-size: var(--text-md); }
 p { margin: 0 0 var(--space-3); }
+/* base subscripts in number notation: never below 12 px */
+sub {
+  font-size: var(--sub-size);
+  line-height: 0;
+}
 code,
 kbd,
 .mono { font-family: var(--font-mono); }
@@ -93,7 +98,9 @@ button {
   color: var(--accent-contrast);
 }
 .btn-primary:hover { filter: brightness(1.08); background: var(--accent); }
-.btn-quiet { border-color: transparent; background: transparent; }
+.btn-quiet { border-color: transparent; background: transparent; color: var(--accent); font-weight: 650; }
+/* a disabled quiet action stays readable: muted text at full opacity */
+.btn-quiet:disabled { opacity: 1; color: var(--text-muted); font-weight: 400; }
 .btn-quiet:hover { background: var(--surface-2); }
 
 .demo-badge {

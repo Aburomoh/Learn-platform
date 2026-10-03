@@ -443,7 +443,7 @@ const subtractionActivity: TopicInput["activities"][number] = {
       label: "B: divide by 2",
       conceptId: "ba.subtraction",
       objectiveId: "ba.obj.subtract",
-      variants: SUBTRACTION_SETS.map((s) => divideVariant(s.b, `${s.a} − ${s.b}: first write B = ({value})₁₀ in binary. Divide by 2, one step at a time.`, s.id)),
+      variants: SUBTRACTION_SETS.map((s) => divideVariant(s.b, `${s.a} − ${s.b}: first write B = ({value})_10 in binary. Divide by 2, one step at a time.`, s.id)),
     },
     { id: "sub.q.read", label: "B: read off", conceptId: "ba.subtraction", objectiveId: "ba.obj.subtract", variants: SUBTRACTION_SETS.map((s) => readVariant(s.b, s.id)) },
     { id: "sub.q.ones", label: "1's complement", conceptId: "ba.subtraction", objectiveId: "ba.obj.subtract", variants: SUBTRACTION_SETS.map((s) => onesVariant(subtractionBits(s).B, s.id)) },

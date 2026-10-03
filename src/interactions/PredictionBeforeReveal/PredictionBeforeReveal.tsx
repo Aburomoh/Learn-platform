@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import { Notation } from "../shared/Notation";
 import styles from "./PredictionBeforeReveal.module.css";
 
 export interface PredictionResult {
@@ -29,7 +30,7 @@ export function PredictionBeforeReveal({ id, prompt, options, onPredict, result,
   return (
     <div className={styles.root} data-prediction={id}>
       <p id={promptId} className={styles.prompt}>
-        {prompt}
+        <Notation text={prompt} />
       </p>
       <div role="group" aria-labelledby={promptId} className={styles.options}>
         {options.map((text, i) => {
@@ -44,14 +45,14 @@ export function PredictionBeforeReveal({ id, prompt, options, onPredict, result,
               disabled={disabled || committed}
               aria-pressed={chosen || undefined}
             >
-              {text}
+              <Notation text={text} />
             </button>
           );
         })}
       </div>
       {committed && result.reveal && (
         <p className={`${styles.reveal} ${result.correct ? styles.revealOk : styles.revealNo}`} role="status">
-          {result.reveal}
+          <Notation text={result.reveal} />
         </p>
       )}
     </div>

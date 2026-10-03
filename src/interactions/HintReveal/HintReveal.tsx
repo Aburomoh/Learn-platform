@@ -1,5 +1,6 @@
 "use client";
 
+import { Notation } from "../shared/Notation";
 import styles from "./HintReveal.module.css";
 
 export interface RevealedHint {
@@ -39,13 +40,15 @@ export function HintReveal({ revealed, canRequest, lockedReason, onRequest, onEx
           {revealed.map((h) => (
             <li key={h.rung} className={styles.item}>
               <span className={styles.rung}>{RUNG_LABEL[h.rung] ?? `Hint ${h.rung}`}</span>
-              <span>{h.text}</span>
+              <span>
+                <Notation text={h.text} />
+              </span>
             </li>
           ))}
         </ol>
       )}
       <div className={styles.actions}>
-        <button type="button" className="btn" onClick={onRequest} disabled={!canRequest} aria-describedby={!canRequest && lockedReason ? "hint-lock" : undefined}>
+        <button type="button" className="btn btn-quiet" onClick={onRequest} disabled={!canRequest} aria-describedby={!canRequest && lockedReason ? "hint-lock" : undefined}>
           {revealed.length === 0 ? "Hint" : "Another hint"}
         </button>
         {onExplainSlowly && (

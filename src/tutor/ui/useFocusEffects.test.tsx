@@ -42,6 +42,9 @@ describe("TutorAvatar", () => {
       const { unmount } = render(<TutorAvatar expression={e} name="Dr. Demo" />);
       expect(screen.getByRole("img", { name: /Dr\. Demo/ })).toBeInTheDocument();
       expect(document.querySelector(`[data-expression="${e}"]`)).not.toBeNull();
+      // the monogram, and no developer caption for students to read (#162)
+      expect(screen.getByRole("img")).toHaveTextContent("DD");
+      expect(document.body.textContent).not.toMatch(/placeholder/i);
       unmount();
     }
   });
