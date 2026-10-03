@@ -127,6 +127,19 @@ describe("tutor engine: core rules", () => {
     expect(says(done.actions).at(-1)?.messageKey).toBe("explain.done");
   });
 
+  it("rule 5 (#42): with another variant available, the explanation ends by switching numbers", () => {
+    const c = { ...ctx, hasOtherVariant: true };
+    let st: TutorState = run([{ type: "ANSWER_SUBMITTED", correct: false }, { type: "HINT_REQUESTED" }, { type: "EXPLAIN_SLOWLY_REQUESTED" }], initialTutorState, c).state;
+    let last: TutorAction[] = [];
+    while (st.stage === "explaining") ({ state: st, actions: last } = run([{ type: "EXPLANATION_STEP_DONE" }], st, c));
+    expect(types(last)).toEqual(expect.arrayContaining(["SWITCH_VARIANT", "RESET_INTERACTION", "REQUEST_RETRY"]));
+    expect(types(last).indexOf("SWITCH_VARIANT")).toBeLessThan(types(last).indexOf("RESET_INTERACTION"));
+    expect(says(last).at(-1)?.messageKey).toBe("explain.done-variant");
+    expect(st).toMatchObject({ stage: "await_answer", attempts: 0, hintLevel: 0, grantedRungs: [], hintsEverUsed: true });
+    // a later correct answer on the new numbers still counts as helped
+    expect(says(run([{ type: "ANSWER_SUBMITTED", correct: true }], st, c).actions).at(-1)?.messageKey).toBe("correct.after-hints");
+  });
+
   it("rule 6: correct answer completes; after hints it invites a similar one", () => {
     const clean = run([{ type: "ANSWER_SUBMITTED", correct: true }]);
     expect(clean.state.stage).toBe("complete");

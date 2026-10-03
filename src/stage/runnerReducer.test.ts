@@ -53,7 +53,7 @@ describe("runner reducer: walked division", () => {
     expect(hinted.hintsUsedTotal).toBe(1);
   });
 
-  it("Explain Slowly walks the chain, then resets to step 0 for an independent retry", () => {
+  it("Explain Slowly walks the chain, then retries on new numbers from step 0", () => {
     let s = run([{ type: "OPEN" }, step(0, 13, 0), step(1, 0, 0), { type: "EXPLAIN" }]);
     expect(s.explanation).toEqual({ step: 0 });
     s = reducer(s, { type: "CONTINUE" });
@@ -67,7 +67,25 @@ describe("runner reducer: walked division", () => {
     }
     expect(s.explanation).toBeNull();
     expect(s.stepIndex).toBe(0);
-    expect(s.tutor.stage).toBe("await_retry");
+    expect(s.vIndex[0]).toBe(1);
+    expect(currentVariant(activity, s).id).toBe("v37");
+    expect(s.tutor).toMatchObject({ stage: "await_answer", attempts: 0, hintLevel: 0, hintsEverUsed: true });
+    expect(s.hints).toEqual([]);
+    expect(s.message).toContain("new numbers");
+  });
+
+  it("#42: the explained numbers cannot complete the question after Explain Slowly", () => {
+    let s = run([{ type: "OPEN" }, step(0, 1, 1), { type: "EXPLAIN" }]);
+    while (s.explanation) {
+      const ask = currentVariant(activity, s).explanation[s.explanation.step].ask;
+      if (ask && !s.explanation.prediction) s = reducer(s, { type: "PREDICT", index: ask.correctIndex });
+      s = reducer(s, { type: "CONTINUE" });
+    }
+    // Type back the walked 26 chain: the first step is already wrong for the new number.
+    s = run(chain26, s);
+    expect(s.completed[0]).toBe(false);
+    expect(s.last?.result.correct).toBe(false);
+    expect(s.stepIndex).toBe(0);
   });
 
   it("moves through read-off, octal and hex, then finishes", () => {

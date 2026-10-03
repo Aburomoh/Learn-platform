@@ -15,6 +15,7 @@ export const en: Record<string, string> = {
   "hesitation": "Take your time. If you are unsure where to start, ask for a hint.",
   "explain.start": "Let us go through it slowly, one step at a time.",
   "explain.done": "Now you try. Same method.",
+  "explain.done-variant": "Your turn now, with new numbers. Same method, one step at a time.",
   "retry.variant": "Here is a similar one.",
   "retry.same": "Reset. Try again from the start.",
   "step.next": "Good. Next step.",

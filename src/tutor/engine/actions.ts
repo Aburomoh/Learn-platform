@@ -28,6 +28,8 @@ export type TutorAction =
   | { type: "ADVANCE_EXPLANATION"; step: number }
   | { type: "RESET_INTERACTION" }
   | { type: "REQUEST_RETRY" }
+  /** Move to another variant of the same question (new numbers), e.g. after Explain Slowly. */
+  | { type: "SWITCH_VARIANT" }
   /** A step was completed: clear pointers and step-level hints, keep the question open. */
   | { type: "STEP_DONE" }
   | { type: "COMPLETE" };

@@ -30,6 +30,8 @@ export interface ActivityContext {
   /** misconception id → message key (from content nudgeKey). */
   misconceptionKeys?: Record<string, string>;
   locale?: string;
+  /** The question has another variant to retry on (new numbers). */
+  hasOtherVariant?: boolean;
 }
 
 export const HESITATION_SECONDS = 45;

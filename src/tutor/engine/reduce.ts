@@ -147,6 +147,17 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
     case "EXPLANATION_STEP_DONE": {
       if (s.stage !== "explaining") break;
       if (s.explanationStep >= ctx.explanation.length - 1) {
+        if (ctx.hasOtherVariant) {
+          // Explanation finished: the explained numbers are now known, so the independent
+          // attempt uses another variant (PEDAGOGY.md: never reveal, then accept). Help is remembered.
+          s = { ...initialTutorState, hintsEverUsed: true, expression: "encouraging" };
+          express("encouraging");
+          say("explain.done-variant");
+          out.push({ type: "SWITCH_VARIANT" });
+          out.push({ type: "RESET_INTERACTION" });
+          out.push({ type: "REQUEST_RETRY" });
+          break;
+        }
         // Explanation finished: hand control back for an independent attempt.
         s.stage = "await_retry";
         s.explanationStep = 0;

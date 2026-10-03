@@ -3,7 +3,7 @@ import { test, expect, type Page } from "@playwright/test";
 /**
  * Core student flow (docs/MILESTONES.md):
  * open → choose course → open activity → one division step at a time → wrong step → feedback →
- * hint → Explain Slowly → retry → finish the chain → read the bits → progress survives reload.
+ * hint → Explain Slowly → retry on new numbers → finish the chain → read the bits → progress survives reload.
  * Runs at desktop and mobile viewports.
  */
 
@@ -75,13 +75,10 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
     await page.getByRole("button", { name: /Continue|Now I try/ }).click();
   }
 
-  // 5. independent retry from the first step, all the way to 0
-  await expect(stage).toHaveAttribute("data-stage", "await_retry");
-  await divisionStep(page, 26, 13, 0);
-  await divisionStep(page, 13, 6, 1);
-  await divisionStep(page, 6, 3, 0);
-  await divisionStep(page, 3, 1, 1);
-  await divisionStep(page, 1, 0, 1);
+  // 5. independent retry on new numbers (#42: never the explained ones), all the way to 0
+  await expect(stage).toHaveAttribute("data-stage", "await_answer");
+  await expect(page.getByText("Your turn now, with new numbers.")).toBeVisible();
+  for (const [d, q, r] of [[37, 18, 1], [18, 9, 0], [9, 4, 1], [4, 2, 0], [2, 1, 0], [1, 0, 1]]) await divisionStep(page, d, q, r);
   await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
   await expect(page.locator("[data-expression='pleased']:visible")).toBeVisible();
 
