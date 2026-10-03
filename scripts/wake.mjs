@@ -29,13 +29,21 @@ const ROLES = {
 const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 30_000 });
 const ISSUE = (n) => `repos/{owner}/{repo}/issues/${n}`;
 
-// Open issues and PRs carrying any of `labels`. The search index lags label changes, so results
-// are re-checked against each item's actual labels (a just-acked item must not wake anyone).
-function openItems(labels) {
+// Issues and PRs carrying any of `labels`: open ones, plus PRs merged in the last 7 days, because
+// wake.yml labels the PR itself on merge (#94). The window keeps old unacked merges from flooding.
+// The search index lags label changes, so results are re-checked against each item's actual
+// labels (a just-acked item must not wake anyone). The session-start check skips merged PRs.
+function openItems(labels, { merged = false } = {}) {
   const search = "label:" + labels.map((l) => `"${l}"`).join(",");
+  const since = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
+  const lists = [
+    ["issue", "--state", "open", "--search", search],
+    ["pr", "--state", "open", "--search", search],
+    ...(merged ? [["pr", "--state", "merged", "--search", `${search} merged:>=${since}`]] : []),
+  ];
   const out = [];
-  for (const kind of ["issue", "pr"]) {
-    const json = gh(kind, "list", "--state", "open", "--search", search, "--json", "number,title,url,updatedAt,labels", "--limit", "50");
+  for (const args of lists) {
+    const json = gh(...args.slice(0, 1), "list", ...args.slice(1), "--json", "number,title,url,updatedAt,labels", "--limit", "50");
     out.push(...JSON.parse(json || "[]"));
   }
   return out.filter((it) => it.labels.some((l) => labels.includes(l.name)));
@@ -83,11 +91,15 @@ if (mode === "--alarm") {
   if (!seen.some((c) => c.body === body)) gh("api", "-X", "POST", `${ISSUE(number)}/comments`, "-f", `body=${body}`);
   console.log(`#${number} now carries ${alarm}. ${title} sees it via wake:watch, at session start, and in npm run wake ${role}.`);
 } else if (mode === "--ack") {
-  if (!Number.isInteger(number)) usage();
-  try {
-    gh("api", "-X", "DELETE", `${ISSUE(number)}/labels/${encodeURIComponent(alarm)}`);
-  } catch {} // already cleared
-  console.log(`#${number}: ${alarm} cleared.`);
+  // Several numbers at once, e.g. to clear a backlog of merge wakes.
+  const numbers = argv.slice(1).map(Number);
+  if (!numbers.length || !numbers.every(Number.isInteger)) usage();
+  for (const n of numbers) {
+    try {
+      gh("api", "-X", "DELETE", `${ISSUE(n)}/labels/${encodeURIComponent(alarm)}`);
+    } catch {} // already cleared
+    console.log(`#${n}: ${alarm} cleared.`);
+  }
 } else if (mode === "--watch") {
   // Each stdout line is one alarm, so a session can stream this (e.g. Claude Code Monitor).
   const every = Number(process.env.WAKE_POLL_SECONDS) || 60;
@@ -98,7 +110,7 @@ if (mode === "--alarm") {
   let failures = 0;
   for (;;) {
     try {
-      for (const it of openItems(watched)) {
+      for (const it of openItems(watched, { merged: true })) {
         if (seen.get(it.number) === it.updatedAt) continue;
         console.log(`WAKE ${role} ${seen.has(it.number) ? "(updated) " : ""}${line(it, watched)}`);
         seen.set(it.number, it.updatedAt);
@@ -125,7 +137,7 @@ if (mode === "--alarm") {
 
   console.log("\n=== OPEN ITEMS ===");
   try {
-    const open = openItems(all).map((it) => "  " + line(it, all));
+    const open = openItems(all, { merged: true }).map((it) => "  " + line(it, all));
     console.log(open.length ? open.join("\n") : "  (none)");
   } catch {
     console.log("  (gh unavailable or not authenticated)");
