@@ -30,6 +30,8 @@ export interface RunnerState {
   interactionKey: number;
   /** Incremented on every submit; the component records evidence when it changes. */
   attemptSeq: number;
+  /** Incremented each time the tutor speaks, so a repeated text still counts as a new message. */
+  messageSeq: number;
   /** Highest hint rung used on the current variant; summed into hintsUsedTotal on completion. */
   hintsUsedTotal: number;
   /** DOM effects to apply (FOCUS / HIGHLIGHT / PULSE / clears). */
@@ -94,6 +96,7 @@ export function initialRunnerState(activity: Activity): RunnerState {
     stepIndex: 0,
     interactionKey: 0,
     attemptSeq: 0,
+    messageSeq: 0,
     hintsUsedTotal: 0,
     effects: [],
     effectSeq: 0,
@@ -112,6 +115,7 @@ export function createRunnerReducer(activity: Activity) {
       switch (a.type) {
         case "SAY":
           next.message = a.text;
+          next.messageSeq += 1;
           break;
         case "CHANGE_EXPRESSION":
           next.expression = a.expression;

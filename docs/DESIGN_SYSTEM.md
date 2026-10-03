@@ -52,14 +52,14 @@ Evidence: `docs/design/review-2026-10-03/`. Each row is adopted by the issue tha
 | `--pending-opacity` | `0.45` | Circuit gates and wires not yet reached in a gate walk. |
 | `--focus-halo` | `var(--highlight-soft)` | Rounded halo behind the active gate or active cell group. |
 | `--sub-size` | `0.7em` | Base subscript in number notation, e.g. (26)<sub>10</sub>. |
-| `--topbar-h` | `52px` | Height of the sticky top bar; replaces literal `52px` / `68px` offsets. |
-| `--tutor-strip-h` | `64px` | Max height of the compact sticky tutor strip below `lg`. |
-| `--sticky-offset` | `calc(var(--topbar-h) + var(--tutor-strip-h))` | `scroll-padding-top` so focus/highlight scrolling never lands under sticky UI. |
+| `--topbar-h` | `52px` | Height of the sticky top bar; replaces literal `52px` / `68px` offsets. Adopted in #54. |
+| `--tutor-strip-h` | `64px` | Height cap of the *collapsed* (stale-message) tutor strip below `lg`. Adopted in #54. |
+| `--sticky-offset` | `calc(var(--topbar-h) + var(--tutor-live-h, var(--tutor-strip-h)) + var(--space-2))` | `scroll-padding-top` so focus/highlight scrolling never lands under sticky UI; `--tutor-live-h` is the strip's live height. Adopted in #54. |
 | `--content-wide` | `1400px` | Activity pages; top bar and footer use the same width so edges align. |
 
 ### Rules that come with them
 - **Accent means attention, not value.** Logic levels use `--signal-*` plus a printed 0/1; the active gate gets `--focus-halo`, a 3.5 px `--accent` outline and a `?` at its output. Gates after it use `--pending-opacity`.
-- **Sticky tutor below `lg`:** a one- or two-line strip (avatar 32 px, text clamped, tap to expand) capped at `--tutor-strip-h`. When the viewport is under 500 px tall the tutor is not sticky at all.
+- **Sticky tutor below `lg`: never clamp unread text.** A new tutor message (feedback, hint, Explain Slowly step) shows in full: the strip grows to fit, up to 40svh, and scrolls inside itself beyond that, never with an ellipsis. It collapses to the 2-line strip (`--tutor-strip-h`) only once the message is stale: the student's next input, Continue, or a page scroll. Height changes use `--dur-base` (instant under reduced motion). `scroll-padding-top` follows the strip's live height, not the collapsed cap, so focused inputs and Continue are never covered. When the viewport is under 500 px tall the tutor is not sticky at all.
 - **DivisionChain is a vertical ladder at all widths** (matches the Chapter 1 slide; #53). Each row has `2 |`, the number and its remainder; the quotient is typed into the next row down. The active row gets `--focus-halo`. In the read-off step an upward arrow beside the remainders runs from MSB (bottom) to LSB (top).
 - **Horizontal steppers on phones** (future bit rows): the active column is always scrolled into view, and a fade edge shows there is more content.
 - **Diagrams must fit at 390 px** down to 0.6× scale before horizontal scrolling is allowed; the output (Y) must always be visible.

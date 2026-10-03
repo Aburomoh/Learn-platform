@@ -61,7 +61,7 @@ export function TutorBubble({ text, speed = 45, onDone, placement = "side" }: Tu
       aria-label={complete ? undefined : "Show the whole message"}
       data-complete={complete}
     >
-      <span aria-hidden="true" className={styles.typed}>
+      <span aria-hidden="true" className={styles.typed} data-tutor-text>
         {text.slice(0, shown)}
         {!complete && <span className={styles.caret} />}
       </span>

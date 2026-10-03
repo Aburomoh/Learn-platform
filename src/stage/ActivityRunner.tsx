@@ -115,7 +115,7 @@ export function ActivityRunner({ offeringId, topic, activity, backHref }: Activi
   return (
     <div className={styles.layout}>
       <div className={styles.tutor}>
-        <TutorPanel name={product.owner.shortName} expression={state.expression} message={state.message} typingSpeed={prefs.typingSpeed} />
+        <TutorPanel name={product.owner.shortName} expression={state.expression} message={state.message} messageSeq={state.messageSeq} typingSpeed={prefs.typingSpeed} />
       </div>
 
       <div className={styles.stage} ref={stageRef} data-testid="learning-stage" data-stage={stage}>
