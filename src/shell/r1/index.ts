@@ -6,3 +6,4 @@ export { TopBar, Footer, TopicRow, type TopicRowProps } from "./Chrome";
 export { ProfileMenu } from "./ProfileMenu";
 export { PageFrame, type PageFrameProps } from "./PageFrame";
 export { TopicNext } from "./TopicNext";
+export { CourseTopics, topicStatus } from "./CourseTopics";

@@ -5,6 +5,7 @@
 export const en = {
   // generic flow
   // pages outside the stage (R1 redesign): set expectations, never method hints
+  "page.course.intro": "Take the topics in order. Each challenge is short, and your progress is saved, so you can stop at any point.",
   "page.topic.intro": "We'll do this one step at a time. Try first; I'm here if you need me.",
 
   "open": "Give it a try. I will step in only if you want me to.",

@@ -1,9 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { courses, getCourse } from "@/content";
-import { Shell } from "@/shell/Shell";
-import styles from "@/shell/Shell.module.css";
+import { product } from "../../../../config/product";
+import { CourseTopics, PageFrame, PageHeading } from "@/shell/r1";
+import { resolveMessage } from "@/tutor";
+import { TutorCard } from "@/tutor/ui";
 
 type Params = { course: string };
 
@@ -16,32 +17,22 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   return { title: getCourse(course)?.title ?? "Course" };
 }
 
+/**
+ * Course page (R1 redesign): a chapter map. Title band, then one section per chapter with one
+ * row per topic. The tutor's one line sits in the right column on wide screens only.
+ */
 export default async function CoursePage({ params }: { params: Promise<Params> }) {
   const { course: courseId } = await params;
   const course = getCourse(courseId);
   if (!course) notFound();
 
   return (
-    <Shell crumbs={[{ href: `/courses/${course.id}/`, label: course.title }]}>
-      <h1>{course.title}</h1>
-      <p className={styles.lead}>{course.summary}</p>
-      {course.modules.map((m) => (
-        <section key={m.id} className={styles.section} aria-labelledby={`m-${m.id}`}>
-          <h2 id={`m-${m.id}`}>{m.title}</h2>
-          <div className={styles.grid}>
-            {m.topics.map((t) => (
-              <Link key={t.id} href={`/courses/${course.id}/${t.id}/`} className={styles.card}>
-                <h3>{t.title}</h3>
-                <p>{t.summary}</p>
-                <div className={styles.meta}>
-                  <span>{t.activities.length} {t.activities.length === 1 ? "activity" : "activities"}</span>
-                  <span>{t.activities.reduce((n, a) => n + a.minutes, 0)} min</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      ))}
-    </Shell>
+    <PageFrame
+      demo={course.authority === "DEMO"}
+      aside={<TutorCard name={product.owner.shortName} message={resolveMessage("page.course.intro")} portraitSrc={product.brand.tutorPortrait} />}
+    >
+      <PageHeading eyebrow={course.code} title={course.title} route={course.summary} />
+      <CourseTopics course={course} />
+    </PageFrame>
   );
 }

@@ -23,7 +23,9 @@ test("home lists the course and navigates to an activity", async ({ page }) => {
   // each hop waits for its URL so a slow transition fails at the hop, not on a stale page
   await page.getByRole("link", { name: /Introduction to Digital System Design/ }).click();
   await expect(page).toHaveURL(/\/courses\/ecet111\/$/);
-  await page.getByRole("link", { name: /Number-base conversions/ }).click();
+  // course page: a chapter map; the topic title is a quiet link, and exactly one button is filled
+  await expect(page.locator("[data-primary-action]")).toHaveCount(1);
+  await page.getByRole("link", { name: "Number-base conversions", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`${TOPIC}$`));
   // topic page: where am I, what am I learning, and one primary button
   await expect(page.getByRole("heading", { level: 1, name: "Number-base conversions" })).toBeVisible();
