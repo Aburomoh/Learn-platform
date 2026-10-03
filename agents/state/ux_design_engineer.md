@@ -1,7 +1,7 @@
 # Current State — UX / Design Engineer
 
-Current assignment: Design rules for M1.1 fixes (#53 ladder, #54 tutor strip, #88 diagram text floor).
-Recent important decision: Diagram text ≥ 12 px via compact layout (replaces 0.6× scale); never clamp unread tutor text.
+Current assignment: Design checks on M1.1/M1.2 component PRs (#90 circuit 12 px approved; #92 BitGrouping changes requested).
+Recent important decision: Diagram text ≥ 12 px via compact layout; never clamp unread tutor text; touch targets ≥ 44 px tall, ≥ 36 px wide in dense rows.
 Blocker: None
-Relevant issue/PR: #88, #87, #53, #32
-Next expected action: Check Frontend PRs for #88 and #53 against the rules.
+Relevant issue/PR: #92, #97, #55, #56
+Next expected action: Re-check #92 after Frontend's fix; answer #97 once Pedagogy rules on LSB label timing.
