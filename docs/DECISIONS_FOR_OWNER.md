@@ -33,8 +33,15 @@ Team recommendation: A until real course content lands; revisit at M2.
 ### 5. Walk through M1.1
 Decision: check that your 2026-10-03 feedback is fixed. Open the preview above (or `npm run dev`) → ECET 111 → Chapter 1.
 Look at: (a) divide-by-2 is now checked one division at a time; (b) the circuit is redrawn with standard symbols and right-angle wires.
-Known gap: the circuit question still asks for Y in one step; a gate-by-gate walk is being ticketed next.
+Best after the close-out lands (#32 circuit walk, plus any vetoes you accept in item 6); the team will ping you.
 Why it matters: M2 (real course content) reuses these step sizes and diagrams.
+
+### 6. Pedagogy vetoes on the conversion activity (#42, #44, #45)
+Decision: accept or reject three vetoes filed against PR #25. Vetoes are advisory to you (docs/PEDAGOGY.md).
+- #42 (High): after Explain Slowly the student can type back the answer just shown on the same numbers. Fix: retry on the other variant.
+- #44: octal/hex still asks pad + group + convert in one answer. Fix: groups first, then one digit per group.
+- #45: an octal question shows a hex message, rung 8 gives the full answer, two weak distractors.
+Team recommendation: accept all three. Work waits for your answer. Reply "accept 42, 44, 45" or name the ones to drop.
 
 ## Resolved
 - 2026-10-03 — Session-start alarm hook in `.claude/settings.json` (PR #26): approved by owner, merged.
