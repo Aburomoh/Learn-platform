@@ -132,6 +132,18 @@ test("octal and hex by grouping, one goal at a time, finish the activity", async
     await page.getByRole("button", { name: new RegExp(`Bit ${size === 3 ? 3 : 2} of 5: .*Start a new group here`) }).click();
 
     for (let i = 0; i < zeros; i++) await page.getByRole("button", { name: "Add a leading zero" }).click();
+    if (size === 4) {
+      // 8 cells on the narrowest phone: the row scrolls inside its own box, the page does not widen
+      const viewport = page.viewportSize()!;
+      await page.setViewportSize({ width: 320, height: 700 });
+      const widths = await page.evaluate(() => ({
+        page: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        cells: document.querySelectorAll("button[aria-pressed]").length + 1,
+      }));
+      expect(widths.cells).toBe(8);
+      expect(widths.page).toBeLessThanOrEqual(0);
+      await page.setViewportSize(viewport);
+    }
     await page.getByRole("button", { name: new RegExp(`${cutAt}: .*Start a new group here`) }).click();
     await page.getByRole("button", { name: "Check groups" }).click();
 
