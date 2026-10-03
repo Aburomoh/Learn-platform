@@ -43,9 +43,15 @@
   min-width: 0;
 }
 
-/* empty frame shown until local progress is read after hydration */
-.stageLoading {
-  min-height: 320px;
+/* A returning student's pre-rendered challenge 1 stays invisible (but keeps its space) until the
+   runner has resumed on the right challenge; the marker is set before first paint (resumeMarker.ts). */
+:global(html[data-resume]) .runner {
+  visibility: hidden;
+}
+
+.runner {
+  display: grid;
+  gap: var(--space-4);
 }
 
 /* "Challenge 2 of 4 · Read off": --brand text, 13 px bold */
