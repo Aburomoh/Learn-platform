@@ -256,6 +256,38 @@ for (const route of [
   });
 }
 
+test("theme: light by default, dark or match-device only by choice, applied before first paint", async ({ page }) => {
+  const theme = () => page.evaluate(() => document.documentElement.getAttribute("data-theme"));
+  const background = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const LIGHT = "rgb(246, 243, 238)";
+  const DARK = "rgb(28, 26, 23)";
+
+  // a device that prefers dark still gets the light theme until the student chooses otherwise
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.goto("/settings/");
+  expect(await theme()).toBe("light");
+  expect(await background()).toBe(LIGHT);
+
+  await page.getByLabel("Theme").selectOption("dark");
+  await expect.poll(theme).toBe("dark");
+  expect(await background()).toBe(DARK);
+  await page.waitForTimeout(400); // debounced prefs write
+
+  // the choice is applied by the head script on the next page, before React hydrates
+  await page.goto("/courses/ecet111/logic-gates/predict-gate-output/");
+  expect(await theme()).toBe("dark");
+  expect(await background()).toBe(DARK);
+
+  await page.goto("/settings/");
+  await page.getByLabel("Theme").selectOption("system");
+  await expect.poll(background).toBe(DARK);
+  await page.emulateMedia({ colorScheme: "light" });
+  await expect.poll(background).toBe(LIGHT);
+
+  await page.getByRole("button", { name: "Clear my local data" }).click();
+  await expect.poll(theme).toBe("light");
+});
+
 test("settings: clear local data resets progress", async ({ page }) => {
   await page.goto(ACTIVITY);
   await expect(page.getByTestId("learning-stage")).toBeVisible();

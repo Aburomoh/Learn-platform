@@ -1,15 +1,27 @@
-/* Design tokens (docs/DESIGN_SYSTEM.md). Semantic, not brand. */
+/*
+ * Design tokens (docs/DESIGN_SYSTEM.md, R1 redesign: docs/design/redesign-r1/README.md §10).
+ * Warm paper neutrals, ink-blue action (--accent), terracotta identity (--brand).
+ *
+ * Theme: light by default. Dark applies only when the student chooses it:
+ *   <html data-theme="dark">    always dark
+ *   <html data-theme="system">  dark when the device asks for it
+ * The dark values are written twice (attribute and media query); keep the two blocks identical.
+ */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-  --text-sm: 0.875rem;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
   --text-base: 1rem;
   --text-md: 1.125rem;
   --text-lg: 1.375rem;
   --text-xl: 1.75rem;
+  --text-display: clamp(1.875rem, 1.35rem + 1.6vw, 2.5rem);
   --leading: 1.5;
+  --tracking-tight: -0.015em;
+  --tracking-eyebrow: 0.08em;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -20,10 +32,13 @@
   --space-7: 48px;
   --space-8: 64px;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --content-max: 1100px;
+  /* tiles and controls 10 px, surfaces 16 px; pills only for tiny status chips */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  /* top bar, main and footer share this width */
+  --content-max: 1120px;
   --touch-min: 44px;
   /* floor for text inside SVG diagrams, as rendered on screen (CircuitDiagram MIN_SCALE = 12 / 16) */
   --diagram-text-min: 12px;
@@ -37,51 +52,102 @@
   --dur-slow: 400ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
 
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --surface-2: #eef0f3;
-  --text: #1b1f24;
-  --text-muted: #5b6470;
-  --border: #d4d9e0;
-  --accent: #1f5fbf;
+  /* surfaces: page, rows and panels, tiles and bubbles, sunken wells (preview board, stage wells) */
+  --bg: #f6f3ee;
+  --surface: #fffdfa;
+  --surface-2: #efe9e0;
+  --surface-sunk: #f1ece4;
+  --text: #2a251f;
+  --text-muted: #6a6157;
+  /* hairlines on inputs and controls that need an edge; not for cards */
+  --border: #e2dacd;
+
+  /* primary action */
+  --accent: #1d4f7a;
+  --accent-hover: #163d5f;
+  --accent-soft: #e4ecf3;
   --accent-contrast: #ffffff;
-  --focus: #1f5fbf;
-  --success: #1b7f4a;
-  --success-bg: #e3f4ea;
+  --focus: #1d4f7a;
+  /* identity: eyebrow, current step, tutor monogram. As text only at 13 px bold or larger. */
+  --brand: #b5522b;
+  --brand-soft: #f6e4da;
+
+  --success: #2e7d4f;
+  --success-soft: #e3f0e7;
+  --success-bg: var(--success-soft);
   --error: #b42318;
   --error-bg: #fbe9e7;
-  --warning: #9a6700;
-  --warning-bg: #fff4d6;
-  --highlight: #ffd666;
-  --highlight-soft: rgba(255, 214, 102, 0.35);
+  --warning: #8a5a00;
+  --warning-bg: #fbefd2;
+  --highlight: #f4c95d;
+  --highlight-soft: rgba(244, 201, 93, 0.3);
   --focus-halo: var(--highlight-soft);
   --signal-high: #0f766e;
   --signal-low: var(--text-muted);
   --pending-opacity: 0.45;
-  --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.1);
+
+  /* one elevated element per page uses --shadow-2; everything else is flat or --shadow-1 */
+  --shadow-1: 0 1px 2px rgba(60, 40, 20, 0.05), 0 2px 8px rgba(60, 40, 20, 0.06);
+  --shadow-2: 0 2px 4px rgba(60, 40, 20, 0.05), 0 10px 28px rgba(60, 40, 20, 0.09);
+  /* alias while modules migrate to --shadow-1 */
+  --shadow: var(--shadow-1);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1c1a17;
+  --surface: #25221e;
+  --surface-2: #2f2b26;
+  --surface-sunk: #211e1b;
+  --text: #f1ece4;
+  --text-muted: #b3a99c;
+  --border: #3a352f;
+  --accent: #8fb8e0;
+  --accent-hover: #a9c9e8;
+  --accent-soft: #24313d;
+  --accent-contrast: #13202c;
+  --focus: #a9c9e8;
+  --brand: #e08a62;
+  --brand-soft: #3a2a21;
+  --success: #74c495;
+  --success-soft: #1f3327;
+  --error: #ff9a8b;
+  --error-bg: #3a1d18;
+  --warning: #f0c060;
+  --warning-bg: #3a2e14;
+  --highlight-soft: rgba(244, 201, 93, 0.2);
+  --signal-high: #5eead4;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.4), 0 10px 28px rgba(0, 0, 0, 0.35);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f1216;
-    --surface: #171b21;
-    --surface-2: #1f252d;
-    --text: #e8ecf1;
-    --text-muted: #9aa4b1;
-    --border: #2f3842;
-    --accent: #7aa7ff;
-    --accent-contrast: #0b1220;
-    --focus: #9cc0ff;
-    --success: #5fd08a;
-    --success-bg: #12301f;
-    --error: #ff8a7a;
-    --error-bg: #3a1a16;
-    --warning: #ffd166;
-    --warning-bg: #3a2e10;
-    --highlight: #ffd666;
-    --highlight-soft: rgba(255, 214, 102, 0.25);
+  :root[data-theme="system"] {
+    color-scheme: dark;
+    --bg: #1c1a17;
+    --surface: #25221e;
+    --surface-2: #2f2b26;
+    --surface-sunk: #211e1b;
+    --text: #f1ece4;
+    --text-muted: #b3a99c;
+    --border: #3a352f;
+    --accent: #8fb8e0;
+    --accent-hover: #a9c9e8;
+    --accent-soft: #24313d;
+    --accent-contrast: #13202c;
+    --focus: #a9c9e8;
+    --brand: #e08a62;
+    --brand-soft: #3a2a21;
+    --success: #74c495;
+    --success-soft: #1f3327;
+    --error: #ff9a8b;
+    --error-bg: #3a1d18;
+    --warning: #f0c060;
+    --warning-bg: #3a2e14;
+    --highlight-soft: rgba(244, 201, 93, 0.2);
     --signal-high: #5eead4;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.4), 0 10px 28px rgba(0, 0, 0, 0.35);
   }
 }
 
