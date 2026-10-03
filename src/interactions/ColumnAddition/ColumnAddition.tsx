@@ -56,7 +56,12 @@ export function ColumnAddition({ id, a, b, columns, stepIndex, onStep, state = "
   const wrong = state === "incorrect" ? styles.wrong : "";
 
   // Grid: column 1 holds the "+" sign; step c (0 = rightmost) sits in grid column width + 2 - c.
-  const col = (step: number) => width + 2 - step;
+  // With a final carry step there is one extra column on the left for it. Without one (the end
+  // carry is dropped, e.g. the +1 of a 2's complement) the grid is exactly as wide as the operands,
+  // and the last column's carry is written above the "+" sign.
+  const hasFinal = columns.some((c) => c.final);
+  const bitColumns = width + (hasFinal ? 1 : 0);
+  const col = (step: number) => bitColumns + 1 - step;
   const at = (row: number, step: number): React.CSSProperties => ({ gridRow: row, gridColumn: col(step) });
 
   // Wide additions scroll inside their own box; keep the active column in view (it starts at the right).
@@ -86,7 +91,7 @@ export function ColumnAddition({ id, a, b, columns, stepIndex, onStep, state = "
   return (
     <form className={styles.root} onSubmit={submit} data-diagram={id} aria-label="Binary addition, one column at a time">
       <div className={styles.scroll} ref={scrollRef} data-fade={fade}>
-      <div className={styles.grid} style={{ gridTemplateColumns: `auto repeat(${width + 1}, var(--cell))` }}>
+      <div className={styles.grid} style={{ gridTemplateColumns: `minmax(var(--cell), auto) repeat(${bitColumns}, var(--cell))` }}>
         {!done && <span className={styles.halo} style={{ gridRow: "1 / span 5", gridColumn: col(stepIndex) }} aria-hidden="true" data-active-column />}
         {attention !== undefined && <span className={styles.attention} style={{ gridRow: "1 / span 5", gridColumn: col(attention) }} aria-hidden="true" />}
 
@@ -102,6 +107,14 @@ export function ColumnAddition({ id, a, b, columns, stepIndex, onStep, state = "
           );
         })}
 
+        {/* no final step: the carry out of the leftmost column is shown, struck through, as dropped */}
+        {!hasFinal && done && (
+          <span className={`${styles.cell} ${styles.carry} ${styles.dropped} mono`} style={at(1, columns.length)} {...focusTarget("add-carry-dropped")}>
+            <span className="sr-only">carry out, dropped: </span>
+            {columns[columns.length - 1].carryOut}
+          </span>
+        )}
+
         {/* rows 2 and 3: the operands */}
         {[...a].map((bit, i) => (
           <span key={`a-${i}`} className={`${styles.cell} mono`} style={at(2, width - 1 - i)}>
@@ -116,7 +129,7 @@ export function ColumnAddition({ id, a, b, columns, stepIndex, onStep, state = "
             {bit}
           </span>
         ))}
-        <span className={styles.line} style={{ gridRow: 4, gridColumn: `1 / span ${width + 2}` }} aria-hidden="true" />
+        <span className={styles.line} style={{ gridRow: 4, gridColumn: `1 / span ${bitColumns + 1}` }} aria-hidden="true" />
 
         {/* row 5: sum bits of the completed steps */}
         {columns.map((c, step) =>
@@ -149,7 +162,7 @@ export function ColumnAddition({ id, a, b, columns, stepIndex, onStep, state = "
               {needsCarry && (
                 <span className={`${styles.cell} ${styles.carry}`} style={at(1, stepIndex + 1)}>
                   <label htmlFor={carryId} className="sr-only">
-                    {name}: carry to the next column
+                    {name}: {!hasFinal && stepIndex === columns.length - 1 ? "carry out" : "carry to the next column"}
                   </label>
                   <input
                     id={carryId}
