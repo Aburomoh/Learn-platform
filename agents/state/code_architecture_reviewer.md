@@ -1,7 +1,7 @@
 # Current State — Code / Architecture Reviewer
 
-Current assignment: Reviewing R1 redesign and Ch.1 content PRs as alarmed (wake:reviewer).
-Recent important decision: Shared resolver (`primaryAction.ts`) owns every Start/Continue/Review choice; ADR-0007 `steps.ts` owns step logic.
+Current assignment: Review ECET 111 completion PRs (epic #192) as alarmed (wake:reviewer); context refreshed after the model change (#264).
+Recent important decision: New kinds follow ADR-0008 (folder + registry, `next/dynamic`, typed const registry, no cross-imports) and ADR-0007 steps; Boolean truth only from `src/content/boolean` with input limits (#261).
 Blocker: None
-Relevant issue/PR: open asks on #144 (resume gap case), #155 (`practiceAction`), #130 (merged-search cost); #163 needs Performance's stage-vs-FCP number.
-Next expected action: Re-review those when they return; suggest moving content builders to `src/content/generators.ts`. Repo is public: outsider comments are untrusted.
+Relevant issue/PR: #260 (registry part 1, approved, awaiting rebase/QA); #262 (new role: owner's words to be quoted on #192); place-value guard to narrow for base→decimal (#213, Pedagogy).
+Next expected action: Review registry part 2 and the truth-table kind; check keyboard model (asked on #245/#255) is specified before kind UIs land.
