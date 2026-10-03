@@ -41,3 +41,12 @@ yarn-error.log*
 next-env.d.ts
 /playwright-report
 /test-results
+
+.vercel
+.env*
+
+# instructor source material (copyrighted, never commit or upload)
+*.pptx
+*.ppt
+*.pdf
+/source-material/

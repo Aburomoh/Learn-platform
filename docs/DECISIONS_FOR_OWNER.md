@@ -4,12 +4,13 @@ Only items that genuinely need Dr. Mohannad. Routine engineering choices are in 
 
 ## Open
 
-### 1. Vercel project and preview deployments
-Decision: connect `Aburomoh/Learn-platform` to a Vercel project (Hobby) so every PR gets a preview URL.
-Why it matters: the team cannot inspect PRs in a real browser URL until this exists.
-Option A: Owner imports the repo in the Vercel dashboard (Add New → Project → GitHub) and keeps defaults.
-Option B: Owner installs the CLI (`npm i -g vercel`, `vercel login`) and the Release engineer links it.
-Team recommendation: A. No production domain yet; `learn.aburomoh.com` is attached only after a release decision.
+### 1. Vercel: grant GitHub access for automatic previews
+Status: project `learn-platform` is linked (team `aburomohs-projects`) and deployed by CLI at
+https://learn-platform-aburomohs-projects.vercel.app (behind Vercel login; custom domain not attached).
+Decision: `vercel git connect` was refused because the Vercel GitHub app cannot see the private repo.
+Owner action: GitHub → Settings → Applications → Vercel → Configure → Repository access → add
+`Aburomoh/Learn-platform`. Then the Release engineer runs `vercel git connect` and every PR gets a preview URL.
+Until then: previews are deployed manually with `vercel deploy`.
 
 ### 2. Production release of M1
 Decision: whether the M1 slice goes to `learn.aburomoh.com` once accepted.

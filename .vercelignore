@@ -1,0 +1,9 @@
+*.pptx
+*.ppt
+*.pdf
+source-material
+agents
+docs
+e2e
+test-results
+playwright-report
