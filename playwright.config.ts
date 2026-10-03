@@ -1,7 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
 // Smoke tests run against the static export in ./out (what Vercel serves).
-const PORT = 4173;
+// Several checkouts (agent worktrees) may run e2e at once: set PW_PORT per checkout. A server is
+// never reused, so a busy port fails loudly instead of silently testing another checkout's build.
+const PORT = Number(process.env.PW_PORT) || 4173;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -16,7 +18,7 @@ export default defineConfig({
   webServer: {
     command: `node scripts/serve-static.mjs out ${PORT}`,
     url: `http://127.0.0.1:${PORT}`,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 60_000,
   },
   projects: [
