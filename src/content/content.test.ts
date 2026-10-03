@@ -202,6 +202,11 @@ describe("grade()", () => {
   it("grades numeric answers case- and zero-insensitively", () => {
     expect(grade(hex, { kind: "numeric", text: "1a" }).correct).toBe(true);
     expect(grade(hex, { kind: "numeric", text: " 01A " }).correct).toBe(true);
+    expect(grade(hex, { kind: "numeric", text: "0x1A" }).correct).toBe(true);
+    expect(grade(hex, { kind: "numeric", text: "0X001a" }).correct).toBe(true);
+    expect(grade(read, { kind: "numeric", text: "0b11010" }).correct).toBe(true);
+    expect(grade(read, { kind: "numeric", text: "0B011010" }).correct).toBe(true);
+    expect(grade(read, { kind: "numeric", text: "0x11010" }).correct).toBe(false); // wrong-base prefix is not stripped
     expect(grade(hex, { kind: "numeric", text: "110" })).toMatchObject({ correct: false, misconceptionId: "ns.hex-digit-decimal" });
     expect(grade(hex, { kind: "numeric", text: "26" })).toMatchObject({ correct: false, misconceptionId: "ns.copied-decimal" });
     expect(grade(hex, { kind: "numeric", text: "d0" })).toMatchObject({ correct: false, misconceptionId: "ns.group-from-left" });
@@ -300,6 +305,7 @@ describe("1's complement on numeric + bit-row (#35)", () => {
     expect(ans(complement100101, "010010")).toMatchObject({ correct: false, misconceptionId: "c1.first-wrong-bit", wrongBit: 2 });
     expect(ans(complement110010, "000001")).toMatchObject({ misconceptionId: "c1.first-wrong-bit", wrongBit: 2 });
     expect(ans(complement110010, "1111")).toMatchObject({ misconceptionId: "c1.first-wrong-bit", wrongBit: 4 });
+    expect(ans(complement100101, "0b010010")).toMatchObject({ misconceptionId: "c1.first-wrong-bit", wrongBit: 2 }); // #74: prefix stripped
   });
 
   it("does not guess a position for non-bit or over-long answers", () => {

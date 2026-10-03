@@ -38,13 +38,13 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
     }
     case "numeric": {
       const a = answer as Extract<Answer, { kind: "numeric" }>;
-      const text = normaliseNumeric(a.text);
-      const correct = text === normaliseNumeric(spec.answer);
+      const text = normaliseNumeric(a.text, spec.base);
+      const correct = text === normaliseNumeric(spec.answer, spec.base);
       // Compare normalised forms on both sides so "01011" still matches an authored "01011".
-      const hit = variant.misconceptions.find((m) => m.detect.type === "equals" && normaliseNumeric(String(m.detect.value)) === text);
+      const hit = variant.misconceptions.find((m) => m.detect.type === "equals" && normaliseNumeric(String(m.detect.value), spec.base) === text);
       if (correct || hit) return { correct, normalized: text, misconceptionId: correct ? undefined : hit?.id };
       const firstWrong = variant.misconceptions.find((m) => m.detect.type === "first-wrong-bit");
-      const wrongBit = firstWrong && spec.base === 2 ? firstWrongBit(spec.answer, a.text.trim()) : undefined;
+      const wrongBit = firstWrong && spec.base === 2 ? firstWrongBit(spec.answer, a.text.trim().replace(/^0[bB]/, "")) : undefined;
       return wrongBit === undefined ? { correct, normalized: text } : { correct, normalized: text, misconceptionId: firstWrong!.id, wrongBit };
     }
     case "multiple-choice": {
@@ -107,8 +107,14 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
   }
 }
 
-function normaliseNumeric(text: string): string {
-  return text.trim().toUpperCase().replace(/^0+(?=.)/, "").replace(/^0[XB]/, "");
+/**
+ * Trims, uppercases, strips a base prefix, then leading zeros. Only the prefix that matches the
+ * base is stripped: in hex, "0B" is the digit B, not a binary prefix.
+ */
+function normaliseNumeric(text: string, base: number): string {
+  const prefix = base === 16 ? /^0X/ : base === 2 ? /^0B/ : null;
+  const upper = text.trim().toUpperCase();
+  return (prefix ? upper.replace(prefix, "") : upper).replace(/^0+(?=.)/, "");
 }
 
 /** Leftmost differing bit after left-padding to the answer's width; undefined if not comparable. */
