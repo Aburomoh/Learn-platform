@@ -2,13 +2,14 @@
  * Deterministic grading against content. Components never grade themselves; the ActivityRunner
  * calls `grade` and passes the result to the tutor engine. Course truth lives in the spec.
  */
-import type { CircuitSpec, InteractionSpec, Misconception, Variant } from "./schema";
+import type { CircuitSpec, InteractionSpec, Variant } from "./schema";
 
 export type Answer =
   | { kind: "place-value"; digits: (0 | 1 | null)[] }
   | { kind: "numeric"; text: string }
   | { kind: "multiple-choice"; optionId: string }
-  | { kind: "circuit-predict"; output: 0 | 1 }
+  /** `step` indexes gateOrder(spec): the gate being answered. Omitted = the output gate. */
+  | { kind: "circuit-predict"; output: 0 | 1; step?: number }
   | { kind: "repeated-division"; step: number; quotient: number; remainder: number }
   /** One column (sum bit + carry out), or the final carry step where only `sum` is read. */
   | { kind: "column-addition"; step: number; sum: number; carry?: number };
@@ -18,7 +19,7 @@ export interface GradeResult {
   misconceptionId?: string;
   /** Normalised student answer for evidence (never raw UI state). */
   normalized: string;
-  /** True when a step was right but the question has more steps (repeated-division, column-addition). */
+  /** True when a step was right but the question has more steps (repeated-division, column-addition, circuit-predict). */
   partial?: boolean;
   /** Leftmost wrong bit, 0-based from the left (set with a `first-wrong-bit` misconception). */
   wrongBit?: number;
@@ -101,8 +102,15 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
     }
     case "circuit-predict": {
       const a = answer as Extract<Answer, { kind: "circuit-predict" }>;
-      const correct = a.output === spec.answer;
-      return { correct, normalized: String(a.output), misconceptionId: correct ? undefined : detectEquals(variant.misconceptions, a.output) };
+      const order = gateOrder(spec);
+      const step = a.step ?? order.length - 1;
+      const gate = spec.gates.find((g) => g.id === order[step]);
+      if (!gate) throw new Error(`No gate step ${step}`);
+      const correct = a.output === evaluateCircuit(spec)[gate.id];
+      const normalized = `${gate.id}=${a.output}`;
+      if (correct) return { correct, normalized, partial: step < order.length - 1 };
+      const hit = variant.misconceptions.find((m) => m.detect.type === "gate-output" && m.detect.gate === gate.type);
+      return { correct, normalized, misconceptionId: hit?.id };
     }
   }
 }
@@ -165,6 +173,21 @@ export function evaluateCircuit(spec: CircuitSpec, inputOverride?: Record<string
   }
   if (pending.length) throw new Error("Circuit has unresolved gates (cycle or missing input)");
   return values;
+}
+
+/** Gate ids in signal-flow order (every gate after its sources), the output gate last. */
+export function gateOrder(spec: CircuitSpec): string[] {
+  const ready = new Set(spec.inputs.map((i) => i.id));
+  const order: string[] = [];
+  const pending = spec.gates.filter((g) => g.id !== spec.outputGateId);
+  while (pending.length) {
+    const i = pending.findIndex((g) => g.from.every((f) => ready.has(f)));
+    if (i < 0) throw new Error("Circuit has unresolved gates (cycle or missing input)");
+    const [g] = pending.splice(i, 1);
+    ready.add(g.id);
+    order.push(g.id);
+  }
+  return [...order, spec.outputGateId];
 }
 
 export function gateOutput(type: CircuitSpec["gates"][number]["type"], x: 0 | 1, y: 0 | 1 = 0): 0 | 1 {

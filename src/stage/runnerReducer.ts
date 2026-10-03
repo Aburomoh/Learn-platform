@@ -6,6 +6,7 @@
 import type { Activity, Variant } from "@/content/schema";
 import { grade, type Answer, type GradeResult } from "@/content/grade";
 import { fill } from "@/content/template";
+import { circuitStepVars } from "@/content/circuitWalk";
 import { reduce, initialTutorState, contextFromVariant, type TutorState, type TutorAction, type Expression, type LearningEvent } from "@/tutor";
 import type { RevealedHint, PredictionResult } from "@/interactions";
 
@@ -22,7 +23,7 @@ export interface RunnerState {
   hints: RevealedHint[];
   /** Non-null while Explain Slowly is running. */
   explanation: { step: number; prediction?: PredictionResult } | null;
-  /** Completed steps inside a multi-step question (repeated-division). */
+  /** Completed steps inside a multi-step question (repeated-division, circuit-predict). */
   stepIndex: number;
   /** Last graded answer on the current variant. */
   last?: { answer: Answer; result: GradeResult };
@@ -54,6 +55,7 @@ const EFFECT_TYPES = new Set<TutorAction["type"]>(["FOCUS", "HIGHLIGHT", "PULSE"
 
 /** Template variables for the step currently being worked on (multi-step questions). */
 export function stepVars(variant: Variant, stepIndex: number): Record<string, string | number> {
+  if (variant.spec.kind === "circuit-predict") return circuitStepVars(variant.spec, stepIndex);
   if (variant.spec.kind !== "repeated-division") return {};
   const step = variant.spec.steps[Math.min(stepIndex, variant.spec.steps.length - 1)];
   return { dividend: step.dividend, quotient: step.quotient, remainder: step.remainder, stepNumber: stepIndex + 1 };
@@ -143,7 +145,8 @@ export function createRunnerReducer(activity: Activity) {
         default:
           break;
       }
-      if (EFFECT_TYPES.has(a.type)) effects.push(a);
+      // Pointer targets may name the current step's element, e.g. "gate-{gateId}".
+      if (EFFECT_TYPES.has(a.type)) effects.push("target" in a ? { ...a, target: fill(a.target, ctx.vars) } : a);
     }
     if (tutor.stage !== "explaining" && next.explanation && next.tutor.stage !== "explaining") next.explanation = null;
     if (effects.length) next = { ...next, effects, effectSeq: next.effectSeq + 1 };

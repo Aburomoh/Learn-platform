@@ -118,15 +118,42 @@ test("octal and hex by grouping finish the activity", async ({ page }) => {
   await expect(page.getByTestId("activity-summary")).toContainText("no hints needed");
 });
 
-test("logic gates activity: predict output, then explore inputs after completion", async ({ page }) => {
+test("logic gates activity: walk the circuit gate by gate, then explore inputs", async ({ page }) => {
   await page.goto("/courses/ecet111/logic-gates/predict-gate-output/");
   await expect(page.getByRole("img", { name: /Circuit with NOT, AND, OR/ })).toBeVisible();
-  await page.getByLabel(/Y = 0/).check();
-  await page.getByRole("button", { name: "Check" }).click();
+  const check = page.getByRole("button", { name: "Check" });
+  const active = page.locator("[data-active]");
+
+  // gate 1 (NOT): wrong answer keeps the student on this gate, with a nudge about it
+  await expect(page.getByText("Gate 1 of 3: NOT")).toBeVisible();
+  await expect(active).toHaveAttribute("data-focus-target", "gate-n1");
+  await page.getByLabel("0", { exact: true }).check();
+  await check.click();
   await expect(page.getByRole("status").filter({ hasText: "Not correct yet." })).toBeVisible();
+  await expect(page.getByText("Gate 1 of 3: NOT")).toBeVisible();
+  await page.getByLabel("1", { exact: true }).check();
+  await check.click();
+
+  // gate 2 (AND): the NOT gate stays lit with its value, focus moves to the new question
+  await expect(page.getByText("Gate 2 of 3: AND")).toBeVisible();
+  await expect(active).toHaveAttribute("data-focus-target", "gate-g1");
+  await expect(page.locator("[data-focus-target='gate-n1'] text", { hasText: /^1$/ })).toBeVisible();
+  await expect(page.locator("[data-focus-target='gate-g2'] text", { hasText: /^[01]$/ })).toHaveCount(0);
+  await expect(page.getByLabel("0", { exact: true })).toBeFocused();
+  await expect(active).toBeInViewport({ ratio: 0.9 });
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+
+  // gate 3 (OR) gives Y
+  await expect(page.getByText("Gate 3 of 3: OR")).toBeVisible();
   await page.getByLabel(/Y = 1/).check();
-  await page.getByRole("button", { name: "Check" }).click();
+  await check.click();
   await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
+  await expect(active).toHaveCount(0);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+
+  // explore mode: inputs become switches and Y updates live
   await expect(page.locator("svg text", { hasText: "Y = 1" })).toBeVisible();
   await page.getByRole("switch", { name: /Input C/ }).click();
   await page.getByRole("switch", { name: /Input A/ }).click();

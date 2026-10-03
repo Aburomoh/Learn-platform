@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { courses, getActivity, listActivityParams } from "./index";
-import { evaluateCircuit, grade, valueToBits, bitsToValue, divisionSteps, groupBits, additionSteps, additionResult, additionStepVars, complementBits } from "./grade";
+import { evaluateCircuit, gateOrder, grade, valueToBits, bitsToValue, divisionSteps, groupBits, additionSteps, additionResult, additionStepVars, complementBits } from "./grade";
+import { circuitStepVars } from "./circuitWalk";
 import { InteractionSpec, MultipleChoiceSpec, NumericSpec } from "./schema";
 import { addition1101 } from "./fixtures/columnAddition";
 import { complement100101, complement110010 } from "./fixtures/onesComplement";
 import { fill } from "./template";
-import type { Variant } from "./schema";
+import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
 
@@ -25,6 +26,10 @@ function allVariants(): { path: string; variant: Variant }[] {
 /** Every set of template variables a variant can be rendered with (one per step if multi-step). */
 function varSets(v: Variant): Record<string, string | number>[] {
   if (v.spec.kind === "column-addition") return additionSteps(v.spec.a, v.spec.b).map((s) => ({ ...v.vars, ...additionStepVars(s) }));
+  if (v.spec.kind === "circuit-predict") {
+    const spec = v.spec;
+    return gateOrder(spec).map((_, i) => ({ ...v.vars, ...circuitStepVars(spec, i) }));
+  }
   if (v.spec.kind !== "repeated-division") return [v.vars];
   return v.spec.steps.map((s, i) => ({ ...v.vars, dividend: s.dividend, quotient: s.quotient, remainder: s.remainder, stepNumber: i + 1 }));
 }
@@ -142,6 +147,30 @@ describe("authored truth is internally consistent", () => {
     }
   });
 
+  it("circuit walks go gate by gate in signal-flow order with computed values", () => {
+    const [v101, v000] = getActivity(COURSE, "logic-gates", "predict-gate-output")!.activity.questions[0].variants;
+    for (const v of [v101, v000]) {
+      if (v.spec.kind !== "circuit-predict") throw new Error("expected a circuit");
+      expect(gateOrder(v.spec)).toEqual(["n1", "g1", "g2"]);
+    }
+    const outs = (v: Variant) => (v.spec.kind === "circuit-predict" ? [0, 1, 2].map((i) => circuitStepVars(v.spec as CircuitSpec, i).gateOut) : []);
+    expect(outs(v101)).toEqual([1, 1, 1]);
+    expect(outs(v000)).toEqual([1, 0, 0]);
+    if (v101.spec.kind !== "circuit-predict") throw new Error("expected a circuit");
+    expect(circuitStepVars(v101.spec, 1)).toMatchObject({ gateName: "AND", gateInputs: "A = 1 and the NOT output = 1", stepNumber: 2, gateCount: 3 });
+    // A gate declared before its sources is still asked after them; the output gate is last.
+    const shuffled: CircuitSpec = { ...v101.spec, gates: [...v101.spec.gates].reverse() };
+    expect(gateOrder(shuffled)).toEqual(["n1", "g1", "g2"]);
+  });
+
+  it("every circuit walk has a nudge for each gate type it contains", () => {
+    for (const { path, variant } of allVariants()) {
+      if (variant.spec.kind !== "circuit-predict") continue;
+      for (const g of variant.spec.gates)
+        expect(variant.misconceptions.some((m) => m.detect.type === "gate-output" && m.detect.gate === g.type), `${path}:${g.type}`).toBe(true);
+    }
+  });
+
   it("multiple-choice correct option exists and misconception ids resolve", () => {
     for (const { path, variant } of allVariants()) {
       if (variant.spec.kind !== "multiple-choice") continue;
@@ -221,8 +250,12 @@ describe("grade()", () => {
   });
 
   it("grades circuit predictions and multiple choice", () => {
-    expect(grade(circuit, { kind: "circuit-predict", output: 1 }).correct).toBe(true);
-    expect(grade(circuit, { kind: "circuit-predict", output: 0 })).toMatchObject({ correct: false, misconceptionId: "lg.forgot-not" });
+    expect(grade(circuit, { kind: "circuit-predict", output: 1 })).toMatchObject({ correct: true, partial: false });
+    expect(grade(circuit, { kind: "circuit-predict", step: 0, output: 1 })).toMatchObject({ correct: true, partial: true, normalized: "n1=1" });
+    expect(grade(circuit, { kind: "circuit-predict", step: 0, output: 0 })).toMatchObject({ correct: false, misconceptionId: "lg.rule-not" });
+    expect(grade(circuit, { kind: "circuit-predict", step: 1, output: 0 })).toMatchObject({ correct: false, misconceptionId: "lg.rule-and" });
+    expect(grade(circuit, { kind: "circuit-predict", step: 2, output: 0 })).toMatchObject({ correct: false, misconceptionId: "lg.rule-or" });
+    expect(() => grade(circuit, { kind: "circuit-predict", step: 3, output: 0 })).toThrow();
     expect(grade(mc, { kind: "multiple-choice", optionId: "and" }).correct).toBe(true);
     expect(grade(mc, { kind: "multiple-choice", optionId: "or" })).toMatchObject({ correct: false, misconceptionId: "lg.or-vs-and" });
   });

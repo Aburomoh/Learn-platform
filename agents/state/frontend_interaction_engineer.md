@@ -1,8 +1,8 @@
 # Current State — Frontend / Interaction Engineer
 
-Current assignment: #19 circuit diagram (orthogonal wires, pins, `activeGateId`) — PR open, awaiting review.
-Recent important decision: Diagram stays native SVG (interactive, no build-time Python); layout is pure in `CircuitDiagram/layout.ts`.
+Current assignment: #32 gate-by-gate circuit walk — PR open (L3: pedagogy, reviewer, QA, Technical Lead).
+Recent important decision: Multi-step questions reuse `stepIndex` + `partial` grading; gate order and truth come from the spec (`gateOrder`, `circuitStepVars`). Signal colours use `--signal-*`; accent means attention only.
 Blocker: None
-Relevant issue/PR: #19
-Wake me: label `wake:frontend` on an issue/PR, or message the session holding this role.
-Next expected action: Address review on #19; gate-by-gate walk-through uses `activeGateId` (stage work, follow-up PR).
+Relevant issue/PR: #32; follow-up after tutor PR #62 merges: drop GATE_RULES text, the reducer target fill and `reactions.stepNext` (engine/catalog own them).
+Wake me: `npm run alarm frontend-interaction-engineer <#> "<reason>" <your-role>` (label `wake:frontend`).
+Next expected action: Queue with wake:frontend — #52, #53, #54 (ready), #56, #57; #44 when the owner decides the veto.

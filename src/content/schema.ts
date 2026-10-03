@@ -55,6 +55,8 @@ export const ExplanationStepSchema = z.object({
     .optional(),
 });
 
+export const GateType = z.enum(["AND", "OR", "NOT", "XOR", "NAND", "NOR"]);
+
 /** How a wrong answer is recognised as a known misconception. */
 export const MisconceptionDetector = z.discriminatedUnion("type", [
   z.object({ type: z.literal("equals"), value: z.union([z.string(), z.number()]) }),
@@ -76,6 +78,8 @@ export const MisconceptionDetector = z.discriminatedUnion("type", [
   z.object({ type: z.literal("addition-swapped") }),
   /** Base-2 numeric answer: fires on any other wrong bit string and reports the leftmost wrong bit. */
   z.object({ type: z.literal("first-wrong-bit") }),
+  /** Circuit walk: wrong output for a gate of this type. */
+  z.object({ type: z.literal("gate-output"), gate: GateType }),
 ]);
 
 export const MisconceptionSchema = z.object({
@@ -169,7 +173,6 @@ export const MultipleChoiceSpec = z.object({
   context: NumericContext.optional(),
 });
 
-export const GateType = z.enum(["AND", "OR", "NOT", "XOR", "NAND", "NOR"]);
 export const CircuitSpec = z.object({
   kind: z.literal("circuit-predict"),
   inputs: z.array(z.object({ id, label: z.string(), value: z.union([z.literal(0), z.literal(1)]) })).min(1).max(3),
@@ -201,7 +204,7 @@ export const VariantSchema = z.object({
     .object({
       correct: template.optional(),
       correctAfterHints: template.optional(),
-      /** Said after each correct intermediate step (repeated-division); may use step vars. */
+      /** Said after each correct intermediate step (repeated-division, circuit-predict); may use step vars. */
       stepNext: template.optional(),
     })
     .optional(),
@@ -274,3 +277,4 @@ export type Course = z.infer<typeof CourseSchema>;
 
 /** Input type (before defaults) for authoring modules. */
 export type CourseInput = z.input<typeof CourseSchema>;
+export type VariantInput = z.input<typeof VariantSchema>;
