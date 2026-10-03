@@ -212,8 +212,8 @@ const hexDigitsActivity: TopicInput["activities"][number] = {
   minutes: 5,
   questions: [
     { id: "ns.t.digit", label: "Decimal → hex", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [11, 14, 10].map((n, k) => decimalToDigit(n, k)) },
-    { id: "ns.t.bits", label: "Hex → 4 bits", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [13, 6, 9].map((n, k) => digitToBits(n, k + 1)) },
-    { id: "ns.t.back", label: "4 bits → hex", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [12, 7, 15].map((n, k) => bitsToDigit(n, k + 2)) },
+    { id: "ns.t.bits", label: "Hex → 4 bits", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [13, 3, 11].map((n, k) => digitToBits(n, k + 1)) }, // no palindromes: reversed bits stay a real distractor
+    { id: "ns.t.back", label: "4 bits → hex", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [12, 7, 10].map((n, k) => bitsToDigit(n, k + 2)) },
   ],
 };
 

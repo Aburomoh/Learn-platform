@@ -216,7 +216,9 @@ describe("content registry", () => {
         return spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : "";
       }),
     );
-    expect(correct).toEqual([["B", "E", "A"], ["1101", "0110", "1001"], ["C", "7", "F"]]);
+    expect(correct).toEqual([["B", "E", "A"], ["1101", "0011", "1011"], ["C", "7", "A"]]);
+    // Pedagogy on #271: no palindromic patterns, so the reversed-bits distractor always exists
+    for (const q of table.questions.slice(1)) for (const v of q.variants) if (v.spec.kind === "multiple-choice") expect(v.spec.options.length, `${q.id}/${v.id}`).toBeGreaterThanOrEqual(3);
     for (const q of table.questions) for (const v of q.variants) if (v.spec.kind === "multiple-choice") expect(v.spec.options.length, `${q.id}/${v.id}`).toBeGreaterThanOrEqual(2);
   });
 
