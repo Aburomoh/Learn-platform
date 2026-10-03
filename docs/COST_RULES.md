@@ -38,3 +38,19 @@ The activity runner adds 17.3 kB over the base; zod is not in the client bundle.
 Throttled phone (`scripts/throttled-load.mjs`: Pixel 7, Slow 4G 562.5 ms RTT / 1.47 Mbps, 4× CPU,
 cold cache, gzip, median of 5), activity route: FCP = LCP 1.57 s, load 2.33 s, hydrated 2.64 s,
 TBT 227 ms, 165 kB transferred. Local server: add ~0.6 s (one RTT) for real document TTFB.
+
+## Re-measure — 2026-10-03, `cf3fdfb` (#154, after M1.2 #34/#36)
+Activity routes (all five share one bundle): **160.3 kB** gzip (+9.0 kB vs baseline; app chunk
+16.4 → 25.4 kB). Base unchanged at 134.0 kB. Headroom ~40 kB. Every activity ships every interaction
+component; consider per-component code splitting if headroom falls below ~25 kB.
+
+Throttled phone, A/B on one machine (baseline vs now, median of 5, two rounds). `stage` = challenge
+on screen, `hydrated` = React attached (both from navigation start):
+
+| | FCP | Question visible | Hydrated | TBT | Transfer |
+|---|---:|---:|---:|---:|---:|
+| `c817572` | 1.65 s | at FCP (in HTML) | 2.68 s | ~270 ms | 165 kB |
+| `cf3fdfb` | 1.43 s | **3.43 s** | 3.17 s | ~380 ms | 179 kB |
+
+Main regression is not size: since #144 the exported HTML holds an empty stage frame, so the question
+waits for JS on slow phones (+~1.8 s). Tracked in #158.

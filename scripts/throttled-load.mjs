@@ -44,21 +44,26 @@ for (let i = 0; i < RUNS; i++) {
     window.__perf = { lcp: 0, longTasks: 0 };
     new PerformanceObserver((l) => { for (const e of l.getEntries()) window.__perf.lcp = e.startTime; }).observe({ type: "largest-contentful-paint", buffered: true });
     new PerformanceObserver((l) => { for (const e of l.getEntries()) window.__perf.longTasks += Math.max(0, e.duration - 50); }).observe({ type: "longtask", buffered: true });
+    // First moment (ms since navigation) each condition holds, checked every frame-ish:
+    // stage    = the challenge is on screen (not the empty loading frame), even before hydration;
+    // hydrated = React has attached to the stage, so it responds to input.
+    const timer = setInterval(() => {
+      const el = document.querySelector("[data-testid=learning-stage]");
+      if (!el) return;
+      if (!window.__perf.stage && el.getAttribute("data-stage") !== "loading" && el.textContent.trim()) window.__perf.stage = performance.now();
+      if (!window.__perf.hydrated && Object.keys(el).some((k) => k.startsWith("__reactFiber"))) window.__perf.hydrated = performance.now();
+      if (window.__perf.stage && window.__perf.hydrated) clearInterval(timer);
+    }, 16);
   });
-  const t0 = Date.now();
   await page.goto(url, { waitUntil: "load" });
-  // hydrated = React has attached to the server-rendered stage
-  await page.waitForFunction(() => {
-    const el = document.querySelector("[data-testid=learning-stage]");
-    return el && Object.keys(el).some((k) => k.startsWith("__reactFiber"));
-  }, null, { timeout: 60_000, polling: 50 });
-  const hydrated = Date.now() - t0;
+  await page.waitForFunction(() => window.__perf.stage && window.__perf.hydrated, null, { timeout: 60_000, polling: 50 });
   const m = await page.evaluate(() => {
     const nav = performance.getEntriesByType("navigation")[0];
     const fcp = performance.getEntriesByName("first-contentful-paint")[0]?.startTime ?? 0;
-    return { ttfb: nav.responseStart, fcp, lcp: window.__perf.lcp, dcl: nav.domContentLoadedEventEnd, load: nav.loadEventEnd, tbt: window.__perf.longTasks };
+    const p = window.__perf;
+    return { ttfb: nav.responseStart, fcp, lcp: p.lcp, dcl: nav.domContentLoadedEventEnd, load: nav.loadEventEnd, hydrated: p.hydrated, stage: p.stage, tbt: p.longTasks };
   });
-  samples.push({ ...m, hydrated, kB: jsBytes / 1024 });
+  samples.push({ ...m, kB: jsBytes / 1024 });
   await context.close();
 }
 await browser.close();
@@ -66,5 +71,5 @@ server.close();
 
 const median = (k) => samples.map((s) => s[k]).sort((a, b) => a - b)[Math.floor(samples.length / 2)];
 console.log(`${ROUTE} — Pixel 7, Slow 4G, 4× CPU, cold cache, median of ${RUNS}`);
-for (const k of ["ttfb", "fcp", "lcp", "dcl", "load", "hydrated", "tbt"]) console.log(`${k.padEnd(9)} ${Math.round(median(k))} ms`);
+for (const k of ["ttfb", "fcp", "lcp", "dcl", "load", "hydrated", "stage", "tbt"]) console.log(`${k.padEnd(9)} ${Math.round(median(k))} ms`);
 console.log(`transfer  ${median("kB").toFixed(1)} kB (all requests, gzip)`);
