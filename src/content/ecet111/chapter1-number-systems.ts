@@ -1,6 +1,6 @@
 /**
  * DEMO / NOT AUTHORITATIVE COURSE CONTENT — pending instructor approval.
- * Follows the method of ECET 111 Chapter 1 (repeated division by 2 with a remainder row,
+ * Follows the method of ECET 111 Chapter 1 (repeated division by 2 as a vertical ladder with remainders beside,
  * LSB first / MSB last; grouping by 3 bits for octal and 4 bits for hexadecimal). Questions,
  * numbers and wording here are original; the slides themselves are not reproduced.
  */
@@ -15,12 +15,12 @@ type VariantInput = z.input<typeof VariantSchema>;
 
 const divisionHints: HintInput[] = [
   { rung: 2, text: "Not yet. Do {dividend} ÷ 2 once more, carefully." },
-  { rung: 3, text: "Each step: divide by 2. The whole-number result goes on top. What is left over (0 or 1) goes underneath." },
+  { rung: 3, text: "Each step: divide by 2. The whole-number result goes in the row below. What is left over (0 or 1) goes beside the number." },
   { rung: 4, text: "Is {dividend} even or odd? What does that tell you about the remainder?" },
   { rung: 5, text: "Work in this column only: {dividend}.", focus: "div-active", highlight: "div-active" },
   { rung: 6, text: "{dividend} = 2 × (top number) + remainder. Find the top number first." },
   { rung: 7, text: "Share {dividend} sweets between two people. Each one gets the top number. What cannot be shared is the remainder." },
-  { rung: 8, text: "Half of {dividend}, rounded down, goes on top. Even numbers leave 0, odd numbers leave 1." },
+  { rung: 8, text: "Half of {dividend}, rounded down, goes in the row below. Even numbers leave 0, odd numbers leave 1." },
   { rung: 9, text: "{dividend} ÷ 2 = {quotient}, remainder {remainder}." },
 ];
 
@@ -34,10 +34,10 @@ const readHints: HintInput[] = [
   { rung: 2, text: "Not yet. Use the remainders, in the right order." },
   { rung: 3, text: "The first remainder you found is the LSB (rightmost bit). The last one is the MSB (leftmost bit)." },
   { rung: 4, text: "Which remainder did you find last? That bit is written first." },
-  { rung: 5, text: "Look at the remainder row. Start from its right-hand end.", focus: "div-remainders", highlight: "div-remainders" },
-  { rung: 6, text: "Write the last remainder, then move left one remainder at a time." },
+  { rung: 5, text: "Look at the remainder column. Start from the bottom.", focus: "div-remainders", highlight: "div-remainders" },
+  { rung: 6, text: "Write the bottom remainder first, then move up one remainder at a time." },
   { rung: 7, text: "Like stacking plates: the last one you put down is the first one you pick up." },
-  { rung: 8, text: "The first bit is the last remainder, {msb}. Continue to the left." },
+  { rung: 8, text: "The first bit is the bottom remainder, {msb}. Continue upward." },
   { rung: 9, text: "({value})₁₀ = ({answerBits})₂." },
 ];
 
@@ -114,7 +114,7 @@ export const numberSystemsTopic: TopicInput = {
           variants: [
             {
               id: "v26",
-              prompt: "Convert ({value})₁₀ to binary. Divide by 2, one step at a time: write the result on top and the remainder underneath.",
+              prompt: "Convert ({value})₁₀ to binary. Divide by 2, one step at a time: write the result below and the remainder beside it.",
               spec: { kind: "repeated-division", value: 26, base: 2, steps: steps26 },
               vars: vars26,
               hints: divisionHints,
@@ -130,19 +130,19 @@ export const numberSystemsTopic: TopicInput = {
                 },
                 {
                   id: "s3",
-                  say: "13 goes on top, 0 goes underneath. Next: 13 ÷ 2 = 6.",
+                  say: "13 goes in the row below, and the remainder 0 goes beside 26. Next: 13 ÷ 2 = 6.",
                   stage: { revealed: 1, attention: 1 },
                   ask: { prompt: "13 ÷ 2 = 6 with what remainder?", options: ["0", "1"], correctIndex: 1, afterCorrect: "Yes. 13 is odd, so 1 is left over.", afterWrong: "2 × 6 = 12, and 13 − 12 = 1. The remainder is 1." },
                 },
                 {
                   id: "s4",
-                  say: "6 goes on top, 1 goes underneath. Next: 6 ÷ 2.",
+                  say: "6 goes in the row below, and the remainder 1 goes beside 13. Next: 6 ÷ 2.",
                   stage: { revealed: 2, attention: 2 },
                   ask: { prompt: "6 ÷ 2 = ?", options: ["3, remainder 0", "3, remainder 1"], correctIndex: 0, afterCorrect: "Yes. 6 is even, so nothing is left over.", afterWrong: "6 is even: 6 ÷ 2 = 3, remainder 0." },
                 },
                 {
                   id: "s5",
-                  say: "3 goes on top, 0 goes underneath. Next: 3 ÷ 2.",
+                  say: "3 goes in the row below, and the remainder 0 goes beside 6. Next: 3 ÷ 2.",
                   stage: { revealed: 3, attention: 3 },
                   ask: { prompt: "3 ÷ 2 = 1 with what remainder?", options: ["0", "1"], correctIndex: 1, afterCorrect: "Yes. 3 is odd, so 1 is left over.", afterWrong: "2 × 1 = 2, and 3 − 2 = 1. The remainder is 1." },
                 },
@@ -152,7 +152,7 @@ export const numberSystemsTopic: TopicInput = {
                   stage: { revealed: 4, attention: 4 },
                   ask: { prompt: "What is 1 ÷ 2?", options: ["0, remainder 1", "1, remainder 0"], correctIndex: 0, afterCorrect: "Right. 2 does not fit into 1, so the result is 0 and the 1 is left over.", afterWrong: "2 does not fit into 1. The result is 0 and the 1 is left over." },
                 },
-                { id: "s7", say: "The result is 0, so we stop. The remainder row holds the bits. Now you do it.", stage: { revealed: 5 } },
+                { id: "s7", say: "The result is 0, so we stop. The remainder column holds the bits. Now you do it.", stage: { revealed: 5 } },
               ],
             },
             {
@@ -164,7 +164,7 @@ export const numberSystemsTopic: TopicInput = {
               misconceptions: divisionMisconceptions,
               reactions: { stepNext: "Good. Now {dividend} ÷ 2.", correct: "Good. The result is 0, so the division stops.", correctAfterHints: "Right. The result is 0, so the division stops." },
               explanation: [
-                { id: "s1", say: "Same method: divide by 2, write the result on top and the remainder underneath.", stage: { revealed: 0 } },
+                { id: "s1", say: "Same method: divide by 2, write the result below and the remainder beside it.", stage: { revealed: 0 } },
                 {
                   id: "s2",
                   say: "{value} is an odd number.",
