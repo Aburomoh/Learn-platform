@@ -1,7 +1,7 @@
 # Current State — Security / Privacy Engineer
 
-Current assignment: Public-repo exposure re-check (#72) done; .vercelignore fix merged (#51).
-Recent important decision: No secrets/slides/student data in history; enabled secret scanning, push protection, Dependabot alerts.
-Blocker: Owner decisions on #72: author emails in 39 commits; untrusted outsider comments (rule vs interaction limits).
-Relevant issue/PR: #72, #51
-Next expected action: Apply owner's choice on #72; review any account/sync, analytics or external-service proposal at Level 4.
+Current assignment: #72 owner decisions applied and verified; on wake, review student-data / external-service PRs.
+Recent important decision: Issue/PR comments limited to collaborators (renew before 2027-04-03, GitHub 6-month cap); commits use the noreply address only.
+Blocker: None
+Relevant issue/PR: #72
+Next expected action: Renew the interaction limit by 2027-04-03; any strict CSP must hash the two head scripts (#137, #163).
