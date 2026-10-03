@@ -573,9 +573,11 @@
   font-weight: 600;
 }
 
-/* the action stays on the title row at every width, so all rows match */
+/* the action stays on the title row; it drops below only when the longest title word and the
+   action cannot fit side by side (320 px with wide fonts), instead of widening the page */
 .practiceRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2) var(--space-4);
@@ -588,7 +590,7 @@
   flex: 1;
   display: grid;
   gap: var(--space-1);
-  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .rowAction,
