@@ -5,9 +5,10 @@ import type { LearningEvent } from "./events";
 import type { TutorAction } from "./actions";
 import { contextFromVariant } from "../context";
 import { hasMessage } from "../messages";
-import { courses, getActivity } from "@/content";
+import { courses } from "@/content";
+import { placeValue45 } from "@/content/fixtures/placeValue45";
 
-const variant = getActivity("digital-logic-demo", "number-systems", "decimal-to-binary")!.activity.questions[0].variants[0];
+const variant = placeValue45;
 const ctx: ActivityContext = contextFromVariant(variant);
 
 function run(events: LearningEvent[], start: TutorState = initialTutorState, c = ctx) {
@@ -148,6 +149,26 @@ describe("tutor engine: core rules", () => {
     expect(done.state.attempts).toBe(1);
     const explaining = run([{ type: "ANSWER_SUBMITTED", correct: false }, { type: "EXPLAIN_SLOWLY_REQUESTED" }, { type: "ANSWER_SUBMITTED", correct: true }]);
     expect(explaining.state.stage).toBe("explaining");
+  });
+});
+
+describe("tutor engine: multi-step questions", () => {
+  it("STEP_COMPLETED restarts the ladder, keeps the question open and remembers hint use", () => {
+    const { state, actions } = run([{ type: "ANSWER_SUBMITTED", correct: false }, { type: "HINT_REQUESTED" }, { type: "STEP_COMPLETED" }]);
+    expect(state).toMatchObject({ stage: "await_answer", attempts: 0, hintLevel: 0, grantedRungs: [], hintsEverUsed: true });
+    expect(actions).toContainEqual({ type: "CHANGE_EXPRESSION", expression: "encouraging" });
+    expect(types(actions)).toContain("STEP_DONE");
+    expect(types(actions)).not.toContain("COMPLETE");
+    expect(says(actions).at(-1)?.messageKey).toBe("step.next");
+    // a later correct answer still counts as helped
+    const end = run([{ type: "ANSWER_SUBMITTED", correct: true }], state);
+    expect(says(end.actions).at(-1)?.messageKey).toBe("correct.after-hints");
+  });
+
+  it("uses the content-supplied step reaction when present", () => {
+    const c = { ...ctx, vars: { ...ctx.vars, dividend: 13 }, reactions: { stepNext: "Good. Now {dividend} ÷ 2." } };
+    const { actions } = run([{ type: "STEP_COMPLETED" }], initialTutorState, c);
+    expect(says(actions).at(-1)?.text).toBe("Good. Now 13 ÷ 2.");
   });
 });
 

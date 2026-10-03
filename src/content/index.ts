@@ -3,9 +3,9 @@
  * defaulted data. Adding a course = adding a module here (ADR-0002).
  */
 import { CourseSchema, type Course, type Topic, type Activity, type Module, type CourseInput } from "./schema";
-import { digitalLogicDemo } from "./demo/digital-logic";
+import { ecet111 } from "./ecet111/course";
 
-const sources: CourseInput[] = [digitalLogicDemo];
+const sources: CourseInput[] = [ecet111];
 
 export const courses: Course[] = sources.map((c) => CourseSchema.parse(c));
 

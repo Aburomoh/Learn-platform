@@ -40,6 +40,12 @@ caricature.
 - Distractors encode real misconceptions, not random wrong values.
 - Every interaction has a learning purpose; movement communicates meaning.
 
+## Step size (owner rule, 2026-10-03)
+A question asks for one small step, never a whole procedure. Procedures taught in class are
+walked through in the same layout and order as the slides (for example: divide by 2 one step at
+a time, then read the remainders, then group the bits). A content test guards this for
+number-base conversion.
+
 ## Pedagogy veto
 The Pedagogy Engineer may file `PEDAGOGY VETO — TASK-###` (advisory to the owner; format in
 `agents/pedagogy_engineer.md`, issue template `.github/ISSUE_TEMPLATE/pedagogy-veto.yml`).

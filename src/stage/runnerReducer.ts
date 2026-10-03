@@ -20,6 +20,8 @@ export interface RunnerState {
   hints: RevealedHint[];
   /** Non-null while Explain Slowly is running. */
   explanation: { step: number; prediction?: PredictionResult } | null;
+  /** Completed steps inside a multi-step question (repeated-division). */
+  stepIndex: number;
   /** Last graded answer on the current variant. */
   last?: { answer: Answer; result: GradeResult };
   /** Bumped on RESET_INTERACTION so inputs remount clean. */
@@ -46,7 +48,14 @@ export type RunnerAction =
   | { type: "HESITATION"; seconds: number }
   | { type: "RESTART" };
 
-const EFFECT_TYPES = new Set<TutorAction["type"]>(["FOCUS", "HIGHLIGHT", "PULSE", "RESET_INTERACTION", "ADVANCE_EXPLANATION", "COMPLETE"]);
+const EFFECT_TYPES = new Set<TutorAction["type"]>(["FOCUS", "HIGHLIGHT", "PULSE", "RESET_INTERACTION", "ADVANCE_EXPLANATION", "COMPLETE", "STEP_DONE"]);
+
+/** Template variables for the step currently being worked on (multi-step questions). */
+export function stepVars(variant: Variant, stepIndex: number): Record<string, string | number> {
+  if (variant.spec.kind !== "repeated-division") return {};
+  const step = variant.spec.steps[Math.min(stepIndex, variant.spec.steps.length - 1)];
+  return { dividend: step.dividend, quotient: step.quotient, remainder: step.remainder, stepNumber: stepIndex + 1 };
+}
 
 export function currentVariant(activity: Activity, s: Pick<RunnerState, "qIndex" | "vIndex">): Variant {
   const q = activity.questions[s.qIndex];
@@ -67,6 +76,7 @@ export function initialRunnerState(activity: Activity): RunnerState {
     message: "",
     hints: [],
     explanation: null,
+    stepIndex: 0,
     interactionKey: 0,
     attemptSeq: 0,
     hintsUsedTotal: 0,
@@ -79,7 +89,7 @@ export function initialRunnerState(activity: Activity): RunnerState {
 export function createRunnerReducer(activity: Activity) {
   function runTutor(s: RunnerState, event: LearningEvent): RunnerState {
     const variant = currentVariant(activity, s);
-    const ctx = contextFromVariant(variant);
+    const ctx = contextFromVariant(variant, "en", stepVars(variant, s.stepIndex));
     const { state: tutor, actions } = reduce(s.tutor, event, ctx);
     let next: RunnerState = { ...s, tutor };
     const effects: TutorAction[] = [];
@@ -98,13 +108,12 @@ export function createRunnerReducer(activity: Activity) {
           next.explanation = { step: a.step };
           break;
         case "RESET_INTERACTION":
-          next = { ...next, last: undefined, interactionKey: next.interactionKey + 1, explanation: null };
+          next = { ...next, last: undefined, stepIndex: 0, interactionKey: next.interactionKey + 1, explanation: null };
           break;
         case "COMPLETE": {
           const completed = [...next.completed];
           completed[next.qIndex] = true;
-          next = { ...next, completed, hintsUsedTotal: next.hintsUsedTotal + (next.tutor.hintLevel > 0 ? 1 : 0) };
-          if (completed.every(Boolean)) next.done = true;
+          next = { ...next, completed, hintsUsedTotal: next.hintsUsedTotal + (next.tutor.hintLevel > 0 || next.tutor.hintsEverUsed ? 1 : 0) };
           break;
         }
         default:
@@ -126,6 +135,11 @@ export function createRunnerReducer(activity: Activity) {
         if (s.tutor.stage === "complete" || s.tutor.stage === "explaining") return s;
         const variant = currentVariant(activity, s);
         const result = grade(variant, action.answer);
+        if (result.correct && result.partial) {
+          // A correct intermediate step: open the next one; the question stays in progress.
+          const stepped: RunnerState = { ...s, stepIndex: s.stepIndex + 1, last: undefined, hints: [] };
+          return runTutor(stepped, { type: "STEP_COMPLETED" });
+        }
         const withLast: RunnerState = { ...s, last: { answer: action.answer, result }, attemptSeq: s.attemptSeq + 1 };
         return runTutor(withLast, { type: "ANSWER_SUBMITTED", correct: result.correct, misconceptionId: result.misconceptionId });
       }
@@ -141,7 +155,7 @@ export function createRunnerReducer(activity: Activity) {
         const step = currentVariant(activity, s).explanation[s.explanation.step];
         if (!step?.ask || s.explanation.prediction) return s;
         const correct = action.index === step.ask.correctIndex;
-        const vars = currentVariant(activity, s).vars;
+        const vars = { ...currentVariant(activity, s).vars, ...stepVars(currentVariant(activity, s), s.stepIndex) };
         const reveal = fill((correct ? step.ask.afterCorrect : step.ask.afterWrong) ?? "", vars) || undefined;
         const next: RunnerState = { ...s, explanation: { ...s.explanation, prediction: { chosenIndex: action.index, correct, reveal } } };
         return runTutor(next, { type: "PREDICTION_MADE", correct });
@@ -156,7 +170,7 @@ export function createRunnerReducer(activity: Activity) {
         vIndex[s.qIndex] += 1;
         const completed = [...s.completed];
         completed[s.qIndex] = false;
-        const next: RunnerState = { ...s, vIndex, completed, hints: [], last: undefined, explanation: null, done: false };
+        const next: RunnerState = { ...s, vIndex, completed, hints: [], last: undefined, explanation: null, stepIndex: 0, done: false };
         return runTutor(next, { type: "RETRY_REQUESTED", newVariant: true });
       }
 
@@ -164,7 +178,7 @@ export function createRunnerReducer(activity: Activity) {
         const qIndex = s.completed.findIndex((c, i) => !c && i > s.qIndex);
         const target = qIndex === -1 ? s.completed.findIndex((c) => !c) : qIndex;
         if (target === -1) return { ...s, done: true };
-        const next: RunnerState = { ...s, qIndex: target, hints: [], last: undefined, explanation: null, tutor: initialTutorState, interactionKey: s.interactionKey + 1 };
+        const next: RunnerState = { ...s, qIndex: target, hints: [], last: undefined, explanation: null, stepIndex: 0, tutor: initialTutorState, interactionKey: s.interactionKey + 1 };
         return runTutor(next, { type: "ACTIVITY_OPENED" });
       }
 

@@ -26,6 +26,7 @@ apply focus / highlight / pulse styles.
 |-----------|----|-------|
 | MultipleChoice | yes | single select, keyboard arrows + enter |
 | NumericInput | yes | base-aware (bin/oct/dec/hex) input |
+| DivisionChain | yes (M1.1) | repeated division by 2, one checked step at a time, classroom layout |
 | DragToTarget | yes | native pointer events + select-then-place keyboard path |
 | ClickableDiagram / Hotspot | yes | SVG with toggleable hotspots (gate inputs) |
 | InteractiveDiagram | yes | place-value row, gate circuit |

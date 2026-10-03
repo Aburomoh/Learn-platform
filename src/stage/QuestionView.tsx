@@ -4,13 +4,15 @@ import { useState } from "react";
 import type { Variant } from "@/content/schema";
 import type { Answer, GradeResult } from "@/content/grade";
 import { fill } from "@/content/template";
-import { MultipleChoice, NumericInput, PlaceValueDiagram, CircuitDiagram, PredictionBeforeReveal, type Bit, type PredictionResult } from "@/interactions";
+import { MultipleChoice, NumericInput, PlaceValueDiagram, CircuitDiagram, DivisionChain, PredictionBeforeReveal, type Bit, type PredictionResult } from "@/interactions";
 import { BitGroups } from "./BitGroups";
 import styles from "./Stage.module.css";
 
 export interface QuestionViewProps {
   variant: Variant;
   last?: { answer: Answer; result: GradeResult };
+  /** Completed steps of a multi-step question. */
+  stepIndex: number;
   locked: boolean;
   explanation: { step: number; prediction?: PredictionResult } | null;
   onSubmit: (answer: Answer) => void;
@@ -19,7 +21,7 @@ export interface QuestionViewProps {
 }
 
 /** Renders one variant in practice mode or, while `explanation` is set, in Explain Slowly mode. */
-export function QuestionView({ variant, last, locked, explanation, onSubmit, onPredict, onContinue }: QuestionViewProps) {
+export function QuestionView({ variant, last, stepIndex, locked, explanation, onSubmit, onPredict, onContinue }: QuestionViewProps) {
   const prompt = fill(variant.prompt, variant.vars);
   const state = last ? (last.result.correct ? "correct" : "incorrect") : "idle";
 
@@ -48,7 +50,7 @@ export function QuestionView({ variant, last, locked, explanation, onSubmit, onP
 
   return (
     <section className={styles.question} aria-label="Question">
-      <PracticeInput variant={variant} prompt={prompt} state={state} last={last} locked={locked} onSubmit={onSubmit} />
+      <PracticeInput variant={variant} prompt={prompt} state={state} last={last} stepIndex={stepIndex} locked={locked} onSubmit={onSubmit} />
       {last && (
         <p className={`${styles.feedback} ${last.result.correct ? styles.ok : styles.no}`} role="status">
           {last.result.correct ? "Correct." : "Not correct yet."}
@@ -63,6 +65,7 @@ function PracticeInput({
   prompt,
   state,
   last,
+  stepIndex,
   locked,
   onSubmit,
 }: {
@@ -70,6 +73,7 @@ function PracticeInput({
   prompt: string;
   state: "idle" | "correct" | "incorrect";
   last?: { answer: Answer; result: GradeResult };
+  stepIndex: number;
   locked: boolean;
   onSubmit: (a: Answer) => void;
 }) {
@@ -87,8 +91,28 @@ function PracticeInput({
           <PlaceValueDiagram id={variant.id} slots={spec.slots} digits={digits} onChange={setDigits} readOnly={locked} state={state} onSubmit={() => onSubmit({ kind: "place-value", digits })} />
         </>
       );
+    case "repeated-division": {
+      const finished = state === "correct";
+      return (
+        <>
+          <p className={styles.prompt}>{prompt}</p>
+          <DivisionChain
+            key={stepIndex}
+            id={variant.id}
+            steps={spec.steps}
+            stepIndex={finished ? spec.steps.length : stepIndex}
+            state={state === "incorrect" ? "incorrect" : "idle"}
+            disabled={locked}
+            onStep={(quotient, remainder) => onSubmit({ kind: "repeated-division", step: stepIndex, quotient, remainder })}
+          />
+        </>
+      );
+    }
     case "numeric":
       return (
+        <>
+          {spec.context?.type === "division-chain" && <DivisionChain id={`${variant.id}-ctx`} steps={spec.context.steps} stepIndex={spec.context.steps.length} />}
+          {spec.context?.type === "bits" && <BitGroups bits={spec.context.bits} groups={[]} />}
         <NumericInput
           id={variant.id}
           prompt={prompt}
@@ -98,6 +122,7 @@ function PracticeInput({
           submittedText={last?.answer.kind === "numeric" ? last.answer.text : undefined}
           onAnswer={(text) => onSubmit({ kind: "numeric", text })}
         />
+        </>
       );
     case "multiple-choice":
       return (
@@ -157,8 +182,14 @@ function ExplainVisual({ variant, stage, isLast }: { variant: Variant; stage: Re
           remainder={stage.remainder as number | undefined}
         />
       );
+    case "repeated-division":
+      return <DivisionChain id={variant.id} steps={spec.steps} stepIndex={(stage.revealed as number | undefined) ?? 0} attention={stage.attention as number | undefined} />;
     case "numeric":
-      return <BitGroups bits={String(variant.vars.answerBits ?? "")} groups={(stage.groups as string[] | undefined) ?? []} attention={stage.attention as number | undefined} done={!!stage.done} />;
+      if (spec.context?.type === "division-chain")
+        return <DivisionChain id={variant.id} steps={spec.context.steps} stepIndex={spec.context.steps.length} showOrder={!!stage.showOrder} attention={stage.attention as number | undefined} />;
+      if (spec.context?.type === "bits")
+        return <BitGroups bits={spec.context.bits} groups={(stage.groups as string[] | undefined) ?? []} attention={stage.attention as number | undefined} done={!!stage.done} />;
+      return null;
     case "circuit-predict":
       return <CircuitDiagram id={variant.id} spec={spec} lit={(stage.lit as string[] | undefined) ?? []} revealOutput={isLast} />;
     case "multiple-choice":

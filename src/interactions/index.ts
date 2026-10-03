@@ -6,3 +6,4 @@ export { FOCUS_ATTR, focusTarget, type InteractionBaseProps, type AnswerState } 
 export { DragToTarget, type DragToTargetProps, type DragItem, type DropTarget, type TargetStatus } from "./DragToTarget/DragToTarget";
 export { PlaceValueDiagram, type PlaceValueDiagramProps, type Bit } from "./PlaceValueDiagram/PlaceValueDiagram";
 export { CircuitDiagram, type CircuitDiagramProps } from "./CircuitDiagram/CircuitDiagram";
+export { DivisionChain, type DivisionChainProps, type ChainStep } from "./DivisionChain/DivisionChain";

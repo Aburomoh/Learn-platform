@@ -8,13 +8,16 @@ export type Answer =
   | { kind: "place-value"; digits: (0 | 1 | null)[] }
   | { kind: "numeric"; text: string }
   | { kind: "multiple-choice"; optionId: string }
-  | { kind: "circuit-predict"; output: 0 | 1 };
+  | { kind: "circuit-predict"; output: 0 | 1 }
+  | { kind: "repeated-division"; step: number; quotient: number; remainder: number };
 
 export interface GradeResult {
   correct: boolean;
   misconceptionId?: string;
   /** Normalised student answer for evidence (never raw UI state). */
   normalized: string;
+  /** True when a step was right but the question has more steps (repeated-division). */
+  partial?: boolean;
 }
 
 export function grade(variant: Variant, answer: Answer): GradeResult {
@@ -33,7 +36,9 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
       const a = answer as Extract<Answer, { kind: "numeric" }>;
       const text = normaliseNumeric(a.text);
       const correct = text === normaliseNumeric(spec.answer);
-      return { correct, normalized: text, misconceptionId: correct ? undefined : detectEquals(variant.misconceptions, text) };
+      // Compare normalised forms on both sides so "01011" still matches an authored "01011".
+      const hit = variant.misconceptions.find((m) => m.detect.type === "equals" && normaliseNumeric(String(m.detect.value)) === text);
+      return { correct, normalized: text, misconceptionId: correct ? undefined : hit?.id };
     }
     case "multiple-choice": {
       const a = answer as Extract<Answer, { kind: "multiple-choice" }>;
@@ -41,6 +46,23 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
       const option = spec.options.find((o) => o.id === a.optionId);
       const fromDetector = variant.misconceptions.find((m) => m.detect.type === "option" && m.detect.optionId === a.optionId)?.id;
       return { correct, normalized: a.optionId, misconceptionId: correct ? undefined : (option?.misconceptionId ?? fromDetector) };
+    }
+    case "repeated-division": {
+      const a = answer as Extract<Answer, { kind: "repeated-division" }>;
+      const step = spec.steps[a.step];
+      if (!step) throw new Error(`No division step ${a.step}`);
+      const correct = a.quotient === step.quotient && a.remainder === step.remainder;
+      const normalized = `${step.dividend}/2=${a.quotient}r${a.remainder}`;
+      if (correct) return { correct, normalized, partial: a.step < spec.steps.length - 1 };
+      const kind =
+        a.quotient === step.remainder && a.remainder === step.quotient && step.quotient !== step.remainder
+          ? "division-swapped"
+          : a.quotient === step.quotient
+            ? "division-remainder"
+            : a.remainder === step.remainder
+              ? "division-quotient"
+              : undefined;
+      return { correct, normalized, misconceptionId: kind ? variant.misconceptions.find((m) => m.detect.type === kind)?.id : undefined };
     }
     case "circuit-predict": {
       const a = answer as Extract<Answer, { kind: "circuit-predict" }>;
@@ -114,4 +136,17 @@ export function bitsToValue(digits: (0 | 1 | null)[]): number {
 
 export function valueToBits(value: number, slots: number): (0 | 1)[] {
   return Array.from({ length: slots }, (_, i) => ((value >> (slots - 1 - i)) & 1) as 0 | 1);
+}
+
+/** Division-by-2 chain for a value; used by content tests to confirm authored steps. */
+export function divisionSteps(value: number): { dividend: number; quotient: number; remainder: 0 | 1 }[] {
+  const out: { dividend: number; quotient: number; remainder: 0 | 1 }[] = [];
+  for (let n = value; n > 0; n = Math.floor(n / 2)) out.push({ dividend: n, quotient: Math.floor(n / 2), remainder: (n % 2) as 0 | 1 });
+  return out;
+}
+
+/** Splits a binary string into groups of `size` from the right, left-padding with zeros. */
+export function groupBits(bits: string, size: number): string[] {
+  const padded = bits.padStart(Math.ceil(bits.length / size) * size, "0");
+  return padded.match(new RegExp(`.{${size}}`, "g")) ?? [];
 }

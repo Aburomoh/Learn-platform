@@ -11,6 +11,8 @@ export interface TutorState {
   /** Highest ladder rung granted so far (0 = none). */
   hintLevel: number;
   grantedRungs: number[];
+  /** Any hint used on this variant, including on earlier steps of a multi-step question. */
+  hintsEverUsed: boolean;
   /** Index of the current Explain Slowly step while `stage === "explaining"`. */
   explanationStep: number;
   lastMisconception?: string;
@@ -24,7 +26,7 @@ export interface ActivityContext {
   explanation: ExplanationStep[];
   vars: TemplateVars;
   /** Per-variant overrides of generic reactions (plain text). */
-  reactions?: { correct?: string; correctAfterHints?: string };
+  reactions?: { correct?: string; correctAfterHints?: string; stepNext?: string };
   /** misconception id → message key (from content nudgeKey). */
   misconceptionKeys?: Record<string, string>;
   locale?: string;
@@ -37,6 +39,7 @@ export const initialTutorState: TutorState = {
   attempts: 0,
   hintLevel: 0,
   grantedRungs: [],
+  hintsEverUsed: false,
   explanationStep: 0,
   hesitationPrompted: false,
   expression: "neutral",
