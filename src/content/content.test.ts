@@ -73,6 +73,25 @@ describe("content registry", () => {
           }
   });
 
+  it("labels every question, and topic previews never reuse the activity's numbers (#116, pedagogy #112)", () => {
+    for (const c of courses)
+      for (const m of c.modules)
+        for (const t of m.topics) {
+          const values = new Set<string>();
+          for (const a of t.activities)
+            for (const q of a.questions) {
+              expect(q.label, q.id).toBeTruthy();
+              expect(q.label!.length, q.id).toBeLessThanOrEqual(24);
+              for (const v of q.variants) if (v.vars.value !== undefined) values.add(String(v.vars.value));
+            }
+          const numbers = t.preview?.match(/\d+/g) ?? [];
+          for (const n of numbers) expect(values.has(n), `${t.id} preview uses ${n}`).toBe(false);
+        }
+    const ns = courses[0].modules.flatMap((m) => m.topics).find((t) => t.id === "number-systems")!;
+    expect(ns.preview).toBe("45₁₀ → 101101₂ → 55₈ → 2D₁₆");
+    expect([(45).toString(2), (45).toString(8), (45).toString(16).toUpperCase()]).toEqual(["101101", "55", "2D"]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
     expect(getActivity("nope", "x", "y")).toBeUndefined();

@@ -100,6 +100,7 @@ export const numberSystemsTopic: TopicInput = {
   id: "number-systems",
   title: "Number-base conversions",
   summary: "Decimal to binary by repeated division, then to octal and hexadecimal by grouping bits.",
+  preview: "45₁₀ → 101101₂ → 55₈ → 2D₁₆",
   concepts: [
     { id: "ns.repeated-division", title: "Repeated division by 2", summary: "Divide by 2 until the result is 0. Each remainder is one bit." },
     { id: "ns.bit-order", title: "LSB and MSB", summary: "The first remainder is the least significant bit; the last remainder is the most significant bit." },
@@ -123,6 +124,7 @@ export const numberSystemsTopic: TopicInput = {
         /* ---- Q1: the division chain, one checked step at a time ---- */
         {
           id: "ns.q.divide",
+          label: "Divide by 2",
           conceptId: "ns.repeated-division",
           objectiveId: "ns.obj.divide",
           variants: [
@@ -201,6 +203,7 @@ export const numberSystemsTopic: TopicInput = {
         /* ---- Q2: reading the remainders in the right order ---- */
         {
           id: "ns.q.read",
+          label: "Read off",
           conceptId: "ns.bit-order",
           objectiveId: "ns.obj.read",
           variants: [
@@ -246,6 +249,7 @@ export const numberSystemsTopic: TopicInput = {
         /* ---- Q3: octal by grouping three bits, one goal at a time (#44) ---- */
         {
           id: "ns.q.octal",
+          label: "Octal",
           conceptId: "ns.octal-grouping",
           objectiveId: "ns.obj.octal",
           variants: [
@@ -319,6 +323,7 @@ export const numberSystemsTopic: TopicInput = {
         /* ---- Q4: hexadecimal by grouping four bits, one goal at a time (#44) ---- */
         {
           id: "ns.q.hex",
+          label: "Hex",
           conceptId: "ns.hex-grouping",
           objectiveId: "ns.obj.hex",
           variants: [
