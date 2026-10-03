@@ -9,6 +9,11 @@ these and carry no styling of their own; everything is drawn from the design tok
 | `PreviewBoard` | What will it look like | Renders a topic's `preview` string as tiles on a sunken board; `role="img"` read out in words ("53 base 10, then …"); bases become `<sub>`. `size="sm"` for rows. |
 | `PrimaryAction` | What do I do next | One filled link-button per view (48 px, full width on phones), optional quiet secondary, effort cue. Takes `{ label, href }` from the primary-action resolver. `size="row"` for a topic row. |
 | `ChallengeSteps` | How far am I | One marker per challenge: done (filled + check), current (ring, `aria-current="step"`), not started (hairline ring); each with hidden text. `stepsFrom(questions, completedIds)` builds the states. |
+| `TopBar` | — | The mark (`product.brand.markSrc`) and the name from config, an optional quiet back link, and the profile button. No breadcrumb trail. |
+| `ProfileMenu` | Who am I here | Disclosure: person icon (+ "Guest" from 641 px). Panel: what Guest means, Appearance (Light · Dark · Match device), Settings. Escape or a click outside closes it. |
+| `Footer` | — | Facts line: amber dot + "Demo content" (only for demo content), "Optional practice, not graded", "Progress stays in this browser". |
+| `TopicRow` | Which topic next | Plain surface: optional visual (`<PreviewBoard size="sm" bare />`, hidden on phones), title, route, status (with a check when completed), and one action: filled for the next topic, quiet for the rest. The row is never the click target. |
+| `TutorCard` (`src/tutor/ui`) | — | Monogram disc from the tutor's name (sm 40, md 56, lg 88 px) with one line in a soft bubble; `portraitSrc` (`product.brand.tutorPortrait`) replaces the disc later. The line is passed in from the tutor catalog. |
 
 Rules that apply to all of them:
 - `--brand` is used as text only at 13 px bold or larger.
@@ -16,4 +21,4 @@ Rules that apply to all of them:
 - Colour is never the only signal; every state also has a shape or text.
 - No tutor copy lives here: tutor text comes from the engine and catalog.
 
-Still to come in this folder (#134): `TopBar`, `Footer`, `TopicRow`, `ProfileMenu`; `TutorCard` goes in `src/tutor/ui`.
+These are not used by pages yet; the page tasks (#121–#125) adopt them and retire the old `Shell`/`TopBar`.

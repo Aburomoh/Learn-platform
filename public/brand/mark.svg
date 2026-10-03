@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <!-- Four bit tiles: two filled (brand, action), two outlined. No letters, so it survives a rename. -->
+  <rect x="1" y="1" width="10" height="10" rx="3" fill="#b5522b"/>
+  <rect x="13.5" y="1.5" width="9" height="9" rx="2.5" fill="none" stroke="#8a8074" stroke-width="1.5"/>
+  <rect x="1.5" y="13.5" width="9" height="9" rx="2.5" fill="none" stroke="#8a8074" stroke-width="1.5"/>
+  <rect x="13" y="13" width="10" height="10" rx="3" fill="#1d4f7a"/>
+</svg>

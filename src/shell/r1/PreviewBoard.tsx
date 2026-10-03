@@ -26,11 +26,11 @@ export function parsePreview(preview: string): PreviewTile[] {
  * chain. One image to assistive technology, read out in words. The numbers come from the topic's
  * `preview` in content and never from the practice itself.
  */
-export function PreviewBoard({ preview, size = "lg" }: { preview: string; size?: "lg" | "sm" }) {
+export function PreviewBoard({ preview, size = "lg", bare = false }: { preview: string; size?: "lg" | "sm"; /** Tiles only, without the sunken board (inside a topic row). */ bare?: boolean }) {
   const tiles = parsePreview(preview);
   const label = tiles.map((t) => (t.base ? `${t.value} base ${t.base}` : t.value)).join(", then ");
   return (
-    <div className={`${styles.board} ${size === "sm" ? styles.boardSm : ""}`}>
+    <div className={`${bare ? styles.bare : styles.board} ${size === "sm" ? styles.boardSm : ""}`}>
       <div className={styles.chain} role="img" aria-label={label}>
         {tiles.map((t, i) => (
           <span key={i} className={styles.chainItem}>
