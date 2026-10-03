@@ -30,6 +30,8 @@ export interface ActivityContext {
   /** misconception id → message key (from content nudgeKey). */
   misconceptionKeys?: Record<string, string>;
   locale?: string;
+  /** ADR-0007 step tag of the current step ("divide", "column", "carry", "gate", …). */
+  stepTag?: string;
   /** The question has another variant to retry on (new numbers). */
   hasOtherVariant?: boolean;
 }

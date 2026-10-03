@@ -7,7 +7,7 @@ import { gateWording } from "./gateVars";
  * structural vars (ADR-0007, `stepVars`); step wording such as a gate's rule is added here from
  * the catalog in the active locale, never authored in content.
  */
-export function contextFromVariant(variant: Variant, locale = "en", extraVars: Record<string, string | number> = {}): ActivityContext {
+export function contextFromVariant(variant: Variant, locale = "en", extraVars: Record<string, string | number> = {}, stepTag?: string): ActivityContext {
   const misconceptionKeys: Record<string, string> = {};
   for (const m of variant.misconceptions) misconceptionKeys[m.id] = m.nudgeKey;
   const vars = { ...variant.vars, ...extraVars };
@@ -18,5 +18,6 @@ export function contextFromVariant(variant: Variant, locale = "en", extraVars: R
     reactions: variant.reactions,
     misconceptionKeys,
     locale,
+    stepTag,
   };
 }

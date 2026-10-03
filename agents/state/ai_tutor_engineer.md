@@ -1,7 +1,7 @@
 # Current State — AI Tutor Engineer
 
-Current assignment: #83 (#80) awaiting merge; #70 (ar slots) in review.
-Recent important decision: Gate wording from structural step vars + catalog (#62, ADR-0007); retry after Explain Slowly prefers an unexplained variant.
+Current assignment: #37 tutor messages for column addition and 1's complement.
+Recent important decision: Step reactions and nudges chosen by ADR-0007 step tag (`<key>.<stepTag>`); wrong-answer details reach the nudge via ANSWER_SUBMITTED.vars.
 Blocker: None
-Relevant issue/PR: #83, #70 (#68), #37 after #33/#35.
-Next expected action: #37 tutor messages for column addition and bit complement once its dependencies are merged.
+Relevant issue/PR: #37, #70 (#68, ar slots, draft until Arabic is prioritised).
+Next expected action: Content for #38/#39 reuses these keys; division stepNext could move to the catalog the same way.
