@@ -23,6 +23,9 @@ export interface CircuitDiagramProps {
   disabled?: boolean;
 }
 
+/** Smallest rendered scale: keeps 14px labels at 12px or more; narrower screens scroll sideways. */
+const MIN_SCALE = 0.88;
+
 /**
  * Small SVG circuit (up to 3 inputs, 4 gates) drawn like a textbook schematic: standard gate
  * symbols, one pin per gate input and right-angle wires (see layout.ts). Inputs are hotspots
@@ -37,7 +40,7 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
 
   return (
     <div className={styles.root} data-diagram={id}>
-      <svg viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`} className={styles.svg} style={{ maxWidth: viewBox.width }} role="img" aria-labelledby={`${id}-title`}>
+      <svg viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`} className={styles.svg} style={{ maxWidth: viewBox.width, minWidth: Math.round(viewBox.width * MIN_SCALE) }} role="img" aria-labelledby={`${id}-title`}>
         <title id={`${id}-title`}>Circuit with {spec.gates.map((g) => g.type).join(", ")} gates</title>
         {/* wires */}
         {layout.wires.map((w, i) => {

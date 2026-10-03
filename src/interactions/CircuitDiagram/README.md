@@ -20,3 +20,5 @@ drawn like a textbook schematic: standard gate symbols, one pin per gate input, 
   channel, so wires of different signals never share a segment; a signal that feeds two gates
   shows a junction dot; a wire that would pass through a gate is moved to a free lane.
   `layout.test.ts` asserts these rules on several circuits.
+- On narrow screens the SVG never shrinks below 88% (labels stay at 12px or more); its container
+  scrolls sideways instead.
