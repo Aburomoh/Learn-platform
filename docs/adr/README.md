@@ -23,3 +23,4 @@ Status: Accepted · Date: YYYY-MM-DD · Owner: <role>
 | 0004 | Native drag and drop |
 | 0005 | Guest progress in localStorage |
 | 0006 | Agent persistence and wake mechanism |
+| 0007 | One step contract for multi-step questions |

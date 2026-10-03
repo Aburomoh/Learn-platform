@@ -45,7 +45,7 @@ and owner re-walk. Pedagogy vetoes #42 (High), #44 and #45 accepted by the owner
 phone fixes #52–#54. M1.2 approved with conditions on #47.
 
 **M1.1 close-out (before M1.2 frontend, tutor and content work).** #32 gate-by-gate circuit walk
-(Frontend); pedagogy vetoes on #25 (pending owner decision, #48): #42 retry on another variant after Explain Slowly (AI Tutor,
+(Frontend); pedagogy vetoes on #25 (accepted by the owner, 2026-10-03): #42 retry on another variant after Explain Slowly (AI Tutor,
 High), #45 content fixes (Backend), #44 octal/hex grouping as two checked steps (Frontend, after #32).
 
 ## M1.2 — ECET 111 Chapter 1 complete (approved by Director with conditions, 2026-10-03)
