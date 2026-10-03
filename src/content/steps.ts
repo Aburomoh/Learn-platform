@@ -7,19 +7,15 @@
  */
 import type { Hint, InteractionSpec, Variant } from "./schema";
 import type { TemplateVars } from "./template";
-import { additionSteps, additionStepVars, evaluateCircuit, gateOrder, groupBits } from "./grade";
+import { isRegisteredKind, kinds } from "@/kinds";
+import type { StepContract } from "@/kinds/types";
+import { additionSteps, additionStepVars, groupBits } from "./grade";
 
 type Kind = InteractionSpec["kind"];
 type SpecOf<K extends Kind> = Extract<InteractionSpec, { kind: K }>;
 
-interface StepContract<S> {
-  count(spec: S): number;
-  /** What kind of goal step `i` is: "divide", "column", "carry", "gate", … */
-  tag(spec: S, i: number): string;
-  vars(spec: S, i: number): TemplateVars;
-}
-
-const contracts: { [K in Kind]?: StepContract<SpecOf<K>> } = {
+/** Contracts of the kinds not migrated to `src/kinds/` yet (ADR-0008). */
+const legacy: { [K in Kind]?: StepContract<SpecOf<K>> } = {
   "repeated-division": {
     count: (spec) => spec.steps.length,
     tag: () => "divide",
@@ -46,33 +42,14 @@ const contracts: { [K in Kind]?: StepContract<SpecOf<K>> } = {
       return { ...common, groupIndex: i, groupBits: groupBitsAt, groupValue, digit: groupValue.toString(16).toUpperCase() };
     },
   },
-  // Gate-by-gate circuit walk, in signal-flow order; the output gate is the last step.
-  "circuit-predict": {
-    count: (spec) => spec.gates.length,
-    tag: () => "gate",
-    vars: (spec, i) => {
-      const order = gateOrder(spec);
-      const gate = spec.gates.find((g) => g.id === order[i])!;
-      const values = evaluateCircuit(spec);
-      const vars: TemplateVars = { stepNumber: i + 1, gateCount: order.length, gateId: gate.id, gateName: gate.type, gateOut: values[gate.id] };
-      // Per input n: its value, plus the circuit input's label or the type of the gate feeding it.
-      gate.from.forEach((source, k) => {
-        const n = k + 1;
-        vars[`in${n}`] = values[source];
-        const input = spec.inputs.find((x) => x.id === source);
-        if (input) vars[`in${n}Label`] = input.label;
-        else vars[`in${n}Gate`] = spec.gates.find((g) => g.id === source)!.type;
-      });
-      return vars;
-    },
-  },
 };
 
 /** Spec kinds that are answered one step at a time. */
-export const MULTI_STEP_KINDS = Object.keys(contracts) as Kind[];
+export const MULTI_STEP_KINDS = [...Object.keys(legacy), ...Object.entries(kinds).filter(([, logic]) => "steps" in logic).map(([kind]) => kind)] as Kind[];
 
 function contractOf(spec: InteractionSpec): StepContract<InteractionSpec> | undefined {
-  return contracts[spec.kind] as StepContract<InteractionSpec> | undefined;
+  const logic: { steps?: unknown } | undefined = isRegisteredKind(spec.kind) ? kinds[spec.kind] : undefined;
+  return (logic ? logic.steps : legacy[spec.kind]) as StepContract<InteractionSpec> | undefined;
 }
 
 /** Number of steps; 1 for single-answer questions. */

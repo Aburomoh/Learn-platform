@@ -3,7 +3,7 @@
  * Each wire that needs a vertical run gets its own channel (x position) in the gap before its
  * destination column, so wires of different signals never share a segment.
  */
-import type { CircuitSpec } from "@/content/schema";
+import type { CircuitSpec } from "./spec";
 
 type GateType = CircuitSpec["gates"][number]["type"];
 

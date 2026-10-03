@@ -266,6 +266,20 @@ for (const width of [390, 320]) {
   });
 }
 
+test("a kind's view is pre-rendered and its chunk is preloaded only where the kind is used (ADR-0008)", async ({ request }) => {
+  const chunksOf = (html: string) => [...new Set(html.match(/\/_next\/static\/chunks\/[\w.-]+\.js/g) ?? [])];
+  const gates = await (await request.get("/courses/ecet111/logic-gates/predict-gate-output/")).text();
+  // challenge 1 of the gate walk is in the exported HTML (#158), although its view is a lazy chunk
+  expect(gates).toContain("What comes out of the");
+  let kindChunk: string | undefined;
+  for (const chunk of chunksOf(gates)) {
+    if ((await (await request.get(chunk)).text()).includes("kind:circuit-predict")) kindChunk = chunk;
+  }
+  expect(kindChunk, "the circuit kind's chunk is referenced by the page that starts with it").toBeDefined();
+  const division = await (await request.get("/courses/ecet111/number-systems/decimal-to-binary/")).text();
+  expect(division).not.toContain(kindChunk!);
+});
+
 test("Continue resumes at the first unfinished challenge; Review starts at challenge 1", async ({ page, request }) => {
   // the pre-rendered page holds challenge 1, so a new student sees the question at first paint (#158)
   // React separates text and values with empty comments in the HTML; drop them before looking

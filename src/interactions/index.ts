@@ -4,8 +4,6 @@ export { HintReveal, type HintRevealProps, type RevealedHint } from "./HintRevea
 export { PredictionBeforeReveal, type PredictionBeforeRevealProps, type PredictionResult } from "./PredictionBeforeReveal/PredictionBeforeReveal";
 export { FOCUS_ATTR, focusTarget, type InteractionBaseProps, type AnswerState } from "./shared/types";
 export { DragToTarget, type DragToTargetProps, type DragItem, type DropTarget, type TargetStatus } from "./DragToTarget/DragToTarget";
-export { PlaceValueDiagram, type PlaceValueDiagramProps, type Bit } from "./PlaceValueDiagram/PlaceValueDiagram";
-export { CircuitDiagram, type CircuitDiagramProps } from "./CircuitDiagram/CircuitDiagram";
 export { DivisionChain, type DivisionChainProps, type ChainStep } from "./DivisionChain/DivisionChain";
 export { BitGrouping, type BitGroupingProps } from "./BitGrouping/BitGrouping";
 export { ColumnAddition, type ColumnAdditionProps, type AdditionColumn } from "./ColumnAddition/ColumnAddition";
