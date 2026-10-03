@@ -13,29 +13,20 @@ Owner action: GitHub → Settings → Applications → Vercel → Configure → 
 `Aburomoh/Learn-platform` (or install the Vercel app from vercel.com → Add New → Project). Then the Release engineer runs `vercel git connect` and every PR gets a preview URL.
 Until then: previews are deployed manually with `vercel deploy`.
 
-### 2. Production release of M1
-Decision: whether the M1/M1.1 slice goes to `learn.aburomoh.com` once accepted.
-Why it matters: mission rule — production while immature needs owner approval.
-Team recommendation: keep preview-only until the owner has used the slice end to end.
-
-### 3. Tutor avatar reference photographs
-Decision: supply 2–3 reference photos (or decide to keep a neutral illustrated placeholder).
-Why it matters: the expression library is built against placeholders until then.
-Team recommendation: no urgency; placeholders are explicit and swappable.
-
-### 4. Repo is public: two choices (Security, #72)
-(a) 39 old commits show personal author emails. Rewriting history is optional; from now on use the GitHub noreply address and turn on "Block command line pushes that expose my email".
-(b) Anyone can comment on issues the agents read. Either the team treats non-member comments as untrusted (current), or you limit interactions to collaborators.
-Team recommendation: no history rewrite; noreply going forward; limit interactions to collaborators.
-
-### 5. Topic preview number: 53 or 45 (PR #135)
-Your sketch showed 45 → 101101 → 55 → 2D. 45 is also a practice answer (37₁₀ = 45₈), and the preview must not give away practice numbers, so it shipped as 53 → 110101 → 65 → 35.
-Option A: keep 53 (team recommendation). Option B: keep 45 and change the practice number 37.
-
-### 6. Quick phone check (#153)
+### 2. Quick phone check (#153)
 On your phone, type bits into a filled row (e.g. binary addition) and confirm every digit lands in the next cell. Fixed and tested; this is a real-device confirmation only.
 
+### 3. Old commits still show your email (optional)
+New commits use your GitHub private address. 39 earlier commits still show personal addresses; only a history rewrite removes them (force-push of `main`, every open branch rebased). Team recommendation: leave history as is unless you want it removed; say "rewrite history" and the Technical Lead will plan it.
+
 ## Resolved
+- 2026-10-04 — Owner decisions (in Technical Lead session; quoted on #192):
+  - Issue comments limited to collaborators (GitHub limit, renew every 6 months; Security tracks the date).
+  - Topic preview keeps 53.
+  - Each question gets three, sometimes four, variants (replaces "at least two"). Random numbers each time: later stage, curated (K-maps).
+  - **Release bar:** production at learn.aburomoh.com only when ready to ship, with at least three courses. ECET 111 completing does not trigger a release; preview-only until then.
+  - Tutor photos: the owner will supply them; placeholder until then.
+  - Hide email: new commits use the GitHub private address.
 - 2026-10-04 — Walkthrough of M1.1 + M1.2 + redesign: no explicit "accepted". The Director treated the owner's statement on #192 as the verdict and closed the milestones: "The current platform is developing very well, and the existing Number Conversion and Simple Logic Gates activities demonstrate the intended direction successfully." Tell the team if anything should be reopened.
 - 2026-10-03 — Redesign proposal (epic #110, PR #129, `docs/design/redesign-r1/`): approved as the direction (owner, in Technical Lead session; quoted on #110). Frontend unblocked.
 - 2026-10-03 — Branch protection (old item 4): owner chose Option B. The repo is public and `main` is protected (PR only, green CI, linear history); see #72. Never post secrets or slide content.
