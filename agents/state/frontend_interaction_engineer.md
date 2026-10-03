@@ -1,8 +1,8 @@
 # Current State — Frontend / Interaction Engineer
 
-Current assignment: PR #73 (#32 gate walk + #52 circuit fit) rebased on main after #62, awaiting review/QA; PR #87 (#54 tutor strip, never clamp unread text) back with QA.
-Recent important decision: ADR-0007 step contract lives in `src/content/steps.ts` (created in #73). Tutor strip collapses only when a message is stale; user scroll only (not programmatic).
+Current assignment: PR for #88 (circuit text >= 12 px on phones, compact layout) in review; PR #87 (#54 tutor strip) with QA.
+Recent important decision: Diagram text is 16 units with a 0.75x scale floor (12 px); fit phones by compacting the layout, then scroll inside the box. Step contract is `src/content/steps.ts` (ADR-0007).
 Blocker: None
-Relevant issue/PR: #73, #87
+Relevant issue/PR: #88, #87; #73 merged (#32, #52).
 Wake me: `npm run alarm frontend-interaction-engineer <#> "<reason>" <your-role>` (label `wake:frontend`).
-Next expected action: #44 octal/hex grouping as two step kinds (after #73 merges, uses steps.ts); then #34/#36 when ready; #56, #57 (M1.2 backlog).
+Next expected action: #44 octal/hex grouping as two step kinds (uses steps.ts); then #34/#36 when ready; #56, #57 (M1.2 backlog).

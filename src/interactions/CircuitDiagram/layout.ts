@@ -32,17 +32,17 @@ export interface CircuitLayout {
 }
 
 export const GATE_H = 44;
-export const INPUT_W = 44;
+export const INPUT_W = 38;
 export const INPUT_H = 40;
-const INPUT_X = 8;
+const INPUT_X = 4;
 const ROW_H = 70;
-const COL_X0 = 108;
-const COL_W = 128;
+const COL_X0 = 82;
+const COL_W = 104;
 const PIN_DY = 11;
 const MIN_GATE_GAP = 64;
 /** A horizontal wire closer than this to a gate centre line would run through its body or label. */
 const BODY_CLEARANCE = 40;
-const OUTPUT_STUB = 40;
+const OUTPUT_STUB = 20;
 
 /** Distance from the left edge of the body to its output tip (bubble included). */
 export function gateWidth(type: GateType): number {
@@ -191,7 +191,7 @@ export function layoutCircuit(spec: CircuitSpec): CircuitLayout {
   ];
   const top = Math.min(...ys) - 12;
   const bottom = Math.max(...ys) + 12;
-  const right = Math.max(output.to.x + 48, ...spec.gates.map((g) => gates[g.id].x + gateWidth(g.type) + 28));
+  const right = Math.max(output.to.x + 44, ...spec.gates.map((g) => gates[g.id].x + gateWidth(g.type) + 28));
 
   return {
     viewBox: { x: 0, y: top, width: right, height: bottom - top },
