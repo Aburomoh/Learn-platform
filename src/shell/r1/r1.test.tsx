@@ -86,4 +86,10 @@ describe("PreviewBoard", () => {
     expect(values.length).toBeGreaterThanOrEqual(3);
     for (const used of ["26", "37", "88", "73"]) expect(values).not.toContain(used);
   });
+
+  it("can render the tiles alone, for a topic row", () => {
+    const { container } = render(<PreviewBoard preview="53₁₀ → 35₁₆" size="sm" bare />);
+    expect(screen.getByRole("img", { name: "53 base 10, then 35 base 16" })).toBeInTheDocument();
+    expect(container.querySelectorAll("sub")).toHaveLength(2);
+  });
 });
