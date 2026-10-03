@@ -1,7 +1,7 @@
 # Current State — QA / Test Engineer
 
-Current assignment: Reduced-motion e2e, DragToTarget pointer unit tests, home→activity flake investigation.
-Recent important decision: Pointer-drag e2e waits for a shipped activity that uses DragToTarget (none since #25); pointer path unit-tested meanwhile.
-Blocker: None. home→activity flake root cause: parallel checkouts shared port 4173 and reused each other's server; fixed (PW_PORT, no reuse).
-Relevant issue/PR: this PR; next #61 (wake:qa).
-Next expected action: Add pointer-drag e2e when an M1.2 activity ships with drag; QA #61.
+Current assignment: QA on wake:qa alarms; passed #61 #62 #65 #69 #73 #76 #77 #79 #83 #84 #87 #90 #91 #102.
+Recent important decision: e2e runs use a per-worktree `PW_PORT` and never reuse a server (#81); this fixed the cross-checkout flake.
+Blocker: None. Open: #100 hydration mismatch on the gates page (Frontend); guest-flow network assert failed twice under load, URL not yet captured.
+Relevant issue/PR: #100, #74 (fixed by #76).
+Next expected action: Make the guest-flow network assert print the URLs it caught; add pointer-drag e2e once a drag activity ships.
