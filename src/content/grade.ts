@@ -99,7 +99,7 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
     }
     case "column-addition": {
       const a = answer as Extract<Answer, { kind: "column-addition" }>;
-      const steps = additionSteps(spec.a, spec.b);
+      const steps = additionSteps(spec.a, spec.b, spec.endCarry !== "drop");
       const step = steps[a.step];
       if (!step) throw new Error(`No addition step ${a.step}`);
       if (step.final) {
@@ -112,7 +112,7 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
       if (a.carry === undefined) throw new Error(`Addition column ${a.step} needs a carry`);
       const correct = a.sum === step.sum && a.carry === step.carryOut;
       const normalized = `${step.a}+${step.b}+${step.carryIn}=${a.sum}c${a.carry}`;
-      if (correct) return { correct, normalized, partial: true };
+      if (correct) return { correct, normalized, partial: a.step < steps.length - 1 };
       const total = step.a + step.b + step.carryIn;
       // With a carry in, "ignored the carry" and "swapped" can give the same pair; the carry reading wins.
       const kind =
@@ -275,7 +275,7 @@ export interface AdditionStep {
  * Column-by-column binary addition, LSB first, plus one final step for the end carry.
  * Used by the grader and by content tests; never authored by hand.
  */
-export function additionSteps(a: string, b: string): AdditionStep[] {
+export function additionSteps(a: string, b: string, endCarry = true): AdditionStep[] {
   if (a.length !== b.length) throw new Error("operands must have equal width");
   const out: AdditionStep[] = [];
   let carry: 0 | 1 = 0;
@@ -287,7 +287,7 @@ export function additionSteps(a: string, b: string): AdditionStep[] {
     out.push(step);
     carry = step.carryOut;
   }
-  out.push({ column: a.length, a: 0, b: 0, carryIn: carry, sum: carry, carryOut: 0, final: true });
+  if (endCarry) out.push({ column: a.length, a: 0, b: 0, carryIn: carry, sum: carry, carryOut: 0, final: true });
   return out;
 }
 
@@ -297,8 +297,8 @@ export function additionStepVars(step: AdditionStep): Record<string, number> {
 }
 
 /** Result bits of a column addition, final carry first (width + 1 bits). */
-export function additionResult(a: string, b: string): string {
-  return additionSteps(a, b).map((s) => s.sum).reverse().join("");
+export function additionResult(a: string, b: string, endCarry = true): string {
+  return additionSteps(a, b, endCarry).map((s) => s.sum).reverse().join("");
 }
 
 /** 1's complement: every 1 becomes 0 and every 0 becomes 1 (width kept). */

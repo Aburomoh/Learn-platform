@@ -50,6 +50,14 @@ function currentPractice(topic: Topic, progress: Progress): Activity {
 
 const isCompleted = (topic: Topic, progress: Progress) => topic.activities.every((a) => statusOf(progress, a) === "completed");
 
+/** One practice's own action, for a row that lists it: Start, Continue or Review. */
+export function practiceAction(course: Course, topic: Topic, activity: Activity, progress: Progress): { kind: "start" | "continue" | "review"; link: ActionLink } {
+  const status = statusOf(progress, activity);
+  if (status === "completed") return { kind: "review", link: { label: "Review", href: reviewHref(course, topic, activity) } };
+  if (status === "started") return { kind: "continue", link: { label: "Continue", href: practiceHref(course, topic, activity) } };
+  return { kind: "start", link: { label: "Start", href: practiceHref(course, topic, activity) } };
+}
+
 /** Topic page: follows the table above for this topic's current practice. */
 export function topicAction(course: Course, topic: Topic, progress: Progress): PrimaryAction {
   const activity = currentPractice(topic, progress);

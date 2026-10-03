@@ -23,9 +23,9 @@ describe("TopicNext", () => {
     const button = document.querySelector("[data-primary-action]")!;
     expect(button).toHaveTextContent("Start practice");
     expect(button.getAttribute("href")).toContain(`/${topic.id}/${first.id}`);
-    // under the button (and again on the practice's own row when the topic has several)
-    expect(screen.getAllByText(`${first.questions.length} short challenges · about ${first.minutes} min`).length).toBeGreaterThan(0);
-    const steps = within(screen.getByRole("list", { name: "Challenges" })).getAllByRole("listitem");
+    expect(document.querySelectorAll("[data-primary-action]")).toHaveLength(1);
+    expect(screen.getAllByText(new RegExp(`${first.questions.length} short challenges`)).length).toBeGreaterThan(0);
+    const steps = within(screen.getByRole("list", { name: /^Challenges/ })).getAllByRole("listitem");
     expect(steps).toHaveLength(first.questions.length);
     expect(steps.every((s) => s.getAttribute("data-state") === "todo")).toBe(true);
   });
@@ -36,7 +36,7 @@ describe("TopicNext", () => {
     });
     render(<TopicNext course={course} topic={topic} />);
     expect(document.querySelector("[data-primary-action]")).toHaveTextContent("Continue");
-    const states = within(screen.getByRole("list", { name: "Challenges" })).getAllByRole("listitem").map((s) => s.getAttribute("data-state"));
+    const states = within(screen.getByRole("list", { name: /^Challenges/ })).getAllByRole("listitem").map((s) => s.getAttribute("data-state"));
     expect(states.slice(0, 2)).toEqual(["done", "current"]);
   });
 
@@ -47,9 +47,14 @@ describe("TopicNext", () => {
     render(<TopicNext course={course} topic={topic} />);
     const rows = within(screen.getByRole("region", { name: "Practices in this topic" })).getAllByRole("listitem");
     expect(rows).toHaveLength(topic.activities.length);
-    expect(rows[0]).toHaveAttribute("data-status", "completed");
+    expect(rows[0]).toHaveAttribute("data-status", "review");
     expect(within(rows[0]).getByRole("link", { name: `Review: ${first.title}` }).getAttribute("href")).toContain("review=1");
-    expect(within(rows[1]).getByRole("link", { name: `Start: ${topic.activities[1].title}` })).toBeInTheDocument();
+    // the practice the page button is about is marked "Up next" and has no second button
+    expect(rows[1]).toHaveAttribute("data-up-next", "true");
+    expect(within(rows[1]).queryByRole("link")).toBeNull();
+    expect(rows[1]).toHaveTextContent("Up next");
+    // and the steps say which practice they belong to
+    expect(screen.getByRole("list", { name: `Challenges of ${topic.activities[1].title}` })).toBeInTheDocument();
     // the page button has moved on to the topic's next practice
     expect(document.querySelector("[data-primary-action]")!.getAttribute("href")).toContain(topic.activities[1].id);
   });
@@ -61,7 +66,7 @@ describe("TopicNext", () => {
     render(<TopicNext course={course} topic={topic} />);
     const isLast = topics[topics.length - 1].id === topic.id;
     expect(document.querySelector("[data-primary-action]")).toHaveTextContent(isLast ? "Review" : "Next topic");
-    expect(screen.queryByRole("list", { name: "Challenges" })).toBeNull();
+    expect(screen.queryByRole("list", { name: /^Challenges/ })).toBeNull();
     expect(screen.getByText("Completed. You can review it any time.")).toBeInTheDocument();
   });
 });

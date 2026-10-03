@@ -39,6 +39,27 @@ describe("BitRow", () => {
     expect(onAnswer).toHaveBeenCalledWith("0110");
   });
 
+  it("retyping over a filled row replaces every cell, also where the digit is the same (#151)", async () => {
+    const onAnswer = vi.fn();
+    render(<BitRow id="r" bits="010101" onAnswer={onAnswer} />);
+    const user = userEvent.setup();
+    const cells = screen.getAllByRole("textbox");
+    const row = () => cells.map((c) => (c as HTMLInputElement).value).join("");
+    cells[0].focus();
+    await user.keyboard("101010");
+    expect(row()).toBe("101010");
+    // QA's cases: same digits in most places, then a mixed overwrite
+    cells[0].focus();
+    await user.keyboard("101011");
+    expect(row()).toBe("101011");
+    cells[0].focus();
+    await user.keyboard("011110");
+    expect(row()).toBe("011110");
+    expect(cells[5]).toHaveFocus();
+    await user.keyboard("{Enter}");
+    expect(onAnswer).toHaveBeenCalledWith("011110");
+  });
+
   it("points at the first wrong cell and keeps what was typed", () => {
     const { rerender } = render(<BitRow id="r" bits="1001" onAnswer={() => {}} />);
     rerender(<BitRow id="r" bits="1001" onAnswer={() => {}} state="incorrect" wrongBit={2} />);

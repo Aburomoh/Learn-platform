@@ -18,6 +18,9 @@ scaffold we add (the slide does not draw it).
   then "Check step" or Enter. Tab order: sum, carry, Check. The sum accepts 0–3 (so "wrote 2" can
   be recognised), the carry 0 or 1.
 - Final step: only the bit to bring down, in the extra leftmost column.
+- No final step in `columns` (the end carry is dropped, e.g. the +1 of a 2's complement): the grid
+  is exactly as wide as the operands; the leftmost column's carry out is typed above the "+" sign
+  and then shown struck through as dropped (`add-carry-dropped`).
 - Completed columns keep their sum bit and the carry that went into the next column; columns not
   reached yet show only the given operand bits.
 - Remount (change `key`) when `stepIndex` advances; focus then moves to the new sum input (not
