@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getActivity } from "@/content";
-import { createRunnerReducer, initialRunnerState, currentVariant, type RunnerAction, type RunnerState } from "./runnerReducer";
+import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, type RunnerAction, type RunnerState } from "./runnerReducer";
 import type { Activity } from "@/content/schema";
 
 const activity = getActivity("ecet111", "number-systems", "decimal-to-binary")!.activity;
@@ -166,5 +166,36 @@ describe("runner reducer: walked division", () => {
   it("hesitation unlocks hints before the first attempt", () => {
     const s = run([{ type: "OPEN" }, { type: "HINT" }, { type: "HESITATION", seconds: 60 }, { type: "HINT" }]);
     expect(s.hints).toHaveLength(1);
+  });
+});
+
+describe("resume at the first unfinished challenge (#119)", () => {
+  const ids = activity.questions.map((q) => q.id);
+
+  it("starts at challenge 1 with nothing finished", () => {
+    expect(resumeRunnerState(activity, [])).toEqual(initialRunnerState(activity));
+  });
+
+  it("keeps finished challenges and opens the first unfinished one, on its first variant and step", () => {
+    const s = resumeRunnerState(activity, ids.slice(0, 2));
+    expect(s.qIndex).toBe(2);
+    expect(s.completed).toEqual(ids.map((_, i) => i < 2));
+    expect(s.vIndex).toEqual(ids.map(() => 0));
+    expect(s.stepIndex).toBe(0);
+    expect(s.done).toBe(false);
+    // the tutor opens the challenge as usual and the runner carries on to the end from there
+    const opened = reducer(s, { type: "OPEN" });
+    expect(opened.tutor.stage).toBe("await_answer");
+    expect(currentVariant(activity, opened).id).toBe(activity.questions[2].variants[0].id);
+  });
+
+  it("resumes past a gap: an earlier unfinished challenge comes first", () => {
+    expect(resumeRunnerState(activity, [ids[1]]).qIndex).toBe(0);
+    expect(resumeRunnerState(activity, [ids[0], ids[2]]).qIndex).toBe(1);
+  });
+
+  it("with everything finished, or unknown ids, it is a fresh start (Review)", () => {
+    expect(resumeRunnerState(activity, ids)).toEqual(initialRunnerState(activity));
+    expect(resumeRunnerState(activity, ["not-a-question"])).toEqual(initialRunnerState(activity));
   });
 });

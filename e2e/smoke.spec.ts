@@ -235,6 +235,42 @@ for (const width of [390, 320]) {
   });
 }
 
+test("Continue resumes at the first unfinished challenge; Review starts at challenge 1", async ({ page, request }) => {
+  // the pre-rendered page holds no challenge, so nothing can flash before local progress is read
+  const html = await (await request.get(ACTIVITY)).text();
+  expect(html).not.toContain("Question 1 of");
+
+  // finish challenges 1 and 2 of 4
+  await page.goto(ACTIVITY);
+  for (const [d, q, r] of [[26, 13, 0], [13, 6, 1], [6, 3, 0], [3, 1, 1], [1, 0, 1]]) await divisionStep(page, d, q, r);
+  await page.getByRole("button", { name: "Next question" }).click();
+  await page.getByRole("textbox").fill("11010");
+  await page.getByRole("button", { name: "Check", exact: true }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
+  await page.waitForTimeout(1200); // debounced write
+
+  // reload: challenge 3 (octal by grouping) is the first thing shown; challenge 1 never appears
+  const seen: string[] = [];
+  await page.exposeFunction("seenQuestion", (text: string) => seen.push(text));
+  await page.addInitScript(() => {
+    new MutationObserver(() => {
+      const m = document.body?.innerText.match(/Question \d of \d/);
+      if (m) (window as unknown as { seenQuestion: (t: string) => void }).seenQuestion(m[0]);
+    }).observe(document, { childList: true, subtree: true });
+  });
+  await page.reload();
+  await expect(page.getByText("Question 3 of 4")).toBeVisible();
+  await expect(page.getByRole("form", { name: "Mark groups of 3 bits" })).toBeVisible();
+  expect(new Set(seen)).toEqual(new Set(["Question 3 of 4"]));
+
+  // Review restarts at challenge 1 without losing what was finished
+  await page.goto(`${ACTIVITY}?review=1`);
+  await expect(page.getByText("Question 1 of 4")).toBeVisible();
+  await expect(page.getByLabel("26 divided by 2: result")).toBeVisible();
+  await page.goto(ACTIVITY);
+  await expect(page.getByText("Question 3 of 4")).toBeVisible();
+});
+
 // The pre-rendered HTML must match the first client render on every route (#100): a hydration
 // mismatch makes React throw and re-render the whole page in the browser.
 for (const route of [
