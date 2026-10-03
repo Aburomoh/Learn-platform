@@ -31,7 +31,7 @@ offering-scoped local progress + settings · ActivityRunner · smoke tests.
 drills · IEEE-754 activity · Sortable/Matching/SequenceBuilder/CodeStepper components ·
 Vercel preview deployments (owner action, see DECISIONS_FOR_OWNER) · real course content.
 
-## M1.1 — Owner feedback on M1 (in progress)
+## M1.1 — Owner feedback on M1 (done on main 2026-10-03, awaiting owner walkthrough)
 Owner walkthrough, 2026-10-03: questions were too large (a full decimal-to-binary conversion in one
 step) and the circuit drawing was unclear. Changes: #20 walked divide-by-2 flow following ECET 111
 Chapter 1 (DivisionChain, step-aware tutor, read-off, octal and hex by grouping) — PR #25; #19 circuit
@@ -79,6 +79,7 @@ Owner supplies slides/questions for one CET course; Backend/Data + Pedagogy stru
 the M1 schema and record what the schema lacks (input to the Instructor Studio design).
 
 ## Status log (newest first)
+- 2026-10-04 — Director: M1.1, M1.2 and R1 redesign all on main (57624e6; 301 unit, 40 e2e green); combined owner walkthrough requested (DECISIONS item 5).
 - 2026-10-03 — M1.2 complete on `main`: binary addition, 1's/2's complement, subtraction (positive and negative), exercises 88/73 and 15−4/10−14, base subscripts (#55); follow-ups #141, #158, #170 closed. All content DEMO until instructor approval.
 - 2026-10-03 — Owner accepted vetoes #42/#44/#45; rule: each step is its own goal. M1.1 close-out = #32, #42, #44, #45, #52–#54.
 - 2026-10-03 — Director: M1.1 close-out = #32; vetoes #42/#44/#45 pending owner; M1.2 approved with conditions (#47); PR #26 resolved (owner approved).
