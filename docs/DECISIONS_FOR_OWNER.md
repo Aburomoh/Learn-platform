@@ -13,24 +13,21 @@ Owner action: GitHub → Settings → Applications → Vercel → Configure → 
 `Aburomoh/Learn-platform` (or install the Vercel app from vercel.com → Add New → Project). Then the Release engineer runs `vercel git connect` and every PR gets a preview URL.
 Until then: previews are deployed manually with `vercel deploy`.
 
-### 2. Production release of M1
-Decision: whether the M1/M1.1 slice goes to `learn.aburomoh.com` once accepted.
-Why it matters: mission rule — production while immature needs owner approval.
-Team recommendation: keep preview-only until the owner has used the slice end to end.
+### 2. Quick phone check (#153)
+On your phone, type bits into a filled row (e.g. binary addition) and confirm every digit lands in the next cell. Fixed and tested; this is a real-device confirmation only.
 
-### 3. Tutor avatar reference photographs
-Decision: supply 2–3 reference photos (or decide to keep a neutral illustrated placeholder).
-Why it matters: the expression library is built against placeholders until then.
-Team recommendation: no urgency; placeholders are explicit and swappable.
-
-### 5. Walk through M1.1 + M1.2 + redesign (one visit)
-Decision: accept or send back. Preview: https://learn-platform-6ri4tafdc-aburomohs-projects.vercel.app (Vercel login).
-Check: (a) divide-by-2, octal/hex grouping, gates: one step at a time, retry on a new number after Explain Slowly;
-(b) rest of Chapter 1: addition, 1's/2's complement, subtraction; (c) the redesign: home → course → topic → activity, Start/Continue, warm light look; (d) on a phone.
-Why it matters: closes M1.1, M1.2 and R1; M2 (Chapters 2–5) builds on them.
-Reply: "accepted", or what feels wrong.
+### 3. Old commits still show your email (optional)
+New commits use your GitHub private address. 39 earlier commits still show personal addresses; only a history rewrite removes them (force-push of `main`, every open branch rebased). Team recommendation: leave history as is unless you want it removed; say "rewrite history" and the Technical Lead will plan it.
 
 ## Resolved
+- 2026-10-04 — Owner decisions (in Technical Lead session; quoted on #192):
+  - Issue comments limited to collaborators (GitHub limit, renew every 6 months; Security tracks the date).
+  - Topic preview keeps 53.
+  - Each question gets three, sometimes four, variants (replaces "at least two"). Random numbers each time: later stage, curated (K-maps).
+  - **Release bar:** production at learn.aburomoh.com only when ready to ship, with at least three courses. ECET 111 completing does not trigger a release; preview-only until then.
+  - Tutor photos: the owner will supply them; placeholder until then.
+  - Hide email: new commits use the GitHub private address.
+- 2026-10-04 — Walkthrough of M1.1 + M1.2 + redesign: no explicit "accepted". The Director treated the owner's statement on #192 as the verdict and closed the milestones: "The current platform is developing very well, and the existing Number Conversion and Simple Logic Gates activities demonstrate the intended direction successfully." Tell the team if anything should be reopened.
 - 2026-10-03 — Redesign proposal (epic #110, PR #129, `docs/design/redesign-r1/`): approved as the direction (owner, in Technical Lead session; quoted on #110). Frontend unblocked.
 - 2026-10-03 — Branch protection (old item 4): owner chose Option B. The repo is public and `main` is protected (PR only, green CI, linear history); see #72. Never post secrets or slide content.
 - 2026-10-03 — Pedagogy vetoes #42, #44, #45: accepted (owner, in Technical Lead session; quoted on #44). New rule: each step of a multi-step answer is its own goal, shown only after the previous one is done; be patient with students.

@@ -4,7 +4,7 @@
 Repository, charters, state files, shared protocols, docs, ADRs 0001–0006, CI, PR/issue
 templates, wake workflow, `.claude/agents` launchers, Next.js scaffold.
 
-## M1 — First vertical slice (done 2026-10-03, awaiting owner walkthrough)
+## M1 — First vertical slice (closed 2026-10-04)
 
 **Product Manager proposal.** One demo course "Digital Logic Fundamentals (DEMO)" with two
 topics chosen by the owner: Number Systems and Logic Gates. Activity 1 (decimal → binary with
@@ -31,7 +31,7 @@ offering-scoped local progress + settings · ActivityRunner · smoke tests.
 drills · IEEE-754 activity · Sortable/Matching/SequenceBuilder/CodeStepper components ·
 Vercel preview deployments (owner action, see DECISIONS_FOR_OWNER) · real course content.
 
-## M1.1 — Owner feedback on M1 (done on main 2026-10-03, awaiting owner walkthrough)
+## M1.1 — Owner feedback on M1 (closed 2026-10-04)
 Owner walkthrough, 2026-10-03: questions were too large (a full decimal-to-binary conversion in one
 step) and the circuit drawing was unclear. Changes: #20 walked divide-by-2 flow following ECET 111
 Chapter 1 (DivisionChain, step-aware tutor, read-off, octal and hex by grouping) — PR #25; #19 circuit
@@ -48,7 +48,7 @@ phone fixes #52–#54. M1.2 approved with conditions on #47.
 (Frontend); pedagogy vetoes on #25 (accepted by the owner, 2026-10-03): #42 retry on another variant after Explain Slowly (AI Tutor,
 High), #45 content fixes (Backend), #44 octal/hex grouping as two checked steps (Frontend, after #32).
 
-## M1.2 — ECET 111 Chapter 1 complete (done 2026-10-03, awaiting owner walkthrough)
+## M1.2 — ECET 111 Chapter 1 complete (closed 2026-10-04)
 Rest of Chapter 1 after M1.1 closes (#32 gate-by-gate circuit walk): binary addition, 1's and 2's
 complement, subtraction by 2's complement, and the slide exercises. Every question is walked in
 checked steps (owner feedback of 2026-10-03); all content DEMO until instructor approval.
@@ -74,11 +74,12 @@ context; 2's complement is that plus +1 through `column-addition`.
 **Variant rule (from #42).** Every content question has at least two variants: the walked example
 (Explain Slowly) uses one, the retry uses another, so an explained answer can never complete it.
 
-## M2 — Real content for one course (proposed, not started)
+## M2 — Real content for one course (superseded by epic #192: complete ECET 111, milestones C1–C6)
 Owner supplies slides/questions for one CET course; Backend/Data + Pedagogy structure it with
 the M1 schema and record what the schema lacks (input to the Instructor Studio design).
 
 ## Status log (newest first)
+- 2026-10-04 — Director: M1, M1.1, M1.2 and R1 (#110) closed by the Director, treating the owner's statement on #192 as the walkthrough verdict (not an explicit acceptance). Next: ECET 111 complete (#192); plan approval on #193.
 - 2026-10-04 — Director: M1.1, M1.2 and R1 redesign all on main (57624e6; 301 unit, 40 e2e green); combined owner walkthrough requested (DECISIONS item 5).
 - 2026-10-03 — M1.2 complete on `main`: binary addition, 1's/2's complement, subtraction (positive and negative), exercises 88/73 and 15−4/10−14, base subscripts (#55); follow-ups #141, #158, #170 closed. All content DEMO until instructor approval.
 - 2026-10-03 — Owner accepted vetoes #42/#44/#45; rule: each step is its own goal. M1.1 close-out = #32, #42, #44, #45, #52–#54.

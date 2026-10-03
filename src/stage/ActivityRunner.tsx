@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { Activity, Course, Topic } from "@/content/schema";
 import { product } from "../../config/product";
 import { HintReveal } from "@/interactions/HintReveal/HintReveal";
@@ -11,6 +11,7 @@ import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVari
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
 import { KindPrefetch } from "@/kinds/ui";
+import { useHydrated } from "@/shell/useHydrated";
 import { RESUME_ATTR } from "./resumeMarker";
 import { ChallengeSteps, type ChallengeStep } from "@/shell/r1";
 import { topicAction } from "@/shell/primaryAction";
@@ -24,7 +25,6 @@ export interface ActivityRunnerProps {
 
 const HESITATION_TICK_MS = 15_000;
 
-const noSubscription = () => () => {};
 
 /** Review links carry `?review=1`: restart at challenge 1 instead of resuming. */
 function isReview(): boolean {
@@ -48,7 +48,7 @@ function startState(offeringId: string, activity: Activity): RunnerState {
 export function ActivityRunner(props: ActivityRunnerProps) {
   const { course, activity } = props;
   // false while rendering on the server and during hydration, true on any later (client) render
-  const client = useSyncExternalStore(noSubscription, () => true, () => false);
+  const client = useHydrated();
   const start = useMemo(() => (client ? startState(course.offeringId, activity) : initialRunnerState(activity)), [client, course.offeringId, activity]);
   const resumed = start.qIndex > 0 || start.completed.some(Boolean);
 
