@@ -25,7 +25,12 @@ test("home lists the course and navigates to an activity", async ({ page }) => {
   await expect(page).toHaveURL(/\/courses\/ecet111\/$/);
   await page.getByRole("link", { name: /Number-base conversions/ }).click();
   await expect(page).toHaveURL(new RegExp(`${TOPIC}$`));
-  await page.getByRole("link", { name: /Decimal → binary/ }).click();
+  // topic page: where am I, what am I learning, and one primary button
+  await expect(page.getByRole("heading", { level: 1, name: "Number-base conversions" })).toBeVisible();
+  await expect(page.getByText(/ECET 111 · Chapter 1/)).toBeVisible();
+  await expect(page.locator("[data-primary-action]")).toHaveCount(1);
+  await expect(page.getByRole("group").filter({ hasText: "What you'll practise" }).locator("ul")).toBeHidden();
+  await page.locator("[data-primary-action]", { hasText: "Start practice" }).click();
   await expect(page).toHaveURL(new RegExp(`${ACTIVITY}$`));
   await expect(page.getByTestId("learning-stage")).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -95,7 +100,8 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
 
   // 7. only same-origin static assets were requested (no server or third-party calls)
   const origin = new URL(page.url()).origin;
-  const nonStatic = requests.filter((u) => !u.startsWith("data:") && !(u.startsWith(origin) && /\/_next\/|\/__next\./.test(u)));
+  // static files of this site: Next.js assets and the brand mark (which a prefetched page may preload)
+  const nonStatic = requests.filter((u) => !u.startsWith("data:") && !(u.startsWith(origin) && /\/_next\/|\/__next\.|\/brand\/[\w.-]+\.svg$/.test(u)));
   expect(nonStatic).toEqual([]);
 
   // 8. progress persisted locally and visible after navigation
@@ -103,7 +109,9 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   const stored = await page.evaluate(() => Object.keys(localStorage).filter((k) => k.startsWith("cet-learn:v1:progress:")));
   expect(stored).toHaveLength(1);
   await page.goto(TOPIC);
-  await expect(page.getByTestId("status-decimal-to-binary")).toHaveText("Started");
+  // the topic page now offers Continue for the practice in progress
+  await expect(page.locator("[data-primary-action]")).toHaveText(/Continue/);
+  await expect(page.locator("[data-action='continue']")).toBeVisible();
 });
 
 test("octal and hex by grouping, one goal at a time, finish the activity", async ({ page }) => {
