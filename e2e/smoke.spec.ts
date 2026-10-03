@@ -190,6 +190,27 @@ for (const width of [390, 320]) {
   });
 }
 
+// The pre-rendered HTML must match the first client render on every route (#100): a hydration
+// mismatch makes React throw and re-render the whole page in the browser.
+for (const route of [
+  "/",
+  "/courses/ecet111/",
+  "/courses/ecet111/number-systems/",
+  "/courses/ecet111/logic-gates/",
+  "/courses/ecet111/number-systems/decimal-to-binary/",
+  "/courses/ecet111/logic-gates/predict-gate-output/",
+  "/settings/",
+]) {
+  test(`no page errors or hydration mismatch on ${route}`, async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(String(e)));
+    await page.goto(route);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await page.waitForTimeout(500);
+    expect(errors).toEqual([]);
+  });
+}
+
 test("settings: clear local data resets progress", async ({ page }) => {
   await page.goto(ACTIVITY);
   await expect(page.getByTestId("learning-stage")).toBeVisible();
