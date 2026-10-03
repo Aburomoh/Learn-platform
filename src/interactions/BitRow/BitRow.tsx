@@ -56,7 +56,11 @@ export function BitRow({ id, bits, sourceLabel = "Number", answerLabel = "Your a
   const setCell = (i: number, value: string) => setCells((c) => c.map((x, k) => (k === i ? value : x)));
 
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>, i: number) {
-    if (e.key === "ArrowLeft") focusCell(i - 1);
+    // A 0 or 1 always replaces the cell and moves on, even when the cell already holds that digit.
+    if ((e.key === "0" || e.key === "1") && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      setCell(i, e.key);
+      if (i < n - 1) focusCell(i + 1);
+    } else if (e.key === "ArrowLeft") focusCell(i - 1);
     else if (e.key === "ArrowRight") focusCell(i + 1);
     else if (e.key === "Backspace" && cells[i] === "") {
       setCell(i - 1, "");
@@ -112,11 +116,14 @@ export function BitRow({ id, bits, sourceLabel = "Number", answerLabel = "Your a
                     aria-label={`Bit ${i + 1} of ${n}, under ${bit}`}
                     aria-invalid={pointAt === i || undefined}
                     value={cells[i]}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/[^01]/g, "").slice(-1);
+                    // onInput, not onChange: React skips onChange when the same digit is typed over a
+                    // filled cell, and the cursor must still move on (#151).
+                    onInput={(e) => {
+                      const value = e.currentTarget.value.replace(/[^01]/g, "").slice(-1);
                       setCell(i, value);
                       if (value !== "" && i < n - 1) focusCell(i + 1);
                     }}
+                    onChange={() => {}}
                     onFocus={(e) => e.target.select()}
                     onKeyDown={(e) => onKeyDown(e, i)}
                   />
