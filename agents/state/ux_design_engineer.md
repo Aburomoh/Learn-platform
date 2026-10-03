@@ -1,7 +1,7 @@
 # Current State — UX / Design Engineer
 
-Current assignment: Design tokens and shell/stage layouts delivered.
-Recent important decision: Tutor panel sticky beside stage ≥1200 px, above it below.
+Current assignment: Responsive review of DivisionChain, CircuitDiagram, subscripts and sticky tutor (390 / 1280 px).
+Recent important decision: Proposed tokens in docs/DESIGN_SYSTEM.md (signal-high/low, focus halo, tutor strip, sticky offset); accent reserved for attention.
 Blocker: None
-Relevant issue/PR: PRs #11, #15, #17
-Next expected action: Review avatar artwork once reference photos arrive.
+Relevant issue/PR: review PR + issues listed in it; #32 gate walk (active-gate spec commented)
+Next expected action: Review frontend PRs that adopt the proposed tokens.
