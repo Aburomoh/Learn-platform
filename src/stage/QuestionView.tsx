@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CircuitSpec, ColumnAdditionSpec, NumericContext, Variant } from "@/content/schema";
 import type { Answer, GradeResult } from "@/content/grade";
 import { stepCount, stepTag, stepVars } from "@/content/steps";
+import { Notation } from "@/interactions/shared/Notation";
 import { fill } from "@/content/template";
 import { MultipleChoice, NumericInput, PlaceValueDiagram, CircuitDiagram, DivisionChain, BitGrouping, ColumnAddition, BitRow, type AdditionColumn, PredictionBeforeReveal, type Bit, type PredictionResult } from "@/interactions";
 import { BitGroups } from "./BitGroups";
@@ -32,7 +33,9 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
     const needsPrediction = !!step.ask && !explanation.prediction;
     return (
       <section className={styles.question} aria-label="Explanation">
-        <p className={styles.prompt}>{prompt}</p>
+        <p className={styles.prompt}>
+            <Notation text={prompt} />
+          </p>
         <ExplainVisual variant={variant} stage={step.stage ?? {}} isLast={isLast} answered={!step.ask || !!explanation.prediction} hasAsk={!!step.ask} />
         {step.ask && (
           <PredictionBeforeReveal id={step.id} prompt={fill(step.ask.prompt, variant.vars)} options={step.ask.options} onPredict={onPredict} result={explanation.prediction} />
@@ -116,7 +119,9 @@ function PracticeInput({
     case "place-value":
       return (
         <>
-          <p className={styles.prompt}>{prompt}</p>
+          <p className={styles.prompt}>
+            <Notation text={prompt} />
+          </p>
           <PlaceValueDiagram id={variant.id} slots={spec.slots} digits={digits} onChange={setDigits} readOnly={locked} state={state} onSubmit={() => onSubmit({ kind: "place-value", digits })} />
         </>
       );
@@ -124,7 +129,9 @@ function PracticeInput({
       const finished = state === "correct";
       return (
         <>
-          <p className={styles.prompt}>{prompt}</p>
+          <p className={styles.prompt}>
+            <Notation text={prompt} />
+          </p>
           <DivisionChain
             key={stepIndex}
             id={variant.id}
@@ -142,7 +149,9 @@ function PracticeInput({
       if (spec.context?.type === "bit-row")
         return (
           <>
-            <p className={styles.prompt}>{prompt}</p>
+            <p className={styles.prompt}>
+            <Notation text={prompt} />
+          </p>
             <BitRow
               id={variant.id}
               bits={spec.context.bits}
@@ -189,7 +198,9 @@ function PracticeInput({
       const finished = state === "correct";
       return (
         <>
-          <p className={styles.prompt}>{prompt}</p>
+          <p className={styles.prompt}>
+            <Notation text={prompt} />
+          </p>
           <BitGrouping
             key={stepIndex}
             id={variant.id}
@@ -210,7 +221,9 @@ function PracticeInput({
       const columns = additionColumns(spec);
       return (
         <>
-          <p className={styles.prompt}>{prompt}</p>
+          <p className={styles.prompt}>
+            <Notation text={prompt} />
+          </p>
           <ColumnAddition
             key={stepIndex}
             id={variant.id}
@@ -275,7 +288,9 @@ function CircuitWalk({
 
   return (
     <>
-      <p className={styles.prompt}>{prompt}</p>
+      <p className={styles.prompt}>
+            <Notation text={prompt} />
+          </p>
       <CircuitDiagram
         id={variant.id}
         spec={spec}

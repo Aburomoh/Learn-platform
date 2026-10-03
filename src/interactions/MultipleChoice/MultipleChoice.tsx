@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import type { InteractionBaseProps } from "../shared/types";
 import { focusTarget } from "../shared/types";
+import { Notation } from "../shared/Notation";
 import styles from "./MultipleChoice.module.css";
 
 export interface ChoiceOption {
@@ -51,7 +52,7 @@ export function MultipleChoice({
       }}
     >
       <p id={labelId} className={styles.prompt}>
-        {prompt}
+        <Notation text={prompt} />
       </p>
       <div role="radiogroup" aria-labelledby={labelId} className={styles.options}>
         {options.map((o) => {
@@ -71,7 +72,9 @@ export function MultipleChoice({
                 onChange={() => setSelected(o.id)}
                 className={styles.radio}
               />
-              <span className={styles.text}>{o.text}</span>
+              <span className={styles.text}>
+                <Notation text={o.text} />
+              </span>
               {o.id === submittedOptionId && state !== "idle" && (
                 <span className={styles.mark} aria-hidden="true">
                   {state === "correct" ? "✓" : "✗"}

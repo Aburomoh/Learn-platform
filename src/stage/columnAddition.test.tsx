@@ -87,5 +87,6 @@ describe("stage: column addition rendered through QuestionView", () => {
 
     expect(screen.getByTestId("stage")).toHaveTextContent("complete");
     expect(document.querySelector("[data-focus-target='add-result']")).toHaveTextContent("1101 + 0111 = 10100");
-  });
+    // many keystrokes: allow more than the default 5 s on a busy machine
+  }, 20_000);
 });

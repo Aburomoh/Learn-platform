@@ -63,7 +63,7 @@ describe("ChallengeSteps", () => {
 
 describe("PreviewBoard", () => {
   it("parses a chain with base subscripts into tiles", () => {
-    expect(parsePreview("53₁₀ → 110101₂ → 65₈ → 35₁₆")).toEqual([
+    expect(parsePreview("53_10 → 110101_2 → 65_8 → 35_16")).toEqual([
       { value: "53", base: "10" },
       { value: "110101", base: "2" },
       { value: "65", base: "8" },
@@ -73,10 +73,10 @@ describe("PreviewBoard", () => {
   });
 
   it("is one image read out in words, with bases as <sub> markup", () => {
-    render(<PreviewBoard preview="53₁₀ → 110101₂" />);
+    render(<PreviewBoard preview="53_10 → 110101_2" />);
     const img = screen.getByRole("img", { name: "53 base 10, then 110101 base 2" });
     expect(img.querySelectorAll("sub")).toHaveLength(2);
-    expect(img.textContent).not.toMatch(/[₀-₉]/);
+    expect(img.textContent).not.toContain("_");
   });
 
   it("renders the preview authored for the Chapter 1 topic, which never reuses the practice's numbers", () => {
@@ -88,7 +88,7 @@ describe("PreviewBoard", () => {
   });
 
   it("can render the tiles alone, for a topic row", () => {
-    const { container } = render(<PreviewBoard preview="53₁₀ → 35₁₆" size="sm" bare />);
+    const { container } = render(<PreviewBoard preview="53_10 → 35_16" size="sm" bare />);
     expect(screen.getByRole("img", { name: "53 base 10, then 35 base 16" })).toBeInTheDocument();
     expect(container.querySelectorAll("sub")).toHaveLength(2);
   });
