@@ -1,0 +1,234 @@
+/**
+ * DEMO / NOT AUTHORITATIVE COURSE CONTENT — pending instructor approval.
+ * Follows the method of ECET 111 Chapter 1 "Operations in binary — addition" (the four single-bit
+ * rules, then addition column by column, checked in decimal). The slide example 1101 + 0111 is
+ * used; other numbers and all wording are original.
+ */
+import type { z } from "zod";
+import type { TopicSchema, HintSchema, VariantSchema } from "../schema";
+import { additionResult, additionSteps } from "../grade";
+
+type TopicInput = z.input<typeof TopicSchema>;
+type HintInput = z.input<typeof HintSchema>;
+type VariantInput = z.input<typeof VariantSchema>;
+type ExplanationInput = VariantInput["explanation"];
+
+/* ---------- Q1: single-bit rules ---------- */
+
+function ruleVariant(id: string, prompt: string, options: { id: string; text: string; misconceptionId?: string }[], correct: string, why: string): VariantInput {
+  return {
+    id,
+    prompt,
+    spec: { kind: "multiple-choice", options, correctOptionId: correct },
+    hints: [
+      { rung: 2, text: "Not yet. Binary has only two digits, 0 and 1." },
+      { rung: 3, text: "When a total reaches 2, it is written 10: a 0 stays, a 1 carries." },
+      { rung: 9, text: why },
+    ],
+    misconceptions: [{ id: "add.wrote-two", title: "Wrote 2 for 1 + 1", nudgeKey: "add.wrote-two", detect: { type: "option", optionId: "two" } }],
+    explanation: [
+      { id: "s1", say: "Binary has only the digits 0 and 1. Adding works as in decimal, but 2 is already '10'." },
+      { id: "s2", say: why },
+    ],
+  };
+}
+
+const rulesQuestions: TopicInput["activities"][number]["questions"] = [
+  {
+    id: "ba.q.zero",
+    label: "0 + 0",
+    conceptId: "ba.rules",
+    objectiveId: "ba.obj.rules",
+    variants: [
+      ruleVariant("v-sum", "0 + 0 = ?", [{ id: "zero", text: "0" }, { id: "one", text: "1" }, { id: "ten", text: "10" }], "zero", "0 + 0 = 0, with no carry."),
+      ruleVariant("v-carry", "A column holds 0 and 0, with no carry coming in. What do you write?", [{ id: "one", text: "1, carry 0" }, { id: "zero", text: "0, carry 0" }, { id: "ten", text: "0, carry 1" }], "zero", "0 + 0 = 0: write 0, carry nothing."),
+    ],
+  },
+  {
+    id: "ba.q.one",
+    label: "0 + 1",
+    conceptId: "ba.rules",
+    objectiveId: "ba.obj.rules",
+    variants: [
+      ruleVariant("v01", "0 + 1 = ?", [{ id: "zero", text: "0" }, { id: "one", text: "1" }, { id: "ten", text: "10" }], "one", "0 + 1 = 1, with no carry."),
+      ruleVariant("v10", "1 + 0 = ?", [{ id: "one", text: "1" }, { id: "ten", text: "10" }, { id: "zero", text: "0" }], "one", "1 + 0 = 1, with no carry: the order does not matter."),
+    ],
+  },
+  {
+    id: "ba.q.two",
+    label: "1 + 1",
+    conceptId: "ba.rules",
+    objectiveId: "ba.obj.rules",
+    variants: [
+      ruleVariant("v-sum", "1 + 1 = ? (in binary)", [{ id: "two", text: "2", misconceptionId: "add.wrote-two" }, { id: "ten", text: "10" }, { id: "one", text: "1" }], "ten", "1 + 1 = 10 in binary: two is written 10."),
+      ruleVariant("v-carry", "A column holds 1 and 1, with no carry coming in. What do you write?", [{ id: "ten", text: "0, carry 1" }, { id: "two", text: "2, carry 0", misconceptionId: "add.wrote-two" }, { id: "one", text: "1, carry 1" }], "ten", "1 + 1 = 10: write 0 in this column and carry 1."),
+    ],
+  },
+];
+
+/* ---------- Q2: column by column ---------- */
+
+const columnHints: HintInput[] = [
+  { rung: 2, text: "Not yet. Add the bits in the {place}s column, plus the carry coming in." },
+  { rung: 3, text: "0 + 0 = 0, 0 + 1 = 1, 1 + 1 = 0 carry 1, and 1 + 1 + 1 = 1 carry 1." },
+  { rung: 4, text: "This column adds {aBit} + {bBit} + {carryIn}. What is the total?" },
+  { rung: 5, text: "Look at the {place}s column only.", focus: "add-sum", highlight: "add-sum" },
+  { rung: 6, text: "A total of 2 is 10 in binary: write 0 here and carry 1. A total of 3 is 11: write 1 and carry 1." },
+  { rung: 7, text: "Like decimal, where a column total of 10 or more leaves one digit and carries the rest." },
+  { rung: 8, text: "Count the 1s in this column: one 1 gives 1; two give 0 carry 1; three give 1 carry 1." },
+  { rung: 9, text: "{aBit} + {bBit} + {carryIn}: write {sum}, carry {carryOut}." },
+];
+
+const lastCarryHints: HintInput[] = [
+  { rung: 2, text: "Not yet. This last step has no bits of its own." },
+  { rung: 3, text: "Look at the carry that came out of the leftmost column." },
+  { rung: 5, text: "That carry becomes the leftmost bit of the sum.", focus: "add-result", highlight: "add-result" },
+  { rung: 9, text: "Bring the carry down: the leftmost bit is {sum}." },
+];
+
+const additionMisconceptions: VariantInput["misconceptions"] = [
+  { id: "add.wrote-two", title: "Wrote 2 or 3 in a column", nudgeKey: "add.wrote-two", detect: { type: "addition-wrote-two" } },
+  { id: "add.carry-ignored", title: "Carry not added in", nudgeKey: "add.carry-ignored", detect: { type: "addition-carry-ignored" } },
+  { id: "add.swapped", title: "Sum and carry swapped", nudgeKey: "add.swapped", detect: { type: "addition-swapped" } },
+];
+
+/** One prediction per column, then the end carry (owner rule: every step a goal). */
+function additionWalk(a: string, b: string): ExplanationInput {
+  const steps = additionSteps(a, b);
+  return [
+    { id: "s1", say: `Add ${a} + ${b} one column at a time, starting from the right.`, stage: { revealed: 0 } },
+    ...steps.map((st, i) => {
+      const say = st.final ? "No bits are left, only the carry." : `The ${2 ** st.column}s column: ${st.a} + ${st.b}${st.carryIn ? " + the carry 1" : ""}.`;
+      if (st.final)
+        return {
+          id: `s${i + 2}`,
+          say,
+          stage: { revealed: i, attention: i },
+          ask: { prompt: "What is the leftmost bit of the sum?", options: [String(st.sum), String(1 - st.sum)], correctIndex: 0, afterCorrect: "Yes. The carry comes down as the leftmost bit.", afterWrong: `The carry out of the last column was ${st.sum}; it comes down as the leftmost bit.` },
+        };
+      const right = `${st.sum}, carry ${st.carryOut}`;
+      const total = st.a + st.b + st.carryIn;
+      // Real mistakes: the decimal total, forgetting the carry in, swapping sum and carry.
+      const wrong = [total >= 2 ? `${total}, carry 0` : "", st.carryIn ? `${(st.a + st.b) % 2}, carry ${(st.a + st.b) >> 1}` : "", `${st.carryOut}, carry ${st.sum}`].filter((w, k, all) => w && w !== right && all.indexOf(w) === k);
+      const options = [right, ...(wrong.length ? wrong : [`${1 - st.sum}, carry ${st.carryOut}`])].slice(0, 3);
+      const k = i % options.length;
+      const rotated = [...options.slice(k), ...options.slice(0, k)];
+      return {
+        id: `s${i + 2}`,
+        say,
+        stage: { revealed: i, attention: i },
+        ask: {
+          prompt: `${st.a} + ${st.b}${st.carryIn ? " + 1" : ""} = ?`,
+          options: rotated,
+          correctIndex: rotated.indexOf(right),
+          afterCorrect: `Yes: write ${st.sum}${st.carryOut ? " and carry 1" : ""}.`,
+          afterWrong: `The total is ${total}, which is ${total.toString(2)} in binary: write ${st.sum}${st.carryOut ? " and carry 1" : ""}.`,
+        },
+      };
+    }),
+    { id: `s${steps.length + 2}`, say: `So ${a} + ${b} = ${additionResult(a, b)}.`, stage: { revealed: steps.length } },
+  ];
+}
+
+function additionVariant(a: string, b: string, prompt: string): VariantInput {
+  return {
+    id: `v${a}`,
+    prompt,
+    spec: { kind: "column-addition", a, b, answer: additionResult(a, b) },
+    vars: { a, b, result: additionResult(a, b) },
+    hints: columnHints,
+    hintsByStep: { column: columnHints, carry: lastCarryHints },
+    misconceptions: additionMisconceptions,
+    explanation: additionWalk(a, b),
+  };
+}
+
+/* ---------- Q3: check in decimal, one number at a time (pedagogy on #38) ---------- */
+
+const checkHints: HintInput[] = [
+  { rung: 2, text: "Not yet. Each bit has a weight: 1, 2, 4, 8, 16, … from the right." },
+  { rung: 3, text: "Add the weights of the bits that are 1. A 0 adds nothing." },
+  { rung: 4, text: "Which weights sit under the 1s in {checkBits}?" },
+  { rung: 5, text: "Find {checkBits} in the finished addition.", focus: "add-result", highlight: "add-result" },
+  { rung: 8, text: "The leftmost 1 is worth {topWeight}. Add the others to it." },
+  { rung: 9, text: "{checkBits} = {checkSum} = {checkValue}." },
+];
+
+function weightSum(bits: string): string {
+  return [...bits].map((d, i) => (d === "1" ? 2 ** (bits.length - 1 - i) : 0)).filter(Boolean).join(" + ");
+}
+
+function checkVariant(a: string, b: string, which: "a" | "b" | "sum"): VariantInput {
+  const bits = which === "a" ? a : which === "b" ? b : additionResult(a, b);
+  const value = parseInt(bits, 2);
+  const reversed = parseInt([...bits].reverse().join(""), 2);
+  const misconceptions: VariantInput["misconceptions"] = [{ id: "ba.copied-bits", title: "Copied the bits", nudgeKey: "ba.copied-bits", detect: { type: "equals", value: bits.replace(/^0+(?=.)/, "") } }];
+  if (reversed !== value) misconceptions.push({ id: "ba.weights-reversed", title: "Weights from the wrong end", nudgeKey: "ba.weights-reversed", detect: { type: "equals", value: String(reversed) } });
+  const [x, y, s] = [parseInt(a, 2), parseInt(b, 2), parseInt(additionResult(a, b), 2)];
+  const done = which === "sum" ? `${x} + ${y} = ${s}. The binary sum checks out.` : undefined;
+  return {
+    id: `v${a}`,
+    prompt: which === "sum" ? `Last check: what is the sum ${bits} in decimal?` : `Check the addition in decimal. What is ${bits} in decimal?`,
+    spec: { kind: "numeric", base: 10, answer: String(value), context: { type: "addition", operands: { a, b } } },
+    vars: { checkBits: bits, checkValue: value, checkSum: weightSum(bits), topWeight: 2 ** (bits.replace(/^0+/, "").length - 1) },
+    hints: checkHints,
+    misconceptions,
+    reactions: done ? { correct: done, correctAfterHints: done } : undefined,
+    explanation: [
+      { id: "s1", say: "Each bit has a weight: 1, 2, 4, 8, 16, … from the right. Add the weights of the 1s." },
+      {
+        id: "s2",
+        say: `Look at ${bits}.`,
+        // Distractor: weights read from the wrong end, or (when that reads the same) weights starting at 2.
+        ask: { prompt: `Which weights are switched on in ${bits}?`, options: [weightSum(bits), reversed !== value ? weightSum([...bits].reverse().join("")) : weightSum(bits + "0")], correctIndex: 0, afterCorrect: `Yes: ${weightSum(bits)} = ${value}.`, afterWrong: `Read the weights from the right: ${weightSum(bits)} = ${value}.` },
+      },
+    ],
+  };
+}
+
+/* ---------- topic ---------- */
+
+const SLIDE: [string, string] = ["1101", "0111"];
+const RETRY: [string, string] = ["1011", "0110"];
+
+export const binaryArithmeticTopic: TopicInput = {
+  id: "binary-arithmetic",
+  title: "Binary arithmetic",
+  summary: "Add binary numbers one column at a time, then check the result in decimal.",
+  preview: "0101 + 0011 = 01000",
+  concepts: [
+    { id: "ba.rules", title: "Single-bit addition", summary: "0 + 0 = 0, 0 + 1 = 1, 1 + 1 = 10 (write 0, carry 1)." },
+    { id: "ba.columns", title: "Column addition", summary: "Add from the right, one column at a time, carrying 1 into the next column." },
+    { id: "ba.check", title: "Checking in decimal", summary: "Convert both numbers and the sum to decimal; the decimal sum must match." },
+  ],
+  objectives: [
+    { id: "ba.obj.rules", conceptId: "ba.rules", text: "State the sum and carry for any two bits." },
+    { id: "ba.obj.columns", conceptId: "ba.columns", text: "Add two 4-bit numbers one column at a time, including the end carry." },
+    { id: "ba.obj.check", conceptId: "ba.check", text: "Check a binary sum by converting each number to decimal." },
+  ],
+  activities: [
+    {
+      id: "binary-addition",
+      title: "Binary addition",
+      summary: "The four rules, then 1101 + 0111 column by column, then a check in decimal.",
+      authority: "DEMO",
+      minutes: 12,
+      questions: [
+        ...rulesQuestions,
+        {
+          id: "ba.q.add",
+          label: "Column by column",
+          conceptId: "ba.columns",
+          objectiveId: "ba.obj.columns",
+          variants: [
+            additionVariant(...SLIDE, "Add 1101 + 0111 one column at a time, starting from the right. Write the bit under the line and the carry above the next column."),
+            additionVariant(...RETRY, "Another one: add 1011 + 0110 one column at a time, from the right."),
+          ],
+        },
+        { id: "ba.q.check-a", label: "First number", conceptId: "ba.check", objectiveId: "ba.obj.check", variants: [checkVariant(...SLIDE, "a"), checkVariant(...RETRY, "a")] },
+        { id: "ba.q.check-b", label: "Second number", conceptId: "ba.check", objectiveId: "ba.obj.check", variants: [checkVariant(...SLIDE, "b"), checkVariant(...RETRY, "b")] },
+        { id: "ba.q.check-sum", label: "The sum", conceptId: "ba.check", objectiveId: "ba.obj.check", variants: [checkVariant(...SLIDE, "sum"), checkVariant(...RETRY, "sum")] },
+      ],
+    },
+  ],
+};

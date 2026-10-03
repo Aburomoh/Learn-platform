@@ -44,6 +44,8 @@ export const en = {
   "add.carry-ignored": "Remember the carry coming in from the right. This column adds {aBit} + {bBit} + {carryIn}.",
   "add.carry-ignored.carry": "This last step has no bits of its own. Look at the carry out of the column on its right.",
   "add.wrote-two.carry": "This last step has no bits of its own. Look at the carry out of the column on its right.",
+  "ba.copied-bits": "That is the binary number itself. Add up the weights of its 1s: 1, 2, 4, 8, … from the right.",
+  "ba.weights-reversed": "The weights start at 1 on the right-hand end. Read them from the right.",
   "add.swapped": "They are swapped. The bit that stays in this column goes underneath; the carry goes up to the next column.",
   "c1.copied": "Those are the bits you started with. The 1's complement flips every bit.",
   "c1.gave-twos": "That is the 2's complement. The 1's complement only flips the bits; nothing is added.",
