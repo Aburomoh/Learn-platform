@@ -21,4 +21,4 @@ Rules that apply to all of them:
 - Colour is never the only signal; every state also has a shape or text.
 - No tutor copy lives here: tutor text comes from the engine and catalog.
 
-These are not used by pages yet; the page tasks (#121–#125) adopt them and retire the old `Shell`/`TopBar`.
+Every page uses these through `PageFrame` (top bar, readable main column with an optional right column, footer). The old `Shell` and its top bar are gone (#125): the demo notice is the footer's amber dot, and Guest / Settings live in the profile menu.

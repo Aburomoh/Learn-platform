@@ -303,8 +303,30 @@ for (const route of [
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await page.waitForTimeout(500);
     expect(errors).toEqual([]);
+    // one subtle demo notice on every page while the content is demo, and no per-card badges (#125)
+    await expect(page.getByRole("contentinfo")).toContainText("Demo content");
+    await expect(page.getByText(/^DEMO/)).toHaveCount(0);
+    // no development indicator in the built site
+    await expect(page.locator("nextjs-portal")).toHaveCount(0);
   });
 }
+
+test("profile menu: reachable by keyboard, explains Guest, leads to Settings", async ({ page }) => {
+  await page.goto("/");
+  const button = page.getByRole("button", { name: "Profile and settings" });
+  await button.focus();
+  await page.keyboard.press("Enter");
+  await expect(button).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByText("You are a guest.")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+  await expect(button).toBeFocused();
+  await page.keyboard.press("Enter");
+  await page.getByRole("link", { name: "Settings" }).click();
+  await expect(page).toHaveURL(/\/settings\/$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Settings" })).toBeVisible();
+  await expect(page.getByLabel("Theme")).toBeVisible();
+});
 
 test("theme: light by default, dark or match-device only by choice, applied before first paint", async ({ page }) => {
   const theme = () => page.evaluate(() => document.documentElement.getAttribute("data-theme"));
