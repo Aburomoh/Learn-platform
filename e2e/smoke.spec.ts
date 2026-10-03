@@ -218,6 +218,18 @@ test("logic gates activity: walk the circuit gate by gate, then explore inputs",
   await expect(page.getByText("Challenge 2 of 2")).toBeVisible();
 });
 
+test("division ladder inputs meet the touch target on a phone", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(ACTIVITY);
+  for (const label of ["26 divided by 2: result", "26 divided by 2: remainder"]) {
+    const box = (await page.getByLabel(label).boundingBox())!;
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.width).toBeGreaterThanOrEqual(36);
+  }
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
 for (const width of [390, 320]) {
   test(`circuit text stays at 12 px or more on a ${width} px phone, with the active gate in view`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 });

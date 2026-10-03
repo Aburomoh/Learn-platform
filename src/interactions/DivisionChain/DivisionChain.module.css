@@ -12,7 +12,9 @@
   --cell: 52px;
   display: grid;
   grid-template-columns: auto var(--cell) var(--cell) auto auto;
-  grid-auto-rows: var(--cell);
+  /* row height: the cell, but never so short that an input falls below the 44 px touch target */
+  --row: max(var(--cell), calc(var(--touch-min) + 4px));
+  grid-auto-rows: var(--row);
   column-gap: var(--space-2);
   row-gap: var(--space-1);
   justify-content: start;
@@ -40,7 +42,7 @@
   position: relative;
   z-index: 1;
   width: var(--cell);
-  height: calc(var(--cell) - 4px);
+  height: calc(var(--row) - 4px);
   display: grid;
   place-items: center;
   font-size: var(--text-lg);
@@ -110,8 +112,8 @@
 }
 
 .input {
-  width: calc(var(--cell) - 8px);
-  height: calc(var(--cell) - 12px);
+  width: calc(var(--cell) - 6px);
+  height: var(--touch-min);
   text-align: center;
   font-size: var(--text-lg);
   border: 1px solid var(--accent);
