@@ -25,7 +25,8 @@ const ROLES = {
   "release-devops-engineer": { title: "Release / DevOps Engineer", file: "release_devops_engineer", alarm: "wake:devops", labels: ["release-ready"] },
 };
 
-const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+// Timeout so a stalled network call surfaces as an error instead of silently freezing a watcher.
+const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 30_000 });
 const ISSUE = (n) => `repos/{owner}/{repo}/issues/${n}`;
 
 // Open issues and PRs matching a search query, e.g. label:"wake:qa".
@@ -98,6 +99,7 @@ if (mode === "--alarm") {
         console.log(`WAKE ${role} ${seen.has(it.number) ? "(updated) " : ""}${line(it, all)}`);
         seen.set(it.number, it.updatedAt);
       }
+      if (failing) console.log(`WAKE-WATCH RECOVERED for ${role}: alarms are being seen again`);
       failing = false;
     } catch (e) {
       if (!failing) console.log(`WAKE-WATCH ERROR for ${role}: gh failed, alarms are not being seen (${String(e.message).split("\n")[0]})`);
