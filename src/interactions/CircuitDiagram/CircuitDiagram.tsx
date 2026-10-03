@@ -68,7 +68,8 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
   return (
     <div className={styles.root} data-diagram={id} data-fade={fade} ref={rootRef} {...(fade === "none" ? {} : { tabIndex: 0, role: "group", "aria-label": "Circuit diagram, scrolls sideways" })}>
       <svg viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`} className={styles.svg} style={{ maxWidth: viewBox.width, minWidth: Math.round(viewBox.width * MIN_SCALE) }} role="img" aria-labelledby={`${id}-title`}>
-        <title id={`${id}-title`}>Circuit with {spec.gates.map((g) => g.type).join(", ")} gates</title>
+        {/* One string child: React hydrates <title> text as a single node. */}
+        <title id={`${id}-title`}>{`Circuit with ${spec.gates.map((g) => g.type).join(", ")} gates`}</title>
         {/* wires: a signal is coloured only once its value is known and its gate has been reached */}
         {layout.wires.map((w, i) => {
           const shown = isKnown(w.from) && (lit.includes(w.to) || lit.includes(w.from) || w.to === activeGateId);
