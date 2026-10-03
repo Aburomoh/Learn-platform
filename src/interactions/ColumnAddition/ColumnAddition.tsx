@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { focusTarget } from "../shared/types";
+import { useScrollFade } from "../shared/useScrollFade";
 import styles from "./ColumnAddition.module.css";
 
 /** One step of the addition: a column (right to left), or the final carry brought down. */
@@ -58,8 +59,17 @@ export function ColumnAddition({ id, a, b, columns, stepIndex, onStep, state = "
   const col = (step: number) => width + 2 - step;
   const at = (row: number, step: number): React.CSSProperties => ({ gridRow: row, gridColumn: col(step) });
 
+  // Wide additions scroll inside their own box; keep the active column in view (it starts at the right).
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const fade = useScrollFade(scrollRef);
+
   // Remounted on each step: carry keyboard focus to the new column.
   useEffect(() => {
+    const box = scrollRef.current;
+    const halo = box?.querySelector<HTMLElement>("[data-active-column]");
+    if (box && box.scrollWidth > box.clientWidth) {
+      box.scrollLeft = halo ? halo.offsetLeft + halo.offsetWidth / 2 - box.clientWidth / 2 : box.scrollWidth;
+    }
     if (interactive && stepIndex > 0) sumRef.current?.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- on mount only
   }, []);
@@ -75,8 +85,9 @@ export function ColumnAddition({ id, a, b, columns, stepIndex, onStep, state = "
 
   return (
     <form className={styles.root} onSubmit={submit} data-diagram={id} aria-label="Binary addition, one column at a time">
+      <div className={styles.scroll} ref={scrollRef} data-fade={fade}>
       <div className={styles.grid} style={{ gridTemplateColumns: `auto repeat(${width + 1}, var(--cell))` }}>
-        {!done && <span className={styles.halo} style={{ gridRow: "1 / span 5", gridColumn: col(stepIndex) }} aria-hidden="true" />}
+        {!done && <span className={styles.halo} style={{ gridRow: "1 / span 5", gridColumn: col(stepIndex) }} aria-hidden="true" data-active-column />}
         {attention !== undefined && <span className={styles.attention} style={{ gridRow: "1 / span 5", gridColumn: col(attention) }} aria-hidden="true" />}
 
         {/* row 1: carries. The carry out of step c is written above step c + 1 once c is done. */}
@@ -157,6 +168,7 @@ export function ColumnAddition({ id, a, b, columns, stepIndex, onStep, state = "
               ?
             </span>
           ))}
+      </div>
       </div>
 
       {interactive && (

@@ -7,6 +7,26 @@
   background: var(--surface);
 }
 
+/* a wide addition scrolls inside its own box, with the hidden edge faded */
+.scroll {
+  position: relative;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 3px;
+}
+
+.scroll[data-fade="end"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}
+
+.scroll[data-fade="start"] {
+  mask-image: linear-gradient(to left, #000 calc(100% - 28px), transparent);
+}
+
+.scroll[data-fade="both"] {
+  mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+}
+
 /* rows: carries, operand a, operand b, line, sum */
 .grid {
   --cell: 44px;
