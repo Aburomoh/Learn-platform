@@ -1,0 +1,34 @@
+.bits {
+  font-size: var(--text-xl);
+  letter-spacing: 0.15em;
+  margin: 0;
+}
+
+.groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.group {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--text-lg);
+  letter-spacing: 0.1em;
+  transition: background var(--dur-base) var(--ease);
+}
+
+.groupAttention {
+  background: var(--highlight-soft);
+  border-color: var(--accent);
+}
+
+.groupValue {
+  font-size: var(--text-base);
+  letter-spacing: 0;
+  color: var(--text-muted);
+}

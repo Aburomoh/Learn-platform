@@ -1,5 +1,5 @@
 import { focusTarget } from "@/interactions/shared/types";
-import styles from "./Stage.module.css";
+import styles from "./BitGroups.module.css";
 
 /** Shows a binary string, optionally split into 4-bit groups with their hex digit. */
 export function BitGroups({ bits, groups, attention, done }: { bits: string; groups: string[]; attention?: number; done?: boolean }) {
