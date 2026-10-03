@@ -93,7 +93,7 @@ describe("chapters (#198 §9, #232)", () => {
   it("status from local progress only: Not started, In progress · n of m topics, Completed", () => {
     expect(chapterStatus(ch1, none)).toMatchObject({ state: "new", text: "Not started" });
     const started = { activities: { [ch1.topics[0].activities[0].id]: { status: "started" as const, attempts: 1, hintsUsed: 0, independent: false, lastAt: 1 } } };
-    expect(chapterStatus(ch1, started)).toMatchObject({ state: "progress", text: `In progress · 0 of ${ch1.topics.length} topics` });
+    expect(chapterStatus(ch1, started)).toMatchObject({ state: "progress", text: `In progress · 0 of ${ch1.topics.length} topics done` });
     expect(chapterStatus(ch1, { activities: done(ch1.topics.slice(0, 1)) })).toMatchObject({ state: "progress", done: 1 });
     expect(chapterStatus(ch1, { activities: done(ch1.topics) })).toMatchObject({ state: "done", text: "Completed" });
   });

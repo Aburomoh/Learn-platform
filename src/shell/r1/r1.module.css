@@ -963,6 +963,8 @@
 @media (max-width: 640px) {
   .panel {
     padding: var(--space-4);
+  }
+}
 
 /* on phones the row's filled button takes the full width; quiet actions stay inline */
 @media (max-width: 640px) {

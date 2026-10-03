@@ -86,7 +86,7 @@ export function chapterStatus(
   if (statuses.some((t) => t.started))
     return {
       state: "progress",
-      text: `In progress · ${done} of ${total} topic${total === 1 ? "" : "s"}`,
+      text: `In progress · ${done} of ${total} topic${total === 1 ? "" : "s"} done`,
       done,
       total,
     };

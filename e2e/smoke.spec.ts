@@ -41,6 +41,12 @@ test("home lists the course and navigates to an activity", async ({ page }) => {
   await expect(page.locator("details:not([open])")).toHaveCount(0);
   await page.setViewportSize({ width: 320, height: 700 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+  // on phones the row's filled button takes the row's full width (#172)
+  const [button, row] = await page.evaluate(() => {
+    const a = document.querySelector("[data-primary-action]")!;
+    return [a.getBoundingClientRect().width, a.closest("li")!.getBoundingClientRect().width];
+  });
+  expect(button).toBeGreaterThanOrEqual(row - 1);
   await page.setViewportSize(viewport);
   await page.getByRole("link", { name: "Number-base conversions", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`${TOPIC}$`));
