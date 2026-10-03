@@ -133,7 +133,12 @@ const bitString = z.string().regex(/^[01]+$/, "bits are 0s and 1s");
 
 /** Two equal-width binary operands (2–8 bits) added column by column. */
 const AdditionOperands = z
-  .object({ a: bitString.min(2).max(8), b: bitString.min(2).max(8) })
+  .object({
+    a: bitString.min(2).max(8),
+    b: bitString.min(2).max(8),
+    /** As on `column-addition`: "drop" shows a fixed-width result with no end-carry column (#161). */
+    endCarry: z.enum(["write", "drop"]).optional(),
+  })
   .refine((o) => o.a.length === o.b.length, "operands must have equal width");
 
 /**
