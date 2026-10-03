@@ -35,6 +35,17 @@ describe("content registry", () => {
     expect(courses.length).toBeGreaterThan(0);
   });
 
+  it("keeps demo notices out of student-facing summaries; the authority field carries DEMO (#175, owner item 11)", () => {
+    for (const c of courses) {
+      expect(c.summary, c.id).not.toMatch(/demo/i);
+      for (const m of c.modules)
+        for (const t of m.topics) {
+          expect(t.summary, t.id).not.toMatch(/demo/i);
+          for (const a of t.activities) expect(a.summary, a.id).not.toMatch(/demo/i);
+        }
+    }
+  });
+
   it("marks all current content as DEMO until the instructor approves it", () => {
     for (const c of courses) {
       expect(c.authority).toBe("DEMO");
@@ -89,6 +100,8 @@ describe("content registry", () => {
                 if ("answer" in v.spec && typeof v.spec.answer === "string") add(v.spec.answer);
               }
             }
+          // The page renders a preview as tiles split on "→" (PreviewBoard): it must be a chain.
+          if (t.preview) expect(t.preview.split("→").length, `${t.id} preview is a chain`).toBeGreaterThanOrEqual(2);
           const numbers = t.preview?.toUpperCase().match(/[0-9A-F]+/g) ?? [];
           for (const n of numbers) expect(values.has(n), `${t.id} preview uses ${n}`).toBe(false);
         }

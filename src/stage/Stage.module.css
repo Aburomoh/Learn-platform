@@ -43,9 +43,47 @@
   min-width: 0;
 }
 
-/* empty frame shown until local progress is read after hydration */
-.stageLoading {
-  min-height: 320px;
+/* A returning student's pre-rendered challenge 1 stays invisible (but keeps its space) until the
+   runner has resumed on the right challenge; the marker is set before first paint (resumeMarker.ts). */
+:global(html[data-resume]) .runner {
+  visibility: hidden;
+}
+
+.runner {
+  display: grid;
+  gap: var(--space-4);
+}
+
+/* "Challenge 2 of 4 · Read off": --brand text, 13 px bold */
+.eyebrow {
+  margin: 0;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.summaryTitle {
+  margin: 0;
+  font-size: var(--text-lg);
+  letter-spacing: var(--tracking-tight);
+}
+
+.summaryLead {
+  margin: 0 0 var(--space-1);
+  font-weight: 650;
+}
+
+.summaryList {
+  margin: 0;
+  padding-inline-start: var(--space-5);
+  color: var(--text-muted);
+}
+
+.summaryActions {
+  display: grid;
+  gap: var(--space-3);
 }
 
 /* "Challenge 2 of 4 · Read off": --brand text, 13 px bold */
