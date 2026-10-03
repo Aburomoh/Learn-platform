@@ -474,7 +474,7 @@ function magnitudeVariant(set: SubtractionSet): VariantInput {
   return {
     id: set.id,
     prompt: `The result is negative and its size is ${s.magnitude}. What is ${s.magnitude} in decimal?`,
-    spec: { kind: "numeric", base: 10, answer: String(size), context: { type: "addition", operands: { a: complementBits(s.result), b: "0001" } } },
+    spec: { kind: "numeric", base: 10, answer: String(size), context: { type: "addition", operands: { a: complementBits(s.result), b: "0001", endCarry: "drop" } } },
     vars: subtractionVars(set),
     hints: [
       { rung: 2, text: "Not yet. Read the re-complemented bits, not the sum bits." },

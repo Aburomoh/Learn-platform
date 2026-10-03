@@ -175,6 +175,12 @@ describe("content registry", () => {
     // B = 1110 → 0001 → 0010; 1010 + 0010 = 0 1100 → negative → 0011 → 0100 → 4 (so −4)
     expect(chain("subtraction-exercise-negative", 0)).toEqual(["0001", "0010", "01100", "negative", "0011", "0100", "4"]);
     expect(chain("subtraction-exercise-negative", 1)).toEqual(["0011", "0100", "01011", "negative", "0100", "0101", "5"]);
+    // The size step shows the finished re-complement at four bits, with no end-carry column (QA on #161).
+    const size = getActivity(COURSE, "binary-arithmetic", "subtraction-exercise-negative")!.activity.questions.at(-1)!.variants[0].spec;
+    if (size.kind !== "numeric" || size.context?.type !== "addition") throw new Error("expected an addition context");
+    const shown = { kind: "column-addition" as const, ...size.context.operands };
+    expect(stepCount(shown)).toBe(4);
+    expect(additionResult(shown.a, shown.b, shown.endCarry !== "drop")).toBe("0100");
   });
 
   it("resolves an activity by path", () => {
