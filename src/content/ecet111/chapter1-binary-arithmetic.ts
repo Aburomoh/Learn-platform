@@ -560,7 +560,7 @@ export const binaryArithmeticTopic: TopicInput = {
   id: "binary-arithmetic",
   title: "Binary arithmetic",
   summary: "Add binary numbers one column at a time, then check the result in decimal.",
-  preview: "1000 + 1000 = 10000",
+  preview: "1000 + 1000 → 10000",
   concepts: [
     { id: "ba.rules", title: "Single-bit addition", summary: "0 + 0 = 0, 0 + 1 = 1, 1 + 1 = 10 (write 0, carry 1)." },
     { id: "ba.columns", title: "Column addition", summary: "Add from the right, one column at a time, carrying 1 into the next column." },
