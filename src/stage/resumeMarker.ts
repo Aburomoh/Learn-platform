@@ -7,7 +7,7 @@
  * removes the marker.
  *
  * Same rules as the theme script: it reads one storage key and sets one attribute, fails silently,
- * and makes no request. No "use client": the page (a server component) inlines it.
+ * and makes no request. `<ResumeScript>` puts it in the pre-rendered page only.
  */
 import { product } from "../../config/product";
 
