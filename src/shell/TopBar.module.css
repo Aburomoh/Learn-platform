@@ -10,7 +10,7 @@
   max-width: var(--content-max);
   margin: 0 auto;
   padding: 0 var(--space-4);
-  min-height: 52px;
+  min-height: var(--topbar-h);
   display: flex;
   align-items: center;
   gap: var(--space-4);

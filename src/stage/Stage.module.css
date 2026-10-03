@@ -12,17 +12,24 @@
   .tutor {
     order: 2;
     position: sticky;
-    top: 68px;
+    top: calc(var(--topbar-h) + var(--space-4));
   }
 }
 
 @media (max-width: 1199px) {
   .tutor {
     position: sticky;
-    top: 52px;
+    top: var(--topbar-h);
     z-index: 5;
     background: var(--bg);
     padding-bottom: var(--space-2);
+  }
+}
+
+/* Short viewports (phones in landscape): the tutor scrolls away instead of covering the stage. */
+@media (max-width: 1199px) and (max-height: 499px) {
+  .tutor {
+    position: static;
   }
 }
 

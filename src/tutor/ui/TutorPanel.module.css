@@ -5,19 +5,69 @@
   align-items: start;
 }
 
-.avatarSm {
+.avatarSm,
+.toggle {
   display: none;
+}
+
+.message {
+  min-width: 0;
 }
 
 .quiet {
   min-height: 48px;
 }
 
-@media (max-width: 900px) {
+/* Below lg: a compact strip capped at --tutor-strip-h; tap or use the toggle to expand. */
+@media (max-width: 1199px) {
+  .panel {
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-2);
+    align-items: center;
+    cursor: pointer;
+  }
+  .panel[data-expanded="false"] {
+    max-height: var(--tutor-strip-h);
+    overflow: hidden;
+  }
   .avatar {
     display: none;
   }
   .avatarSm {
     display: block;
+    width: 32px;
+  }
+  .avatarSm > * {
+    width: 32px;
+  }
+  .quiet {
+    min-height: 32px;
+  }
+  /* two lines of text + padding + border = 62px */
+  .message > * {
+    min-height: 0;
+    padding: 6px var(--space-3);
+  }
+  .message > *::before {
+    top: 12px;
+  }
+  .panel[data-expanded="false"] [data-tutor-text] {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+  .toggle {
+    display: grid;
+    place-items: center;
+    width: var(--touch-min);
+    height: var(--touch-min);
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: var(--text-md);
+    cursor: pointer;
   }
 }

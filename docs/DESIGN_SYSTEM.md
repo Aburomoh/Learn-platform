@@ -52,9 +52,9 @@ Evidence: `docs/design/review-2026-10-03/`. Each row is adopted by the issue tha
 | `--pending-opacity` | `0.45` | Circuit gates and wires not yet reached in a gate walk. |
 | `--focus-halo` | `var(--highlight-soft)` | Rounded halo behind the active gate or active cell group. |
 | `--sub-size` | `0.7em` | Base subscript in number notation, e.g. (26)<sub>10</sub>. |
-| `--topbar-h` | `52px` | Height of the sticky top bar; replaces literal `52px` / `68px` offsets. |
-| `--tutor-strip-h` | `64px` | Max height of the compact sticky tutor strip below `lg`. |
-| `--sticky-offset` | `calc(var(--topbar-h) + var(--tutor-strip-h))` | `scroll-padding-top` so focus/highlight scrolling never lands under sticky UI. |
+| `--topbar-h` | `52px` | Height of the sticky top bar; replaces literal `52px` / `68px` offsets. | Adopted in #54.
+| `--tutor-strip-h` | `64px` | Max height of the compact sticky tutor strip below `lg`. | Adopted in #54.
+| `--sticky-offset` | `calc(var(--topbar-h) + var(--tutor-strip-h))` | `scroll-padding-top` so focus/highlight scrolling never lands under sticky UI. | Adopted in #54.
 | `--content-wide` | `1400px` | Activity pages; top bar and footer use the same width so edges align. |
 
 ### Rules that come with them

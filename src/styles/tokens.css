@@ -25,6 +25,10 @@
   --radius-lg: 12px;
   --content-max: 1100px;
   --touch-min: 44px;
+  --topbar-h: 52px;
+  --tutor-strip-h: 64px;
+  /* scroll-padding-top, so focus and highlight scrolling never lands under sticky UI */
+  --sticky-offset: calc(var(--topbar-h) + var(--tutor-strip-h) + var(--space-2));
 
   --dur-fast: 120ms;
   --dur-base: 200ms;

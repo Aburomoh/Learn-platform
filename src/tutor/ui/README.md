@@ -17,3 +17,10 @@ for (const a of actions) { if (a.type === "SAY") setMessage(a.text); else if (a.
 ```
 
 No audio, no voice, no forced animation.
+
+## Compact strip (below 1200 px)
+`TutorPanel` becomes a strip capped at `--tutor-strip-h`: 32 px avatar, message clamped to two
+lines. Tap the strip or use the toggle button (`aria-expanded`) to read the whole message; Escape
+collapses it; a new message starts collapsed. The stage makes the strip sticky under the top bar
+(`--topbar-h`), except when the viewport is under 500 px tall, where it scrolls away.
+`html { scroll-padding-top: var(--sticky-offset) }` keeps focus/highlight scrolling clear of it.
