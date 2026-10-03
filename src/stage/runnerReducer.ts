@@ -13,6 +13,8 @@ export interface RunnerState {
   qIndex: number;
   /** Variant index per question (retry variations advance it). */
   vIndex: number[];
+  /** Variant ids already walked by Explain Slowly, per question. Session only, never stored. */
+  explained: string[][];
   completed: boolean[];
   tutor: TutorState;
   expression: Expression;
@@ -62,6 +64,18 @@ export function currentVariant(activity: Activity, s: Pick<RunnerState, "qIndex"
   return q.variants[s.vIndex[s.qIndex] % q.variants.length];
 }
 
+/**
+ * Variant rotation index to retry on after Explain Slowly: the next variant whose numbers have
+ * not been explained yet, or simply the next one if every variant has been (#80).
+ */
+export function nextUnexplainedVIndex(activity: Activity, s: Pick<RunnerState, "qIndex" | "vIndex" | "explained">): number {
+  const variants = activity.questions[s.qIndex].variants;
+  const seen = s.explained[s.qIndex];
+  const from = s.vIndex[s.qIndex];
+  for (let k = 1; k < variants.length; k++) if (!seen.includes(variants[(from + k) % variants.length].id)) return from + k;
+  return from + 1;
+}
+
 export function hasAnotherVariant(activity: Activity, s: Pick<RunnerState, "qIndex" | "vIndex">): boolean {
   return activity.questions[s.qIndex].variants.length > 1;
 }
@@ -70,6 +84,7 @@ export function initialRunnerState(activity: Activity): RunnerState {
   return {
     qIndex: 0,
     vIndex: activity.questions.map(() => 0),
+    explained: activity.questions.map(() => []),
     completed: activity.questions.map(() => false),
     tutor: initialTutorState,
     expression: "neutral",
@@ -108,10 +123,12 @@ export function createRunnerReducer(activity: Activity) {
           next.explanation = { step: a.step };
           break;
         case "SWITCH_VARIANT": {
-          // New numbers for the same question; hints shown were for the old ones.
+          // New numbers for the same question, preferring ones not yet explained; hints shown were for the old ones.
+          const explained = [...next.explained];
+          explained[next.qIndex] = [...new Set([...explained[next.qIndex], variant.id])];
           const vIndex = [...next.vIndex];
-          vIndex[next.qIndex] += 1;
-          next = { ...next, vIndex, hints: [], last: undefined };
+          vIndex[next.qIndex] = nextUnexplainedVIndex(activity, { ...next, explained });
+          next = { ...next, vIndex, explained, hints: [], last: undefined };
           break;
         }
         case "RESET_INTERACTION":
