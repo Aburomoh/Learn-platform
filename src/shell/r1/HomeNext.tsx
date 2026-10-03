@@ -61,7 +61,7 @@ export function HomeNext({ courses }: { courses: Course[] }) {
   const finishedAll = action.kind === "review";
 
   return (
-    <div className={styles.column} style={ready ? undefined : { visibility: "hidden" }} aria-busy={!ready} data-home={returning ? "returning" : "first"}>
+    <div className={`${styles.column} ${styles.bands}`} style={ready ? undefined : { visibility: "hidden" }} aria-busy={!ready} data-home={returning ? "returning" : "first"}>
       {returning ? (
         <PageHeading eyebrow="Welcome back" title={finishedAll ? "You have finished every topic" : "Pick up where you left off"} />
       ) : (

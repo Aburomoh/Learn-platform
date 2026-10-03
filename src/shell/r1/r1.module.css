@@ -685,6 +685,10 @@
 }
 
 /* ---- HomeNext: the one elevated panel of the page ---- */
+.bands {
+  gap: var(--space-7);
+}
+
 .panel {
   display: grid;
   gap: var(--space-5);
