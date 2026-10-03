@@ -69,6 +69,9 @@ describe("DivisionChain", () => {
     const result = screen.getByLabelText("6 divided by 2: result");
     const remainder = screen.getByLabelText("6 divided by 2: remainder");
     expect([row(result), col(result)]).toEqual(["4 / span 1", "2"]);
+    // the halo reaches the result cell in the next row (#97)
+    const below = document.querySelector<HTMLElement>("[data-halo='result']")!;
+    expect([below.style.gridRow, below.style.gridColumn]).toEqual(["4", "2"]);
     expect([row(remainder), col(remainder)]).toEqual(["3 / span 1", "3"]);
   });
 

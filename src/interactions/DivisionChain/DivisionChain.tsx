@@ -69,7 +69,9 @@ export function DivisionChain({ id, steps, stepIndex, onStep, state = "idle", di
       <div className={styles.ladder}>
         {/* highlight target behind the whole remainder column */}
         <span className={styles.remColumn} style={at(1, 3, shown.length)} aria-hidden="true" {...focusTarget("div-remainders")} />
+        {/* the halo covers both cells being filled: the remainder beside the number and the result below it */}
         {!done && <span className={styles.halo} style={{ gridRow: stepIndex + 1, gridColumn: "1 / span 3" }} aria-hidden="true" />}
+        {!done && <span className={`${styles.halo} ${styles.haloBelow}`} style={{ gridRow: stepIndex + 2, gridColumn: 2 }} aria-hidden="true" data-halo="result" />}
 
         {shown.map((s, j) => {
           const isActive = j === stepIndex && !done;
