@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "./useReducedMotion";
+import { plainNotation, snapToToken } from "@/content/notation";
+import { Notation } from "@/interactions/shared/Notation";
 import styles from "./TutorBubble.module.css";
 
 export interface TutorBubbleProps {
@@ -25,7 +27,8 @@ export function TutorBubble({ text, speed = 45, onDone, placement = "side" }: Tu
   // Typing progress keyed by the text it belongs to; a new text resets during render.
   const [progress, setProgress] = useState({ text, shown: 0 });
   if (progress.text !== text) setProgress({ text, shown: 0 });
-  const shown = instant ? text.length : Math.min(progress.shown, text.length);
+  // never cut a base-notation token in half while typing (the raw `_10` would flash)
+  const shown = instant ? text.length : snapToToken(text, Math.min(progress.shown, text.length));
   const complete = shown >= text.length;
 
   useEffect(() => {
@@ -62,11 +65,11 @@ export function TutorBubble({ text, speed = 45, onDone, placement = "side" }: Tu
       data-complete={complete}
     >
       <span aria-hidden="true" className={styles.typed} data-tutor-text>
-        {text.slice(0, shown)}
+        <Notation text={text.slice(0, shown)} />
         {!complete && <span className={styles.caret} />}
       </span>
       <span className="sr-only" aria-live="polite" aria-atomic="true">
-        {text}
+        {plainNotation(text)}
       </span>
     </div>
   );

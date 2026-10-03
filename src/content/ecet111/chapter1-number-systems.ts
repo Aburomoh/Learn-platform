@@ -39,7 +39,7 @@ const readHints: HintInput[] = [
   { rung: 6, text: "Write the bottom remainder first, then move up one remainder at a time." },
   { rung: 7, text: "Like stacking plates: the last one you put down is the first one you pick up." },
   { rung: 8, text: "The first bit is the bottom remainder, {msb}. Continue upward." },
-  { rung: 9, text: "({value})₁₀ = ({answerBits})₂." },
+  { rung: 9, text: "({value})_10 = ({answerBits})_2." },
 ];
 
 /* Grouping (#44): step 0 marks the groups, then one digit per group. Ladders are per step (ADR-0007 §3). */
@@ -179,7 +179,7 @@ function groupingWalk(bits: string, size: 3 | 4): ExplanationInput {
         },
       };
     }),
-    { id: `s${groups.length + 3}`, say: `So ({value})₁₀ = (${answer})${base === 8 ? "₈" : "₁₆"}.`, stage: { groups, done: true } },
+    { id: `s${groups.length + 3}`, say: `So ({value})_10 = (${answer})${base === 8 ? "_8" : "_16"}.`, stage: { groups, done: true } },
   ];
 }
 
@@ -207,7 +207,7 @@ export function readVariant(value: number, id = `v${value}`): VariantInput {
   const reversed = [...bits].reverse().join("");
   return {
     id,
-    prompt: "The division of {value} is finished. Use the remainders to write ({value})₁₀ in binary.",
+    prompt: "The division of {value} is finished. Use the remainders to write ({value})_10 in binary.",
     spec: { kind: "numeric", base: 2, answer: bits, context: { type: "division-chain", value, steps: divisionSteps(value) } },
     vars: exerciseVars(value),
     hints: readHints,
@@ -230,7 +230,7 @@ function groupingVariant(value: number, size: 3 | 4): VariantInput {
   const answer = value.toString(size === 3 ? 8 : 16).toUpperCase();
   return {
     id: `v${value}`,
-    prompt: `({value})₁₀ = ({answerBits})₂. Write it in ${size === 3 ? "octal" : "hexadecimal"}: first mark groups of ${size === 3 ? "three" : "four"} bits from the right, then write one digit under each group.`,
+    prompt: `({value})_10 = ({answerBits})_2. Write it in ${size === 3 ? "octal" : "hexadecimal"}: first mark groups of ${size === 3 ? "three" : "four"} bits from the right, then write one digit under each group.`,
     spec: { kind: "bit-grouping", bits, groupSize: size, answer },
     vars: { ...exerciseVars(value), groups: groupBits(bits, size).join(" ") },
     hints: groupHints,
@@ -254,8 +254,8 @@ const conversionExercise: TopicInput["activities"][number] = {
       conceptId: "ns.repeated-division",
       objectiveId: "ns.obj.divide",
       variants: [
-        divideVariant(88, "Exercise: convert ({value})₁₀ to binary. Divide by 2, one step at a time: the result goes below, the remainder beside it."),
-        divideVariant(73, "Now ({value})₁₀. Divide by 2, one step at a time."),
+        divideVariant(88, "Exercise: convert ({value})_10 to binary. Divide by 2, one step at a time: the result goes below, the remainder beside it."),
+        divideVariant(73, "Now ({value})_10. Divide by 2, one step at a time."),
       ],
     },
     { id: "ns.x.read", label: "Read off", conceptId: "ns.bit-order", objectiveId: "ns.obj.read", variants: [readVariant(88), readVariant(73)] },
@@ -268,7 +268,7 @@ export const numberSystemsTopic: TopicInput = {
   id: "number-systems",
   title: "Number-base conversions",
   summary: "Decimal to binary by repeated division, then to octal and hexadecimal by grouping bits.",
-  preview: "53₁₀ → 110101₂ → 65₈ → 35₁₆",
+  preview: "53_10 → 110101_2 → 65_8 → 35_16",
   concepts: [
     { id: "ns.repeated-division", title: "Repeated division by 2", summary: "Divide by 2 until the result is 0. Each remainder is one bit." },
     { id: "ns.bit-order", title: "LSB and MSB", summary: "The first remainder is the least significant bit; the last remainder is the most significant bit." },
@@ -298,7 +298,7 @@ export const numberSystemsTopic: TopicInput = {
           variants: [
             {
               id: "v26",
-              prompt: "Convert ({value})₁₀ to binary. Divide by 2, one step at a time: write the result below and the remainder beside it.",
+              prompt: "Convert ({value})_10 to binary. Divide by 2, one step at a time: write the result below and the remainder beside it.",
               spec: { kind: "repeated-division", value: 26, base: 2, steps: steps26 },
               vars: vars26,
               hints: divisionHints,
@@ -341,7 +341,7 @@ export const numberSystemsTopic: TopicInput = {
             },
             {
               id: "v37",
-              prompt: "Another one. Convert ({value})₁₀ to binary by dividing by 2, one step at a time.",
+              prompt: "Another one. Convert ({value})_10 to binary by dividing by 2, one step at a time.",
               spec: { kind: "repeated-division", value: 37, base: 2, steps: steps37 },
               vars: vars37,
               hints: divisionHints,
@@ -377,7 +377,7 @@ export const numberSystemsTopic: TopicInput = {
           variants: [
             {
               id: "v26",
-              prompt: "The division of {value} is finished. Use the remainders to write ({value})₁₀ in binary.",
+              prompt: "The division of {value} is finished. Use the remainders to write ({value})_10 in binary.",
               spec: { kind: "numeric", base: 2, answer: "11010", context: { type: "division-chain", value: 26, steps: steps26 } },
               vars: vars26,
               hints: readHints,
@@ -395,7 +395,7 @@ export const numberSystemsTopic: TopicInput = {
             },
             {
               id: "v37",
-              prompt: "The division of {value} is finished. Use the remainders to write ({value})₁₀ in binary.",
+              prompt: "The division of {value} is finished. Use the remainders to write ({value})_10 in binary.",
               spec: { kind: "numeric", base: 2, answer: "100101", context: { type: "division-chain", value: 37, steps: steps37 } },
               vars: vars37,
               hints: readHints,
@@ -423,7 +423,7 @@ export const numberSystemsTopic: TopicInput = {
           variants: [
             {
               id: "v26",
-              prompt: "({value})₁₀ = ({answerBits})₂. Write it in octal: first mark groups of three bits from the right, then write one digit under each group.",
+              prompt: "({value})_10 = ({answerBits})_2. Write it in octal: first mark groups of three bits from the right, then write one digit under each group.",
               spec: { kind: "bit-grouping", bits: "11010", groupSize: 3, answer: "32" },
               vars: { ...vars26, groups: "011 010" },
               hints: groupHints,
@@ -450,12 +450,12 @@ export const numberSystemsTopic: TopicInput = {
                   stage: { groups: ["011", "010"], attention: 1 },
                   ask: { prompt: "What is 010 as a number?", options: ["2", "1", "10"], correctIndex: 0, afterCorrect: "Yes: only the 2 is on.", afterWrong: "The weights are 4, 2, 1. Only the middle bit, 2, is on." },
                 },
-                { id: "s5", say: "3 and 2: ({value})₁₀ = ({answerOct})₈. Check: 3 × 8 + 2 = {value}.", stage: { groups: ["011", "010"], done: true } },
+                { id: "s5", say: "3 and 2: ({value})_10 = ({answerOct})_8. Check: 3 × 8 + 2 = {value}.", stage: { groups: ["011", "010"], done: true } },
               ],
             },
             {
               id: "v37",
-              prompt: "({value})₁₀ = ({answerBits})₂. Write it in octal: first mark groups of three bits from the right, then write one digit under each group.",
+              prompt: "({value})_10 = ({answerBits})_2. Write it in octal: first mark groups of three bits from the right, then write one digit under each group.",
               spec: { kind: "bit-grouping", bits: "100101", groupSize: 3, answer: "45" },
               vars: { ...vars37, groups: "100 101" },
               hints: groupHints,
@@ -482,7 +482,7 @@ export const numberSystemsTopic: TopicInput = {
                   stage: { groups: ["100", "101"], attention: 1 },
                   ask: { prompt: "What is 101 as a number?", options: ["5", "2", "101"], correctIndex: 0, afterCorrect: "Yes: 4 + 1 = 5.", afterWrong: "The weights are 4, 2, 1. 101 is 4 + 1 = 5." },
                 },
-                { id: "s5", say: "4 and 5: ({value})₁₀ = ({answerOct})₈. Check: 4 × 8 + 5 = {value}.", stage: { groups: ["100", "101"], done: true } },
+                { id: "s5", say: "4 and 5: ({value})_10 = ({answerOct})_8. Check: 4 × 8 + 5 = {value}.", stage: { groups: ["100", "101"], done: true } },
               ],
             },
           ],
@@ -497,7 +497,7 @@ export const numberSystemsTopic: TopicInput = {
           variants: [
             {
               id: "v26",
-              prompt: "({value})₁₀ = ({answerBits})₂. Write it in hexadecimal: first mark groups of four bits from the right, then write one digit under each group.",
+              prompt: "({value})_10 = ({answerBits})_2. Write it in hexadecimal: first mark groups of four bits from the right, then write one digit under each group.",
               spec: { kind: "bit-grouping", bits: "11010", groupSize: 4, answer: "1A" },
               vars: { ...vars26, groups: "0001 1010" },
               hints: groupHints,
@@ -524,12 +524,12 @@ export const numberSystemsTopic: TopicInput = {
                   stage: { groups: ["0001", "1010"], attention: 0 },
                   ask: { prompt: "What is 0001 as a number?", options: ["1", "8", "0001"], correctIndex: 0, afterCorrect: "Yes, 1.", afterWrong: "The weights are 8, 4, 2, 1. Only the 1 is on." },
                 },
-                { id: "s5", say: "1 and A: ({value})₁₀ = ({answerHex})₁₆. Check: 1 × 16 + 10 = {value}.", stage: { groups: ["0001", "1010"], done: true } },
+                { id: "s5", say: "1 and A: ({value})_10 = ({answerHex})_16. Check: 1 × 16 + 10 = {value}.", stage: { groups: ["0001", "1010"], done: true } },
               ],
             },
             {
               id: "v37",
-              prompt: "({value})₁₀ = ({answerBits})₂. Write it in hexadecimal: first mark groups of four bits from the right, then write one digit under each group.",
+              prompt: "({value})_10 = ({answerBits})_2. Write it in hexadecimal: first mark groups of four bits from the right, then write one digit under each group.",
               spec: { kind: "bit-grouping", bits: "100101", groupSize: 4, answer: "25" },
               vars: { ...vars37, groups: "0010 0101" },
               hints: groupHints,
@@ -556,7 +556,7 @@ export const numberSystemsTopic: TopicInput = {
                   stage: { groups: ["0010", "0101"], attention: 0 },
                   ask: { prompt: "What is 0010 as a number?", options: ["2", "4", "10"], correctIndex: 0, afterCorrect: "Yes: only the 2 is on.", afterWrong: "The weights are 8, 4, 2, 1. Only the 2 is on." },
                 },
-                { id: "s5", say: "2 and 5: ({value})₁₀ = ({answerHex})₁₆. Check: 2 × 16 + 5 = {value}.", stage: { groups: ["0010", "0101"], done: true } },
+                { id: "s5", say: "2 and 5: ({value})_10 = ({answerHex})_16. Check: 2 × 16 + 5 = {value}.", stage: { groups: ["0010", "0101"], done: true } },
               ],
             },
           ],
