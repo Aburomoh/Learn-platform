@@ -30,6 +30,7 @@ export const en = {
   "div.swapped": "They are swapped. The result of the division goes in the row below; the remainder goes beside the number.",
   "ns.read-reversed": "That is top to bottom. Read the remainders from the bottom (MSB) up to the top (LSB).",
   "ns.group-from-left": "Group from the right-hand side, and add zeros on the left if a group is short.",
+  "ns.group-no-padding": "Right direction. The leftmost group is short: add zeros on its left until it has {groupSize} bits.",
   "ns.wrong-group-size": "Check the group size: 3 bits for octal, 4 bits for hexadecimal.",
   "ns.reversed": "The order looks reversed. The largest place value is on the left.",
   "ns.missing-largest": "Check the largest place value. Does {largest} fit in {value}?",

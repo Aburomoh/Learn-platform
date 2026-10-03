@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { courses, getActivity, listActivityParams } from "./index";
 import { evaluateCircuit, gateOrder, grade, valueToBits, bitsToValue, divisionSteps, groupBits, additionSteps, additionResult, additionStepVars, complementBits } from "./grade";
-import { MULTI_STEP_KINDS, stepCount, stepTag, stepVars } from "./steps";
+import { MULTI_STEP_KINDS, hintsForStep, stepCount, stepTag, stepVars } from "./steps";
 import { contextFromVariant } from "@/tutor";
 import { InteractionSpec, MultipleChoiceSpec, NumericSpec } from "./schema";
 import { addition1101 } from "./fixtures/columnAddition";
 import { complement100101, complement110010 } from "./fixtures/onesComplement";
+import { hex26, octal88 } from "./fixtures/bitGrouping";
 import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
@@ -163,7 +164,7 @@ describe("authored truth is internally consistent", () => {
   });
 
   it("every multi-step kind follows the step contract: partial until the last step (ADR-0007)", () => {
-    expect([...MULTI_STEP_KINDS].sort()).toEqual(["circuit-predict", "column-addition", "repeated-division"]);
+    expect([...MULTI_STEP_KINDS].sort()).toEqual(["bit-grouping", "circuit-predict", "column-addition", "repeated-division"]);
     for (const { path, variant } of allVariants()) {
       const spec = variant.spec;
       const n = stepCount(spec);
@@ -224,11 +225,17 @@ describe("authored truth is internally consistent", () => {
   });
 
   it("hints follow the ladder in ascending rung order and every template slot resolves at every step", () => {
-    for (const { path, variant } of allVariants()) {
-      const rungs = variant.hints.map((h) => h.rung);
-      expect([...rungs].sort((a, b) => a - b), path).toEqual(rungs);
-      const texts = [variant.prompt, variant.reactions?.stepNext ?? "", ...variant.hints.map((h) => h.text), ...variant.explanation.flatMap((s) => [s.say, s.ask?.prompt ?? "", s.ask?.afterCorrect ?? "", s.ask?.afterWrong ?? ""])];
-      for (const vars of varSets(variant)) for (const t of texts) expect(fill(t, vars), `${path}: ${t}`).not.toMatch(/\{[a-zA-Z0-9_]+\}/);
+    const fixtures = [hex26, octal88].map((variant) => ({ path: `fixture/${variant.id}`, variant }));
+    for (const { path, variant } of [...allVariants(), ...fixtures]) {
+      for (const ladder of [variant.hints, ...Object.values(variant.hintsByStep ?? {})]) {
+        const rungs = ladder.map((h) => h.rung);
+        expect([...rungs].sort((a, b) => a - b), path).toEqual(rungs);
+      }
+      const texts = [variant.prompt, variant.reactions?.stepNext ?? "", ...variant.explanation.flatMap((s) => [s.say, s.ask?.prompt ?? "", s.ask?.afterCorrect ?? "", s.ask?.afterWrong ?? ""])];
+      varSets(variant).forEach((vars, i) => {
+        // A step's own ladder (ADR-0007 §3) only has to resolve with that step's vars.
+        for (const t of [...texts, ...hintsForStep(variant, i).map((h) => h.text)]) expect(fill(t, vars), `${path} step ${i}: ${t}`).not.toMatch(/\{[a-zA-Z0-9_]+\}/);
+      });
     }
   });
 
@@ -396,5 +403,62 @@ describe("1's complement on numeric + bit-row (#35)", () => {
     expect(spec("1")).toBe(false);
     expect(spec("101010101")).toBe(false);
     expect(spec("1021")).toBe(false);
+  });
+});
+
+describe("octal/hex by grouping, one goal at a time (#44)", () => {
+  const at = (v: Variant, step: number, input: { groups?: string[]; digit?: string }) => grade(v, { kind: "bit-grouping", step, ...input });
+
+  it("has 1 + G steps: mark the groups, then one digit per group, left to right", () => {
+    expect(stepCount(hex26.spec)).toBe(3);
+    expect([0, 1, 2].map((i) => stepTag(hex26.spec, i))).toEqual(["group", "digit", "digit"]);
+    expect(stepVars(hex26.spec, 0)).toMatchObject({ groupSize: 4, bits: "11010", padCount: 3, groupCount: 2, stepNumber: 1 });
+    expect(stepVars(hex26.spec, 2)).toMatchObject({ groupIndex: 2, groupBits: "1010", groupValue: 10, digit: "A", stepNumber: 3 });
+    expect(stepVars(octal88.spec, 0)).toMatchObject({ padCount: 2, groupCount: 3 });
+  });
+
+  it("authored answers equal the computed digits", () => {
+    for (const v of [hex26, octal88]) {
+      if (v.spec.kind !== "bit-grouping") throw new Error("fixture shape");
+      const digits = groupBits(v.spec.bits, v.spec.groupSize).map((g) => parseInt(g, 2).toString(16).toUpperCase());
+      expect(v.spec.answer).toBe(digits.join(""));
+      expect(v.spec.answer).toBe(parseInt(v.spec.bits, 2).toString(v.spec.groupSize === 3 ? 8 : 16).toUpperCase());
+    }
+  });
+
+  it("grades a full walk: partial until the last digit", () => {
+    expect(at(hex26, 0, { groups: ["0001", "1010"] })).toMatchObject({ correct: true, partial: true, normalized: "0001|1010" });
+    expect(at(hex26, 1, { digit: "1" })).toMatchObject({ correct: true, partial: true });
+    expect(at(hex26, 2, { digit: " a " })).toMatchObject({ correct: true, partial: false, normalized: "1010=A" });
+    expect(at(octal88, 3, { digit: "0" })).toMatchObject({ correct: true, partial: false });
+  });
+
+  it("names the grouping mistake from the marked group lengths", () => {
+    expect(at(octal88, 0, { groups: ["101", "100", "0"] })).toMatchObject({ correct: false, misconceptionId: "ns.group-from-left" });
+    expect(at(octal88, 0, { groups: ["1", "011", "000"] })).toMatchObject({ correct: false, misconceptionId: "ns.group-no-padding" });
+    expect(at(hex26, 0, { groups: ["011", "010"] })).toMatchObject({ correct: false, misconceptionId: "ns.wrong-group-size" });
+    expect(at(hex26, 0, { groups: ["11", "010"] })).toMatchObject({ correct: false, misconceptionId: "ns.wrong-group-size" });
+    expect(at(hex26, 0, { groups: ["1101", "0"] })).toMatchObject({ correct: false, misconceptionId: "ns.group-from-left" });
+    expect(at(hex26, 0, { groups: ["0000", "0001", "1010"] })).toEqual({ correct: false, normalized: "0000|0001|1010" });
+  });
+
+  it("detects a decimal value typed for a hex digit, only where the value is 10 or more", () => {
+    expect(at(hex26, 2, { digit: "10" })).toMatchObject({ correct: false, misconceptionId: "ns.hex-digit-decimal" });
+    expect(at(hex26, 1, { digit: "2" }).misconceptionId).toBeUndefined();
+  });
+
+  it("chooses the step's own hint ladder, falling back to hints", () => {
+    expect(hintsForStep(hex26, 0)[0].text).toContain("{padCount}");
+    expect(hintsForStep(hex26, 1)[0].text).toContain("{groupIndex}");
+    expect(hintsForStep(addition1101, 0)).toBe(addition1101.hints);
+  });
+
+  it("rejects malformed answers and specs", () => {
+    expect(() => at(hex26, 3, { digit: "1" })).toThrow();
+    expect(() => at(hex26, 0, { digit: "1" })).toThrow();
+    expect(() => at(hex26, 1, { groups: ["0001"] })).toThrow();
+    expect(InteractionSpec.safeParse({ kind: "bit-grouping", bits: "1", groupSize: 3, answer: "1" }).success).toBe(false);
+    expect(InteractionSpec.safeParse({ kind: "bit-grouping", bits: "1010", groupSize: 2, answer: "22" }).success).toBe(false);
+    expect(InteractionSpec.safeParse({ kind: "bit-grouping", bits: "11010", groupSize: 4, answer: "1a" }).success).toBe(false);
   });
 });

@@ -5,9 +5,9 @@
  * spec has, what kind of goal each step is, and which values text may use at that step.
  * Values are structural only (ids, numbers, bits): wording stays in the tutor catalog.
  */
-import type { InteractionSpec } from "./schema";
+import type { Hint, InteractionSpec, Variant } from "./schema";
 import type { TemplateVars } from "./template";
-import { additionSteps, additionStepVars, evaluateCircuit, gateOrder } from "./grade";
+import { additionSteps, additionStepVars, evaluateCircuit, gateOrder, groupBits } from "./grade";
 
 type Kind = InteractionSpec["kind"];
 type SpecOf<K extends Kind> = Extract<InteractionSpec, { kind: K }>;
@@ -32,6 +32,19 @@ const contracts: { [K in Kind]?: StepContract<SpecOf<K>> } = {
     count: (spec) => additionSteps(spec.a, spec.b).length,
     tag: (spec, i) => (additionSteps(spec.a, spec.b)[i].final ? "carry" : "column"),
     vars: (spec, i) => additionStepVars(additionSteps(spec.a, spec.b)[i]),
+  },
+  // Octal/hex grouping: step 0 marks the groups, then one digit per group, left to right.
+  "bit-grouping": {
+    count: (spec) => 1 + groupBits(spec.bits, spec.groupSize).length,
+    tag: (_, i) => (i === 0 ? "group" : "digit"),
+    vars: (spec, i) => {
+      const groups = groupBits(spec.bits, spec.groupSize);
+      const common = { groupSize: spec.groupSize, bits: spec.bits, groupCount: groups.length, stepNumber: i + 1 };
+      if (i === 0) return { ...common, padCount: groups.length * spec.groupSize - spec.bits.length };
+      const groupBitsAt = groups[i - 1];
+      const groupValue = parseInt(groupBitsAt, 2);
+      return { ...common, groupIndex: i, groupBits: groupBitsAt, groupValue, digit: groupValue.toString(16).toUpperCase() };
+    },
   },
   // Gate-by-gate circuit walk, in signal-flow order; the output gate is the last step.
   "circuit-predict": {
@@ -80,4 +93,10 @@ export function stepTag(spec: InteractionSpec, i: number): string | undefined {
 /** Structural template values for step `i`; {} for single-answer questions. */
 export function stepVars(spec: InteractionSpec, i: number): TemplateVars {
   return contractOf(spec)?.vars(spec, clamp(spec, i)) ?? {};
+}
+
+/** The hint ladder for step `i`: `hintsByStep[stepTag]` when authored, else `hints` (ADR-0007 §3). */
+export function hintsForStep(variant: Variant, i: number): Hint[] {
+  const tag = stepTag(variant.spec, i);
+  return (tag && variant.hintsByStep?.[tag]) || variant.hints;
 }
