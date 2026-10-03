@@ -19,7 +19,15 @@ async function divisionStep(page: Page, dividend: number, quotient: number, rema
 test("home lists the course and navigates to an activity", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.getByText("DEMO / NOT AUTHORITATIVE COURSE CONTENT")).toBeVisible();
+  // home: one clear way in, and the demo notice as a quiet footer fact
+  await expect(page.getByRole("heading", { level: 1, name: "Start here" })).toBeVisible();
+  await expect(page.locator("[data-primary-action]")).toHaveCount(1);
+  await expect(page.getByRole("contentinfo")).toContainText("Demo content");
+  // narrowest phone: the preview chain wraps inside the panel instead of widening the page
+  const viewport = page.viewportSize()!;
+  await page.setViewportSize({ width: 320, height: 700 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+  await page.setViewportSize(viewport);
   // each hop waits for its URL so a slow transition fails at the hop, not on a stale page
   await page.getByRole("link", { name: /Introduction to Digital System Design/ }).click();
   await expect(page).toHaveURL(/\/courses\/ecet111\/$/);
