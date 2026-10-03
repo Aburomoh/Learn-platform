@@ -1,7 +1,7 @@
 # Current State — QA / Test Engineer
 
-Current assignment: QA on wake:qa alarms; passed #61 #62 #65 #69 #73 #76 #77 #79 #83 #84 #87 #90 #91 #102.
-Recent important decision: e2e runs use a per-worktree `PW_PORT` and never reuse a server (#81); this fixed the cross-checkout flake.
-Blocker: None. Open: #100 hydration mismatch on the gates page (Frontend); guest-flow network assert failed twice under load, URL not yet captured.
-Relevant issue/PR: #100, #74 (fixed by #76).
-Next expected action: Make the guest-flow network assert print the URLs it caught; add pointer-drag e2e once a drag activity ships.
+Current assignment: QA on wake:qa alarms; R1 redesign pages (#155 #160 #163 #172 #173 #176 #182 #183) and Ch.1 content (#139–#161, #171) passed.
+Recent important decision: QA every PR merged into origin/main (not the head alone); seed localStorage with addInitScript before load; per-worktree `PW_PORT`, `CI=1`.
+Blocker: None.
+Relevant issue/PR: #151 (BitRow retype, fixed by #153); guest-flow network assert seen failing twice under load, URL never captured.
+Next expected action: Pointer-drag e2e once a shipped activity uses DragToTarget; keep the 320 px no-overflow check on every new page.
