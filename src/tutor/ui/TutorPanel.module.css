@@ -39,10 +39,6 @@
   }
   .avatarSm {
     display: block;
-    width: 32px;
-  }
-  .avatarSm > * {
-    width: 32px;
   }
   .quiet {
     min-height: 32px;
@@ -51,9 +47,6 @@
   .message > * {
     min-height: 0;
     padding: 6px var(--space-3);
-  }
-  .message > *::before {
-    top: 12px;
   }
   .panel[data-expanded="false"] [data-tutor-text] {
     display: -webkit-box;

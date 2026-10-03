@@ -45,7 +45,7 @@ export function HintReveal({ revealed, canRequest, lockedReason, onRequest, onEx
         </ol>
       )}
       <div className={styles.actions}>
-        <button type="button" className="btn" onClick={onRequest} disabled={!canRequest} aria-describedby={!canRequest && lockedReason ? "hint-lock" : undefined}>
+        <button type="button" className="btn btn-quiet" onClick={onRequest} disabled={!canRequest} aria-describedby={!canRequest && lockedReason ? "hint-lock" : undefined}>
           {revealed.length === 0 ? "Hint" : "Another hint"}
         </button>
         {onExplainSlowly && (

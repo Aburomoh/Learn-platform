@@ -4,9 +4,8 @@
   min-width: 0;
   gap: var(--space-3);
   padding: var(--space-3);
-  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--surface-sunk);
 }
 
 /* Source and answer rows share one grid, so the cells line up at every width. */
