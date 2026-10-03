@@ -29,7 +29,7 @@ export const ecet111: CourseInput = {
   id: "ecet111",
   code: "ECET 111",
   title: "Introduction to Digital System Design I",
-  summary: "Chapter 1 number-base conversions, plus a logic-gates preview. Demo content pending instructor approval.",
+  summary: "Number systems and binary arithmetic, one step at a time: convert between bases, add, complement and subtract. Plus a first look at logic gates.",
   authority: "DEMO",
   offeringId: "ecet111.2026-fall",
   modules: [

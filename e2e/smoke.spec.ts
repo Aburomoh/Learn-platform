@@ -250,9 +250,11 @@ for (const width of [390, 320]) {
 }
 
 test("Continue resumes at the first unfinished challenge; Review starts at challenge 1", async ({ page, request }) => {
-  // the pre-rendered page holds no challenge, so nothing can flash before local progress is read
-  const html = await (await request.get(ACTIVITY)).text();
-  expect(html).not.toContain("Challenge 1 of");
+  // the pre-rendered page holds challenge 1, so a new student sees the question at first paint (#158)
+  // React separates text and values with empty comments in the HTML; drop them before looking
+  const html = (await (await request.get(ACTIVITY)).text()).replace(/<!-- -->/g, "");
+  expect(html.includes("Challenge 1 of 4")).toBe(true);
+  expect(html.includes("26 divided by 2: result")).toBe(true);
 
   // finish challenges 1 and 2 of 4
   await page.goto(ACTIVITY);
@@ -268,14 +270,16 @@ test("Continue resumes at the first unfinished challenge; Review starts at chall
   await page.exposeFunction("seenQuestion", (text: string) => seen.push(text));
   await page.addInitScript(() => {
     new MutationObserver(() => {
-      const m = document.body?.textContent?.match(/Challenge \d of \d/);
-      if (m) (window as unknown as { seenQuestion: (t: string) => void }).seenQuestion(m[0]);
+      // innerText skips what is not visible, so a hidden pre-rendered challenge does not count
+      const m = document.body?.innerText.match(/Challenge \d of \d/i);
+      if (m) (window as unknown as { seenQuestion: (t: string) => void }).seenQuestion(m[0].toLowerCase());
     }).observe(document, { childList: true, subtree: true });
   });
   await page.reload();
   await expect(page.getByText("Challenge 3 of 4")).toBeVisible();
   await expect(page.getByRole("form", { name: "Mark groups of 3 bits" })).toBeVisible();
-  expect(new Set(seen)).toEqual(new Set(["Challenge 3 of 4"]));
+  expect(new Set(seen)).toEqual(new Set(["challenge 3 of 4"]));
+  await expect(page.locator("html")).not.toHaveAttribute("data-resume", /.*/);
 
   // Review restarts at challenge 1 without losing what was finished
   await page.goto(`${ACTIVITY}?review=1`);

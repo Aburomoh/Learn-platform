@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useSyncExternalStore } from "react";
 import type { Activity, Course, Topic } from "@/content/schema";
 import { product } from "../../config/product";
 import { HintReveal } from "@/interactions";
@@ -10,6 +10,7 @@ import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordA
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
+import { RESUME_ATTR } from "./resumeMarker";
 import { ChallengeSteps, type ChallengeStep } from "@/shell/r1";
 import { topicAction } from "@/shell/primaryAction";
 import styles from "./Stage.module.css";
@@ -29,22 +30,37 @@ function isReview(): boolean {
   return new URLSearchParams(window.location.search).has("review");
 }
 
+/** Where this visit starts: Continue resumes, Review or a finished practice starts at challenge 1. */
+function startState(offeringId: string, activity: Activity): RunnerState {
+  const record = getProgressStore(offeringId).get().activities[activity.id];
+  if (isReview() || !record || record.status === "completed") return initialRunnerState(activity);
+  return resumeRunnerState(activity, record.completedQuestions ?? []);
+}
+
 /**
- * Learning Stage entry. Local progress lives in the browser, so the first challenge to show is
- * only known after hydration. Until then an empty stage frame is rendered (also in the
- * pre-rendered HTML), so a returning student never sees challenge 1 flash before the one they
- * continue with.
+ * Learning Stage entry. The page is pre-rendered with challenge 1, so a new student sees the
+ * question at first paint and hydration simply attaches to it. Local progress is only readable in
+ * the browser: when it says the student is part-way through, the runner is remounted on the
+ * resume challenge right after hydration. For that case the page's inline marker script has
+ * already hidden the pre-rendered stage (see resumeMarker.ts), so challenge 1 never flashes.
  */
 export function ActivityRunner(props: ActivityRunnerProps) {
-  const hydrated = useSyncExternalStore(noSubscription, () => true, () => false);
-  if (!hydrated) {
-    return (
-      <div className={styles.layout}>
-        <div className={`${styles.stage} ${styles.stageLoading}`} data-testid="learning-stage" data-stage="loading" aria-busy="true" />
-      </div>
-    );
-  }
-  return <Runner {...props} />;
+  const { course, activity } = props;
+  // false while rendering on the server and during hydration, true on any later (client) render
+  const client = useSyncExternalStore(noSubscription, () => true, () => false);
+  const start = useMemo(() => (client ? startState(course.offeringId, activity) : initialRunnerState(activity)), [client, course.offeringId, activity]);
+  const resumed = start.qIndex > 0 || start.completed.some(Boolean);
+
+  // Once the runner shows the right challenge, the pre-paint marker has done its job.
+  useEffect(() => {
+    if (client) document.documentElement.removeAttribute(RESUME_ATTR);
+  }, [client]);
+
+  return (
+    <div className={styles.runner}>
+      <Runner key={resumed ? "resumed" : "first"} {...props} initial={start} />
+    </div>
+  );
 }
 
 /**
@@ -52,15 +68,9 @@ export function ActivityRunner(props: ActivityRunnerProps) {
  * structured actions to the UI, and records compact evidence in the local learner store.
  * Everything here runs in the browser; there are no network calls.
  */
-function Runner({ course, topic, activity }: ActivityRunnerProps) {
+function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { initial: RunnerState }) {
   const offeringId = course.offeringId;
   const reducer = useMemo(() => createRunnerReducer(activity), [activity]);
-  // Continue resumes at the first unfinished challenge; Review, or a finished practice, starts at challenge 1.
-  const [initial] = useState<RunnerState>(() => {
-    const record = getProgressStore(offeringId).get().activities[activity.id];
-    if (isReview() || !record || record.status === "completed") return initialRunnerState(activity);
-    return resumeRunnerState(activity, record.completedQuestions ?? []);
-  });
   const [state, dispatch] = useReducer(reducer, initial);
   const [progress, updateProgress] = useOfferingProgress(offeringId);
   const [prefs] = usePrefs();

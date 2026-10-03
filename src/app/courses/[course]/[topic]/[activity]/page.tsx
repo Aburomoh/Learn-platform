@@ -4,6 +4,7 @@ import { getActivity, listActivityParams } from "@/content";
 import { Footer, TopBar } from "@/shell/r1";
 import shell from "@/shell/r1/r1.module.css";
 import { ActivityRunner } from "@/stage/ActivityRunner";
+import { resumeMarkerScript } from "@/stage/resumeMarker";
 
 type Params = { course: string; topic: string; activity: string };
 
@@ -32,6 +33,8 @@ export default async function ActivityPage({ params }: { params: Promise<Params>
       <main className={`${shell.main} ${shell.mainStage}`}>
         {/* the page still has a name for assistive technology and the tab title */}
         <h1 className="sr-only">{activity.title}</h1>
+        {/* before the stage, so it runs before the stage can paint (see resumeMarker.ts) */}
+        <script dangerouslySetInnerHTML={{ __html: resumeMarkerScript(course.offeringId, activity.id) }} />
         <ActivityRunner course={course} topic={topic} activity={activity} />
       </main>
       <Footer demo={activity.authority === "DEMO"} />
