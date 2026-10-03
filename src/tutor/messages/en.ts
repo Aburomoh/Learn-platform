@@ -51,6 +51,7 @@ export const en = {
   "add.carry-ignored.carry": "This last step has no bits of its own. Look at the carry out of the column on its right.",
   "add.wrote-two.carry": "This last step has no bits of its own. Look at the carry out of the column on its right.",
   "ba.copied-bits": "That is the binary number itself. Add up the weights of its 1s: 1, 2, 4, 8, … from the right.",
+  "ns.copied-digits": "Those are the digits themselves. Multiply each digit by its place weight, then add.",
   "ba.weights-reversed": "The weights start at 1 on the right-hand end. Read them from the right.",
   "sub.missed-negative": "There is no end carry, so the result is negative. The sum bits are its 2's complement: complement them again to read its size.",
   "sub.kept-carry": "The end carry is not part of the answer. An end carry of 1 means positive: discard it and read the other bits.",
