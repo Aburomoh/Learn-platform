@@ -13,15 +13,18 @@ import styles from "./r1.module.css";
 const noSubscription = () => () => {};
 
 /** Topic-level status line: nothing about single practices (that is the topic page's job). */
-export function topicStatus(topic: Topic, progress: Pick<OfferingProgress, "activities">): { text: string; completed: boolean } {
+export function topicStatus(topic: Topic, progress: Pick<OfferingProgress, "activities">): { text: string; completed: boolean; started: boolean } {
   const total = topic.activities.reduce((n, a) => n + a.questions.length, 0);
   const records = topic.activities.map((a) => ({ a, r: progress.activities[a.id] }));
-  if (records.every(({ r }) => r?.status === "completed")) return { text: "Completed", completed: true };
+  if (records.every(({ r }) => r?.status === "completed")) return { text: "Completed", completed: true, started: true };
   if (records.some(({ r }) => r && r.status !== "new")) {
     const done = records.reduce((n, { a, r }) => n + (r?.status === "completed" ? a.questions.length : (r?.completedQuestions?.length ?? 0)), 0);
-    return { text: `${done} of ${total} challenges done`, completed: false };
+    return { text: `${done} of ${total} challenges done`, completed: false, started: true };
   }
-  return { text: effortCue(total, topic.activities.reduce((n, a) => n + a.minutes, 0)), completed: false };
+  // Not started: a topic of several practices is not one long sitting, so count practices (Pedagogy, #172).
+  const minutes = topic.activities.reduce((n, a) => n + a.minutes, 0);
+  const text = topic.activities.length > 1 ? `${topic.activities.length} short practices · about ${minutes} min` : effortCue(total, minutes);
+  return { text, completed: false, started: false };
 }
 
 /** The first and last tile of a topic's preview chain, small enough for a row; nothing if it is not a chain. */
@@ -66,8 +69,10 @@ export function CourseTopics({ course }: { course: Course }) {
                   href={topicHref(course, topic)}
                   route={topic.summary}
                   status={status.text}
+                  statusMuted={!status.started}
                   completed={status.completed}
                   visual={preview ? <PreviewBoard preview={preview} size="sm" bare /> : undefined}
+                  reserveVisual
                   action={isNext ? next.primary : quietAction(topicRowAction(course, topic, progress))}
                   emphasis={isNext ? "primary" : "quiet"}
                 />

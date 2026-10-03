@@ -671,6 +671,10 @@
 }
 
 .titleLink {
+  /* a 44 px hit area on the title line only; the row itself is still not a target */
+  display: inline-block;
+  padding-block: 11px;
+  margin-block: -11px;
   color: inherit;
   text-decoration: none;
 }
@@ -678,4 +682,14 @@
 .titleLink:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+/* on phones the row's filled button takes the full width; quiet actions stay inline */
+@media (max-width: 640px) {
+  .topicAction:has([data-primary-action]) {
+    flex-basis: 100%;
+  }
+  .topicAction .buttonRow {
+    width: 100%;
+  }
 }
