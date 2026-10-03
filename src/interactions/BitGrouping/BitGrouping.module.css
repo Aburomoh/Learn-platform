@@ -1,5 +1,8 @@
 .root {
   display: grid;
+  /* grid and flex children default to min-width: auto; without this a long bit row widens the page */
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   gap: var(--space-3);
   padding: var(--space-3);
   border: 1px solid var(--border);
@@ -9,6 +12,8 @@
 
 .step {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   gap: var(--space-3);
 }
 
@@ -39,6 +44,7 @@
   --cell: 36px;
   display: flex;
   align-items: stretch;
+  min-width: 0;
   max-width: 100%;
   overflow-x: auto;
   /* room for the focus ring inside the scroll box */
