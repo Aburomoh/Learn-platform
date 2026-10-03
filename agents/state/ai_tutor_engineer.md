@@ -1,7 +1,7 @@
 # Current State — AI Tutor Engineer
 
-Current assignment: #37 tutor messages for column addition and 1's complement.
-Recent important decision: Step reactions and nudges chosen by ADR-0007 step tag (`<key>.<stepTag>`); wrong-answer details reach the nudge via ANSWER_SUBMITTED.vars.
+Current assignment: #141 later challenges follow the worked variant (runner).
+Recent important decision: Follow by matching variant id (not raw index), only from a finished question; content test enforces aligned ids.
 Blocker: None
-Relevant issue/PR: #37, #70 (#68, ar slots, draft until Arabic is prioritised).
-Next expected action: Content for #38/#39 reuses these keys; division stepNext could move to the catalog the same way.
+Relevant issue/PR: #141, #70 (#68, ar slots, draft until Arabic is prioritised).
+Next expected action: Pedagogy + review on the #141 PR; then idle until woken.

@@ -77,6 +77,21 @@ export function nextUnexplainedVIndex(activity: Activity, s: Pick<RunnerState, "
   return from + 1;
 }
 
+/**
+ * Variant indexes after moving to question `target` (#141). Variants are an activity-level number
+ * set: when the current question is finished, the target starts on the variant with the same id
+ * (same numbers, by authoring convention), else keeps its own. Unfinished questions pass nothing on.
+ */
+export function followVariant(activity: Activity, s: Pick<RunnerState, "qIndex" | "vIndex" | "completed">, target: number): number[] {
+  if (!s.completed[s.qIndex]) return s.vIndex;
+  const id = currentVariant(activity, s).id;
+  const k = activity.questions[target].variants.findIndex((v) => v.id === id);
+  if (k === -1) return s.vIndex;
+  const vIndex = [...s.vIndex];
+  vIndex[target] = k;
+  return vIndex;
+}
+
 export function hasAnotherVariant(activity: Activity, s: Pick<RunnerState, "qIndex" | "vIndex">): boolean {
   return activity.questions[s.qIndex].variants.length > 1;
 }
@@ -207,7 +222,7 @@ export function createRunnerReducer(activity: Activity) {
         const qIndex = s.completed.findIndex((c, i) => !c && i > s.qIndex);
         const target = qIndex === -1 ? s.completed.findIndex((c) => !c) : qIndex;
         if (target === -1) return { ...s, done: true };
-        const next: RunnerState = { ...s, qIndex: target, hints: [], last: undefined, explanation: null, stepIndex: 0, tutor: initialTutorState, interactionKey: s.interactionKey + 1 };
+        const next: RunnerState = { ...s, qIndex: target, vIndex: followVariant(activity, s, target), hints: [], last: undefined, explanation: null, stepIndex: 0, tutor: initialTutorState, interactionKey: s.interactionKey + 1 };
         return runTutor(next, { type: "ACTIVITY_OPENED" });
       }
 

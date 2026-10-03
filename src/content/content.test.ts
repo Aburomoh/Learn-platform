@@ -123,6 +123,20 @@ describe("pedagogy guard", () => {
 });
 
 describe("authored truth is internally consistent", () => {
+  it("#141: a variant id shared by questions of one activity sits at the same index in each", () => {
+    for (const c of courses)
+      for (const m of c.modules)
+        for (const t of m.topics)
+          for (const a of t.activities) {
+            const at = new Map<string, number>();
+            for (const q of a.questions)
+              q.variants.forEach((v, i) => {
+                if (!at.has(v.id)) at.set(v.id, i);
+                expect(at.get(v.id), `${a.id}:${q.id}:${v.id}`).toBe(i);
+              });
+          }
+  });
+
   it("division chains equal the computed divide-by-2 steps and end at quotient 0", () => {
     let checked = 0;
     for (const { path, variant } of allVariants()) {
