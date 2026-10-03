@@ -1,12 +1,11 @@
-import Link from "next/link";
-import { Shell } from "@/shell/Shell";
+import { courses } from "@/content";
+import { PageFrame, PageHeading, PrimaryAction } from "@/shell/r1";
 
 export default function NotFound() {
   return (
-    <Shell>
-      <h1>Not found</h1>
-      <p>That page does not exist in this course companion.</p>
-      <Link href="/">Back to courses</Link>
-    </Shell>
+    <PageFrame demo={courses.some((c) => c.authority === "DEMO")}>
+      <PageHeading title="Not found" route="That page does not exist in this course companion." />
+      <PrimaryAction primary={{ label: "Back to home", href: "/" }} />
+    </PageFrame>
   );
 }

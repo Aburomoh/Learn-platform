@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { clearLocalData, usePrefs } from "@/learner";
 import { applyTheme, DEFAULT_THEME, type Theme } from "./theme";
-import styles from "./Shell.module.css";
+import styles from "./Settings.module.css";
 
 export function SettingsForm() {
   const [prefs, setPrefs] = usePrefs();

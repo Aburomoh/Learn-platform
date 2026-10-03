@@ -1,8 +1,8 @@
 # Current State — Frontend / Interaction Engineer
 
-Current assignment: PR #105 (#34 ColumnAddition, now also carrying #106 BitRow for #36) merged-up with main, awaiting Technical Lead merge. PR #90 (#88 12 px circuit text) with QA. PR #103 (#100 hydration fix) and PR #108 (#97 ladder halo) in review.
-Recent important decision: Step components rely on the `key={stepIndex}` remount contract (src/interactions/README.md). `QuestionView` switches are exhaustive (`never` default); contexts render through one `ContextView`.
+Current assignment: R1 redesign pages. Merged: tokens (#137), resolver (#143), resume (#144), shared components (#147, #148), topic page (#155), activity page (#160). In review: pre-render fix #163, course page #172, home #173 (stacked on #172), profile/demo #125 PR (stacked on #173), ColumnAddition drop-carry #152, BitRow retype #153.
+Recent important decision: All pages are built from `src/shell/r1` inside `PageFrame`; the old `Shell`/`TopBar` are removed. One filled button per view comes from `src/shell/primaryAction.ts`. Content that depends on local progress is rendered invisibly until hydrated (no flash).
 Blocker: None
-Relevant issue/PR: #105, #90, #103, #108; merged: #73, #84, #87, #92.
+Relevant issue/PR: #110 epic; open follow-ups #162 (stage chrome + tutor monogram), #168 (DivisionChain inputs 44 px on phones), #55 (subscripts as <sub>).
 Wake me: `npm run alarm frontend-interaction-engineer <#> "<reason>" <your-role>` (label `wake:frontend`).
-Next expected action: #114 redesign implementation once the UX proposal is accepted (blocked); #56, #57 (M1.2 backlog).
+Next expected action: #162, #168, #55; rebase the stacked PRs as their bases merge.

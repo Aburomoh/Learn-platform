@@ -103,12 +103,3 @@ button {
 .btn-quiet:disabled { opacity: 1; color: var(--text-muted); font-weight: 400; }
 .btn-quiet:hover { background: var(--surface-2); }
 
-.demo-badge {
-  display: inline-block;
-  font-size: var(--text-sm);
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-sm);
-  background: var(--warning-bg);
-  color: var(--warning);
-  border: 1px solid currentColor;
-}

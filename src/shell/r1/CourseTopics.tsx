@@ -1,6 +1,5 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import type { Course, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
 import type { OfferingProgress } from "@/learner/progress";
@@ -8,9 +7,8 @@ import { courseAction, topicHref, topicRowAction, type ActionLink, type PrimaryA
 import { TopicRow } from "./Chrome";
 import { PreviewBoard, parsePreview } from "./PreviewBoard";
 import { effortCue } from "./PrimaryAction";
+import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
-
-const noSubscription = () => () => {};
 
 /** Topic-level status line: nothing about single practices (that is the topic page's job). */
 export function topicStatus(topic: Topic, progress: Pick<OfferingProgress, "activities">): { text: string; completed: boolean; started: boolean } {
@@ -47,7 +45,7 @@ function quietAction(action: PrimaryAction): ActionLink {
  */
 export function CourseTopics({ course }: { course: Course }) {
   const [progress] = useOfferingProgress(course.offeringId);
-  const ready = useSyncExternalStore(noSubscription, () => true, () => false);
+  const ready = useHydrated();
   const next = courseAction(course, progress);
 
   return (

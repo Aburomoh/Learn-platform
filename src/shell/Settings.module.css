@@ -1,0 +1,40 @@
+/* Settings form: plain surfaces, no card borders (R1 redesign §7). */
+.list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.card h2 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-md);
+  letter-spacing: var(--tracking-tight);
+}
+
+.card select {
+  min-height: var(--touch-min);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.lead {
+  max-width: 70ch;
+  color: var(--text-muted);
+}
+
+.meta {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}

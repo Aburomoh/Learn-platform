@@ -1,15 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
 import type { Course, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
 import { practiceAction, topicAction } from "../primaryAction";
 import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
 import { PrimaryAction, effortCue } from "./PrimaryAction";
+import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
-
-const noSubscription = () => () => {};
 
 /**
  * "What do I do next" on the topic page: the one primary button (Start practice / Continue /
@@ -21,7 +19,7 @@ const noSubscription = () => () => {};
  */
 export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
   const [progress] = useOfferingProgress(course.offeringId);
-  const ready = useSyncExternalStore(noSubscription, () => true, () => false);
+  const ready = useHydrated();
   const action = topicAction(course, topic, progress);
   const { activity } = action;
   const record = progress.activities[activity.id];
