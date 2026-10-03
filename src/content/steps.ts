@@ -29,9 +29,9 @@ const contracts: { [K in Kind]?: StepContract<SpecOf<K>> } = {
     },
   },
   "column-addition": {
-    count: (spec) => additionSteps(spec.a, spec.b).length,
-    tag: (spec, i) => (additionSteps(spec.a, spec.b)[i].final ? "carry" : "column"),
-    vars: (spec, i) => additionStepVars(additionSteps(spec.a, spec.b)[i]),
+    count: (spec) => additionSteps(spec.a, spec.b, spec.endCarry !== "drop").length,
+    tag: (spec, i) => (additionSteps(spec.a, spec.b, spec.endCarry !== "drop")[i].final ? "carry" : "column"),
+    vars: (spec, i) => additionStepVars(additionSteps(spec.a, spec.b, spec.endCarry !== "drop")[i]),
   },
   // Octal/hex grouping: step 0 marks the groups, then one digit per group, left to right.
   "bit-grouping": {
