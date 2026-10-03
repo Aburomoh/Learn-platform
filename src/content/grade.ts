@@ -12,7 +12,9 @@ export type Answer =
   | { kind: "circuit-predict"; output: 0 | 1; step?: number }
   | { kind: "repeated-division"; step: number; quotient: number; remainder: number }
   /** One column (sum bit + carry out), or the final carry step where only `sum` is read. */
-  | { kind: "column-addition"; step: number; sum: number; carry?: number };
+  | { kind: "column-addition"; step: number; sum: number; carry?: number }
+  /** Step 0: `groups` as marked, padding included, left to right. Steps 1…G: `digit` of group G. */
+  | { kind: "bit-grouping"; step: number; groups?: string[]; digit?: string };
 
 export interface GradeResult {
   correct: boolean;
@@ -71,6 +73,29 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
               ? "division-quotient"
               : undefined;
       return { correct, normalized, misconceptionId: kind ? variant.misconceptions.find((m) => m.detect.type === kind)?.id : undefined };
+    }
+    case "bit-grouping": {
+      const a = answer as Extract<Answer, { kind: "bit-grouping" }>;
+      const groups = groupBits(spec.bits, spec.groupSize);
+      if (a.step < 0 || a.step > groups.length) throw new Error(`No grouping step ${a.step}`);
+      const find = (type: string) => variant.misconceptions.find((m) => m.detect.type === type)?.id;
+      if (a.step === 0) {
+        if (!a.groups) throw new Error("Grouping step 0 needs groups");
+        const normalized = a.groups.join("|");
+        const correct = normalized === groups.join("|");
+        if (correct) return { correct, normalized, partial: true };
+        const kind = groupingMistake(a.groups, spec.groupSize);
+        return { correct, normalized, misconceptionId: kind ? find(kind) : undefined };
+      }
+      if (a.digit === undefined) throw new Error(`Grouping step ${a.step} needs a digit`);
+      const group = groups[a.step - 1];
+      const value = parseInt(group, 2);
+      const digit = a.digit.trim().toUpperCase();
+      const normalized = `${group}=${digit}`;
+      const correct = digit === value.toString(16).toUpperCase();
+      if (correct) return { correct, normalized, partial: a.step < groups.length };
+      const decimal = value >= 10 && digit === String(value);
+      return { correct, normalized, misconceptionId: decimal ? find("digit-as-decimal") : undefined };
     }
     case "column-addition": {
       const a = answer as Extract<Answer, { kind: "column-addition" }>;
@@ -211,6 +236,20 @@ export function divisionSteps(value: number): { dividend: number; quotient: numb
   const out: { dividend: number; quotient: number; remainder: 0 | 1 }[] = [];
   for (let n = value; n > 0; n = Math.floor(n / 2)) out.push({ dividend: n, quotient: Math.floor(n / 2), remainder: (n % 2) as 0 | 1 });
   return out;
+}
+
+/**
+ * Names the grouping mistake in a wrong step-0 answer, judged by group lengths (the student only
+ * places separators and adds zeros on the left, so the bits themselves are given).
+ */
+function groupingMistake(marked: string[], size: number): string | undefined {
+  const lengths = marked.map((g) => g.length);
+  const [first, ...rest] = lengths;
+  const init = lengths.slice(0, -1);
+  if (init.length && init.every((l) => l === size) && lengths[lengths.length - 1] < size) return "group-from-left";
+  if (rest.every((l) => l === size) && first < size) return "group-no-padding";
+  if (rest.length && rest.every((l) => l === rest[0]) && rest[0] !== size) return "group-wrong-size";
+  return undefined;
 }
 
 /** Splits a binary string into groups of `size` from the right, left-padding with zeros. */
