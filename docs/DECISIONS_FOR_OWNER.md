@@ -29,12 +29,8 @@ Look at: (a) divide-by-2 is now checked one division at a time; (b) the circuit 
 Best after the close-out lands (#32 circuit walk, #42, #44, #45, phone fixes #52–#54); the team will ping you.
 Why it matters: M2 (real course content) reuses these step sizes and diagrams.
 
-### 6. Approve the student-experience redesign proposal (epic #110)
-Decision: when UX posts the proposal (#113), approve it or send it back. Frontend (#114) starts only after you approve.
-Why it matters: major UI redesign (shared/OWNER_APPROVAL.md); it sets identity, palette and layout for every course.
-Status: not ready yet; the Technical Lead reviews it technically first, then the team brings it to you.
-
 ## Resolved
+- 2026-10-03 — Redesign proposal (epic #110, PR #129, `docs/design/redesign-r1/`): approved as the direction (owner, in Technical Lead session; quoted on #110). Frontend unblocked.
 - 2026-10-03 — Branch protection (old item 4): owner chose Option B. The repo is public and `main` is protected (PR only, green CI, linear history); see #72. Never post secrets or slide content.
 - 2026-10-03 — Pedagogy vetoes #42, #44, #45: accepted (owner, in Technical Lead session; quoted on #44). New rule: each step of a multi-step answer is its own goal, shown only after the previous one is done; be patient with students.
 - 2026-10-03 — Session-start alarm hook in `.claude/settings.json` (PR #26): approved by owner, merged.
