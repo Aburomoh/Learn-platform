@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
 import type { Course } from "@/content/schema";
 import { getProgressStore } from "@/learner";
 import { emptyProgress, type OfferingProgress } from "@/learner/progress";
@@ -13,9 +12,8 @@ import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
 import { PageHeading } from "./PageHeading";
 import { PreviewBoard } from "./PreviewBoard";
 import { PrimaryAction, effortCue } from "./PrimaryAction";
+import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
-
-const noSubscription = () => () => {};
 
 interface Pick {
   course: Course;
@@ -50,7 +48,7 @@ export function remainingCue(done: number, total: number, minutes: number): stri
  * renders the first-visit version invisibly.
  */
 export function HomeNext({ courses }: { courses: Course[] }) {
-  const ready = useSyncExternalStore(noSubscription, () => true, () => false);
+  const ready = useHydrated();
   const progressOf = (course: Course) => (ready ? getProgressStore(course.offeringId).get() : emptyProgress(course.offeringId));
   const { course, progress, action } = pickCourse(courses, progressOf);
   const { topic, activity } = action;
