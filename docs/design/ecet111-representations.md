@@ -32,6 +32,19 @@ at 1280 and 390 px. Examples in the mock-ups are illustrative, not content.
 - **Actions:** one filled action per challenge ("Check column", "Check group"…). Hint and Explain slowly stay quiet text actions (#182).
 - **Explain slowly:** reuses the same view read-only, with the halo moving step by step. No separate diagrams.
 
+### Keyboard model (all kinds)
+- **Tab order follows the page:** the prompt's interaction, its controls, then Check and Hint. Pending parts are not focusable, but they are announced as "later" in the goal's accessible description.
+- **Grids** (truth table, state table, K-map) are one ARIA `grid` with a single tab stop. Only cells in the active goal are editable (`aria-readonly` on the rest).
+  - **Moving and leaving:** arrow keys move between cells, Home/End jump to the row's ends, and Tab leaves the grid.
+  - **Filling:** Space or Enter cycles empty → 0 → 1 (→ x); typing 0, 1 or x sets the value directly.
+  - **Announcing:** each cell has an accessible name with its row and column, e.g. "Row 1 0, column AB', 1".
+- **K-map group selection:** cells toggle in and out of the current group with Space or Enter (`aria-pressed`). The goal line reads "Group n: 2 cells selected". Escape clears the selection.
+- **Group list:** each group's term field is a normal text input, reached with Tab after the grid.
+- **Choices** (law chips, state-diagram labels, mux inputs, the timing 0/1 control): one `radiogroup` with a single tab stop. Arrow keys move, Space or Enter selects, and Check confirms.
+- **Expression field:** the on-screen keys are buttons in tab order after the field, and every key also works from the keyboard.
+- **Timing and state diagrams:** the active edge or arrow is described in the goal line. The diagram itself is `role="img"` with a text summary, not focusable.
+- **Focus:** after a correct check, focus moves to the next goal's control and the live region says what changed ("Column AB' correct. Next: column A'B"). After a wrong check, focus stays put and the first wrong cell is named.
+
 ## 2. Truth table (N-truth-table, incl. row-select mode)
 - **Layout:** inputs on the left, then intermediate columns (A', B', AB'…), the output last, as on the slides.
   - A 2 px vertical rule separates inputs from the derived columns and the derived columns from the output.
