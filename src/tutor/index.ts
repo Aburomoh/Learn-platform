@@ -5,6 +5,6 @@ export type { TutorState, TutorStage, ActivityContext } from "./engine/state";
 export { initialTutorState, canRequestScaffold, nextHint, HESITATION_SECONDS } from "./engine/state";
 export { reduce, type ReduceResult } from "./engine/reduce";
 export { resolveMessage, hasMessage, messageKeys, type MessageKey } from "./messages";
-export { gateVars } from "./gateVars";
+export { gateWording } from "./gateVars";
 export { RuleBasedTutor, createTutorAdapter, type ConversationalTutorAdapter, type TutorAdapterKind, type TutorTurnInput, type TutorTurnOutput } from "./adapter";
 export { contextFromVariant } from "./context";

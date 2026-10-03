@@ -55,7 +55,7 @@ export const en = {
   "gate.analogy.NOT": "NOT is like a switch wired backwards: on gives off, off gives on.",
   "gate.analogy.AND": "AND is like a door with two locks: it opens only when both keys turn.",
   "gate.analogy.OR": "OR is like two doors into a room: if either is open, you can get in.",
-  "gate.analogy.XOR": "XOR is like a stairway light with two switches: flipping either one changes it.",
+  "gate.analogy.XOR": "XOR is like a two-way stairway light: it is on when the two switches are in different positions.",
   "gate.analogy.NAND": "Work out AND first, then flip the result.",
   "gate.analogy.NOR": "Work out OR first, then flip the result.",
   "gate.output-of": "the {gateType} output",

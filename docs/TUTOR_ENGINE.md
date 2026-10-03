@@ -42,10 +42,12 @@ attention-left, attention-right` (placeholders until approved assets exist).
 7. Multi-step questions: a correct intermediate step sends `STEP_COMPLETED` → `encouraging`, one
    short line naming the next step, ladder and attempts restart, `STEP_DONE` clears pointers.
    Hint use on any step is remembered for the final reaction.
-8. Gate-by-gate circuit walk: the stage passes the active gate's step vars (`gateId`, `gateName`,
-   `stepNumber`, `gateCount`); `contextFromVariant` adds `gateRule`, `gateAnalogy`, `gateInputs` in
-   the active locale (`gate.*` keys). A correct gate says `step.next-gate`, or `step.last-gate`
-   before the output gate. Pointer targets such as `gate-{gateId}` are filled by the engine.
+8. Gate-by-gate circuit walk (ADR-0007 step tag `"gate"`): `stepVars` supplies structural vars
+   only — `gateId`, `gateName` (type), `stepNumber`, `gateCount`, `gateOut`, and per input n = 1, 2
+   `in{n}` plus `in{n}Label` (circuit input) or `in{n}Gate` (feeding gate's type).
+   `contextFromVariant` adds `gateRule`, `gateAnalogy`, `gateInputs` from the `gate.*` keys in the
+   active locale. A correct gate says `step.next-gate`, or `step.last-gate` before the output gate.
+   Pointer targets such as `gate-{gateId}` are filled by the engine.
 6. Correct answer → `pleased`, brief acknowledgement; if hints were used, offer a retry variation.
 
 ## Adapter

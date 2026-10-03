@@ -1,20 +1,20 @@
 import type { Variant } from "@/content/schema";
 import type { ActivityContext } from "./engine/state";
-import { gateVars } from "./gateVars";
+import { gateWording } from "./gateVars";
 
 /**
- * Builds the engine context for one content variant. `extraVars` are the current step's vars
- * (multi-step questions). For a circuit walk, `extraVars.gateId` names the gate being asked and
- * its rule, analogy and inputs are added in the active locale.
+ * Builds the engine context for one content variant. `extraVars` are the current step's
+ * structural vars (ADR-0007, `stepVars`); step wording such as a gate's rule is added here from
+ * the catalog in the active locale, never authored in content.
  */
 export function contextFromVariant(variant: Variant, locale = "en", extraVars: Record<string, string | number> = {}): ActivityContext {
   const misconceptionKeys: Record<string, string> = {};
   for (const m of variant.misconceptions) misconceptionKeys[m.id] = m.nudgeKey;
-  const gate = variant.spec.kind === "circuit-predict" && typeof extraVars.gateId === "string" ? gateVars(variant.spec, extraVars.gateId, locale) : {};
+  const vars = { ...variant.vars, ...extraVars };
   return {
     hints: variant.hints,
     explanation: variant.explanation,
-    vars: { ...variant.vars, ...extraVars, ...gate },
+    vars: { ...vars, ...gateWording(vars, locale) },
     reactions: variant.reactions,
     misconceptionKeys,
     locale,

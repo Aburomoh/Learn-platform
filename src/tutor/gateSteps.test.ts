@@ -1,17 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { getActivity } from "@/content";
-import type { CircuitSpec, Variant } from "@/content/schema";
+import type { Variant } from "@/content/schema";
 import { reduce } from "./engine/reduce";
 import { initialTutorState, type TutorState } from "./engine/state";
 import type { LearningEvent } from "./engine/events";
 import type { TutorAction } from "./engine/actions";
 import { contextFromVariant } from "./context";
-import { gateVars } from "./gateVars";
+import { gateWording } from "./gateVars";
 import { en } from "./messages/en";
 import { resolveMessage } from "./messages";
 
 const [v101] = getActivity("ecet111", "logic-gates", "predict-gate-output")!.activity.questions[0].variants;
-const spec = v101.spec as CircuitSpec;
 
 /** The circuit variant as a gate walk authors it: step hints that point at the active gate. */
 const walk: Variant = {
@@ -22,8 +21,13 @@ const walk: Variant = {
     { rung: 5, text: "Its inputs are {gateInputs}.", focus: "gate-{gateId}", highlight: "gate-{gateId}" },
   ],
 };
-/** Step vars the stage supplies for gate `i` of n1 → g1 → g2. */
-const step = (i: number) => ({ stepNumber: i + 1, gateCount: 3, gateId: ["n1", "g1", "g2"][i], gateName: ["NOT", "AND", "OR"][i] });
+/** Structural step vars (ADR-0007 `stepVars`) for gate `i` of n1 → g1 → g2 with A = 1, B = 0, C = 1. */
+const gates: Record<string, string | number>[] = [
+  { gateId: "n1", gateName: "NOT", in1: 0, in1Label: "B", gateOut: 1 },
+  { gateId: "g1", gateName: "AND", in1: 1, in1Label: "A", in2: 1, in2Gate: "NOT", gateOut: 1 },
+  { gateId: "g2", gateName: "OR", in1: 1, in1Gate: "AND", in2: 1, in2Label: "C", gateOut: 1 },
+];
+const step = (i: number) => ({ stepNumber: i + 1, gateCount: 3, ...gates[i] });
 
 function run(events: LearningEvent[], ctx = contextFromVariant(walk, "en", step(1)), start: TutorState = initialTutorState) {
   let state = start;
@@ -38,14 +42,14 @@ function run(events: LearningEvent[], ctx = contextFromVariant(walk, "en", step(
 const says = (a: TutorAction[]) => a.filter((x): x is Extract<TutorAction, { type: "SAY" }> => x.type === "SAY");
 
 describe("gate walk: localised gate wording", () => {
-  it("describes the active gate's rule and inputs from the spec", () => {
-    expect(gateVars(spec, "n1")).toEqual({ gateRule: en["gate.rule.NOT"], gateAnalogy: en["gate.analogy.NOT"], gateInputs: "B = 0" });
-    expect(gateVars(spec, "g1").gateInputs).toBe("A = 1 and the NOT output = 1");
-    expect(gateVars(spec, "g2").gateInputs).toBe("the AND output = 1 and C = 1");
-    expect(gateVars(spec, "nope")).toEqual({});
+  it("words the active gate's rule and inputs from structural step vars", () => {
+    expect(gateWording(step(0))).toEqual({ gateRule: en["gate.rule.NOT"], gateAnalogy: en["gate.analogy.NOT"], gateInputs: "B = 0" });
+    expect(gateWording(step(1)).gateInputs).toBe("A = 1 and the NOT output = 1");
+    expect(gateWording(step(2)).gateInputs).toBe("the AND output = 1 and C = 1");
+    expect(gateWording({ dividend: 26 })).toEqual({});
   });
 
-  it("adds gate wording to the context only for a circuit step", () => {
+  it("adds gate wording to the context only on a gate step", () => {
     expect(contextFromVariant(walk, "en", step(1)).vars).toMatchObject({ gateId: "g1", gateRule: en["gate.rule.AND"] });
     expect(contextFromVariant(walk).vars).not.toHaveProperty("gateRule");
   });
@@ -93,6 +97,6 @@ describe("gate walk: step-aware rules", () => {
 describe("catalog locale fallback", () => {
   it("an unknown locale or missing key falls back to en", () => {
     expect(resolveMessage("gate.rule.AND", {}, "xx")).toBe(en["gate.rule.AND"]);
-    expect(gateVars(spec, "g1", "xx").gateRule).toBe(en["gate.rule.AND"]);
+    expect(gateWording(step(1), "xx").gateRule).toBe(en["gate.rule.AND"]);
   });
 });
