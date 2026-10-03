@@ -46,6 +46,13 @@ walked through in the same layout and order as the slides (for example: divide b
 a time, then read the remainders, then group the bits). A content test guards this for
 number-base conversion.
 
+Each step is a goal by itself (owner, 2026-10-03, #42). The next step appears only after the
+current one is done; earlier steps stay done. Be patient: no time pressure, and a wrong step is
+retried on its own. Grouping for octal/hex is its own checked step before the digits (#44).
+
+After Explain Slowly the next attempt uses different numbers (another variant), so a revealed
+answer can never complete a question (#42). Every content task needs at least two variants.
+
 ## Pedagogy veto
 The Pedagogy Engineer may file `PEDAGOGY VETO — TASK-###` (advisory to the owner; format in
 `agents/pedagogy_engineer.md`, issue template `.github/ISSUE_TEMPLATE/pedagogy-veto.yml`).
