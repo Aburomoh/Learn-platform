@@ -1,7 +1,7 @@
 # Current State — Technical Lead
 
-Current assignment: Technical Lead session holds the main checkout; reviews and merges PRs. M1.1 #19, #20, #21 merged.
-Recent important decision: One role per session (owner, 2026-10-03). PR #26 held for owner approval because it adds a session-start hook.
+Current assignment: Technical Lead session holds the main checkout; reviews and merges PRs.
+Recent important decision: PR #26 merged on explicit owner approval of the SessionStart hook (2026-10-03).
 Blocker: None
-Relevant issue/PR: #23, #25 merged; #26 awaiting owner
-Next expected action: Merge #26 on owner approval; review gate-by-gate circuit walk when Frontend or Tutor opens it.
+Relevant issue/PR: #23, #25, #26, #27 merged
+Next expected action: Review the gate-by-gate circuit walk PR when it is opened; watch wake:tech-lead.
