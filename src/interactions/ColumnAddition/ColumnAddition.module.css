@@ -1,5 +1,8 @@
 .root {
   display: grid;
+  /* keep a wide addition from widening the page: it scrolls inside .scroll instead */
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   gap: var(--space-3);
   padding: var(--space-3);
   border: 1px solid var(--border);
@@ -10,6 +13,7 @@
 /* a wide addition scrolls inside its own box, with the hidden edge faded */
 .scroll {
   position: relative;
+  min-width: 0;
   max-width: 100%;
   overflow-x: auto;
   padding: 3px;
