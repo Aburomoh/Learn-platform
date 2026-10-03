@@ -321,3 +321,45 @@ test("reduced motion: no running animations, tutor text appears at once", async 
   await page.emulateMedia({ reducedMotion: "no-preference" });
   expect(await dur()).toBeGreaterThan(0);
 });
+
+test("binary addition: rules, column by column with the end carry, then the decimal check (#38)", async ({ page }) => {
+  await page.goto("/courses/ecet111/binary-arithmetic/binary-addition/");
+  const correct = page.getByRole("status").filter({ hasText: "Correct." });
+  const next = page.getByRole("button", { name: "Next question" });
+
+  // the single-bit rules, one small check each
+  for (const [i, answer] of ["0", "1", "10"].entries()) {
+    if (i) await next.click();
+    await page.getByLabel(answer, { exact: true }).check();
+    await page.getByRole("button", { name: "Check", exact: true }).click();
+    await expect(correct).toBeVisible();
+  }
+
+  // 1101 + 0111, one column at a time; "wrote 2" keeps the student on the column with a nudge
+  await next.click();
+  const sum = page.getByLabel(/sum bit$/);
+  const carry = page.getByLabel(/carry to the next column$/);
+  const step = page.getByRole("button", { name: "Check step" });
+  await sum.fill("2");
+  await carry.fill("0");
+  await step.click();
+  await expect(page.getByText(/A column holds a single bit/)).toBeVisible();
+  for (const [s, c] of [["0", "1"], ["0", "1"], ["1", "1"], ["0", "1"]]) {
+    await sum.fill(s);
+    await carry.fill(c);
+    await step.click();
+  }
+  await page.getByLabel(/Final carry/).fill("1");
+  await step.click();
+  await expect(correct).toBeVisible();
+
+  // check in decimal, one number at a time, ending with the match
+  for (const value of ["13", "7", "20"]) {
+    await next.click();
+    await page.getByRole("textbox").fill(value);
+    await page.getByRole("button", { name: "Check", exact: true }).click();
+  }
+  await expect(page.getByText("13 + 7 = 20")).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});

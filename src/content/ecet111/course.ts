@@ -5,6 +5,7 @@
  */
 import type { CourseInput, VariantInput } from "../schema";
 import { numberSystemsTopic } from "./chapter1-number-systems";
+import { binaryArithmeticTopic } from "./chapter1-binary-arithmetic";
 
 /** Hints for the gate-by-gate circuit walk; `{gate...}` slots are filled for the gate being asked. */
 const gateWalkHints: NonNullable<VariantInput["hints"]> = [
@@ -37,6 +38,7 @@ export const ecet111: CourseInput = {
       title: "Chapter 1 · Digital Systems and Binary Numbers",
       topics: [
         numberSystemsTopic,
+        binaryArithmeticTopic,
         /* ------------------------------------------------------------------ */
         {
           id: "logic-gates",
