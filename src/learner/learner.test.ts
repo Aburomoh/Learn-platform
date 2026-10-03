@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { emptyProgress, recordAttempt, startActivity, completeActivity, completeQuestion, firstUnfinishedQuestion, masteryEstimate, recentMisconceptions, EVIDENCE_CAP } from "./progress";
 import { readJSON, writeJSON, _resetMemory } from "./storage";
-import { getProgressStore, clearLocalData, progressKey, _resetStores } from "./store";
+import { getProgressStore, clearLocalData, progressKey, serverProgressSnapshot, _resetStores } from "./store";
 
 describe("progress reducers", () => {
   it("tracks attempts, hints and evidence per concept without ability labels", () => {
@@ -129,5 +129,14 @@ describe("progress store", () => {
     expect(clearLocalData()).toBeGreaterThanOrEqual(1);
     expect(window.localStorage.getItem(progressKey("off-4"))).toBeNull();
     expect(store.get().activities).toEqual({});
+  });
+});
+
+describe("server snapshot (#57)", () => {
+  it("returns the same empty progress object on every call, per offering", () => {
+    const a = serverProgressSnapshot("ecet111.2026-fall");
+    expect(serverProgressSnapshot("ecet111.2026-fall")).toBe(a);
+    expect(a).toEqual(emptyProgress("ecet111.2026-fall"));
+    expect(serverProgressSnapshot("other.offering")).not.toBe(a);
   });
 });
