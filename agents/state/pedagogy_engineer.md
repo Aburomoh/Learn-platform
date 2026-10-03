@@ -1,7 +1,7 @@
 # Current State — Educational / Pedagogy Engineer
 
-Current assignment: Reviewed content (#10), engine (#14), runner (#17). No vetoes.
-Recent important decision: Scaffold gate: one attempt before hints, hesitation unlocks at 45 s.
-Blocker: None
-Relevant issue/PR: PRs #10, #14, #17
-Next expected action: Review real course content in M2 for ladder quality and distractor misconceptions.
+Current assignment: Reviewed #25 (walked divide-by-2, octal/hex grouping) against Chapter 1 and the Step-size rule.
+Recent important decision: Filed advisory vetoes #42 (explain-then-copy, High), #44 (grouping in one step, Medium), #45 (nudges/distractors, Medium).
+Blocker: None. Vetoes await owner/PM triage.
+Relevant issue/PR: #25, #42, #44, #45
+Next expected action: Review the fix PRs for #42/#44/#45; then the gate-by-gate circuit walk (M1.1).
