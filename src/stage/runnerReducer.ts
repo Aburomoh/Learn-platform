@@ -112,7 +112,9 @@ export function resumeRunnerState(activity: Activity, completedQuestionIds: read
   const fresh = initialRunnerState(activity);
   const completed = activity.questions.map((q) => completedQuestionIds.includes(q.id));
   const qIndex = completed.indexOf(false);
-  if (qIndex <= 0) return fresh;
+  // everything finished: a fresh start. Otherwise keep what is finished, even past a gap, so
+  // "Next" after an early unfinished challenge skips the ones already done.
+  if (qIndex < 0) return fresh;
   return { ...fresh, qIndex, completed };
 }
 

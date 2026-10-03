@@ -190,8 +190,14 @@ describe("resume at the first unfinished challenge (#119)", () => {
   });
 
   it("resumes past a gap: an earlier unfinished challenge comes first", () => {
-    expect(resumeRunnerState(activity, [ids[1]]).qIndex).toBe(0);
     expect(resumeRunnerState(activity, [ids[0], ids[2]]).qIndex).toBe(1);
+    // challenge 1 unfinished, 2 and 3 finished: resume at 1, and after it go straight to 4
+    let s = resumeRunnerState(activity, [ids[1], ids[2]]);
+    expect(s.qIndex).toBe(0);
+    expect(s.completed).toEqual([false, true, true, false]);
+    s = run([{ type: "OPEN" }, ...chain26, { type: "NEXT_QUESTION" }], s);
+    expect(s.qIndex).toBe(3);
+    expect(s.done).toBe(false);
   });
 
   it("with everything finished, or unknown ids, it is a fresh start (Review)", () => {
