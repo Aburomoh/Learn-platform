@@ -131,7 +131,15 @@ describe("runner reducer: walked division", () => {
     s = reducer(s, { type: "SUBMIT", answer: { kind: "numeric", text: "01011" } });
     expect(s.last?.result.misconceptionId).toBe("ns.read-reversed");
     expect(s.message).toContain("MSB");
-    s = run([{ type: "SUBMIT", answer: { kind: "numeric", text: "11010" } }, { type: "NEXT_QUESTION" }, { type: "SUBMIT", answer: { kind: "numeric", text: "32" } }, { type: "NEXT_QUESTION" }, { type: "SUBMIT", answer: { kind: "numeric", text: "1a" } }], s);
+    s = run([{ type: "SUBMIT", answer: { kind: "numeric", text: "11010" } }, { type: "NEXT_QUESTION" }], s);
+    // Octal and hex are walked one goal at a time (#44): mark the groups, then one digit per group.
+    const grouping = (step: number, input: { groups?: string[]; digit?: string }): RunnerAction => ({ type: "SUBMIT", answer: { kind: "bit-grouping", step, ...input } });
+    s = reducer(s, grouping(0, { groups: ["110", "10"] }));
+    expect(s.last?.result.misconceptionId).toBe("ns.group-from-left");
+    s = run([grouping(0, { groups: ["011", "010"] })], s);
+    expect(s.stepIndex).toBe(1);
+    s = run([grouping(1, { digit: "3" }), grouping(2, { digit: "2" }), { type: "NEXT_QUESTION" }], s);
+    s = run([grouping(0, { groups: ["0001", "1010"] }), grouping(1, { digit: "1" }), grouping(2, { digit: "a" })], s);
     expect(s.done).toBe(false); // feedback and the Finish button are shown first
     s = reducer(s, { type: "NEXT_QUESTION" });
     expect(s.done).toBe(true);

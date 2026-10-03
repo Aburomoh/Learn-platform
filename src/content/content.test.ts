@@ -3,7 +3,7 @@ import { courses, getActivity, listActivityParams } from "./index";
 import { evaluateCircuit, gateOrder, grade, valueToBits, bitsToValue, divisionSteps, groupBits, additionSteps, additionResult, additionStepVars, complementBits } from "./grade";
 import { MULTI_STEP_KINDS, hintsForStep, stepCount, stepTag, stepVars } from "./steps";
 import { contextFromVariant } from "@/tutor";
-import { InteractionSpec, MultipleChoiceSpec, NumericSpec } from "./schema";
+import { InteractionSpec, MultipleChoiceSpec, NumericSpec, VariantSchema } from "./schema";
 import { addition1101 } from "./fixtures/columnAddition";
 import { complement100101, complement110010 } from "./fixtures/onesComplement";
 import { hex26, octal88 } from "./fixtures/bitGrouping";
@@ -256,7 +256,19 @@ describe("grade()", () => {
   const q = getActivity(COURSE, "number-systems", "decimal-to-binary")!.activity.questions;
   const chain = q[0].variants[0];
   const read = q[1].variants[0];
-  const hex = q[3].variants[0];
+  // Typed hex answer (numeric kind); course Q4 is now walked by grouping (#44), so this is a local fixture.
+  const hex = VariantSchema.parse({
+    id: "vhex",
+    prompt: "26 in hex?",
+    spec: { kind: "numeric", base: 16, answer: "1A" },
+    hints: [{ rung: 2, text: "Group the bits in fours." }],
+    explanation: [{ id: "s1", say: "Group in fours." }, { id: "s2", say: "1010 is A." }],
+    misconceptions: [
+      { id: "ns.hex-digit-decimal", title: "10 for A", nudgeKey: "ns.hex-letter", detect: { type: "equals", value: "110" } },
+      { id: "ns.copied-decimal", title: "Copied decimal", nudgeKey: "ns.copied-decimal", detect: { type: "equals", value: "26" } },
+      { id: "ns.group-from-left", title: "From the left", nudgeKey: "ns.group-from-left", detect: { type: "equals", value: "D0" } },
+    ],
+  });
   const circuit = getActivity(COURSE, "logic-gates", "predict-gate-output")!.activity.questions[0].variants[0];
   const mc = getActivity(COURSE, "logic-gates", "predict-gate-output")!.activity.questions[1].variants[0];
 

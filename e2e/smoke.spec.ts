@@ -105,17 +105,62 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await expect(page.getByTestId("status-decimal-to-binary")).toHaveText("Started");
 });
 
-test("octal and hex by grouping finish the activity", async ({ page }) => {
+test("octal and hex by grouping, one goal at a time, finish the activity", async ({ page }) => {
   await page.goto(ACTIVITY);
   for (const [d, q, r] of [[26, 13, 0], [13, 6, 1], [6, 3, 0], [3, 1, 1], [1, 0, 1]]) await divisionStep(page, d, q, r);
-  for (const answer of ["11010", "32", "1A"]) {
+  const correct = page.getByRole("status").filter({ hasText: "Correct." });
+
+  // read the remainders: 11010
+  await page.getByRole("button", { name: "Next question" }).click();
+  await page.getByRole("textbox").fill("11010");
+  await page.getByRole("button", { name: "Check", exact: true }).click();
+  await expect(correct).toBeVisible();
+
+  // octal and hex: mark the groups first (padding on the left), then one digit per group
+  for (const { size, zeros, cutAt, base, digits } of [
+    { size: 3, zeros: 1, cutAt: "Bit 4 of 6", base: "octal", digits: [["011", "3"], ["010", "2"]] },
+    { size: 4, zeros: 3, cutAt: "Bit 5 of 8", base: "hexadecimal", digits: [["0001", "1"], ["1010", "a"]] },
+  ]) {
     await page.getByRole("button", { name: "Next question" }).click();
-    await page.getByRole("textbox").fill(answer);
-    await page.getByRole("button", { name: "Check" }).click();
-    await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
+    await expect(page.getByRole("form", { name: `Mark groups of ${size} bits` })).toBeVisible();
+    await expect(page.getByRole("textbox")).toHaveCount(0); // no digit is asked before the groups are right
+
+    // a wrong grouping (no padding) stays on this goal
+    await page.getByRole("button", { name: new RegExp(`Bit ${size === 3 ? 3 : 2} of 5: .*Start a new group here`) }).click();
+    await page.getByRole("button", { name: "Check groups" }).click();
+    await expect(page.getByRole("status").filter({ hasText: "Not correct yet." })).toBeVisible();
+    await page.getByRole("button", { name: new RegExp(`Bit ${size === 3 ? 3 : 2} of 5: .*Start a new group here`) }).click();
+
+    for (let i = 0; i < zeros; i++) await page.getByRole("button", { name: "Add a leading zero" }).click();
+    if (size === 4) {
+      // 8 cells on the narrowest phone: the row scrolls inside its own box, the page does not widen
+      const viewport = page.viewportSize()!;
+      await page.setViewportSize({ width: 320, height: 700 });
+      const widths = await page.evaluate(() => ({
+        page: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        cells: document.querySelectorAll("button[aria-pressed]").length + 1,
+      }));
+      expect(widths.cells).toBe(8);
+      expect(widths.page).toBeLessThanOrEqual(0);
+      await page.setViewportSize(viewport);
+    }
+    await page.getByRole("button", { name: new RegExp(`${cutAt}: .*Start a new group here`) }).click();
+    await page.getByRole("button", { name: "Check groups" }).click();
+
+    for (const [i, [bits, digit]] of digits.entries()) {
+      const input = page.getByLabel(`Group ${i + 1} of 2, ${bits}: ${base} digit`);
+      await expect(input).toBeFocused();
+      await expect(page.getByRole("textbox")).toHaveCount(1); // one goal at a time
+      await input.fill(digit);
+      await page.keyboard.press("Enter");
+    }
+    await expect(correct).toBeVisible();
   }
+  await expect(page.locator("[data-focus-target='group-result']")).toContainText("(1A)16");
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
   await page.getByRole("button", { name: "Finish" }).click();
-  await expect(page.getByTestId("activity-summary")).toContainText("no hints needed");
+  await expect(page.getByTestId("activity-summary")).toBeVisible();
 });
 
 test("logic gates activity: walk the circuit gate by gate, then explore inputs", async ({ page }) => {

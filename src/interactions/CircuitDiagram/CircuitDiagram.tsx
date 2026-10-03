@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import type { CircuitSpec } from "@/content/schema";
 import { evaluateCircuit } from "@/content/grade";
 import { focusTarget } from "../shared/types";
+import { useScrollFade } from "../shared/useScrollFade";
 import { GATE_H, INPUT_H, INPUT_W, gateWidth, layoutCircuit } from "./layout";
 import styles from "./CircuitDiagram.module.css";
 
@@ -62,23 +63,7 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
   }, [activeGateId]);
 
   // Fade the edge(s) where more of the diagram is hidden, so sideways scrolling is discoverable.
-  const [fade, setFade] = useState<"none" | "start" | "end" | "both">("none");
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const update = () => {
-      const max = root.scrollWidth - root.clientWidth;
-      setFade(max <= 1 ? "none" : root.scrollLeft <= 1 ? "end" : root.scrollLeft >= max - 1 ? "start" : "both");
-    };
-    update();
-    root.addEventListener("scroll", update, { passive: true });
-    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(update);
-    observer?.observe(root);
-    return () => {
-      root.removeEventListener("scroll", update);
-      observer?.disconnect();
-    };
-  }, []);
+  const fade = useScrollFade(rootRef);
 
   return (
     <div className={styles.root} data-diagram={id} data-fade={fade} ref={rootRef} {...(fade === "none" ? {} : { tabIndex: 0, role: "group", "aria-label": "Circuit diagram, scrolls sideways" })}>
