@@ -3,8 +3,26 @@
  * Demo course used to validate the learning architecture. Replace with instructor-approved
  * content before any production release. Every entity below is stamped authority: "DEMO".
  */
-import type { CourseInput } from "../schema";
+import type { CourseInput, VariantInput } from "../schema";
 import { numberSystemsTopic } from "./chapter1-number-systems";
+
+/** Hints for the gate-by-gate circuit walk; `{gate...}` slots are filled for the gate being asked. */
+const gateWalkHints: NonNullable<VariantInput["hints"]> = [
+  { rung: 2, text: "Not quite. Look only at the {gateName} gate and the values on its input wires." },
+  { rung: 3, text: "{gateRule}" },
+  { rung: 4, text: "Which values arrive at the {gateName} gate? Read them from the wires on its left." },
+  { rung: 5, text: "This is the gate. Its inputs are {gateInputs}.", focus: "gate-{gateId}", highlight: "gate-{gateId}" },
+  { rung: 6, text: "Say the rule, then check each input against it: {gateInputs}." },
+  { rung: 7, text: "{gateAnalogy}" },
+  { rung: 8, text: "{gateRule} Here the inputs are {gateInputs}. What does that give?" },
+  { rung: 9, text: "The {gateName} gate outputs {gateOut}, because its inputs are {gateInputs}." },
+];
+
+const gateWalkMisconceptions: NonNullable<VariantInput["misconceptions"]> = [
+  { id: "lg.rule-not", title: "Wrong NOT output", nudgeKey: "lg.check-not", detect: { type: "gate-output", gate: "NOT" } },
+  { id: "lg.rule-and", title: "Wrong AND output", nudgeKey: "lg.check-and", detect: { type: "gate-output", gate: "AND" } },
+  { id: "lg.rule-or", title: "Wrong OR output", nudgeKey: "lg.check-or", detect: { type: "gate-output", gate: "OR" } },
+];
 
 export const ecet111: CourseInput = {
   id: "ecet111",
@@ -48,7 +66,7 @@ export const ecet111: CourseInput = {
                   variants: [
                     {
                       id: "v101",
-                      prompt: "Inputs are A = {A}, B = {B}, C = {C}. Follow the signals and predict the output Y.",
+                      prompt: "Inputs are A = {A}, B = {B}, C = {C}. Work through the circuit one gate at a time to find Y.",
                       spec: {
                         kind: "circuit-predict",
                         inputs: [
@@ -66,39 +84,34 @@ export const ecet111: CourseInput = {
                         inputsToggleable: true,
                       },
                       vars: { A: 1, B: 0, C: 1, notB: 1, g1: 1, answer: 1 },
-                      hints: [
-                        { rung: 2, text: "Not quite. Take it one gate at a time, starting from the inputs." },
-                        { rung: 3, text: "NOT flips its input. AND gives 1 only if both inputs are 1. OR gives 1 if at least one input is 1." },
-                        { rung: 4, text: "B is {B}. What comes out of the NOT gate?" },
-                        { rung: 5, text: "Look at the NOT gate first. Its output is {notB}.", focus: "gate-n1", highlight: "gate-n1" },
-                        { rung: 6, text: "NOT B = {notB}. AND(A = {A}, {notB}) = {g1}. OR({g1}, C = {C}) = ?" },
-                        { rung: 7, text: "OR is like two doors into a room: if either is open, you can get in." },
-                        { rung: 8, text: "The AND gate outputs {g1}. The OR gate sees {g1} and C = {C}, so it outputs 1 if either is 1." },
-                        { rung: 9, text: "Y = {answer}. NOT B = {notB}; AND = {g1}; OR({g1}, {C}) = {answer}." },
-                      ],
+                      hints: gateWalkHints,
                       explanation: [
                         { id: "s1", say: "Signals move from the inputs on the left to Y on the right. Follow them one gate at a time.", stage: { lit: [] } },
                         {
                           id: "s2",
                           say: "B is {B}. The NOT gate flips it.",
-                          stage: { lit: ["n1"] },
+                          stage: { lit: [], active: "n1" },
                           ask: { prompt: "What comes out of NOT?", options: ["0", "1"], correctIndex: 1, afterCorrect: "Yes: NOT 0 = 1.", afterWrong: "NOT flips 0 to 1." },
                         },
                         {
                           id: "s3",
                           say: "The AND gate receives A = {A} and NOT B = {notB}. AND outputs 1 only when both are 1.",
-                          stage: { lit: ["n1", "g1"] },
+                          stage: { lit: ["n1"], active: "g1" },
                           ask: { prompt: "What does the AND gate output?", options: ["0", "1"], correctIndex: 1, afterCorrect: "Right, both inputs are 1, so 1.", afterWrong: "Both inputs are 1, so the AND gate outputs 1." },
                         },
-                        { id: "s4", say: "The OR gate receives {g1} and C = {C}. OR outputs 1 when at least one input is 1. So Y = {answer}.", stage: { lit: ["n1", "g1", "g2"] } },
+                        {
+                          id: "s4",
+                          say: "The OR gate receives {g1} from AND and C = {C}. OR outputs 1 when at least one input is 1.",
+                          stage: { lit: ["n1", "g1"], active: "g2" },
+                          ask: { prompt: "What does the OR gate output?", options: ["0", "1"], correctIndex: 1, afterCorrect: "Yes. At least one input is 1, so OR gives 1.", afterWrong: "At least one input is 1, so OR gives 1." },
+                        },
+                        { id: "s5", say: "The OR gate is the last one, so its output is Y. Y = {answer}.", stage: { lit: ["n1", "g1", "g2"] } },
                       ],
-                      misconceptions: [
-                        { id: "lg.forgot-not", title: "Did not apply the NOT gate", nudgeKey: "lg.check-not", detect: { type: "equals", value: 0 } },
-                      ],
+                      misconceptions: gateWalkMisconceptions,
                     },
                     {
                       id: "v000",
-                      prompt: "Now A = {A}, B = {B}, C = {C}. Predict Y again.",
+                      prompt: "Now A = {A}, B = {B}, C = {C}. Find Y again, one gate at a time.",
                       spec: {
                         kind: "circuit-predict",
                         inputs: [
@@ -116,30 +129,30 @@ export const ecet111: CourseInput = {
                         inputsToggleable: true,
                       },
                       vars: { A: 0, B: 0, C: 0, notB: 1, g1: 0, answer: 0 },
-                      hints: [
-                        { rung: 2, text: "Not quite. Start with the NOT gate and work towards Y." },
-                        { rung: 3, text: "NOT flips. AND needs both inputs at 1. OR needs at least one input at 1." },
-                        { rung: 4, text: "NOT B = {notB}. A = {A}. Can the AND gate output 1?" },
-                        { rung: 5, text: "Look at the AND gate: one of its inputs is 0.", focus: "gate-g1", highlight: "gate-g1" },
-                        { rung: 6, text: "AND({A}, {notB}) = {g1}. OR({g1}, C = {C}) = ?" },
-                        { rung: 7, text: "OR with two closed doors: nobody gets in." },
-                        { rung: 8, text: "Both OR inputs are 0, so the OR gate outputs 0." },
-                        { rung: 9, text: "Y = {answer}. NOT B = {notB}; AND = {g1}; OR({g1}, {C}) = {answer}." },
-                      ],
+                      hints: gateWalkHints,
                       explanation: [
                         { id: "s1", say: "Same circuit, new inputs. Follow the signals again.", stage: { lit: [] } },
-                        { id: "s2", say: "B = {B}, so NOT B = {notB}.", stage: { lit: ["n1"] } },
+                        {
+                          id: "s2",
+                          say: "B is {B}. The NOT gate flips it.",
+                          stage: { lit: [], active: "n1" },
+                          ask: { prompt: "What comes out of NOT?", options: ["0", "1"], correctIndex: 1, afterCorrect: "Yes: NOT 0 = 1.", afterWrong: "NOT flips 0 to 1." },
+                        },
                         {
                           id: "s3",
                           say: "AND receives A = {A} and {notB}.",
-                          stage: { lit: ["n1", "g1"] },
+                          stage: { lit: ["n1"], active: "g1" },
                           ask: { prompt: "What does the AND gate output?", options: ["0", "1"], correctIndex: 0, afterCorrect: "Right: A is 0, so AND is 0.", afterWrong: "A is 0, so the AND gate cannot output 1. It outputs 0." },
                         },
-                        { id: "s4", say: "OR receives {g1} and C = {C}. Both are 0, so Y = {answer}.", stage: { lit: ["n1", "g1", "g2"] } },
+                        {
+                          id: "s4",
+                          say: "The OR gate receives {g1} from AND and C = {C}.",
+                          stage: { lit: ["n1", "g1"], active: "g2" },
+                          ask: { prompt: "What does the OR gate output?", options: ["0", "1"], correctIndex: 0, afterCorrect: "Right. Both inputs are 0, so OR gives 0.", afterWrong: "Both inputs are 0, so OR gives 0." },
+                        },
+                        { id: "s5", say: "The OR gate is the last one, so its output is Y. Y = {answer}.", stage: { lit: ["n1", "g1", "g2"] } },
                       ],
-                      misconceptions: [
-                        { id: "lg.not-as-one", title: "Treated NOT output as the final answer", nudgeKey: "lg.follow-through", detect: { type: "equals", value: 1 } },
-                      ],
+                      misconceptions: gateWalkMisconceptions,
                     },
                   ],
                 },

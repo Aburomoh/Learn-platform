@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import type { Variant } from "@/content/schema";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { CircuitSpec, Variant } from "@/content/schema";
 import type { Answer, GradeResult } from "@/content/grade";
+import { stepCount, stepVars } from "@/content/steps";
 import { fill } from "@/content/template";
 import { MultipleChoice, NumericInput, PlaceValueDiagram, CircuitDiagram, DivisionChain, PredictionBeforeReveal, type Bit, type PredictionResult } from "@/interactions";
 import { BitGroups } from "./BitGroups";
@@ -32,7 +33,7 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
     return (
       <section className={styles.question} aria-label="Explanation">
         <p className={styles.prompt}>{prompt}</p>
-        <ExplainVisual variant={variant} stage={step.stage ?? {}} isLast={isLast} />
+        <ExplainVisual variant={variant} stage={step.stage ?? {}} isLast={isLast} answered={!step.ask || !!explanation.prediction} />
         {step.ask && (
           <PredictionBeforeReveal id={step.id} prompt={fill(step.ask.prompt, variant.vars)} options={step.ask.options} onPredict={onPredict} result={explanation.prediction} />
         )}
@@ -81,7 +82,6 @@ function PracticeInput({
   const [digits, setDigits] = useState<Bit[]>(() =>
     spec.kind === "place-value" && last?.answer.kind === "place-value" ? last.answer.digits : Array.from({ length: spec.kind === "place-value" ? spec.slots : 0 }, () => null),
   );
-  const [inputs, setInputs] = useState<Record<string, 0 | 1>>({});
 
   switch (spec.kind) {
     case "place-value":
@@ -136,39 +136,87 @@ function PracticeInput({
           onAnswer={(optionId) => onSubmit({ kind: "multiple-choice", optionId })}
         />
       );
-    case "circuit-predict": {
-      const explore = locked && state === "correct" && spec.inputsToggleable;
-      return (
-        <>
-          <p className={styles.prompt}>{prompt}</p>
-          <CircuitDiagram
-            id={variant.id}
-            spec={spec}
-            inputs={explore ? inputs : undefined}
-            onToggleInput={explore ? (id, v) => setInputs((prev) => ({ ...prev, [id]: v })) : undefined}
-            revealOutput={locked}
-            lit={locked ? spec.gates.map((g) => g.id) : []}
-          />
-          {explore && <p className={styles.hintText}>Explore: toggle A, B or C and watch Y change.</p>}
-          <MultipleChoice
-            id={`${variant.id}-y`}
-            prompt="What is Y?"
-            options={[
-              { id: "0", text: "Y = 0" },
-              { id: "1", text: "Y = 1" },
-            ]}
-            disabled={locked}
-            state={state}
-            submittedOptionId={last?.answer.kind === "circuit-predict" ? String(last.answer.output) : undefined}
-            onAnswer={(optionId) => onSubmit({ kind: "circuit-predict", output: optionId === "1" ? 1 : 0 })}
-          />
-        </>
-      );
-    }
+    case "circuit-predict":
+      return <CircuitWalk variant={variant} spec={spec} prompt={prompt} state={state} last={last} stepIndex={stepIndex} locked={locked} onSubmit={onSubmit} />;
   }
 }
 
-function ExplainVisual({ variant, stage, isLast }: { variant: Variant; stage: Record<string, unknown>; isLast: boolean }) {
+/**
+ * Circuit question answered one gate at a time, in signal-flow order. The gate being asked is
+ * outlined; gates already answered stay lit with their value; the last gate gives Y.
+ */
+function CircuitWalk({
+  variant,
+  spec,
+  prompt,
+  state,
+  last,
+  stepIndex,
+  locked,
+  onSubmit,
+}: {
+  variant: Variant;
+  spec: CircuitSpec;
+  prompt: string;
+  state: "idle" | "correct" | "incorrect";
+  last?: { answer: Answer; result: GradeResult };
+  stepIndex: number;
+  locked: boolean;
+  onSubmit: (a: Answer) => void;
+}) {
+  const [inputs, setInputs] = useState<Record<string, 0 | 1>>({});
+  // Gate order comes from the step contract (ADR-0007): step i asks about one gate.
+  const order = useMemo(() => Array.from({ length: stepCount(spec) }, (_, i) => String(stepVars(spec, i).gateId)), [spec]);
+  const step = Math.min(stepIndex, order.length - 1);
+  const gate = spec.gates.find((g) => g.id === order[step])!;
+  const isOutput = step === order.length - 1;
+  const finished = locked && state === "correct";
+  const explore = finished && spec.inputsToggleable;
+
+  // The answer form is replaced on each step; keep keyboard focus with the new question.
+  const answerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (step > 0 && !finished) answerRef.current?.querySelector<HTMLInputElement>("input[type='radio']")?.focus();
+  }, [step, finished]);
+
+  return (
+    <>
+      <p className={styles.prompt}>{prompt}</p>
+      <CircuitDiagram
+        id={variant.id}
+        spec={spec}
+        inputs={explore ? inputs : undefined}
+        onToggleInput={explore ? (id, v) => setInputs((prev) => ({ ...prev, [id]: v })) : undefined}
+        revealOutput={finished}
+        lit={finished ? order : order.slice(0, step)}
+        activeGateId={finished ? undefined : gate.id}
+      />
+      {explore && <p className={styles.hintText}>Explore: toggle A, B or C and watch Y change.</p>}
+      {!finished && (
+        <p className={styles.walkStep} aria-live="polite">
+          Gate {step + 1} of {order.length}: {gate.type}
+        </p>
+      )}
+      <div ref={answerRef}>
+        <MultipleChoice
+          key={step}
+          id={`${variant.id}-${gate.id}`}
+          prompt={isOutput ? `What comes out of the ${gate.type} gate? That is Y.` : `What comes out of the ${gate.type} gate?`}
+          options={[
+            { id: "0", text: isOutput ? "Y = 0" : "0" },
+            { id: "1", text: isOutput ? "Y = 1" : "1" },
+          ]}
+          disabled={locked}
+          state={state}
+          submittedOptionId={last?.answer.kind === "circuit-predict" ? String(last.answer.output) : undefined}
+          onAnswer={(optionId) => onSubmit({ kind: "circuit-predict", step, output: optionId === "1" ? 1 : 0 })}
+        />
+      </div>
+    </>
+  );
+}
+
+function ExplainVisual({ variant, stage, isLast, answered }: { variant: Variant; stage: Record<string, unknown>; isLast: boolean; answered: boolean }) {
   const spec = variant.spec;
   switch (spec.kind) {
     case "place-value":
@@ -190,8 +238,11 @@ function ExplainVisual({ variant, stage, isLast }: { variant: Variant; stage: Re
       if (spec.context?.type === "bits")
         return <BitGroups bits={spec.context.bits} groups={(stage.groups as string[] | undefined) ?? []} attention={stage.attention as number | undefined} done={!!stage.done} />;
       return null;
-    case "circuit-predict":
-      return <CircuitDiagram id={variant.id} spec={spec} lit={(stage.lit as string[] | undefined) ?? []} revealOutput={isLast} />;
+    case "circuit-predict": {
+      const active = stage.active as string | undefined;
+      const lit = (stage.lit as string[] | undefined) ?? [];
+      return <CircuitDiagram id={variant.id} spec={spec} lit={active && answered ? [...lit, active] : lit} activeGateId={active} revealOutput={isLast} />;
+    }
     case "multiple-choice":
       return null;
   }

@@ -14,7 +14,28 @@
   height: auto;
   display: block;
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 15px;
+}
+
+.root[data-fade="end"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent);
+}
+
+.root[data-fade="start"] {
+  mask-image: linear-gradient(to left, #000 calc(100% - 36px), transparent);
+}
+
+.root[data-fade="both"] {
+  mask-image: linear-gradient(to right, transparent, #000 36px, #000 calc(100% - 36px), transparent);
+}
+
+.root:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.hitArea {
+  fill: transparent;
 }
 
 .wire {
@@ -25,27 +46,39 @@
   transition: stroke var(--dur-base) var(--ease);
 }
 
-.wireOn {
-  stroke: var(--accent);
+/* Logic levels use the signal tokens; accent is reserved for "where you are". */
+.wireHigh {
+  stroke: var(--signal-high);
   stroke-width: 3;
+}
+
+.wireLow {
+  stroke: var(--signal-low);
+}
+
+/* Not reached yet: dim the strokes only, so labels keep full text contrast. */
+.pending .wire,
+.pending .body,
+.pending .backArc {
+  stroke-opacity: var(--pending-opacity);
+}
+
+.pending .junction {
+  fill-opacity: var(--pending-opacity);
 }
 
 .junction {
   fill: var(--text-muted);
 }
 
-.junctionOn {
-  fill: var(--accent);
+.junctionHigh {
+  fill: var(--signal-high);
 }
 
 .backArc {
   fill: none;
   stroke: var(--text);
   stroke-width: 2;
-}
-
-.gateLit .backArc {
-  stroke: var(--accent);
 }
 
 .inputBox {
@@ -55,8 +88,8 @@
 }
 
 .inputOn .inputBox {
-  fill: var(--highlight-soft);
-  stroke: var(--accent);
+  stroke: var(--signal-high);
+  stroke-width: 2;
 }
 
 .toggleable {
@@ -72,9 +105,31 @@
   fill: var(--text);
 }
 
+/* Values are the thing to read: larger than labels so they survive the 0.6x phone scale. */
 .value {
-  fill: var(--accent);
+  font-size: 18px;
   font-weight: 700;
+}
+
+.valueHigh {
+  fill: var(--signal-high);
+}
+
+.valueLow {
+  fill: var(--signal-low);
+}
+
+.unknown {
+  fill: var(--accent);
+}
+
+.pinValue {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.halo {
+  fill: var(--focus-halo);
 }
 
 .body {
@@ -82,11 +137,6 @@
   stroke: var(--text);
   stroke-width: 2;
   transition: fill var(--dur-base) var(--ease), stroke var(--dur-base) var(--ease);
-}
-
-.gateLit .body {
-  fill: var(--highlight-soft);
-  stroke: var(--accent);
 }
 
 .gateActive .body,
@@ -97,7 +147,13 @@
 
 .gateLabel {
   fill: var(--text);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   pointer-events: none;
+}
+
+@media (max-width: 480px) {
+  .root {
+    padding: var(--space-1);
+  }
 }

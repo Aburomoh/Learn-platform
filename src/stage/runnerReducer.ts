@@ -6,6 +6,7 @@
 import type { Activity, Variant } from "@/content/schema";
 import { grade, type Answer, type GradeResult } from "@/content/grade";
 import { fill } from "@/content/template";
+import { stepVars as specStepVars } from "@/content/steps";
 import { reduce, initialTutorState, contextFromVariant, type TutorState, type TutorAction, type Expression, type LearningEvent } from "@/tutor";
 import type { RevealedHint, PredictionResult } from "@/interactions";
 
@@ -22,7 +23,7 @@ export interface RunnerState {
   hints: RevealedHint[];
   /** Non-null while Explain Slowly is running. */
   explanation: { step: number; prediction?: PredictionResult } | null;
-  /** Completed steps inside a multi-step question (repeated-division). */
+  /** Completed steps inside a multi-step question (repeated-division, circuit-predict). */
   stepIndex: number;
   /** Last graded answer on the current variant. */
   last?: { answer: Answer; result: GradeResult };
@@ -54,11 +55,9 @@ export type RunnerAction =
 
 const EFFECT_TYPES = new Set<TutorAction["type"]>(["FOCUS", "HIGHLIGHT", "PULSE", "RESET_INTERACTION", "ADVANCE_EXPLANATION", "COMPLETE", "STEP_DONE"]);
 
-/** Template variables for the step currently being worked on (multi-step questions). */
+/** Template variables for the step currently being worked on (ADR-0007: asked of the step contract). */
 export function stepVars(variant: Variant, stepIndex: number): Record<string, string | number> {
-  if (variant.spec.kind !== "repeated-division") return {};
-  const step = variant.spec.steps[Math.min(stepIndex, variant.spec.steps.length - 1)];
-  return { dividend: step.dividend, quotient: step.quotient, remainder: step.remainder, stepNumber: stepIndex + 1 };
+  return specStepVars(variant.spec, stepIndex);
 }
 
 export function currentVariant(activity: Activity, s: Pick<RunnerState, "qIndex" | "vIndex">): Variant {

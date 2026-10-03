@@ -1,8 +1,8 @@
 # Current State — Frontend / Interaction Engineer
 
-Current assignment: #19 circuit diagram (orthogonal wires, pins, `activeGateId`) — PR open, awaiting review.
-Recent important decision: Diagram stays native SVG (interactive, no build-time Python); layout is pure in `CircuitDiagram/layout.ts`.
+Current assignment: PR #73 (#32 gate walk + #52 circuit fit) rebased on main after #62, awaiting review/QA; PR #87 (#54 tutor strip, never clamp unread text) back with QA.
+Recent important decision: ADR-0007 step contract lives in `src/content/steps.ts` (created in #73). Tutor strip collapses only when a message is stale; user scroll only (not programmatic).
 Blocker: None
-Relevant issue/PR: #19
-Wake me: label `wake:frontend` on an issue/PR, or message the session holding this role.
-Next expected action: Address review on #19; gate-by-gate walk-through uses `activeGateId` (stage work, follow-up PR).
+Relevant issue/PR: #73, #87
+Wake me: `npm run alarm frontend-interaction-engineer <#> "<reason>" <your-role>` (label `wake:frontend`).
+Next expected action: #44 octal/hex grouping as two step kinds (after #73 merges, uses steps.ts); then #34/#36 when ready; #56, #57 (M1.2 backlog).

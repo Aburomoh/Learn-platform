@@ -50,4 +50,31 @@ describe("CircuitDiagram", () => {
     expect(document.querySelectorAll("[data-active]")).toHaveLength(1);
     expect(document.querySelector("[data-focus-target='gate-g1']")).toHaveAttribute("data-active");
   });
+
+  it("gives nothing away during a walk: the active gate's output and everything after it stay neutral", () => {
+    const order = ["n1", "g1", "g2"];
+    for (let step = 0; step < order.length; step++) {
+      const { unmount } = render(<CircuitDiagram id="c" spec={spec} lit={order.slice(0, step)} activeGateId={order[step]} />);
+      const notYet = order.slice(step);
+      for (const id of notYet) {
+        // no coloured wire leaves a gate that has not been answered
+        for (const w of document.querySelectorAll(`[data-wire^='${id}-']`)) expect(w).not.toHaveAttribute("data-signal");
+        // and no value is printed on it
+        const texts = [...document.querySelectorAll(`[data-focus-target='gate-${id}'] text`)].map((t) => t.textContent);
+        expect(texts.some((t) => t === "0" || t === "1")).toBe(false);
+      }
+      expect(document.querySelector("[data-wire='output']")).not.toHaveAttribute("data-signal");
+      // wires into the active gate do show their (known) values
+      for (const w of document.querySelectorAll(`[data-wire$='-${order[step]}']`)) expect(w).toHaveAttribute("data-signal");
+      expect(document.querySelector("[data-active]")).toHaveTextContent("?");
+      unmount();
+    }
+  });
+
+  it("colours wires only when their value is known", () => {
+    render(<CircuitDiagram id="c" spec={spec} lit={["n1", "g1", "g2"]} revealOutput />);
+    expect(document.querySelector("[data-wire='b-n1']")).toHaveAttribute("data-signal", "0");
+    expect(document.querySelector("[data-wire='n1-g1']")).toHaveAttribute("data-signal", "1");
+    expect(document.querySelector("[data-wire='output']")).toHaveAttribute("data-signal", "1");
+  });
 });

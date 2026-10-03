@@ -97,6 +97,13 @@
   color: var(--text-muted);
 }
 
+.walkStep {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
 .hintText {
   margin: 0;
   font-size: var(--text-sm);
