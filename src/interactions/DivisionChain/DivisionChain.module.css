@@ -71,6 +71,12 @@
   background: var(--focus-halo, var(--highlight-soft));
 }
 
+.haloBelow {
+  /* touches the row halo above it (both extend 2 px into the 4 px row gap), forming one shape */
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
 .active {
   border-color: var(--accent);
   box-shadow: inset 0 0 0 1px var(--accent);
