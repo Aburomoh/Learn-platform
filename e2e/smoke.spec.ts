@@ -63,7 +63,7 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
 
   // 4. Explain Slowly with a prediction before the reveal
   await page.getByRole("button", { name: "Explain slowly" }).click();
-  await expect(page.getByText("Step 1 of 6")).toBeVisible();
+  await expect(page.getByText("Step 1 of 7")).toBeVisible();
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.locator("[data-prediction]").getByText("What is the remainder of 26 ÷ 2?")).toBeVisible();
   await expect(page.getByRole("button", { name: "Continue" })).toBeDisabled();
