@@ -26,6 +26,19 @@ and every activity page ships every interaction component. Two problems follow:
 5. **Budget:** first-load JS for any activity route stays under 200 kB gzip; the CI size report
    lists the shared stage chunk and each kind chunk.
 
+## Implementation conditions (Reviewer and Performance review, 2026-10-04)
+- Use `next/dynamic`, not raw `React.lazy`: the exported HTML must still contain challenge 1 and a
+  preload for its kind chunk (keeps the #158 gain). Add an e2e asserting both.
+- The registry is a `const` object so `InteractionSpec` and `Answer` stay statically typed; the
+  exhaustive `never` checks survive.
+- Kinds may import shared helpers (grading primitives, notation, generators), never each other.
+- Zod stays out of the client bundle: keep `spec` in a build-time registry separate from the
+  runtime one (`grade`, `steps`, UI). Check: no `ZodError` in `out/_next/static/chunks`.
+- After hydration, prefetch the remaining kind chunks when idle, so the next challenge of another
+  kind does not pause on a slow network.
+- Each kind UI module carries a stable marker (`displayName = "kind:<id>"`) so the size report can
+  attribute chunks.
+
 ## Consequences
 Bundle grows per activity, not per course. Parallel work on different kinds stops colliding.
 One more indirection when reading the stage code; the registry file is the map.
