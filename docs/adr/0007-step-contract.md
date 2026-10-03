@@ -12,6 +12,7 @@ own step logic; template variables are computed in three places (`docs/SCHEMA_GA
    - `stepCount(spec): number`
    - `stepTag(spec, i): string` — what kind of goal step `i` is (`"divide"`, `"carry"`, `"group"`, `"digit"`, `"gate"`)
    - `stepVars(spec, i): TemplateVars` — the values text may use at that step
+     (structural values only: ids, numbers, bits; wording and localisation stay in the tutor catalog)
    and `grade()` returns `partial: true` until the last step. The runner, the tutor context and
    the content tests call only this module. No other step dispatch is allowed.
 2. **A new spec kind is justified by a different interaction layout, not by different step logic.**
