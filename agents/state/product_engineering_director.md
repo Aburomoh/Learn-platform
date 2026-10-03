@@ -1,7 +1,7 @@
 # Current State — Product / Engineering Director
 
 Current assignment: M1.1 review against owner feedback of 2026-10-03.
-Recent important decision: divide-by-2 accepted; M1.1 stays open until a gate-by-gate circuit walk lands (docs/MILESTONES.md).
+Recent important decision: owner accepted vetoes #42/#44/#45; M1.1 close-out = #32, #42, #44, #45, #52–#54; M1.2 approved w/ conditions (#47).
 Blocker: None
-Relevant issue/PR: #48 (this), #47 (M1.2 approved w/ conditions), close-out #32; vetoes #42 #44 #45 await owner.
+Relevant issue/PR: this PR; #47; #62 (asked to split ar.ts out).
 Next expected action: when close-out merges, request owner re-walk on a fresh preview.
