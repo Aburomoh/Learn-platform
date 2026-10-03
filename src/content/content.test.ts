@@ -77,19 +77,24 @@ describe("content registry", () => {
     for (const c of courses)
       for (const m of c.modules)
         for (const t of m.topics) {
+          // Every number a practice uses or expects: values, answer* vars and spec answers.
           const values = new Set<string>();
+          const add = (x: unknown) => String(x).toUpperCase().match(/[0-9A-F]+/g)?.forEach((n) => values.add(n));
           for (const a of t.activities)
             for (const q of a.questions) {
               expect(q.label, q.id).toBeTruthy();
               expect(q.label!.length, q.id).toBeLessThanOrEqual(24);
-              for (const v of q.variants) if (v.vars.value !== undefined) values.add(String(v.vars.value));
+              for (const v of q.variants) {
+                for (const [k, x] of Object.entries(v.vars)) if (k === "value" || k.startsWith("answer")) add(x);
+                if ("answer" in v.spec && typeof v.spec.answer === "string") add(v.spec.answer);
+              }
             }
-          const numbers = t.preview?.match(/\d+/g) ?? [];
+          const numbers = t.preview?.toUpperCase().match(/[0-9A-F]+/g) ?? [];
           for (const n of numbers) expect(values.has(n), `${t.id} preview uses ${n}`).toBe(false);
         }
     const ns = courses[0].modules.flatMap((m) => m.topics).find((t) => t.id === "number-systems")!;
-    expect(ns.preview).toBe("45₁₀ → 101101₂ → 55₈ → 2D₁₆");
-    expect([(45).toString(2), (45).toString(8), (45).toString(16).toUpperCase()]).toEqual(["101101", "55", "2D"]);
+    expect(ns.preview).toBe("53₁₀ → 110101₂ → 65₈ → 35₁₆");
+    expect([(53).toString(2), (53).toString(8), (53).toString(16)]).toEqual(["110101", "65", "35"]);
   });
 
   it("resolves an activity by path", () => {
