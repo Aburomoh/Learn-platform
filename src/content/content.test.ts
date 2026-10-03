@@ -143,7 +143,13 @@ describe("content registry", () => {
     expect(x.questions.map((q) => q.variants.map((v) => v.id))).toEqual([["v100101", "v110010"], ["v100101", "v110010"], ["v100101", "v110010"]]);
     const [ones, , plus] = x.questions;
     expect(ones.variants.map((v) => (v.spec.kind === "numeric" ? v.spec.answer : ""))).toEqual(["011010", "001101"]);
-    expect(plus.variants.map((v) => (v.spec.kind === "column-addition" ? `${v.spec.a}+${v.spec.b}=${additionResult(v.spec.a, v.spec.b).slice(1)}` : ""))).toEqual(["011010+000001=011011", "001101+000001=001110"]);
+    expect(plus.variants.map((v) => (v.spec.kind === "column-addition" ? `${v.spec.a}+${v.spec.b}=${v.spec.answer}` : ""))).toEqual(["011010+000001=011011", "001101+000001=001110"]);
+    // Fixed width: no end-carry step, and the last column completes the question (Pedagogy on #150).
+    const v = plus.variants[0];
+    expect(stepCount(v.spec)).toBe(6);
+    expect(stepTag(v.spec, 5)).toBe("column");
+    expect(grade(v, { kind: "column-addition", step: 4, sum: 1, carry: 0 })).toMatchObject({ correct: true, partial: true });
+    expect(grade(v, { kind: "column-addition", step: 5, sum: 0, carry: 0 })).toMatchObject({ correct: true, partial: false });
   });
 
   it("resolves an activity by path", () => {
@@ -219,8 +225,10 @@ describe("authored truth is internally consistent", () => {
     for (const { path, variant } of [...allVariants(), { path: "fixture/v1101", variant: addition1101 }]) {
       const spec = variant.spec;
       if (spec.kind !== "column-addition" || !spec.answer) continue;
-      expect(spec.answer, path).toBe(additionResult(spec.a, spec.b));
-      expect(parseInt(spec.answer, 2), path).toBe(parseInt(spec.a, 2) + parseInt(spec.b, 2));
+      const keep = spec.endCarry !== "drop";
+      expect(spec.answer, path).toBe(additionResult(spec.a, spec.b, keep));
+      // A dropped end carry keeps the operand width: the sum modulo 2^width.
+      expect(parseInt(spec.answer, 2), path).toBe((parseInt(spec.a, 2) + parseInt(spec.b, 2)) % (keep ? Infinity : 2 ** spec.a.length));
     }
   });
 

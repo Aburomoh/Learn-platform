@@ -147,8 +147,13 @@ export const ColumnAdditionSpec = z
     kind: z.literal("column-addition"),
     a: bitString.min(2).max(8),
     b: bitString.min(2).max(8),
-    /** Optional authored result (width + 1 bits, final carry first). */
+    /** Optional authored result (width + 1 bits, final carry first; width bits with `endCarry: "drop"`). */
     answer: bitString.optional(),
+    /**
+     * "write" (default): the end carry is a last step of its own. "drop": no end-carry step and the
+     * result keeps the operand width, as for a complement (Pedagogy on #150, gap 15).
+     */
+    endCarry: z.enum(["write", "drop"]).optional(),
   })
   .refine((o) => o.a.length === o.b.length, "operands must have equal width");
 

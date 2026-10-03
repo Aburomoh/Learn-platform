@@ -92,9 +92,9 @@ const additionMisconceptions: VariantInput["misconceptions"] = [
   { id: "add.swapped", title: "Sum and carry swapped", nudgeKey: "add.swapped", detect: { type: "addition-swapped" } },
 ];
 
-/** One prediction per column, then the end carry (owner rule: every step a goal). */
-function additionWalk(a: string, b: string): ExplanationInput {
-  const steps = additionSteps(a, b);
+/** One prediction per column, then the end carry unless it is dropped (owner rule: every step a goal). */
+function additionWalk(a: string, b: string, endCarry = true): ExplanationInput {
+  const steps = additionSteps(a, b, endCarry);
   return [
     { id: "s1", say: `Add ${a} + ${b} one column at a time, starting from the right.`, stage: { revealed: 0 } },
     ...steps.map((st, i) => {
@@ -126,7 +126,7 @@ function additionWalk(a: string, b: string): ExplanationInput {
         },
       };
     }),
-    { id: `s${steps.length + 2}`, say: `So ${a} + ${b} = ${additionResult(a, b)}.`, stage: { revealed: steps.length } },
+    { id: `s${steps.length + 2}`, say: `So ${a} + ${b} = ${additionResult(a, b, endCarry)}.`, stage: { revealed: steps.length } },
   ];
 }
 
@@ -207,7 +207,7 @@ const ruleHints: HintInput[] = [
 
 function complementVars(bits: string) {
   const ones = complementBits(bits);
-  const twos = additionResult(ones, "1".padStart(bits.length, "0")).slice(1);
+  const twos = additionResult(ones, "1".padStart(bits.length, "0"), false);
   // `value` names the number set, so later challenges follow the one the student worked on (#141).
   return { value: parseInt(bits, 2), bits, ones, twos, width: bits.length };
 }
@@ -285,13 +285,14 @@ function plusOneVariant(bits: string): VariantInput {
   return {
     id: `v${bits}`,
     prompt: `Add 1 to the 1's complement, one column at a time: ${v.ones} + ${one}.`,
-    spec: { kind: "column-addition", a: v.ones, b: one, answer: additionResult(v.ones, one) },
+    // A complement keeps its width, so there is no end-carry step (Pedagogy on #150).
+    spec: { kind: "column-addition", a: v.ones, b: one, answer: v.twos, endCarry: "drop" },
     vars: v,
     hints: columnHints,
     hintsByStep: { column: columnHints, carry: lastCarryHints },
     misconceptions: additionMisconceptions,
     reactions: { correct: done, correctAfterHints: done },
-    explanation: additionWalk(v.ones, one),
+    explanation: additionWalk(v.ones, one, false),
   };
 }
 
