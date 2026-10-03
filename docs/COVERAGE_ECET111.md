@@ -29,7 +29,7 @@ Prerequisites for new kinds: registry #196 (ADR-0008), Boolean module #197, UX r
 | Decimal → binary by ÷2 (ladder) | 14–15, 31–44 | CORE | COMPLETE | — | repeated-division | `decimal-to-binary` KEEP |
 | Octal → decimal, with fraction (124.160) | 16–19 | CORE | MISSING | as binary | place-value kind | #213 |
 | Octal → binary by digit replacement (246) | 21 | CORE | MISSING | one digit per goal | bit-grouping reverse | #210, #211, #214 |
-| Binary → octal, groups of 3, binary point | 22 | CORE | PARTIAL (whole numbers only) | group outward from the point | bit-grouping + point | #210, #211, #214 |
+| Binary → octal, groups of 3, binary point | 22 | CORE (whole); WORKED + one practice (point) | PARTIAL (whole numbers only) | group outward from the point, once | bit-grouping + point | #210, #211, #214 |
 | Hex digits and 0–15 table | 23–25 | CORE | PARTIAL (hints only) | small table checks | multiple-choice | #215 |
 | Hex → decimal (1A3) | 26 | CORE | MISSING | weights → terms → sum | place-value kind | #213 |
 | Hex → binary by digit replacement | 27–28 | CORE | MISSING | one digit per goal | bit-grouping reverse | #214 |
@@ -54,7 +54,7 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 | XOR as AB'+A'B, XNOR | 11–18 | CORE | MISSING | A', B', products, F | truth-table | #225 |
 | 3-input gates, rows = 2ⁿ | 19–20 | CORE | MISSING | row count, fill | truth-table | #225 |
 | Expression → circuit, circuit → expression | 21–25 | CORE | MISSING | one gate output per goal | expression, MC | #226 |
-| SOP vs POS | 26–30 | CORE | MISSING | tag parts | MC | #227 |
+| SOP vs POS | 26–30 | CORE (POS recognition only) | MISSING | tag parts; no 0-rows → POS, no maxterms | MC | #227 |
 | Expression ↔ truth table | 31–36 | CORE | MISSING | 1-rows; rows → SOP | truth-table row-select, expression | #227 |
 | Laws (commutative, associative, distributive) | 37–40 | CORE | MISSING | match law to example | MC | #228 |
 | Rules and postulates | 41–43 | CORE | MISSING | match rule to example | MC | #228 |
@@ -63,6 +63,8 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 | Minterms; canonical form (two methods) | 64–76 | CORE | MISSING | expansion; table with m column | derivation, truth-table | #231 |
 
 ## Chapter 3 — K-map simplification (Ch.3 deck, 112 slides)
+All K-map rows grade **any** minimal cover: several slide examples have more than one.
+
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
 | Canonical recap | 3–10 | WORKED | via Ch.2 | — | — | #231 |
@@ -88,7 +90,7 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
 | Sequential model, intro | I 4–7 | CONTEXT | N/A | — | — | — |
-| NAND SR latch, gated SR | I 8–13 | CORE | MISSING | predict one output; table | truth-table | #205 |
+| NAND SR latch, gated SR | I 8–13 | CORE (outputs per input pair, incl. invalid); internals CONTEXT | MISSING | predict one output; table | truth-table | #205 |
 | Clock edges; SR, JK, D, T characteristic tables and equations | I 14–37 | CORE | MISSING | table; equation; one edge | truth-table, expression | #205 |
 | Timing diagrams (all types, both edges) | I 18–37 | CORE / PRACTICE | MISSING | Q per active edge | timing | #237, #238 |
 | Analysis: D, JK, T, 3-flip-flop | II 4–52 | CORE | MISSING | stages as separate activities | expression, truth-table groups, state diagram, timing | #205 |
