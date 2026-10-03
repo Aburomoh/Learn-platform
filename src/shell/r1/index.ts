@@ -7,3 +7,4 @@ export { ProfileMenu } from "./ProfileMenu";
 export { PageFrame, type PageFrameProps } from "./PageFrame";
 export { TopicNext } from "./TopicNext";
 export { CourseTopics, topicStatus } from "./CourseTopics";
+export { HomeNext, pickCourse, remainingCue } from "./HomeNext";
