@@ -44,4 +44,10 @@ describe("CircuitDiagram", () => {
     expect(screen.getByText("Y = 1")).toBeInTheDocument();
     expect(document.querySelectorAll("[data-focus-target^='gate-'] text").length).toBeGreaterThanOrEqual(6);
   });
+
+  it("marks only the active gate", () => {
+    render(<CircuitDiagram id="c" spec={spec} activeGateId="g1" />);
+    expect(document.querySelectorAll("[data-active]")).toHaveLength(1);
+    expect(document.querySelector("[data-focus-target='gate-g1']")).toHaveAttribute("data-active");
+  });
 });
