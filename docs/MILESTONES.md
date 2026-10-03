@@ -31,10 +31,18 @@ offering-scoped local progress + settings · ActivityRunner · smoke tests.
 drills · IEEE-754 activity · Sortable/Matching/SequenceBuilder/CodeStepper components ·
 Vercel preview deployments (owner action, see DECISIONS_FOR_OWNER) · real course content.
 
+## M1.1 — Owner feedback on M1 (in progress)
+Owner walkthrough, 2026-10-03: questions were too large (a full decimal-to-binary conversion in one
+step) and the circuit drawing was unclear. Changes: #20 walked divide-by-2 flow following ECET 111
+Chapter 1 (DivisionChain, step-aware tutor, read-off, octal and hex by grouping); #19 circuit diagram
+with standard symbols and right-angle wires (Frontend session); #21 Vercel project linked. Next:
+walk the circuit gate by gate.
+
 ## M2 — Real content for one course (proposed, not started)
 Owner supplies slides/questions for one CET course; Backend/Data + Pedagogy structure it with
 the M1 schema and record what the schema lacks (input to the Instructor Studio design).
 
 ## Status log (newest first)
+- 2026-10-03 — M1.1 opened from owner feedback; course renamed to ECET 111, Chapter 1 method adopted.
 - 2026-10-03 — M1 complete on `main`; 9 tasks closed via PRs #10–#18; 73 unit + 8 e2e tests green.
 - 2026-10-03 — M0 complete; M1 tasks created; implementation started.

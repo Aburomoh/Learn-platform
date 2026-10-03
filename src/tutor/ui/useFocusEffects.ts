@@ -56,6 +56,7 @@ export function useFocusEffects(container: RefObject<HTMLElement | null>) {
           break;
         }
         case "RESET_INTERACTION":
+        case "STEP_DONE":
         case "ADVANCE_EXPLANATION":
         case "COMPLETE":
           clear();

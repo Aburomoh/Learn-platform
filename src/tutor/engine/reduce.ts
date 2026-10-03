@@ -38,7 +38,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         s.stage = "complete";
         s.expression = "pleased";
         express("pleased");
-        const usedHints = s.hintLevel > 0;
+        const usedHints = s.hintLevel > 0 || s.hintsEverUsed;
         const override = usedHints ? ctx.reactions?.correctAfterHints : ctx.reactions?.correct;
         if (override) sayText(usedHints ? "correct.after-hints" : "correct", override);
         else say(usedHints ? "correct.after-hints" : "correct");
@@ -85,6 +85,17 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         pointAt(h, out);
       }
       out.push({ type: "REQUEST_RETRY" });
+      break;
+    }
+
+    case "STEP_COMPLETED": {
+      if (s.stage === "complete" || s.stage === "explaining") break;
+      // The ladder restarts for the next step; remember that help was used on this variant.
+      s = { ...s, stage: "await_answer", attempts: 0, hesitationPrompted: false, hintsEverUsed: s.hintsEverUsed || s.hintLevel > 0, hintLevel: 0, grantedRungs: [], lastMisconception: undefined, expression: "encouraging" };
+      express("encouraging");
+      if (ctx.reactions?.stepNext) sayText("step.next", ctx.reactions.stepNext);
+      else say("step.next");
+      out.push({ type: "STEP_DONE" });
       break;
     }
 

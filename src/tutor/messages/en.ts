@@ -17,10 +17,17 @@ export const en: Record<string, string> = {
   "explain.done": "Now you try. Same method.",
   "retry.variant": "Here is a similar one.",
   "retry.same": "Reset. Try again from the start.",
+  "step.next": "Good. Next step.",
   "prediction.correct": "Yes.",
   "prediction.wrong": "Not quite. Here is why.",
 
   // misconception nudges referenced by content (nudgeKey)
+  "div.remainder": "The division is right. Check the remainder: is {dividend} even or odd?",
+  "div.quotient": "The remainder is right. Check the top number: half of {dividend}, rounded down.",
+  "div.swapped": "They are swapped. The result of the division goes on top, the remainder goes underneath.",
+  "ns.read-reversed": "That is the order you wrote them. Read from the last remainder (MSB) back to the first (LSB).",
+  "ns.group-from-left": "Group from the right-hand side, and add zeros on the left if a group is short.",
+  "ns.wrong-group-size": "Check the group size: 3 bits for octal, 4 bits for hexadecimal.",
   "ns.reversed": "The order looks reversed. The largest place value is on the left.",
   "ns.missing-largest": "Check the largest place value. Does {largest} fit in {value}?",
   "ns.extra-place": "One of the lit places is too big for what is left. Check the remainder after each step.",

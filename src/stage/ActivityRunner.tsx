@@ -130,6 +130,7 @@ export function ActivityRunner({ offeringId, topic, activity, backHref }: Activi
           key={`${variant.id}-${state.interactionKey}`}
           variant={variant}
           last={state.last}
+          stepIndex={state.stepIndex}
           locked={stage === "complete" || stage === "explaining"}
           explanation={state.explanation}
           onSubmit={(answer) => act({ type: "SUBMIT", answer })}

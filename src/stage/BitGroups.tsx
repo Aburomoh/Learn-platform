@@ -17,10 +17,7 @@ export function BitGroups({ bits, groups, attention, done }: { bits: string; gro
         return (
           <div key={i} className={`${styles.group} ${attention === i ? styles.groupAttention : ""}`} {...focusTarget(`group-${i}`)}>
             <span className="mono">{g}</span>
-            <span className={styles.groupValue}>
-              {value}
-              {done && <strong className="mono"> → {value.toString(16).toUpperCase()}</strong>}
-            </span>
+            <span className={styles.groupValue}>{done ? <strong className="mono">{value.toString(16).toUpperCase()}</strong> : "?"}</span>
           </div>
         );
       })}

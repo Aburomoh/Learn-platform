@@ -62,6 +62,12 @@ export const MisconceptionDetector = z.discriminatedUnion("type", [
   z.object({ type: z.literal("missing-place"), place: z.number().int().positive() }),
   z.object({ type: z.literal("extra-place"), place: z.number().int().positive() }),
   z.object({ type: z.literal("option"), optionId: id }),
+  /** Division step: quotient right but remainder wrong. */
+  z.object({ type: z.literal("division-remainder") }),
+  /** Division step: remainder right but quotient wrong. */
+  z.object({ type: z.literal("division-quotient") }),
+  /** Division step: quotient and remainder entered in each other's place. */
+  z.object({ type: z.literal("division-swapped") }),
 ]);
 
 export const MisconceptionSchema = z.object({
@@ -85,12 +91,39 @@ export const PlaceValueSpec = z.object({
   answer: z.array(z.union([z.literal(0), z.literal(1)])),
 });
 
+const DivisionStep = z.object({
+  dividend: z.number().int().positive(),
+  quotient: z.number().int().min(0),
+  remainder: z.union([z.literal(0), z.literal(1)]),
+});
+
+/**
+ * Repeated division by 2, one checked step at a time (ECET 111 Chapter 1 layout: a row of
+ * numbers, a row of remainders; first remainder = LSB, last = MSB). The question is complete
+ * when the quotient reaches 0. A content test verifies the authored steps.
+ */
+export const RepeatedDivisionSpec = z.object({
+  kind: z.literal("repeated-division"),
+  value: z.number().int().positive(),
+  base: z.literal(2),
+  steps: z.array(DivisionStep).min(2).max(8),
+});
+
+/** What is shown above a numeric question so the student works from something visible. */
+export const NumericContext = z.discriminatedUnion("type", [
+  /** A completed division chain to read the remainders from. */
+  z.object({ type: z.literal("division-chain"), value: z.number().int().positive(), steps: z.array(DivisionStep).min(2).max(8) }),
+  /** A binary string to be grouped by 3 (octal) or 4 (hex) bits from the right. */
+  z.object({ type: z.literal("bits"), bits: z.string().regex(/^[01]+$/), groupSize: z.union([z.literal(3), z.literal(4)]) }),
+]);
+
 /** Numeric entry in a given base. */
 export const NumericSpec = z.object({
   kind: z.literal("numeric"),
   base: z.union([z.literal(2), z.literal(8), z.literal(10), z.literal(16)]),
   /** Correct answer as digits in `base`, uppercase for hex. */
   answer: z.string().min(1),
+  context: NumericContext.optional(),
 });
 
 export const MultipleChoiceSpec = z.object({
@@ -114,7 +147,7 @@ export const CircuitSpec = z.object({
   inputsToggleable: z.boolean().default(false),
 });
 
-export const InteractionSpec = z.discriminatedUnion("kind", [PlaceValueSpec, NumericSpec, MultipleChoiceSpec, CircuitSpec]);
+export const InteractionSpec = z.discriminatedUnion("kind", [PlaceValueSpec, NumericSpec, MultipleChoiceSpec, CircuitSpec, RepeatedDivisionSpec]);
 
 /** A concrete instance of a question. The first variant is primary; others are retry variations. */
 export const VariantSchema = z.object({
@@ -127,7 +160,14 @@ export const VariantSchema = z.object({
   explanation: z.array(ExplanationStepSchema).min(2),
   misconceptions: z.array(MisconceptionSchema).default([]),
   /** Optional overrides for generic tutor reactions (message text, not keys). */
-  reactions: z.object({ correct: template.optional(), correctAfterHints: template.optional() }).optional(),
+  reactions: z
+    .object({
+      correct: template.optional(),
+      correctAfterHints: template.optional(),
+      /** Said after each correct intermediate step (repeated-division); may use step vars. */
+      stepNext: template.optional(),
+    })
+    .optional(),
 });
 
 export const QuestionSchema = z.object({
@@ -181,6 +221,9 @@ export type ExplanationStep = z.infer<typeof ExplanationStepSchema>;
 export type Misconception = z.infer<typeof MisconceptionSchema>;
 export type PlaceValueSpec = z.infer<typeof PlaceValueSpec>;
 export type NumericSpec = z.infer<typeof NumericSpec>;
+export type NumericContext = z.infer<typeof NumericContext>;
+export type RepeatedDivisionSpec = z.infer<typeof RepeatedDivisionSpec>;
+export type DivisionStep = z.infer<typeof DivisionStep>;
 export type MultipleChoiceSpec = z.infer<typeof MultipleChoiceSpec>;
 export type CircuitSpec = z.infer<typeof CircuitSpec>;
 export type InteractionSpec = z.infer<typeof InteractionSpec>;
