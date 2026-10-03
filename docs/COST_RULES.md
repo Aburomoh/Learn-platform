@@ -20,4 +20,21 @@ infrastructure without justification, analytics SDKs.
 
 ## M1 budget
 Zero server functions, zero external requests after page load, zero paid services.
-Bundle: keep first-load JS for the stage route well under 200 kB gzipped; CI prints the size.
+Bundle: keep first-load JS for the stage route well under 200 kB gzipped; CI prints the size
+per route (`scripts/size-report.mjs`, step summary, report only).
+
+## Baseline — 2026-10-03, `c817572` (#50)
+First-load JS, gzip -9, excluding the `noModule` legacy polyfill (39 kB, never fetched by modern browsers):
+
+| Route | Gzip kB | Raw kB |
+|---|---:|---:|
+| Activity (`/courses/…/[activity]`) | 151.3 | 506.7 |
+| Topic / settings | 135.5–135.8 | 455–456 |
+| Shared Next + React base (home, course) | 134.0 | 451.0 |
+
+The activity runner adds 17.3 kB over the base; zod is not in the client bundle. Headroom to the
+200 kB budget: ~49 kB. Any PR adding >10 kB gzip to the activity route should say why.
+
+Throttled phone (`scripts/throttled-load.mjs`: Pixel 7, Slow 4G 562.5 ms RTT / 1.47 Mbps, 4× CPU,
+cold cache, gzip, median of 5), activity route: FCP = LCP 1.57 s, load 2.33 s, hydrated 2.64 s,
+TBT 227 ms, 165 kB transferred. Local server: add ~0.6 s (one RTT) for real document TTFB.

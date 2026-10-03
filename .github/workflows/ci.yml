@@ -25,10 +25,8 @@ jobs:
       - run: npm run lint
       - run: npm run test
       - run: npm run build
-      - name: Bundle size summary
-        run: |
-          echo '### Static output' >> "$GITHUB_STEP_SUMMARY"
-          du -sh out 2>/dev/null | sed 's/^/total: /' >> "$GITHUB_STEP_SUMMARY" || true
+      - name: First-load JS per route (report only)
+        run: node scripts/size-report.mjs out >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: site
