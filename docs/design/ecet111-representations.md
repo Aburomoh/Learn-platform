@@ -22,7 +22,7 @@ at 1280 and 390 px. Examples in the mock-ups are illustrative, not content.
   - *Now*: `--focus-halo` behind the active cells, column, group, edge or line, plus a 2 px `--accent` outline on the inputs.
   - *Done*: normal text on `--surface`.
   - *Later*: `--pending-opacity`, values hidden, headers still visible so the student sees the plan.
-  - *Try again*: `--error-bg` with a 2 px `--error` border and a ✕ glyph. The feedback line says what to look at.
+  - *Try again*: `--error-bg` with a 2 px `--error` border and a ✕ glyph. After a wrong Check only the **first** wrong cell is marked, and the feedback line says how many are wrong ("2 cells are not right yet; look at row 0 1"). Marking every wrong cell comes only at hint rung 5, because with 0/1 values it hands over the answer (Pedagogy, #245; same pattern as first-wrong-bit, #35).
   - Each card ends with a small legend.
 - **Sizes:**
   - Every tappable cell is at least 44 px tall and 36 px wide on phones.
@@ -43,7 +43,7 @@ at 1280 and 390 px. Examples in the mock-ups are illustrative, not content.
 - **Choices** (law chips, state-diagram labels, mux inputs, the timing 0/1 control): one `radiogroup` with a single tab stop. Arrow keys move, Space or Enter selects, and Check confirms.
 - **Expression field:** the on-screen keys are buttons in tab order after the field, and every key also works from the keyboard.
 - **Timing and state diagrams:** the active edge or arrow is described in the goal line. The diagram itself is `role="img"` with a text summary, not focusable.
-- **Focus:** after a correct check, focus moves to the next goal's control and the live region says what changed ("Column AB' correct. Next: column A'B"). After a wrong check, focus stays put and the first wrong cell is named.
+- **Focus:** after a correct check, focus moves to the next goal's control and the live region says what changed ("Column AB' correct. Next: column A'B"). After a wrong check, focus stays put and the live region gives the count and names the first wrong cell only.
 
 ## 2. Truth table (N-truth-table, incl. row-select mode)
 - **Layout:** inputs on the left, then intermediate columns (A', B', AB'…), the output last, as on the slides.
@@ -53,7 +53,7 @@ at 1280 and 390 px. Examples in the mock-ups are illustrative, not content.
 - **Filling:** one column per goal.
   - Tap a cell to cycle empty → 0 → 1 → empty (X added when the spec allows don't-cares). Keys 0/1/x type, arrows move.
   - Later columns stay visible but empty and dim.
-  - Wrong cells are marked individually after Check; correct cells keep their value.
+  - After a wrong Check: the count of wrong cells, and only the first one marked (§1). Correct cells keep their value.
 - **16-row tables on phones:** sticky header row. Cells are 36 × 44 px, so 7 columns fit in 358 px. Wider tables scroll inside the well with a fade edge and the active column scrolled into view.
 - **Row-select mode:** a check column ("pick the 1-rows", "decoder outputs for S"), or a per-row choice of 0 / 1 / z / z' for mux design. The choice opens as chips under the row on phones.
 - **State tables** use the same component with two-level headers: Present state | Input | Next state | (Flip-flop inputs) | Output.
@@ -76,7 +76,7 @@ at 1280 and 390 px. Examples in the mock-ups are illustrative, not content.
   1. Choose the law, from 3–4 chips.
   2. Give or choose the line it produces.
 
-  While the student chooses the law, the sub-expression it applies to is highlighted in the previous line (`.hl`), and the new line is an empty dashed slot.
+  The new line is an empty dashed slot. The student finds the pattern. Highlighting the sub-expression the law applies to (`.hl`) is hint rung 5, not the default (Pedagogy, #245).
 - Later lines show only "…" at `--pending-opacity`.
 
 ## 5. K-map (N-kmap)
@@ -100,7 +100,7 @@ at 1280 and 390 px. Examples in the mock-ups are illustrative, not content.
 - **Layout (slides):** time runs left to right. Inputs on top, clock in the middle, outputs at the bottom.
   - Signal names sit on the left in italic bold, in a fixed column that stays put while the diagram scrolls on phones.
   - A dotted vertical guide at every active edge, and the trigger edge stated in the prompt ("positive-edge triggered"). The slides use a red ring and a corner tag; we use the halo and words.
-- **Step = one active edge.** The active edge gets a halo column and a "?" on the output row. The goal line names the edge and the input value at that edge ("Edge 4 of 6 (rising): D is 1").
+- **Step = one active edge.** The active edge gets a halo column and a "?" on the output row. The goal line names **the edge only** ("Edge 4 of 6 (rising)"). Reading the inputs at that edge is the student's skill. Pointing at the input at the active edge is hint rung 5 (Pedagogy, #245).
   - The student answers with a 0 / 1 segmented control (48 px). The output trace then draws to the next edge in `--signal-high`.
   - Initial Q is always stated (course map).
 - **Phones:** the SVG keeps its 12 px text and scrolls inside the well with the active edge scrolled into view. The names column stays fixed.
