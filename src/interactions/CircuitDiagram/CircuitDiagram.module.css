@@ -105,7 +105,9 @@
   fill: var(--text);
 }
 
+/* Values are the thing to read: larger than labels so they survive the 0.6x phone scale. */
 .value {
+  font-size: 18px;
   font-weight: 700;
 }
 
@@ -122,7 +124,7 @@
 }
 
 .pinValue {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
 }
 

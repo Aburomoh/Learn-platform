@@ -187,6 +187,25 @@ describe("authored truth is internally consistent", () => {
     expect(stepVars(add, 2)).toEqual(additionStepVars(additionSteps(add.a, add.b)[2]));
   });
 
+  it("circuit explanations ask for every gate's output before showing it", () => {
+    for (const { path, variant } of allVariants()) {
+      if (variant.spec.kind !== "circuit-predict") continue;
+      const asked = new Set<string>();
+      for (const step of variant.explanation) {
+        const stage = (step.stage ?? {}) as { lit?: string[]; active?: string };
+        // a gate may only be lit (value shown) after a step that asked about it
+        for (const id of stage.lit ?? []) expect(asked.has(id), `${path}/${step.id}: ${id} shown before it was asked`).toBe(true);
+        if (stage.active) {
+          expect(step.ask, `${path}/${step.id}: active gate without a prediction`).toBeDefined();
+          const options = step.ask!.options;
+          expect(options[step.ask!.correctIndex], `${path}/${step.id}`).toBe(String(evaluateCircuit(variant.spec)[stage.active]));
+          asked.add(stage.active);
+        }
+      }
+      expect([...asked].sort(), path).toEqual(variant.spec.gates.map((g) => g.id).sort());
+    }
+  });
+
   it("every circuit walk has a nudge for each gate type it contains", () => {
     for (const { path, variant } of allVariants()) {
       if (variant.spec.kind !== "circuit-predict") continue;
