@@ -5,7 +5,7 @@ import type { CircuitSpec, ColumnAdditionSpec, NumericContext, Variant } from "@
 import type { Answer, GradeResult } from "@/content/grade";
 import { stepCount, stepTag, stepVars } from "@/content/steps";
 import { fill } from "@/content/template";
-import { MultipleChoice, NumericInput, PlaceValueDiagram, CircuitDiagram, DivisionChain, BitGrouping, ColumnAddition, type AdditionColumn, PredictionBeforeReveal, type Bit, type PredictionResult } from "@/interactions";
+import { MultipleChoice, NumericInput, PlaceValueDiagram, CircuitDiagram, DivisionChain, BitGrouping, ColumnAddition, BitRow, type AdditionColumn, PredictionBeforeReveal, type Bit, type PredictionResult } from "@/interactions";
 import { BitGroups } from "./BitGroups";
 import styles from "./Stage.module.css";
 
@@ -82,7 +82,7 @@ function ContextView({ id, context, stage }: { id: string; context: NumericConte
       return <ColumnAddition id={id} a={context.operands.a} b={context.operands.b} columns={columns} stepIndex={columns.length} attention={stage?.attention as number | undefined} />;
     }
     case "bit-row":
-      return <BitGroups bits={context.bits} groups={[]} />;
+      return <BitRow id={id} bits={context.bits} sourceOnly />;
     default: {
       const unhandled: never = context;
       throw new Error(`No renderer for context ${JSON.stringify(unhandled)}`);
@@ -138,6 +138,21 @@ function PracticeInput({
       );
     }
     case "numeric":
+      // A bit-row question is answered in the aligned cells themselves: the whole row is one answer.
+      if (spec.context?.type === "bit-row")
+        return (
+          <>
+            <p className={styles.prompt}>{prompt}</p>
+            <BitRow
+              id={variant.id}
+              bits={spec.context.bits}
+              state={state}
+              wrongBit={last?.result.wrongBit}
+              disabled={locked}
+              onAnswer={(text) => onSubmit({ kind: "numeric", text })}
+            />
+          </>
+        );
       return (
         <>
           <ContextView id={`${variant.id}-ctx`} context={spec.context} />
@@ -312,6 +327,9 @@ function ExplainVisual({ variant, stage, isLast, answered, hasAsk }: { variant: 
     case "repeated-division":
       return <DivisionChain id={variant.id} steps={spec.steps} stepIndex={(stage.revealed as number | undefined) ?? 0} attention={stage.attention as number | undefined} />;
     case "numeric":
+      // stage.revealed = answer cells filled in so far (from the left); stage.attention = column outlined.
+      if (spec.context?.type === "bit-row")
+        return <BitRow id={variant.id} bits={spec.context.bits} answer={spec.answer.padStart(spec.context.bits.length, "0")} revealed={(stage.revealed as number | undefined) ?? 0} attention={stage.attention as number | undefined} />;
       return <ContextView id={variant.id} context={spec.context} stage={stage} />;
     case "bit-grouping": {
       // Content stages: `groups: []` = the bits before grouping; groups shown = `attention` is the
