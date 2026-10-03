@@ -18,7 +18,8 @@ function htmlFiles(dir) {
   return readdirSync(dir).flatMap((name) => {
     const p = join(dir, name);
     if (statSync(p).isDirectory()) return name === "_next" ? [] : htmlFiles(p);
-    return name.endsWith(".html") ? [p] : [];
+    // root 404.html duplicates 404/index.html in the export
+    return name.endsWith(".html") && !(dir === OUT && name === "404.html") ? [p] : [];
   });
 }
 
