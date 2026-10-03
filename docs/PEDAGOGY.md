@@ -52,6 +52,9 @@ retried on its own. Grouping for octal/hex is its own checked step before the di
 
 After Explain Slowly the next attempt uses different numbers (another variant), so a revealed
 answer can never complete a question (#42). Every content task needs at least two variants.
+Variant ids are an activity-level number set: a shared id means shared numbers, and it must sit
+at the same index in every question that has it. A finished question passes its set on to the
+following questions (#141).
 
 ## Pedagogy veto
 The Pedagogy Engineer may file `PEDAGOGY VETO — TASK-###` (advisory to the owner; format in
