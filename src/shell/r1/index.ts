@@ -4,3 +4,5 @@ export { ChallengeSteps, stepsFrom, type ChallengeStep, type StepState } from ".
 export { PreviewBoard, parsePreview, type PreviewTile } from "./PreviewBoard";
 export { TopBar, Footer, TopicRow, type TopicRowProps } from "./Chrome";
 export { ProfileMenu } from "./ProfileMenu";
+export { PageFrame, type PageFrameProps } from "./PageFrame";
+export { TopicNext } from "./TopicNext";

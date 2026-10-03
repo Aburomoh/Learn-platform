@@ -20,6 +20,8 @@
   --text-xl: 1.75rem;
   --text-display: clamp(1.875rem, 1.35rem + 1.6vw, 2.5rem);
   --leading: 1.5;
+  /* base subscripts in number notation, e.g. (26) base 10: never below 12 px */
+  --sub-size: max(0.7em, 12px);
   --tracking-tight: -0.015em;
   --tracking-eyebrow: 0.08em;
 

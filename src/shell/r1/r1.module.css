@@ -191,7 +191,7 @@
 
 .tile sub {
   font-family: var(--font-sans);
-  font-size: 0.7em;
+  font-size: var(--sub-size);
   font-weight: 600;
   line-height: 0;
   color: var(--text-muted);
@@ -483,4 +483,163 @@
   .topicRow {
     padding: var(--space-4);
   }
+}
+
+/* ---- PageFrame: readable main column, optional right column ---- */
+.main {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-4) var(--space-8);
+}
+
+.column {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.split {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.aside {
+  display: none;
+}
+
+.h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+
+@media (min-width: 900px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: start;
+    gap: var(--space-7);
+  }
+  .aside {
+    display: block;
+  }
+  .onlyNarrow {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .main {
+    padding-top: var(--space-5);
+  }
+}
+
+/* ---- TopicNext: primary action, steps, practices ---- */
+.next {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.practices {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+}
+
+.practiceList {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stepsBlock {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.stepsLabel {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+/* the action stays on the title row at every width, so all rows match */
+.practiceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.practiceText {
+  flex: 1;
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.rowAction,
+.upNext {
+  flex: none;
+  white-space: nowrap;
+}
+
+.upNext {
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 650;
+  color: var(--text-muted);
+}
+
+.practiceText > * {
+  margin: 0;
+}
+
+.statusMuted {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* ---- collapsed objectives ---- */
+.more {
+  font-size: var(--text-sm);
+}
+
+.more summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.more summary::-webkit-details-marker {
+  display: none;
+}
+
+.more summary::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
+  transform: rotate(-45deg);
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.more[open] summary::before {
+  transform: rotate(45deg);
+}
+
+.more ul {
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
 }
