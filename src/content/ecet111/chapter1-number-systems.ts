@@ -188,9 +188,10 @@ function exerciseVars(value: number) {
   return { value, answerBits: bits, msb: 1, answerOct: value.toString(8), answerHex: value.toString(16).toUpperCase() };
 }
 
-function divideVariant(value: number, prompt: string): VariantInput {
+/** Also used by subtraction (B in binary), with that practice's variant id (#141). */
+export function divideVariant(value: number, prompt: string, id = `v${value}`): VariantInput {
   return {
-    id: `v${value}`,
+    id,
     prompt,
     spec: { kind: "repeated-division", value, base: 2, steps: divisionSteps(value) },
     vars: exerciseVars(value),
@@ -201,11 +202,11 @@ function divideVariant(value: number, prompt: string): VariantInput {
   };
 }
 
-function readVariant(value: number): VariantInput {
+export function readVariant(value: number, id = `v${value}`): VariantInput {
   const bits = value.toString(2);
   const reversed = [...bits].reverse().join("");
   return {
-    id: `v${value}`,
+    id,
     prompt: "The division of {value} is finished. Use the remainders to write ({value})₁₀ in binary.",
     spec: { kind: "numeric", base: 2, answer: bits, context: { type: "division-chain", value, steps: divisionSteps(value) } },
     vars: exerciseVars(value),
