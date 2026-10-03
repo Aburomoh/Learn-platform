@@ -5,8 +5,8 @@ Only items that genuinely need Dr. Mohannad. Routine engineering choices are in 
 ## Open
 
 ### 1. Vercel: grant GitHub access for automatic previews
-Status: project `learn-platform` is linked (team `aburomohs-projects`). Latest manual preview (main incl. M1.1):
-https://learn-platform-or0e54pc3-aburomohs-projects.vercel.app (behind Vercel login; custom domain not attached).
+Status: project `learn-platform` is linked (team `aburomohs-projects`). Latest manual preview (main @ 6dd0304: vertical division ladder #84, retry on a new number #79, hint fixes #69, 0x/0b prefixes #76):
+https://learn-platform-azmyz1tfk-aburomohs-projects.vercel.app (behind Vercel login; custom domain not attached).
 Decision: `vercel git connect` was refused because the Vercel GitHub app cannot see the private repo.
 Owner action: GitHub → Settings → Applications → Vercel → Configure → Repository access → add
 `Aburomoh/Learn-platform`. Then the Release engineer runs `vercel git connect` and every PR gets a preview URL.
