@@ -5,15 +5,15 @@ Only items that genuinely need Dr. Mohannad. Routine engineering choices are in 
 ## Open
 
 ### 1. Vercel: grant GitHub access for automatic previews
-Status: project `learn-platform` is linked (team `aburomohs-projects`) and deployed by CLI at
-https://learn-platform-aburomohs-projects.vercel.app (behind Vercel login; custom domain not attached).
+Status: project `learn-platform` is linked (team `aburomohs-projects`). Latest manual preview (main incl. M1.1):
+https://learn-platform-or0e54pc3-aburomohs-projects.vercel.app (behind Vercel login; custom domain not attached).
 Decision: `vercel git connect` was refused because the Vercel GitHub app cannot see the private repo.
 Owner action: GitHub → Settings → Applications → Vercel → Configure → Repository access → add
 `Aburomoh/Learn-platform`. Then the Release engineer runs `vercel git connect` and every PR gets a preview URL.
 Until then: previews are deployed manually with `vercel deploy`.
 
 ### 2. Production release of M1
-Decision: whether the M1 slice goes to `learn.aburomoh.com` once accepted.
+Decision: whether the M1/M1.1 slice goes to `learn.aburomoh.com` once accepted.
 Why it matters: mission rule — production while immature needs owner approval.
 Team recommendation: keep preview-only until the owner has used the slice end to end.
 
@@ -30,10 +30,14 @@ Option B: Make the repo public (demo content only) so protection rules become av
 Option C: GitHub Pro on the owner account (paid).
 Team recommendation: A until real course content lands; revisit at M2.
 
-### 5. Walk through M1
-Decision: the first vertical slice is complete on `main`. Try both demo activities (run `npm run dev`, or ask for a preview URL after decision 1) and tell the team what feels wrong.
-Why it matters: the next milestone (real content) builds on these interaction patterns.
+### 5. Walk through M1.1
+Decision: check that your 2026-10-03 feedback is fixed. Open the preview above (or `npm run dev`) → ECET 111 → Chapter 1.
+Look at: (a) divide-by-2 is now checked one division at a time; (b) the circuit is redrawn with standard symbols and right-angle wires.
+Known gap: the circuit question still asks for Y in one step; a gate-by-gate walk is being ticketed next.
+Why it matters: M2 (real course content) reuses these step sizes and diagrams.
 
 ## Resolved
+- 2026-10-03 — Session-start alarm hook in `.claude/settings.json` (PR #26): approved by owner, merged.
+- 2026-10-03 — M1 walkthrough given: steps too large, circuit unclear → M1.1.
 - 2026-10-03 — Repository `Aburomoh/Learn-platform`, private. (Owner created it.)
 - 2026-10-03 — First demo topics: basic logic gates and number-system conversions.
