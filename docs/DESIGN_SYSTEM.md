@@ -47,10 +47,10 @@ Evidence: `docs/design/review-2026-10-03/`. Each row is adopted by the issue tha
 
 | Token | Value (light / dark) | Use |
 |---|---|---|
-| `--signal-high` | `#0f766e` / `#5eead4` | Wire, junction and value label carrying logic 1. Frees `--accent` to mean only "where you are / what to do". | Adopted in #32.
-| `--signal-low` | `var(--text-muted)` | Wire carrying logic 0 (once its value is known). | Adopted in #32.
-| `--pending-opacity` | `0.45` | Circuit gates and wires not yet reached in a gate walk. | Adopted in #32.
-| `--focus-halo` | `var(--highlight-soft)` | Rounded halo behind the active gate or active cell group. | Adopted in #32.
+| `--signal-high` | `#0f766e` / `#5eead4` | Wire, junction and value label carrying logic 1. Frees `--accent` to mean only "where you are / what to do". Adopted in #32. |
+| `--signal-low` | `var(--text-muted)` | Wire carrying logic 0 (once its value is known). Adopted in #32. |
+| `--pending-opacity` | `0.45` | Circuit gates and wires not yet reached in a gate walk. Adopted in #32. |
+| `--focus-halo` | `var(--highlight-soft)` | Rounded halo behind the active gate or active cell group. Adopted in #32. |
 | `--sub-size` | `0.7em` | Base subscript in number notation, e.g. (26)<sub>10</sub>. |
 | `--topbar-h` | `52px` | Height of the sticky top bar; replaces literal `52px` / `68px` offsets. |
 | `--tutor-strip-h` | `64px` | Max height of the compact sticky tutor strip below `lg`. |
