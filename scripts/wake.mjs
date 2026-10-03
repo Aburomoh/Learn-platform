@@ -33,13 +33,17 @@ const ISSUE = (n) => `repos/{owner}/{repo}/issues/${n}`;
 // wake.yml labels the PR itself on merge (#94). The window keeps old unacked merges from flooding.
 // The search index lags label changes, so results are re-checked against each item's actual
 // labels (a just-acked item must not wake anyone). The session-start check skips merged PRs.
+// Labels .github/workflows/wake.yml sets on a PR when it merges. Only watchers of these labels
+// query merged PRs, to keep every watcher to 2 searches per poll (shared search rate limit).
+const MERGE_LABELS = ["wake:product-manager"];
+
 function openItems(labels, { merged = false } = {}) {
   const search = "label:" + labels.map((l) => `"${l}"`).join(",");
   const since = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
   const lists = [
     ["issue", "--state", "open", "--search", search],
     ["pr", "--state", "open", "--search", search],
-    ...(merged ? [["pr", "--state", "merged", "--search", `${search} merged:>=${since}`]] : []),
+    ...(merged && labels.some((l) => MERGE_LABELS.includes(l)) ? [["pr", "--state", "merged", "--search", `${search} merged:>=${since}`]] : []),
   ];
   const out = [];
   for (const args of lists) {
