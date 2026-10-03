@@ -23,14 +23,13 @@ Decision: supply 2–3 reference photos (or decide to keep a neutral illustrated
 Why it matters: the expression library is built against placeholders until then.
 Team recommendation: no urgency; placeholders are explicit and swappable.
 
-### 5. Walk through M1.1 + M1.2 + redesign (one visit)
-Decision: accept or send back. Preview: https://learn-platform-6ri4tafdc-aburomohs-projects.vercel.app (Vercel login).
-Check: (a) divide-by-2, octal/hex grouping, gates: one step at a time, retry on a new number after Explain Slowly;
-(b) rest of Chapter 1: addition, 1's/2's complement, subtraction; (c) the redesign: home → course → topic → activity, Start/Continue, warm light look; (d) on a phone.
-Why it matters: closes M1.1, M1.2 and R1; M2 (Chapters 2–5) builds on them.
-Reply: "accepted", or what feels wrong.
+### 4. Repo is public: two choices (Security, #72)
+(a) 39 old commits show personal author emails. Rewriting history is optional; from now on use the GitHub noreply address and turn on "Block command line pushes that expose my email".
+(b) Anyone can comment on issues the agents read. Either the team treats non-member comments as untrusted (current), or you limit interactions to collaborators.
+Team recommendation: no history rewrite; noreply going forward; limit interactions to collaborators.
 
 ## Resolved
+- 2026-10-04 — Walkthrough of M1.1 + M1.2 + redesign: accepted (owner's words quoted on #192). Milestones closed.
 - 2026-10-03 — Redesign proposal (epic #110, PR #129, `docs/design/redesign-r1/`): approved as the direction (owner, in Technical Lead session; quoted on #110). Frontend unblocked.
 - 2026-10-03 — Branch protection (old item 4): owner chose Option B. The repo is public and `main` is protected (PR only, green CI, linear history); see #72. Never post secrets or slide content.
 - 2026-10-03 — Pedagogy vetoes #42, #44, #45: accepted (owner, in Technical Lead session; quoted on #44). New rule: each step of a multi-step answer is its own goal, shown only after the previous one is done; be patient with students.
