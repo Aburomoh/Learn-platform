@@ -25,6 +25,8 @@
   --radius-lg: 12px;
   --content-max: 1100px;
   --touch-min: 44px;
+  /* floor for text inside SVG diagrams, as rendered on screen (CircuitDiagram MIN_SCALE = 12 / 16) */
+  --diagram-text-min: 12px;
   --topbar-h: 52px;
   --tutor-strip-h: 64px;
   /* scroll-padding-top, so focus and highlight scrolling never lands under sticky UI */

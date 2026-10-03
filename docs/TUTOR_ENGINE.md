@@ -41,7 +41,11 @@ attention-left, attention-right` (placeholders until approved assets exist).
    complete the question (#42). Same numbers only if the question has a single variant.
 7. Multi-step questions: a correct intermediate step sends `STEP_COMPLETED` → `encouraging`, one
    short line naming the next step, ladder and attempts restart, `STEP_DONE` clears pointers.
-   Hint use on any step is remembered for the final reaction.
+   Hint use on any step is remembered for the final reaction. The line names the next goal by
+   ADR-0007 step tag: `column` → `step.next-column` (or `step.next-column-carry` when a 1 is
+   carried in), `carry` → `step.last-carry`, `gate` → rule 8; content `stepNext` still wins.
+   A nudge key may have a step-specific form `<key>.<stepTag>` that is used on that step.
+   `ANSWER_SUBMITTED.vars` carries structural details of the wrong answer (e.g. `wrongBitNumber`).
 8. Gate-by-gate circuit walk (ADR-0007 step tag `"gate"`): `stepVars` supplies structural vars
    only — `gateId`, `gateName` (type), `stepNumber`, `gateCount`, `gateOut`, and per input n = 1, 2
    `in{n}` plus `in{n}Label` (circuit input) or `in{n}Gate` (feeding gate's type).

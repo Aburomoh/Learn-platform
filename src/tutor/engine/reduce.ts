@@ -7,7 +7,7 @@ import { fill } from "@/content/template";
 import type { LearningEvent } from "./events";
 import type { Expression, TutorAction } from "./actions";
 import { canRequestScaffold, HESITATION_SECONDS, initialTutorState, nextHint, type ActivityContext, type TutorState } from "./state";
-import { resolveMessage } from "../messages";
+import { hasMessage, resolveMessage } from "../messages";
 
 export interface ReduceResult {
   state: TutorState;
@@ -51,11 +51,9 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         // Rule 1: nudge only, never reveal. Misconception-specific when recognised.
         s.expression = "thinking";
         express("thinking");
-        if (event.misconceptionId) {
-          const key = misconceptionKey(ctx, event.misconceptionId);
-          if (key) say(key);
-          else say("wrong.first");
-        } else say("wrong.first");
+        const key = event.misconceptionId && misconceptionKey(ctx, event.misconceptionId);
+        if (key) say(key, event.vars);
+        else say("wrong.first");
         out.push({ type: "REQUEST_RETRY" });
         break;
       }
@@ -74,11 +72,9 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       // Rule 3 (attempts ≥ 3): progressive support, one rung per wrong answer.
       s.expression = "concern";
       express("concern");
-      if (event.misconceptionId) {
-        const key = misconceptionKey(ctx, event.misconceptionId);
-        if (key) say(key);
-        else say("wrong.again");
-      } else say("wrong.again");
+      const key = event.misconceptionId && misconceptionKey(ctx, event.misconceptionId);
+      if (key) say(key, event.vars);
+      else say("wrong.again");
       const h = nextHint(s, ctx);
       if (h) {
         grant(s, h.rung, out, fill(h.text, ctx.vars));
@@ -202,15 +198,20 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
   return { state: s, actions: out };
 }
 
-/** Circuit walks name the next gate, and say when it is the last one (vars are for the new step). */
+/** The line after a correct step names the next goal (ctx is for the new step). */
 function stepNextKey(ctx: ActivityContext): string {
-  const { gateName, stepNumber, gateCount } = ctx.vars;
-  if (gateName === undefined) return "step.next";
+  const { gateName, stepNumber, gateCount, carryIn } = ctx.vars;
+  if (ctx.stepTag === "column") return carryIn === 1 ? "step.next-column-carry" : "step.next-column";
+  if (ctx.stepTag === "carry") return "step.last-carry";
+  if (ctx.stepTag !== "gate" && gateName === undefined) return "step.next";
   return stepNumber !== undefined && stepNumber === gateCount ? "step.last-gate" : "step.next-gate";
 }
 
+/** Content nudge key, or its step-specific form `<key>.<stepTag>` when the catalog has one. */
 function misconceptionKey(ctx: ActivityContext, id: string): string | undefined {
-  return ctx.misconceptionKeys?.[id];
+  const key = ctx.misconceptionKeys?.[id];
+  if (key && ctx.stepTag && hasMessage(`${key}.${ctx.stepTag}`)) return `${key}.${ctx.stepTag}`;
+  return key;
 }
 
 function grant(s: TutorState, rung: number, out: TutorAction[], text: string) {

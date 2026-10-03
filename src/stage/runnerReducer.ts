@@ -6,7 +6,7 @@
 import type { Activity, Variant } from "@/content/schema";
 import { grade, type Answer, type GradeResult } from "@/content/grade";
 import { fill } from "@/content/template";
-import { hintsForStep, stepVars as specStepVars } from "@/content/steps";
+import { stepTag, stepVars as specStepVars } from "@/content/steps";
 import { reduce, initialTutorState, contextFromVariant, type TutorState, type TutorAction, type Expression, type LearningEvent } from "@/tutor";
 import type { RevealedHint, PredictionResult } from "@/interactions";
 
@@ -106,8 +106,7 @@ export function initialRunnerState(activity: Activity): RunnerState {
 export function createRunnerReducer(activity: Activity) {
   function runTutor(s: RunnerState, event: LearningEvent): RunnerState {
     const variant = currentVariant(activity, s);
-    // Hints may differ per kind of step (ADR-0007 §3): ask the step contract for this step's ladder.
-    const ctx = { ...contextFromVariant(variant, "en", stepVars(variant, s.stepIndex)), hints: hintsForStep(variant, s.stepIndex), hasOtherVariant: hasAnotherVariant(activity, s) };
+    const ctx = { ...contextFromVariant(variant, "en", stepVars(variant, s.stepIndex), stepTag(variant.spec, s.stepIndex)), hasOtherVariant: hasAnotherVariant(activity, s) };
     const { state: tutor, actions } = reduce(s.tutor, event, ctx);
     let next: RunnerState = { ...s, tutor };
     const effects: TutorAction[] = [];
@@ -169,7 +168,8 @@ export function createRunnerReducer(activity: Activity) {
           return runTutor(stepped, { type: "STEP_COMPLETED" });
         }
         const withLast: RunnerState = { ...s, last: { answer: action.answer, result }, attemptSeq: s.attemptSeq + 1 };
-        return runTutor(withLast, { type: "ANSWER_SUBMITTED", correct: result.correct, misconceptionId: result.misconceptionId });
+        const vars = result.wrongBit === undefined ? undefined : { wrongBitNumber: result.wrongBit + 1 };
+        return runTutor(withLast, { type: "ANSWER_SUBMITTED", correct: result.correct, misconceptionId: result.misconceptionId, vars });
       }
 
       case "HINT":
