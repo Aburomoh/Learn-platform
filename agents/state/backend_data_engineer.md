@@ -1,7 +1,7 @@
 # Current State — Backend / Data Engineer
 
-Current assignment: None open; #44 grouping delivered (schema #91, content + wiring #92).
-Recent important decision: `bit-grouping` with 1 + G steps and per-step hints (`hintsByStep`/`hintsForStep`, ADR-0007 §3).
+Current assignment: Chapter 1 content complete; #41 subtraction exercises in QA (#161).
+Recent important decision: `column-addition` `endCarry: "drop"` for fixed-width complements (Pedagogy, gap 15); variants follow by id across a practice (#141).
 Blocker: None
-Relevant issue/PR: merged #61, #65, #69, #71, #76, #91, #92 (content); queued #55, #38, #39.
-Next expected action: #55 notation token when `ready`; #38/#39 content once #34/#36 land.
+Relevant issue/PR: #161 (#41); merged #135, #136, #139, #140, #146, #149, #150, #156; queued #55.
+Next expected action: #55 notation token when `ready`; Chapter 2 starts with a pure Boolean module (review note on #131).
