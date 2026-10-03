@@ -35,7 +35,9 @@ attention-left, attention-right` (placeholders until approved assets exist).
 3. Hint requests move down the ladder one rung at a time; rungs 5+ add `HIGHLIGHT`/`PULSE`.
 4. Hesitation > 45 s with no attempt → `curious`, one gentle prompt (once per attempt).
 5. Explain Slowly → `explaining`, walk steps; each step may `ASK`; correct prediction →
-   `pleased` + continue, wrong → short note + continue (no penalty).
+   `pleased` + continue, wrong → short note + continue (no penalty). When it ends, the retry uses
+   another variant (`SWITCH_VARIANT`, `explain.done-variant`): the explained numbers can never
+   complete the question (#42). Same numbers only if the question has a single variant.
 7. Multi-step questions: a correct intermediate step sends `STEP_COMPLETED` → `encouraging`, one
    short line naming the next step, ladder and attempts restart, `STEP_DONE` clears pointers.
    Hint use on any step is remembered for the final reaction.

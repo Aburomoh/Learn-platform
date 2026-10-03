@@ -89,7 +89,7 @@ export function initialRunnerState(activity: Activity): RunnerState {
 export function createRunnerReducer(activity: Activity) {
   function runTutor(s: RunnerState, event: LearningEvent): RunnerState {
     const variant = currentVariant(activity, s);
-    const ctx = contextFromVariant(variant, "en", stepVars(variant, s.stepIndex));
+    const ctx = { ...contextFromVariant(variant, "en", stepVars(variant, s.stepIndex)), hasOtherVariant: hasAnotherVariant(activity, s) };
     const { state: tutor, actions } = reduce(s.tutor, event, ctx);
     let next: RunnerState = { ...s, tutor };
     const effects: TutorAction[] = [];
@@ -107,6 +107,13 @@ export function createRunnerReducer(activity: Activity) {
         case "ADVANCE_EXPLANATION":
           next.explanation = { step: a.step };
           break;
+        case "SWITCH_VARIANT": {
+          // New numbers for the same question; hints shown were for the old ones.
+          const vIndex = [...next.vIndex];
+          vIndex[next.qIndex] += 1;
+          next = { ...next, vIndex, hints: [], last: undefined };
+          break;
+        }
         case "RESET_INTERACTION":
           next = { ...next, last: undefined, stepIndex: 0, interactionKey: next.interactionKey + 1, explanation: null };
           break;
