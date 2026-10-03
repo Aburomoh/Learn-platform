@@ -32,7 +32,7 @@ export const en: Record<string, string> = {
   "ns.missing-largest": "Check the largest place value. Does {largest} fit in {value}?",
   "ns.extra-place": "One of the lit places is too big for what is left. Check the remainder after each step.",
   "ns.hex-letter": "In hex, 10 to 15 are single letters A to F, not two digits.",
-  "ns.copied-decimal": "That is the decimal value. Hex uses groups of four bits. Group {answerBits} from the right.",
+  "ns.copied-decimal": "That is the decimal value. Group {answerBits} in groups of {groupSize} bits from the right, then convert each group.",
   "lg.check-not": "Look at the NOT gate again. It flips its input.",
   "lg.follow-through": "The NOT output is not the final answer. Follow the signal through the next gates.",
   "lg.or-vs-and": "OR is satisfied by any 1. Which gate needs every input to be 1?",
