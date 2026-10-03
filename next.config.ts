@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   images: { unoptimized: true },
   reactStrictMode: true,
+  // No floating Next.js badge over the student UI in development (R1 redesign, #110).
+  devIndicators: false,
 };
 
 export default nextConfig;

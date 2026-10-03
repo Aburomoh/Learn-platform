@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { product } from "../../config/product";
+import { DEFAULT_THEME, themeScript } from "@/shell/theme";
 import "@/styles/globals.css";
 import "@/tutor/ui/tutor-effects.css";
 
@@ -16,7 +17,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={product.defaultLocale}>
+    // data-theme is set before first paint by the inline script, so React must not "fix" it on hydration.
+    <html lang={product.defaultLocale} data-theme={DEFAULT_THEME} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>{children}</body>
     </html>
   );

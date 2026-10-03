@@ -15,9 +15,11 @@ export interface Prefs {
   /** Characters per second for the tutor bubble; 0 = instant. */
   typingSpeed: number;
   locale: "en" | "ar";
+  /** Appearance; absent in records saved before the choice existed (treated as light). */
+  theme?: "light" | "dark" | "system";
 }
 
-export const defaultPrefs: Prefs = { typingSpeed: 45, locale: "en" };
+export const defaultPrefs: Prefs = { typingSpeed: 45, locale: "en", theme: "light" };
 
 /* ---------- tiny external store with debounced persistence ---------- */
 interface Store<T> {
