@@ -88,6 +88,8 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 ## Course-level
 | Item | Status |
 |---|---|
+| Three variants per question, sometimes four (owner, #192): Chapter 1 backfill | #247 |
+| Curated random numbers per attempt (later stage) | #248 backlog |
 | Five-chapter navigation with Not started / In progress / Completed | #232 |
 | Per-chapter quality gates (#192 item 11) | #216, #233; C3–C5 gates filed with their content |
 | Final audit and owner report | #242 |
