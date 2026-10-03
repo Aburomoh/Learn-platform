@@ -26,8 +26,12 @@ export interface CircuitDiagramProps {
   disabled?: boolean;
 }
 
-/** Smallest rendered scale (docs/DESIGN_SYSTEM.md): a three-column circuit fits a 390 px phone; below that the box scrolls sideways. */
-const MIN_SCALE = 0.6;
+/**
+ * Smallest rendered scale. All diagram text is 16 units or more, so at 0.75x it is still 12 px:
+ * the layout is compact enough for a three-column circuit to fit a 390 px phone at that scale.
+ * Narrower than that, the box scrolls sideways instead of shrinking the text.
+ */
+const MIN_SCALE = 0.75;
 
 /**
  * Small SVG circuit (up to 3 inputs, 4 gates) drawn like a textbook schematic: standard gate
@@ -134,10 +138,10 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
             >
               {toggleable && <rect x="-12" y="-12" width={INPUT_W + 24} height={INPUT_H + 24} className={styles.hitArea} />}
               <rect width={INPUT_W} height={INPUT_H} rx="8" className={styles.inputBox} />
-              <text x="12" y="25" className={styles.label}>
+              <text x="7" y="26" className={styles.label}>
                 {inp.label}
               </text>
-              <text x="30" y="25" className={`${styles.value} ${v === 1 ? styles.valueHigh : styles.valueLow} mono`}>
+              <text x="23" y="26" className={`${styles.value} ${v === 1 ? styles.valueHigh : styles.valueLow} mono`}>
                 {v}
               </text>
             </g>
