@@ -18,13 +18,17 @@
   min-height: 48px;
 }
 
-/* Below lg: a compact strip capped at --tutor-strip-h; tap or use the toggle to expand. */
+/* Below lg: a strip above the stage. Open (unread or reopened) it shows the whole message;
+   collapsed (stale) it is capped at --tutor-strip-h with the text clamped to two lines. */
 @media (max-width: 1199px) {
   .panel {
     grid-template-columns: auto 1fr auto;
     gap: var(--space-2);
     align-items: center;
     cursor: pointer;
+    max-height: 40svh;
+    overflow-y: auto;
+    transition: max-height var(--dur-base) var(--ease);
   }
   .panel[data-expanded="false"] {
     max-height: var(--tutor-strip-h);

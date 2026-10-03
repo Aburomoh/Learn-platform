@@ -18,9 +18,14 @@ for (const a of actions) { if (a.type === "SAY") setMessage(a.text); else if (a.
 
 No audio, no voice, no forced animation.
 
-## Compact strip (below 1200 px)
-`TutorPanel` becomes a strip capped at `--tutor-strip-h`: 32 px avatar, message clamped to two
-lines. Tap the strip or use the toggle button (`aria-expanded`) to read the whole message; Escape
-collapses it; a new message starts collapsed. The stage makes the strip sticky under the top bar
-(`--topbar-h`), except when the viewport is under 500 px tall, where it scrolls away.
-`html { scroll-padding-top: var(--sticky-offset) }` keeps focus/highlight scrolling clear of it.
+## Strip below 1200 px: never clamp unread text
+`TutorPanel` is a strip above the stage (32 px avatar). A new message — feedback, hint or Explain
+Slowly step — always shows in full: the strip grows to fit, up to 40svh, then scrolls inside
+itself. It collapses to two lines (`--tutor-strip-h`) only once the message is stale: the student
+types, clicks elsewhere (Check, Continue) or scrolls the page themselves (wheel, touch, PageUp/Down;
+programmatic focus scrolling does not count). Tap the strip or use the toggle (`aria-expanded`) to
+reopen; Escape collapses. Pass `messageSeq` so a repeated text still counts as a new message.
+The stage makes the strip sticky under the top bar (`--topbar-h`), except when the viewport is
+under 500 px tall. The panel publishes its live height as `--tutor-live-h`, which
+`--sticky-offset` (`scroll-padding-top`) uses, and it scrolls the focused element clear if a
+grown strip would cover it.
