@@ -7,29 +7,42 @@
   background: var(--surface);
 }
 
-.scroll {
-  overflow-x: auto;
+/* Vertical ladder: divisor | number | remainder | LSB/MSB | reading arrow */
+.ladder {
+  --cell: 52px;
+  display: grid;
+  grid-template-columns: auto var(--cell) var(--cell) auto auto;
+  grid-auto-rows: var(--cell);
+  column-gap: var(--space-2);
+  row-gap: var(--space-1);
+  justify-content: start;
+  align-items: center;
 }
 
-.table {
-  border-collapse: separate;
-  border-spacing: var(--space-2) var(--space-1);
+.row {
+  display: contents;
 }
 
-.rowLabel {
-  text-align: end;
-  font-weight: 500;
-  font-size: var(--text-sm);
+/* "2 |" to the left of each number, as on the slide */
+.divisor {
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  padding-inline: var(--space-2);
+  border-inline-end: 2px solid var(--text-muted);
   color: var(--text-muted);
-  padding-inline-end: var(--space-2);
-  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  z-index: 1;
 }
 
 .cell {
-  width: 52px;
-  min-width: 52px;
-  height: 48px;
-  text-align: center;
+  position: relative;
+  z-index: 1;
+  width: var(--cell);
+  height: calc(var(--cell) - 4px);
+  display: grid;
+  place-items: center;
   font-size: var(--text-lg);
   border-radius: var(--radius-sm);
 }
@@ -37,18 +50,6 @@
 .number {
   border: 1px solid var(--border);
   background: var(--surface-2);
-  position: relative;
-}
-
-/* arrow between successive numbers */
-.number + .number::before {
-  content: "→";
-  position: absolute;
-  left: calc(-1 * var(--space-2) - 5px);
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
-  color: var(--text-muted);
 }
 
 .rem {
@@ -57,10 +58,35 @@
   font-weight: 700;
 }
 
+.remColumn {
+  align-self: stretch;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}
+
+.halo {
+  align-self: stretch;
+  margin: -2px calc(-1 * var(--space-1));
+  border-radius: var(--radius-md);
+  background: var(--focus-halo, var(--highlight-soft));
+}
+
 .active {
   border-color: var(--accent);
   box-shadow: inset 0 0 0 1px var(--accent);
   background: var(--surface);
+}
+
+/* the row that has just appeared */
+.next {
+  background: var(--surface);
+  animation: appear var(--dur-base) var(--ease);
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
 }
 
 .attention {
@@ -78,8 +104,8 @@
 }
 
 .input {
-  width: 44px;
-  height: 40px;
+  width: calc(var(--cell) - 8px);
+  height: calc(var(--cell) - 12px);
   text-align: center;
   font-size: var(--text-lg);
   border: 1px solid var(--accent);
@@ -99,10 +125,30 @@
 }
 
 .order {
-  text-align: center;
   font-size: var(--text-sm);
   font-weight: 700;
   color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* upward arrow beside the remainders: read from MSB (bottom) to LSB (top) */
+.readArrow {
+  align-self: stretch;
+  position: relative;
+  width: 12px;
+  margin-block: var(--space-2);
+  border-inline-start: 2px solid var(--accent);
+  margin-inline-start: var(--space-2);
+}
+
+.readArrow::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -7px;
+  border: 6px solid transparent;
+  border-top: 0;
+  border-bottom: 9px solid var(--accent);
 }
 
 .read {
@@ -122,19 +168,11 @@
 }
 
 @media (max-width: 640px) {
-  .cell {
-    width: 44px;
-    min-width: 44px;
-    height: 44px;
-    font-size: var(--text-md);
+  .ladder {
+    --cell: 44px;
   }
+  .cell,
   .input {
-    width: 38px;
-    height: 38px;
     font-size: var(--text-md);
-  }
-  .rowLabel {
-    font-size: 11px;
-    padding-inline-end: 2px;
   }
 }
