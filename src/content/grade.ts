@@ -83,13 +83,14 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
       const normalized = `${step.a}+${step.b}+${step.carryIn}=${a.sum}c${a.carry}`;
       if (correct) return { correct, normalized, partial: true };
       const total = step.a + step.b + step.carryIn;
+      // With a carry in, "ignored the carry" and "swapped" can give the same pair; the carry reading wins.
       const kind =
         a.sum > 1 && a.sum === total
           ? "addition-wrote-two"
-          : a.sum === step.carryOut && a.carry === step.sum && step.sum !== step.carryOut
-            ? "addition-swapped"
-            : step.carryIn === 1 && a.sum !== step.sum && a.sum <= 1
-              ? "addition-carry-ignored"
+          : step.carryIn === 1 && a.sum !== step.sum && a.sum <= 1
+            ? "addition-carry-ignored"
+            : a.sum === step.carryOut && a.carry === step.sum && step.sum !== step.carryOut
+              ? "addition-swapped"
               : undefined;
       return { correct, normalized, misconceptionId: kind ? variant.misconceptions.find((m) => m.detect.type === kind)?.id : undefined };
     }
@@ -211,6 +212,11 @@ export function additionSteps(a: string, b: string): AdditionStep[] {
   }
   out.push({ column: a.length, a: 0, b: 0, carryIn: carry, sum: carry, carryOut: 0, final: true });
   return out;
+}
+
+/** Template variables for one addition step (hints, nudges and step reactions may use them). */
+export function additionStepVars(step: AdditionStep): Record<string, number> {
+  return { place: 2 ** step.column, aBit: step.a, bBit: step.b, carryIn: step.carryIn, sum: step.sum, carryOut: step.carryOut, stepNumber: step.column + 1 };
 }
 
 /** Result bits of a column addition, final carry first (width + 1 bits). */
