@@ -112,6 +112,32 @@ describe("content registry", () => {
     }
   });
 
+  it("a variant id shared by questions of one practice means the same numbers (#141)", () => {
+    // The numbers a variant works on: its decimal value, or the two operands of an addition.
+    const numbersOf = (v: Variant): string | undefined => {
+      if (v.vars.value !== undefined) return `value:${v.vars.value}`;
+      if (v.spec.kind === "column-addition") return `add:${v.spec.a}+${v.spec.b}`;
+      if (v.spec.kind === "numeric" && v.spec.context?.type === "addition") return `add:${v.spec.context.operands.a}+${v.spec.context.operands.b}`;
+      return undefined;
+    };
+    let shared = 0;
+    for (const c of courses)
+      for (const m of c.modules)
+        for (const t of m.topics)
+          for (const a of t.activities) {
+            const seen = new Map<string, string | undefined>();
+            for (const q of a.questions)
+              for (const v of q.variants) {
+                const n = numbersOf(v);
+                if (seen.has(v.id)) {
+                  expect(n, `${a.id}/${q.id}/${v.id}`).toBe(seen.get(v.id));
+                  shared++;
+                } else seen.set(v.id, n);
+              }
+          }
+    expect(shared).toBeGreaterThan(0);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
