@@ -17,6 +17,9 @@ role continuity, idempotent wake triggers and repository-authoritative state.
   humans/agents. Re-running the workflow never duplicates a label or comment.
 - `scripts/wake.mjs <role>` prints the role's charter, state and the open issues/PRs carrying
   its wake label, so a session can be started with exactly the right context.
+- Amendment 2026-10-03 (#24): every role also has a direct alarm label `wake:<role>` that any agent
+  may apply (`npm run alarm`). Sessions surface open alarms at start (SessionStart hook) and while
+  live (`npm run wake:watch`); see `shared/WAKE_PROTOCOL.md`.
 
 ## Consequences
 No server, no cron, no bot tokens beyond `GITHUB_TOKEN`. Activation still requires a session

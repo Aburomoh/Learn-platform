@@ -1,7 +1,8 @@
 # Current State — Release / DevOps Engineer
 
-Current assignment: CI + wake workflow live; Vercel not yet connected.
-Recent important decision: Static export served from ./out; labels bootstrap script.
-Blocker: Owner must import repo into Vercel for previews (DECISIONS_FOR_OWNER #1).
-Relevant issue/PR: PR #10 (CI first run)
-Next expected action: Link Vercel project when owner decides; add preview URL comment to PRs.
+Current assignment: Direct alarm mechanism for all roles (#24).
+Recent important decision: Per-role `wake:<role>` label + `npm run alarm` / `wake:watch` / `wake:ack`; SessionStart hook lists open alarms.
+Blocker: None
+Relevant issue/PR: #24
+Wake me: `npm run alarm release-devops-engineer <#> "<reason>" <your-role>` (label `wake:devops`).
+Next expected action: After merge, confirm live role sessions run `wake:watch`; then preview URL comment on PRs.
