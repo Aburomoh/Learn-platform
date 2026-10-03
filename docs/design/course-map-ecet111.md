@@ -65,7 +65,7 @@ rectangles, half-ovals when they wrap; the term for each group is written beside
 1. **N-truth-table** — fill one column at a time (intermediate columns, column groups, X entries). Ch2, 4, 5.
 2. **N-expression** — Boolean expression entry, graded by equivalence plus a form check (`form: sop | pos | any`, optional `maxLiterals`); a correct but unsimplified answer gets its own nudge. Ch2–5.
 3. **N-derivation** — two goals per line, in order: name the law, then give or choose the line it produces. Authored lines and law ids; a content test checks each line is equivalent to the one before. Ch2, 3, 4.
-4. **N-row-select** — tick rows / outputs, or choose a value per row. Ch2, 4.
+4. **N-row-select** (a mode of N-truth-table, not a separate kind) — tick rows / outputs, or choose a value per row. Ch2, 4.
 5. **N-kmap** — fill from Σ (one goal); then per group two goals: mark the group, write its term; F is the last goal. Groups are checked as wrapping 2^k rectangles covering only 1s and X cells, and F for minimality — any minimal grouping is accepted. Step count is fixed per spec from the minimal cover. Ch3, 4, 5.
 6. **N-timing** — place Q at each active clock edge. Ch5.
 7. **N-state-diagram** — label edges / complete a pre-drawn diagram (no free drawing at first). Ch5.
@@ -79,6 +79,5 @@ Free-form circuit building is out of scope; use "pick the matching circuit" and 
 ## For the owner
 - Slide exercises without printed answers (Ch3 slides 44, 45, 92–95, 102–108) have answers worked
   by machine; the instructor must confirm them before they become content.
-- Possible slide slips: Ch3 slide 96 names F(A,B,C,D) but uses a 3-variable map; Ch2 p. 34 names Y
-  but the table says X; Ch5 Part II slide 51's y column disagrees with y = x + B'.
+- Three slide details need the instructor's confirmation; the list was given to the owner directly.
 - Blank timing exercises do not state the initial Q; we will state it.
