@@ -5,14 +5,13 @@
  * used; other numbers and all wording are original.
  */
 import type { z } from "zod";
-import type { TopicSchema, HintSchema, VariantSchema } from "../schema";
-import { additionResult, additionSteps, complementBits } from "../grade";
-import { divideVariant, readVariant } from "./chapter1-number-systems";
+import type { TopicSchema, HintSchema, VariantSchema } from "../../schema";
+import { additionResult, complementBits } from "../../grade";
+import { additionWalk, divideVariant, flipWalk, readVariant, weightSum } from "../../generators";
 
 type TopicInput = z.input<typeof TopicSchema>;
 type HintInput = z.input<typeof HintSchema>;
 type VariantInput = z.input<typeof VariantSchema>;
-type ExplanationInput = VariantInput["explanation"];
 
 /* ---------- Q1: single-bit rules ---------- */
 
@@ -93,44 +92,6 @@ const additionMisconceptions: VariantInput["misconceptions"] = [
   { id: "add.swapped", title: "Sum and carry swapped", nudgeKey: "add.swapped", detect: { type: "addition-swapped" } },
 ];
 
-/** One prediction per column, then the end carry unless it is dropped (owner rule: every step a goal). */
-function additionWalk(a: string, b: string, endCarry = true): ExplanationInput {
-  const steps = additionSteps(a, b, endCarry);
-  return [
-    { id: "s1", say: `Add ${a} + ${b} one column at a time, starting from the right.`, stage: { revealed: 0 } },
-    ...steps.map((st, i) => {
-      const say = st.final ? "No bits are left, only the carry." : `The ${2 ** st.column}s column: ${st.a} + ${st.b}${st.carryIn ? " + the carry 1" : ""}.`;
-      if (st.final)
-        return {
-          id: `s${i + 2}`,
-          say,
-          stage: { revealed: i, attention: i },
-          ask: { prompt: "What is the leftmost bit of the sum?", options: [String(st.sum), String(1 - st.sum)], correctIndex: 0, afterCorrect: "Yes. The carry comes down as the leftmost bit.", afterWrong: `The carry out of the last column was ${st.sum}; it comes down as the leftmost bit.` },
-        };
-      const right = `${st.sum}, carry ${st.carryOut}`;
-      const total = st.a + st.b + st.carryIn;
-      // Real mistakes: the decimal total, forgetting the carry in, swapping sum and carry.
-      const wrong = [total >= 2 ? `${total}, carry 0` : "", st.carryIn ? `${(st.a + st.b) % 2}, carry ${(st.a + st.b) >> 1}` : "", `${st.carryOut}, carry ${st.sum}`].filter((w, k, all) => w && w !== right && all.indexOf(w) === k);
-      const options = [right, ...(wrong.length ? wrong : [`${1 - st.sum}, carry ${st.carryOut}`])].slice(0, 3);
-      const k = i % options.length;
-      const rotated = [...options.slice(k), ...options.slice(0, k)];
-      return {
-        id: `s${i + 2}`,
-        say,
-        stage: { revealed: i, attention: i },
-        ask: {
-          prompt: `${st.a} + ${st.b}${st.carryIn ? " + 1" : ""} = ?`,
-          options: rotated,
-          correctIndex: rotated.indexOf(right),
-          afterCorrect: `Yes: write ${st.sum}${st.carryOut ? " and carry 1" : ""}.`,
-          afterWrong: `The total is ${total}, which is ${total.toString(2)} in binary: write ${st.sum}${st.carryOut ? " and carry 1" : ""}.`,
-        },
-      };
-    }),
-    { id: `s${steps.length + 2}`, say: `So ${a} + ${b} = ${additionResult(a, b, endCarry)}.`, stage: { revealed: steps.length } },
-  ];
-}
-
 function additionVariant(a: string, b: string, prompt: string): VariantInput {
   return {
     id: `v${a}`,
@@ -154,10 +115,6 @@ const checkHints: HintInput[] = [
   { rung: 8, text: "The leftmost 1 is worth {topWeight}. Add the others to it." },
   { rung: 9, text: "{checkBits} = {checkSum} = {checkValue}." },
 ];
-
-function weightSum(bits: string): string {
-  return [...bits].map((d, i) => (d === "1" ? 2 ** (bits.length - 1 - i) : 0)).filter(Boolean).join(" + ");
-}
 
 function checkVariant(a: string, b: string, which: "a" | "b" | "sum"): VariantInput {
   const bits = which === "a" ? a : which === "b" ? b : additionResult(a, b);
@@ -211,27 +168,6 @@ function complementVars(bits: string) {
   const twos = additionResult(ones, "1".padStart(bits.length, "0"), false);
   // `value` names the number set, so later challenges follow the one the student worked on (#141).
   return { value: parseInt(bits, 2), bits, ones, twos, width: bits.length };
-}
-
-/** One prediction per bit (owner rule: every step a goal). */
-function flipWalk(bits: string): ExplanationInput {
-  const ones = complementBits(bits);
-  return [
-    { id: "s1", say: "The 1's complement flips every bit. We go from the left, one bit at a time.", stage: { revealed: 0 } },
-    ...[...bits].map((b, i) => ({
-      id: `s${i + 2}`,
-      say: `Bit ${i + 1} is ${b}.`,
-      stage: { revealed: i, attention: i },
-      ask: {
-        prompt: `What does ${b} become?`,
-        options: ["0", "1"],
-        correctIndex: Number(ones[i]),
-        afterCorrect: `Yes: ${b} flips to ${ones[i]}.`,
-        afterWrong: `It flips: ${b} becomes ${ones[i]}.`,
-      },
-    })),
-    { id: `s${bits.length + 2}`, say: `So the 1's complement of ${bits} is ${ones}.`, stage: { revealed: bits.length } },
-  ];
 }
 
 function onesVariant(bits: string, id = `v${bits}`): VariantInput {
