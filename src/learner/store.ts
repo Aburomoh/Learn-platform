@@ -99,9 +99,24 @@ if (typeof window !== "undefined") {
 }
 
 /* ---------- React hooks ---------- */
+const serverSnapshots = new Map<string, OfferingProgress>();
+
+/**
+ * Snapshot used for the pre-rendered HTML and the first client render: empty progress.
+ * useSyncExternalStore requires the same object on every call, so it is cached per offering.
+ */
+export function serverProgressSnapshot(offeringId: string): OfferingProgress {
+  let snapshot = serverSnapshots.get(offeringId);
+  if (!snapshot) {
+    snapshot = emptyProgress(offeringId);
+    serverSnapshots.set(offeringId, snapshot);
+  }
+  return snapshot;
+}
+
 export function useOfferingProgress(offeringId: string) {
   const store = getProgressStore(offeringId);
-  const progress = useSyncExternalStore(store.subscribe, store.get, () => emptyProgress(offeringId));
+  const progress = useSyncExternalStore(store.subscribe, store.get, () => serverProgressSnapshot(offeringId));
   const update = useCallback((fn: (p: OfferingProgress) => OfferingProgress) => store.set(fn), [store]);
   return [progress, update] as const;
 }
