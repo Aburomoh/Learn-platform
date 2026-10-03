@@ -1,8 +1,7 @@
 .root {
   padding: var(--space-3);
-  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--surface-sunk);
   /* On narrow screens the diagram keeps a readable size and scrolls sideways. */
   overflow-x: auto;
   min-width: 0;

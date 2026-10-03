@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import type { InteractionBaseProps } from "../shared/types";
 import { focusTarget } from "../shared/types";
+import { Notation } from "../shared/Notation";
 import styles from "./NumericInput.module.css";
 
 export type NumberBase = 2 | 8 | 10 | 16;
@@ -49,7 +50,7 @@ export function NumericInput({
       }}
     >
       <label htmlFor={inputId} className={styles.prompt}>
-        {prompt}
+        <Notation text={prompt} />
       </label>
       <div className={styles.row}>
         <span className={styles.base} aria-hidden="true">

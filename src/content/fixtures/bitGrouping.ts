@@ -30,7 +30,7 @@ function grouping(id: string, bits: string, groupSize: 3 | 4, answer: string): V
   });
 }
 
-/** 26 = 11010₂ → 0001 1010 → 1A₁₆ */
+/** 26 = 11010_2 → 0001 1010 → 1A_16 */
 export const hex26 = grouping("vhex26", "11010", 4, "1A");
-/** 88 = 1011000₂ → 001 011 000 → 130₈ */
+/** 88 = 1011000_2 → 001 011 000 → 130_8 */
 export const octal88 = grouping("voct88", "1011000", 3, "130");

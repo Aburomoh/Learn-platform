@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import type { Expression } from "../engine/actions";
+import { product } from "../../../config/product";
 import { TutorAvatar } from "./TutorAvatar";
 import { TutorBubble } from "./TutorBubble";
 import styles from "./TutorPanel.module.css";
@@ -98,10 +99,10 @@ export function TutorPanel({ name, expression, message, messageSeq, typingSpeed,
       }}
     >
       <div className={styles.avatar}>
-        <TutorAvatar expression={expression} name={name} />
+        <TutorAvatar expression={expression} name={name} portraitSrc={product.brand.tutorPortrait} />
       </div>
       <div className={styles.avatarSm}>
-        <TutorAvatar expression={expression} name={name} size="sm" />
+        <TutorAvatar expression={expression} name={name} size="sm" portraitSrc={product.brand.tutorPortrait} />
       </div>
       {message ? (
         <div id={bubbleId} className={styles.message}>

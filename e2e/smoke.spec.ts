@@ -23,6 +23,11 @@ test("home lists the course and navigates to an activity", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1, name: "Start here" })).toBeVisible();
   await expect(page.locator("[data-primary-action]")).toHaveCount(1);
   await expect(page.getByRole("contentinfo")).toContainText("Demo content");
+  // narrowest phone: the preview chain wraps inside the panel instead of widening the page
+  const viewport = page.viewportSize()!;
+  await page.setViewportSize({ width: 320, height: 700 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+  await page.setViewportSize(viewport);
   // each hop waits for its URL so a slow transition fails at the hop, not on a stale page
   await page.getByRole("link", { name: /Introduction to Digital System Design/ }).click();
   await expect(page).toHaveURL(/\/courses\/ecet111\/$/);
@@ -47,7 +52,7 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await page.goto(ACTIVITY);
   const stage = page.getByTestId("learning-stage");
   await expect(stage).toBeVisible();
-  page.on("request", (r) => requests.push(r.url()));
+  page.on("request", (r) => requests.push(`${r.method()} ${r.url()}`));
 
   // the chain length is not given away: only the first number is visible
   await expect(page.getByLabel("26 divided by 2: result")).toBeVisible();
@@ -103,10 +108,10 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await page.getByRole("button", { name: "Check" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
 
-  // 7. only same-origin static assets were requested (no server or third-party calls)
+  // 7. no server or third-party calls: the site is a static export, so the only requests allowed
+  //    are GETs of its own files (assets, the brand mark, and pages that links pre-load).
   const origin = new URL(page.url()).origin;
-  // static files of this site: Next.js assets and the brand mark (which a prefetched page may preload)
-  const nonStatic = requests.filter((u) => !u.startsWith("data:") && !(u.startsWith(origin) && /\/_next\/|\/__next\.|\/brand\/[\w.-]+\.svg$/.test(u)));
+  const nonStatic = requests.filter((r) => !r.startsWith("GET data:") && !r.startsWith(`GET ${origin}/`));
   expect(nonStatic).toEqual([]);
 
   // 8. progress persisted locally and visible after navigation
@@ -219,6 +224,18 @@ test("logic gates activity: walk the circuit gate by gate, then explore inputs",
   await expect(page.locator("svg text", { hasText: "Y = 0" })).toBeVisible();
   await page.getByRole("button", { name: "Next challenge" }).click();
   await expect(page.getByText("Challenge 2 of 2")).toBeVisible();
+});
+
+test("division ladder inputs meet the touch target on a phone", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(ACTIVITY);
+  for (const label of ["26 divided by 2: result", "26 divided by 2: remainder"]) {
+    const box = (await page.getByLabel(label).boundingBox())!;
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.width).toBeGreaterThanOrEqual(36);
+  }
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
 });
 
 for (const width of [390, 320]) {

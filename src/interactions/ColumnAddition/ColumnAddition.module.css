@@ -5,9 +5,8 @@
   min-width: 0;
   gap: var(--space-3);
   padding: var(--space-3);
-  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--surface-sunk);
 }
 
 /* a wide addition scrolls inside its own box, with the hidden edge faded */

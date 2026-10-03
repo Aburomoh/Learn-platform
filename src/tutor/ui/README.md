@@ -4,7 +4,7 @@ The instructor beside the whiteboard. Small, quiet, reacts in short messages.
 
 | Piece | Purpose |
 |-------|---------|
-| `TutorAvatar` | Placeholder line-drawn face per expression (`data-expression`). Swap the SVG per expression for approved artwork later; the API stays. |
+| `TutorAvatar` | Monogram disc from the tutor's name (56 px beside the stage, 40 px in the strip); the expression is kept as `data-expression` and in the accessible label. No caption. `portraitSrc` (`product.brand.tutorPortrait`) replaces the disc later; the API stays. |
 | `TutorBubble` | Typewriter bubble. Click/Enter reveals all; reduced motion or `speed=0` renders instantly; full text goes to a polite live region at once. |
 | `TutorPanel` | Avatar + bubble; shrinks the avatar below 900 px. |
 | `useFocusEffects` | Executes FOCUS / HIGHLIGHT / PULSE on `data-focus-target` elements inside a container; clears on RESET_INTERACTION, ADVANCE_EXPLANATION, COMPLETE. Styles in `tutor-effects.css` (import once globally). |

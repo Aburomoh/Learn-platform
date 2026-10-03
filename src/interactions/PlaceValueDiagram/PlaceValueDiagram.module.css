@@ -2,9 +2,8 @@
   display: grid;
   gap: var(--space-3);
   padding: var(--space-3);
-  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--surface-sunk);
 }
 
 .drag {

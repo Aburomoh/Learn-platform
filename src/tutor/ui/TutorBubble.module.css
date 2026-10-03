@@ -1,11 +1,9 @@
 .bubble {
   position: relative;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+  border-radius: 4px var(--radius-lg) var(--radius-lg) var(--radius-lg);
   padding: var(--space-3) var(--space-4);
   min-height: 48px;
-  box-shadow: var(--shadow);
   cursor: default;
   line-height: 1.5;
 }
@@ -14,23 +12,9 @@
   cursor: pointer;
 }
 
-.bubble::before {
-  content: "";
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: var(--surface);
-  border-left: 1px solid var(--border);
-  border-top: 1px solid var(--border);
-  transform: rotate(-45deg);
-  left: -7px;
-  top: 20px;
-}
-
-.below::before {
-  left: 28px;
-  top: -7px;
-  transform: rotate(45deg);
+/* under the avatar: the squared corner is still top-left */
+.below {
+  border-radius: 4px var(--radius-lg) var(--radius-lg) var(--radius-lg);
 }
 
 .typed {

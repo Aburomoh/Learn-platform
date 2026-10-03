@@ -106,7 +106,7 @@ describe("content registry", () => {
           for (const n of numbers) expect(values.has(n), `${t.id} preview uses ${n}`).toBe(false);
         }
     const ns = courses[0].modules.flatMap((m) => m.topics).find((t) => t.id === "number-systems")!;
-    expect(ns.preview).toBe("53₁₀ → 110101₂ → 65₈ → 35₁₆");
+    expect(ns.preview).toBe("53_10 → 110101_2 → 65_8 → 35_16");
     expect([(53).toString(2), (53).toString(8), (53).toString(16)]).toEqual(["110101", "65", "35"]);
   });
 
