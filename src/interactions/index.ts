@@ -8,3 +8,4 @@ export { PlaceValueDiagram, type PlaceValueDiagramProps, type Bit } from "./Plac
 export { CircuitDiagram, type CircuitDiagramProps } from "./CircuitDiagram/CircuitDiagram";
 export { DivisionChain, type DivisionChainProps, type ChainStep } from "./DivisionChain/DivisionChain";
 export { BitGrouping, type BitGroupingProps } from "./BitGrouping/BitGrouping";
+export { ColumnAddition, type ColumnAdditionProps, type AdditionColumn } from "./ColumnAddition/ColumnAddition";
