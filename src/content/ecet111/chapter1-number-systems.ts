@@ -41,27 +41,41 @@ const readHints: HintInput[] = [
   { rung: 9, text: "({value})₁₀ = ({answerBits})₂." },
 ];
 
-const octalHints: HintInput[] = [
-  { rung: 2, text: "Not yet. One octal digit stands for three bits." },
-  { rung: 3, text: "Group the bits in threes starting from the right. Add zeros on the left if the last group is short." },
-  { rung: 4, text: "What are the groups of three for {answerBits}?" },
-  { rung: 5, text: "The groups are {groups3}.", focus: "bits", highlight: "bits" },
-  { rung: 6, text: "Convert each group on its own. The weights inside a group are 4, 2, 1." },
-  { rung: 7, text: "Like reading a long number in thousands: you split it from the right." },
-  { rung: 8, text: "{groups3}: write the value of each group side by side." },
-  { rung: 9, text: "({value})₁₀ = ({answerBits})₂ = ({answerOct})₈." },
+/* Grouping (#44): step 0 marks the groups, then one digit per group. Ladders are per step (ADR-0007 §3). */
+const groupHints: HintInput[] = [
+  { rung: 2, text: "Not yet. Start at the right-hand end of {bits}." },
+  { rung: 3, text: "Each group has {groupSize} bits. Count {groupSize} bits from the right, then the next {groupSize}." },
+  { rung: 4, text: "Look at the bits left over on the left. Is that group shorter than {groupSize}?" },
+  { rung: 5, text: "Add zeros on the left until the leftmost group has {groupSize} bits.", focus: "pad-zero", highlight: "pad-zero" },
+  { rung: 6, text: "Zeros on the left do not change the value, just as 007 is still 7." },
+  { rung: 7, text: "Like writing 1234567 as 1 234 567: you split from the right." },
+  { rung: 8, text: "You need {padCount} zero(s) on the left, which makes {groupCount} groups." },
+  { rung: 9, text: "The groups are {groups}." },
 ];
 
-const hexHints: HintInput[] = [
-  { rung: 2, text: "Not yet. One hexadecimal digit stands for four bits." },
-  { rung: 3, text: "Group the bits in fours starting from the right. Add zeros on the left if the last group is short. 10 to 15 are written A to F." },
-  { rung: 4, text: "What are the groups of four for {answerBits}?" },
-  { rung: 5, text: "The groups are {groups4}.", focus: "bits", highlight: "bits" },
-  { rung: 6, text: "Convert each group on its own. The weights inside a group are 8, 4, 2, 1." },
-  { rung: 7, text: "Same idea as octal, with four bits per digit instead of three." },
-  { rung: 8, text: "{groups4}: write the hex digit of each group side by side." },
-  { rung: 9, text: "({value})₁₀ = ({answerBits})₂ = ({answerHex})₁₆." },
+function digitHints(weights: string, extra: string): HintInput[] {
+  return [
+    { rung: 2, text: "Not yet. Look only at group {groupIndex}: {groupBits}." },
+    { rung: 3, text: `Inside a group the weights are ${weights}.${extra}` },
+    { rung: 4, text: "Which weights sit under the 1s in {groupBits}?" },
+    { rung: 5, text: "Add the weights of the 1s in {groupBits}.", focus: "group-digit", highlight: "group-digit" },
+    { rung: 6, text: "A 0 adds nothing. Only the 1s count." },
+    { rung: 8, text: "The total of the weights is one digit. Write that digit in the slot." },
+    { rung: 9, text: "{groupBits} is {groupValue}, so the digit is {digit}." },
+  ];
+}
+
+const octalDigitHints = digitHints("4, 2, 1", "");
+const hexDigitHints = digitHints("8, 4, 2, 1", " Values 10 to 15 are written A to F.");
+
+const groupingMisconceptions: VariantInput["misconceptions"] = [
+  { id: "ns.group-from-left", title: "Grouped from the left", nudgeKey: "ns.group-from-left", detect: { type: "group-from-left" } },
+  { id: "ns.group-no-padding", title: "Short group not padded", nudgeKey: "ns.group-no-padding", detect: { type: "group-no-padding" } },
+  { id: "ns.wrong-group-size", title: "Wrong group size", nudgeKey: "ns.wrong-group-size", detect: { type: "group-wrong-size" } },
+  { id: "ns.hex-digit-decimal", title: "Wrote the decimal value instead of a hex digit", nudgeKey: "ns.hex-letter", detect: { type: "digit-as-decimal" } },
 ];
+
+const groupingReactions = { stepNext: "Good. Now the next goal.", correct: "Good. Every group has its digit.", correctAfterHints: "Right. Every group has its digit." };
 
 const steps26 = [
   { dividend: 26, quotient: 13, remainder: 0 as const },
@@ -79,8 +93,8 @@ const steps37 = [
   { dividend: 1, quotient: 0, remainder: 1 as const },
 ];
 
-const vars26 = { value: 26, answerBits: "11010", msb: 1, groups3: "011 010", groups4: "0001 1010", answerOct: "32", answerHex: "1A" };
-const vars37 = { value: 37, answerBits: "100101", msb: 1, groups3: "100 101", groups4: "0010 0101", answerOct: "45", answerHex: "25" };
+const vars26 = { value: 26, answerBits: "11010", msb: 1, answerOct: "32", answerHex: "1A" };
+const vars37 = { value: 37, answerBits: "100101", msb: 1, answerOct: "45", answerHex: "25" };
 
 export const numberSystemsTopic: TopicInput = {
   id: "number-systems",
@@ -229,7 +243,7 @@ export const numberSystemsTopic: TopicInput = {
           ],
         },
 
-        /* ---- Q3: octal by grouping three bits ---- */
+        /* ---- Q3: octal by grouping three bits, one goal at a time (#44) ---- */
         {
           id: "ns.q.octal",
           conceptId: "ns.octal-grouping",
@@ -237,47 +251,60 @@ export const numberSystemsTopic: TopicInput = {
           variants: [
             {
               id: "v26",
-              prompt: "({value})₁₀ = ({answerBits})₂. Group the bits in threes from the right and write the number in octal.",
-              spec: { kind: "numeric", base: 8, answer: "32", context: { type: "bits", bits: "11010", groupSize: 3 } },
-              vars: { ...vars26, groupSize: 3 },
-              hints: octalHints,
-              misconceptions: [
-                { id: "ns.group-from-left", title: "Grouped from the left", nudgeKey: "ns.group-from-left", detect: { type: "equals", value: "62" } },
-                { id: "ns.copied-decimal", title: "Copied the decimal value", nudgeKey: "ns.copied-decimal", detect: { type: "equals", value: "26" } },
-              ],
+              prompt: "({value})₁₀ = ({answerBits})₂. Write it in octal: first mark groups of three bits from the right, then write one digit under each group.",
+              spec: { kind: "bit-grouping", bits: "11010", groupSize: 3, answer: "32" },
+              vars: { ...vars26, groups: "011 010" },
+              hints: groupHints,
+              hintsByStep: { group: groupHints, digit: octalDigitHints },
+              misconceptions: groupingMisconceptions,
+              reactions: groupingReactions,
               explanation: [
-                { id: "s1", say: "One octal digit stands for three bits. Group from the right and pad with a zero: {groups3}.", stage: { groups: ["011", "010"] } },
+                { id: "s1", say: "One octal digit stands for three bits. We split {answerBits} from the right.", stage: { groups: [] } },
                 {
                   id: "s2",
-                  say: "Take the left group first.",
+                  say: "From the right: 010 is one group. Two bits are left over: 11.",
+                  stage: { groups: [], attention: 0 },
+                  ask: { prompt: "The left group 11 has only two bits. What do we do?", options: ["Add one 0 on its left: 011", "Add one 0 on its right: 110", "Leave it as 11"], correctIndex: 0, afterCorrect: "Yes. A zero on the left does not change the value.", afterWrong: "Add the zero on the left: 011. A zero there does not change the value." },
+                },
+                {
+                  id: "s3",
+                  say: "The groups are 011 and 010. Take the left group first.",
                   stage: { groups: ["011", "010"], attention: 0 },
                   ask: { prompt: "What is 011 as a number?", options: ["3", "6", "11"], correctIndex: 0, afterCorrect: "Yes: 2 + 1 = 3.", afterWrong: "The weights are 4, 2, 1. 011 is 2 + 1 = 3." },
                 },
-                { id: "s3", say: "010 is 2. So the answer is ({answerOct})₈. Check: 3 × 8 + 2 = {value}.", stage: { groups: ["011", "010"], done: true } },
+                { id: "s4", say: "010 is 2. So ({value})₁₀ = ({answerOct})₈. Check: 3 × 8 + 2 = {value}.", stage: { groups: ["011", "010"], done: true } },
               ],
             },
             {
               id: "v37",
-              prompt: "({value})₁₀ = ({answerBits})₂. Group the bits in threes from the right and write the number in octal.",
-              spec: { kind: "numeric", base: 8, answer: "45", context: { type: "bits", bits: "100101", groupSize: 3 } },
-              vars: { ...vars37, groupSize: 3 },
-              hints: octalHints,
-              misconceptions: [{ id: "ns.copied-decimal", title: "Copied the decimal value", nudgeKey: "ns.copied-decimal", detect: { type: "equals", value: "37" } }],
+              prompt: "({value})₁₀ = ({answerBits})₂. Write it in octal: first mark groups of three bits from the right, then write one digit under each group.",
+              spec: { kind: "bit-grouping", bits: "100101", groupSize: 3, answer: "45" },
+              vars: { ...vars37, groups: "100 101" },
+              hints: groupHints,
+              hintsByStep: { group: groupHints, digit: octalDigitHints },
+              misconceptions: groupingMisconceptions,
+              reactions: groupingReactions,
               explanation: [
-                { id: "s1", say: "Group in threes from the right: {groups3}.", stage: { groups: ["100", "101"] } },
+                { id: "s1", say: "Split {answerBits} into threes from the right.", stage: { groups: [] } },
                 {
                   id: "s2",
+                  say: "Six bits make exactly two groups of three.",
+                  stage: { groups: ["100", "101"] },
+                  ask: { prompt: "Do we need to add zeros?", options: ["No, both groups have three bits", "Yes, one zero on the left"], correctIndex: 0, afterCorrect: "Right. Both groups are full.", afterWrong: "6 bits = 2 × 3, so both groups are already full." },
+                },
+                {
+                  id: "s3",
                   say: "Take the left group first.",
                   stage: { groups: ["100", "101"], attention: 0 },
                   ask: { prompt: "What is 100 as a number?", options: ["4", "1", "100"], correctIndex: 0, afterCorrect: "Yes, 4.", afterWrong: "The weights are 4, 2, 1. Only the 4 is on." },
                 },
-                { id: "s3", say: "101 is 4 + 1 = 5. So the answer is ({answerOct})₈. Check: 4 × 8 + 5 = {value}.", stage: { groups: ["100", "101"], done: true } },
+                { id: "s4", say: "101 is 4 + 1 = 5. So ({value})₁₀ = ({answerOct})₈. Check: 4 × 8 + 5 = {value}.", stage: { groups: ["100", "101"], done: true } },
               ],
             },
           ],
         },
 
-        /* ---- Q4: hexadecimal by grouping four bits ---- */
+        /* ---- Q4: hexadecimal by grouping four bits, one goal at a time (#44) ---- */
         {
           id: "ns.q.hex",
           conceptId: "ns.hex-grouping",
@@ -285,46 +312,54 @@ export const numberSystemsTopic: TopicInput = {
           variants: [
             {
               id: "v26",
-              prompt: "({value})₁₀ = ({answerBits})₂. Group the bits in fours from the right and write the number in hexadecimal.",
-              spec: { kind: "numeric", base: 16, answer: "1A", context: { type: "bits", bits: "11010", groupSize: 4 } },
-              vars: { ...vars26, groupSize: 4 },
-              hints: hexHints,
-              misconceptions: [
-                { id: "ns.hex-digit-decimal", title: "Wrote 10 instead of A", nudgeKey: "ns.hex-letter", detect: { type: "equals", value: "110" } },
-                { id: "ns.group-from-left", title: "Grouped from the left", nudgeKey: "ns.group-from-left", detect: { type: "equals", value: "D0" } },
-                { id: "ns.wrong-group-size", title: "Used groups of three", nudgeKey: "ns.wrong-group-size", detect: { type: "equals", value: "32" } },
-                { id: "ns.copied-decimal", title: "Copied the decimal value", nudgeKey: "ns.copied-decimal", detect: { type: "equals", value: "26" } },
-              ],
+              prompt: "({value})₁₀ = ({answerBits})₂. Write it in hexadecimal: first mark groups of four bits from the right, then write one digit under each group.",
+              spec: { kind: "bit-grouping", bits: "11010", groupSize: 4, answer: "1A" },
+              vars: { ...vars26, groups: "0001 1010" },
+              hints: groupHints,
+              hintsByStep: { group: groupHints, digit: hexDigitHints },
+              misconceptions: groupingMisconceptions,
+              reactions: groupingReactions,
               explanation: [
-                { id: "s1", say: "One hexadecimal digit stands for four bits. Group from the right and pad with zeros: {groups4}.", stage: { groups: ["0001", "1010"] } },
+                { id: "s1", say: "One hexadecimal digit stands for four bits. From the right: 1010 is one group, and 1 is left over.", stage: { groups: [] } },
                 {
                   id: "s2",
-                  say: "1010 is 8 + 2 = 10. Hexadecimal writes 10 as one digit.",
+                  say: "The left group has only one bit.",
+                  stage: { groups: [], attention: 0 },
+                  ask: { prompt: "How many zeros do we add on its left?", options: ["3", "1", "0"], correctIndex: 0, afterCorrect: "Yes: 0001 has four bits.", afterWrong: "A group needs four bits. 1 becomes 0001: three zeros." },
+                },
+                {
+                  id: "s3",
+                  say: "The groups are 0001 and 1010. 1010 is 8 + 2 = 10, and hexadecimal writes 10 as one digit.",
                   stage: { groups: ["0001", "1010"], attention: 1 },
                   ask: { prompt: "Which hexadecimal digit is 10?", options: ["A", "B", "10"], correctIndex: 0, afterCorrect: "Yes, A.", afterWrong: "After 9 comes A = 10, then B = 11, up to F = 15." },
                 },
-                { id: "s3", say: "0001 is 1. So the answer is ({answerHex})₁₆. Check: 1 × 16 + 10 = {value}.", stage: { groups: ["0001", "1010"], done: true } },
+                { id: "s4", say: "0001 is 1. So ({value})₁₀ = ({answerHex})₁₆. Check: 1 × 16 + 10 = {value}.", stage: { groups: ["0001", "1010"], done: true } },
               ],
             },
             {
               id: "v37",
-              prompt: "({value})₁₀ = ({answerBits})₂. Group the bits in fours from the right and write the number in hexadecimal.",
-              spec: { kind: "numeric", base: 16, answer: "25", context: { type: "bits", bits: "100101", groupSize: 4 } },
-              vars: { ...vars37, groupSize: 4 },
-              hints: hexHints,
-              misconceptions: [
-                { id: "ns.wrong-group-size", title: "Used groups of three", nudgeKey: "ns.wrong-group-size", detect: { type: "equals", value: "45" } },
-                { id: "ns.copied-decimal", title: "Copied the decimal value", nudgeKey: "ns.copied-decimal", detect: { type: "equals", value: "37" } },
-              ],
+              prompt: "({value})₁₀ = ({answerBits})₂. Write it in hexadecimal: first mark groups of four bits from the right, then write one digit under each group.",
+              spec: { kind: "bit-grouping", bits: "100101", groupSize: 4, answer: "25" },
+              vars: { ...vars37, groups: "0010 0101" },
+              hints: groupHints,
+              hintsByStep: { group: groupHints, digit: hexDigitHints },
+              misconceptions: groupingMisconceptions,
+              reactions: groupingReactions,
               explanation: [
-                { id: "s1", say: "Group in fours from the right and pad with zeros: {groups4}.", stage: { groups: ["0010", "0101"] } },
+                { id: "s1", say: "From the right: 0101 is one group, and 10 is left over.", stage: { groups: [] } },
                 {
                   id: "s2",
-                  say: "Take the right group.",
+                  say: "The left group has two bits.",
+                  stage: { groups: [], attention: 0 },
+                  ask: { prompt: "How many zeros do we add on its left?", options: ["2", "1", "0"], correctIndex: 0, afterCorrect: "Yes: 0010.", afterWrong: "A group needs four bits. 10 becomes 0010: two zeros." },
+                },
+                {
+                  id: "s3",
+                  say: "The groups are 0010 and 0101. Take the right group.",
                   stage: { groups: ["0010", "0101"], attention: 1 },
                   ask: { prompt: "What is 0101 as a number?", options: ["5", "10", "101"], correctIndex: 0, afterCorrect: "Yes: 4 + 1 = 5.", afterWrong: "The weights are 8, 4, 2, 1. 0101 is 4 + 1 = 5." },
                 },
-                { id: "s3", say: "0010 is 2. So the answer is ({answerHex})₁₆. Check: 2 × 16 + 5 = {value}.", stage: { groups: ["0010", "0101"], done: true } },
+                { id: "s4", say: "0010 is 2. So ({value})₁₀ = ({answerHex})₁₆. Check: 2 × 16 + 5 = {value}.", stage: { groups: ["0010", "0101"], done: true } },
               ],
             },
           ],
