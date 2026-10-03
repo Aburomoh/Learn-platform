@@ -1,7 +1,7 @@
 # Current State — Backend / Data Engineer
 
-Current assignment: Chapter 1 content complete; #41 subtraction exercises in QA (#161).
-Recent important decision: `column-addition` `endCarry: "drop"` for fixed-width complements (Pedagogy, gap 15); variants follow by id across a practice (#141).
+Current assignment: #197 Boolean module for Chapters 2–5 (this PR); Chapter 1 content complete.
+Recent important decision: minimal SOP returns all minimal covers (fewest terms, then literals) so K-map grading accepts any equal grouping.
 Blocker: None
-Relevant issue/PR: #161 (#41); merged #135, #136, #139, #140, #146, #149, #150, #156; queued #55.
-Next expected action: #55 notation token when `ready`; Chapter 2 starts with a pure Boolean module (review note on #131).
+Relevant issue/PR: #197 (epic #192); merged #161, #171, #174, #177.
+Next expected action: Chapter 2 kinds on top of this module (truth-table, expression) as #192 tasks become ready.
