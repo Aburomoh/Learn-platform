@@ -51,7 +51,8 @@ current one is done; earlier steps stay done. Be patient: no time pressure, and 
 retried on its own. Grouping for octal/hex is its own checked step before the digits (#44).
 
 After Explain Slowly the next attempt uses different numbers (another variant), so a revealed
-answer can never complete a question (#42). Every content task needs at least two variants.
+answer can never complete a question (#42). Every content task needs at least two variants;
+prefer three where cheap, so a second explanation does not return to explained numbers (#80).
 
 ## Pedagogy veto
 The Pedagogy Engineer may file `PEDAGOGY VETO — TASK-###` (advisory to the owner; format in
