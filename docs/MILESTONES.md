@@ -38,11 +38,15 @@ Chapter 1 (DivisionChain, step-aware tutor, read-off, octal and hex by grouping)
 with standard symbols and right-angle wires (Frontend session); #21 Vercel project linked. Next:
 walk the circuit gate by gate.
 
+**M1.1 close-out (before M1.2 frontend, tutor and content work).** #32 gate-by-gate circuit walk
+(Frontend); pedagogy vetoes on #25: #42 retry on another variant after Explain Slowly (AI Tutor,
+High), #45 content fixes (Backend), #44 octal/hex grouping as two checked steps (Frontend, after #32).
+
 ## M2 — Real content for one course (proposed, not started)
 Owner supplies slides/questions for one CET course; Backend/Data + Pedagogy structure it with
 the M1 schema and record what the schema lacks (input to the Instructor Studio design).
 
-## M1.2 — ECET 111 Chapter 1 complete (proposed, awaiting Director approval)
+## M1.2 — ECET 111 Chapter 1 complete (approved by Director with conditions, 2026-10-03)
 Rest of Chapter 1 after M1.1 closes (#32 gate-by-gate circuit walk): binary addition, 1's and 2's
 complement, subtraction by 2's complement, and the slide exercises. Every question is walked in
 checked steps (owner feedback of 2026-10-03); all content DEMO until instructor approval.
@@ -51,7 +55,7 @@ checked steps (owner feedback of 2026-10-03); all content DEMO until instructor 
 |---|---|---|---|
 | #33 | `column-addition` schema + grader | Backend | — |
 | #35 | `bit-complement` schema + grader | Backend | — |
-| #43 | Exercise: 88 and 73 conversions (existing kinds) | Backend | — |
+| #43 | Exercise: 88 and 73 conversions (existing kinds) | Backend | #42, #44 |
 | #34 | ColumnAddition interaction | Frontend | #33 |
 | #36 | Bit-complement interaction | Frontend | #35 |
 | #37 | Tutor messages for both | AI Tutor | #33, #35 |
@@ -60,8 +64,13 @@ checked steps (owner feedback of 2026-10-03); all content DEMO until instructor 
 | #40 | Subtraction by 2's complement, positive (13−9, 12−6) | Backend | #39 |
 | #41 | Exercise: 15−4 and 10−14 (negative result) | Backend | #40 |
 
-Content and interaction tasks carry pedagogy review. Tasks become `ready` when approved and their
-dependencies are merged; #33, #35 and #43 can start in parallel with #32.
+Content and interaction tasks carry pedagogy review. Only #33 and #35 (schema + grader, nothing
+learner-facing) are `ready` now; the rest go `ready` as their dependencies merge, after the M1.1
+close-out. #35 first checks whether the existing `numeric` kind with `bits` context and a
+first-wrong-bit detector is enough; if so, no new kind is added and #36 shrinks or closes.
+
+**Variant rule (from #42).** Every content question has at least two variants: the walked example
+(Explain Slowly) uses one, the retry uses another, so an explained answer can never complete it.
 
 ## Status log (newest first)
 - 2026-10-03 — M1.1 opened from owner feedback; course renamed to ECET 111, Chapter 1 method adopted.
