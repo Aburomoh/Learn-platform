@@ -1,0 +1,132 @@
+.layout {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 1200px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: start;
+  }
+  .tutor {
+    order: 2;
+    position: sticky;
+    top: 68px;
+  }
+}
+
+@media (max-width: 1199px) {
+  .tutor {
+    position: sticky;
+    top: 52px;
+    z-index: 5;
+    background: var(--bg);
+    padding-bottom: var(--space-2);
+  }
+}
+
+.stage {
+  display: grid;
+  gap: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: baseline;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.step {
+  font-weight: 600;
+}
+
+.concept::before {
+  content: "·";
+  margin-inline-end: var(--space-2);
+}
+
+.question {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.prompt {
+  font-size: var(--text-md);
+  margin: 0;
+}
+
+.feedback {
+  margin: 0;
+  font-weight: 600;
+}
+
+.ok {
+  color: var(--success);
+}
+
+.no {
+  color: var(--error);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.stepCount {
+  margin-inline-end: auto;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.hintText {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.bits {
+  font-size: var(--text-xl);
+  letter-spacing: 0.15em;
+  margin: 0;
+}
+
+.groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.group {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--text-lg);
+  letter-spacing: 0.1em;
+  transition: background var(--dur-base) var(--ease);
+}
+
+.groupAttention {
+  background: var(--highlight-soft);
+  border-color: var(--accent);
+}
+
+.groupValue {
+  font-size: var(--text-base);
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
