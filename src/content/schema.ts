@@ -68,6 +68,12 @@ export const MisconceptionDetector = z.discriminatedUnion("type", [
   z.object({ type: z.literal("division-quotient") }),
   /** Division step: quotient and remainder entered in each other's place. */
   z.object({ type: z.literal("division-swapped") }),
+  /** Column addition: wrote the decimal column total (2 or 3) instead of a bit. */
+  z.object({ type: z.literal("addition-wrote-two") }),
+  /** Column addition: the carry from the previous column was not added in. */
+  z.object({ type: z.literal("addition-carry-ignored") }),
+  /** Column addition: sum bit and carry out entered in each other's place. */
+  z.object({ type: z.literal("addition-swapped") }),
 ]);
 
 export const MisconceptionSchema = z.object({
@@ -109,12 +115,37 @@ export const RepeatedDivisionSpec = z.object({
   steps: z.array(DivisionStep).min(2).max(8),
 });
 
+const bitString = z.string().regex(/^[01]+$/, "bits are 0s and 1s");
+
+/** Two equal-width binary operands (2–8 bits) added column by column. */
+const AdditionOperands = z
+  .object({ a: bitString.min(2).max(8), b: bitString.min(2).max(8) })
+  .refine((o) => o.a.length === o.b.length, "operands must have equal width");
+
+/**
+ * Binary addition one column at a time, LSB first (ECET 111 Ch.1: 0+0=0, 0+1=1, 1+1=0 carry 1).
+ * Each column is one checked step answered as (sum bit, carry out); the final carry out is a
+ * last step of its own and becomes the extra leftmost result bit. Column truth is computed by
+ * `additionSteps`; `answer` is optional and only checked by a content test.
+ */
+export const ColumnAdditionSpec = z
+  .object({
+    kind: z.literal("column-addition"),
+    a: bitString.min(2).max(8),
+    b: bitString.min(2).max(8),
+    /** Optional authored result (width + 1 bits, final carry first). */
+    answer: bitString.optional(),
+  })
+  .refine((o) => o.a.length === o.b.length, "operands must have equal width");
+
 /** What is shown above a numeric question so the student works from something visible. */
 export const NumericContext = z.discriminatedUnion("type", [
   /** A completed division chain to read the remainders from. */
   z.object({ type: z.literal("division-chain"), value: z.number().int().positive(), steps: z.array(DivisionStep).min(2).max(8) }),
   /** A binary string to be grouped by 3 (octal) or 4 (hex) bits from the right. */
   z.object({ type: z.literal("bits"), bits: z.string().regex(/^[01]+$/), groupSize: z.union([z.literal(3), z.literal(4)]) }),
+  /** A completed column addition (operands, carry row and result). */
+  z.object({ type: z.literal("addition"), operands: AdditionOperands }),
 ]);
 
 /** Numeric entry in a given base. */
@@ -130,6 +161,8 @@ export const MultipleChoiceSpec = z.object({
   kind: z.literal("multiple-choice"),
   options: z.array(z.object({ id, text: template, misconceptionId: id.optional() })).min(2).max(5),
   correctOptionId: id,
+  /** Optional worked result shown above the options (same contexts as numeric questions). */
+  context: NumericContext.optional(),
 });
 
 export const GateType = z.enum(["AND", "OR", "NOT", "XOR", "NAND", "NOR"]);
@@ -147,7 +180,7 @@ export const CircuitSpec = z.object({
   inputsToggleable: z.boolean().default(false),
 });
 
-export const InteractionSpec = z.discriminatedUnion("kind", [PlaceValueSpec, NumericSpec, MultipleChoiceSpec, CircuitSpec, RepeatedDivisionSpec]);
+export const InteractionSpec = z.discriminatedUnion("kind", [PlaceValueSpec, NumericSpec, MultipleChoiceSpec, CircuitSpec, RepeatedDivisionSpec, ColumnAdditionSpec]);
 
 /** A concrete instance of a question. The first variant is primary; others are retry variations. */
 export const VariantSchema = z.object({
@@ -224,6 +257,7 @@ export type NumericSpec = z.infer<typeof NumericSpec>;
 export type NumericContext = z.infer<typeof NumericContext>;
 export type RepeatedDivisionSpec = z.infer<typeof RepeatedDivisionSpec>;
 export type DivisionStep = z.infer<typeof DivisionStep>;
+export type ColumnAdditionSpec = z.infer<typeof ColumnAdditionSpec>;
 export type MultipleChoiceSpec = z.infer<typeof MultipleChoiceSpec>;
 export type CircuitSpec = z.infer<typeof CircuitSpec>;
 export type InteractionSpec = z.infer<typeof InteractionSpec>;

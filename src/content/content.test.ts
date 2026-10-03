@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { courses, getActivity, listActivityParams } from "./index";
-import { evaluateCircuit, grade, valueToBits, bitsToValue, divisionSteps, groupBits } from "./grade";
+import { evaluateCircuit, grade, valueToBits, bitsToValue, divisionSteps, groupBits, additionSteps, additionResult, additionStepVars } from "./grade";
+import { InteractionSpec, MultipleChoiceSpec, NumericSpec } from "./schema";
+import { addition1101 } from "./fixtures/columnAddition";
 import { fill } from "./template";
 import type { Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
@@ -20,6 +22,7 @@ function allVariants(): { path: string; variant: Variant }[] {
 
 /** Every set of template variables a variant can be rendered with (one per step if multi-step). */
 function varSets(v: Variant): Record<string, string | number>[] {
+  if (v.spec.kind === "column-addition") return additionSteps(v.spec.a, v.spec.b).map((s) => ({ ...v.vars, ...additionStepVars(s) }));
   if (v.spec.kind !== "repeated-division") return [v.vars];
   return v.spec.steps.map((s, i) => ({ ...v.vars, dividend: s.dividend, quotient: s.quotient, remainder: s.remainder, stepNumber: i + 1 }));
 }
@@ -121,6 +124,15 @@ describe("authored truth is internally consistent", () => {
     }
   });
 
+  it("column-addition answers, where authored, equal the computed sum", () => {
+    for (const { path, variant } of [...allVariants(), { path: "fixture/v1101", variant: addition1101 }]) {
+      const spec = variant.spec;
+      if (spec.kind !== "column-addition" || !spec.answer) continue;
+      expect(spec.answer, path).toBe(additionResult(spec.a, spec.b));
+      expect(parseInt(spec.answer, 2), path).toBe(parseInt(spec.a, 2) + parseInt(spec.b, 2));
+    }
+  });
+
   it("circuit answers equal the evaluated circuit", () => {
     for (const { path, variant } of allVariants()) {
       if (variant.spec.kind !== "circuit-predict") continue;
@@ -201,6 +213,51 @@ describe("grade()", () => {
   });
 
   it("rejects mismatched answer kinds", () => {
+    expect(() => grade(addition1101, { kind: "numeric", text: "10100" })).toThrow();
     expect(() => grade(mc, { kind: "numeric", text: "1" })).toThrow();
+  });
+});
+
+describe("column addition (#33)", () => {
+  const add = (step: number, sum: number, carry?: number) => grade(addition1101, { kind: "column-addition", step, sum, carry });
+
+  it("computes the columns LSB first, with the end carry as a final step", () => {
+    const steps = additionSteps("1101", "0111");
+    expect(steps.map((s) => [s.sum, s.carryOut])).toEqual([[0, 1], [0, 1], [1, 1], [0, 1], [1, 0]]);
+    expect(steps.at(-1)).toMatchObject({ final: true, carryIn: 1, sum: 1 });
+    expect(additionResult("1101", "0111")).toBe("10100");
+    expect(additionResult("0101", "0010")).toBe("00111"); // no end carry: still a final step, bit 0
+    expect(additionStepVars(steps[2])).toMatchObject({ place: 4, aBit: 1, bBit: 1, carryIn: 1, stepNumber: 3 });
+  });
+
+  it("grades one column at a time: partial until the final carry step", () => {
+    expect(add(0, 0, 1)).toMatchObject({ correct: true, partial: true, normalized: "1+1+0=0c1" });
+    expect(add(3, 0, 1)).toMatchObject({ correct: true, partial: true });
+    expect(add(4, 1)).toMatchObject({ correct: true, partial: false, normalized: "final=1" });
+  });
+
+  it("recognises addition misconceptions", () => {
+    expect(add(0, 2, 0)).toMatchObject({ correct: false, misconceptionId: "add.wrote-two" });
+    expect(add(2, 3, 0)).toMatchObject({ correct: false, misconceptionId: "add.wrote-two" });
+    expect(add(0, 1, 0)).toMatchObject({ correct: false, misconceptionId: "add.swapped" });
+    expect(add(1, 1, 0)).toMatchObject({ correct: false, misconceptionId: "add.carry-ignored" }); // 0+1 without the carry
+    expect(add(2, 0, 1)).toMatchObject({ correct: false, misconceptionId: "add.carry-ignored" });
+    expect(add(4, 0)).toMatchObject({ correct: false, misconceptionId: "add.carry-ignored" }); // end carry not brought down
+    expect(add(0, 0, 0).misconceptionId).toBeUndefined();
+  });
+
+  it("rejects malformed answers and specs", () => {
+    expect(() => add(5, 0, 0)).toThrow();
+    expect(() => add(1, 0)).toThrow(); // a column needs a carry
+    expect(InteractionSpec.safeParse({ kind: "column-addition", a: "101", b: "0111" }).success).toBe(false);
+    expect(InteractionSpec.safeParse({ kind: "column-addition", a: "1", b: "1" }).success).toBe(false);
+    expect(InteractionSpec.safeParse({ kind: "column-addition", a: "102", b: "011" }).success).toBe(false);
+  });
+
+  it("numeric and multiple-choice questions can show a completed addition as context", () => {
+    const context = { type: "addition", operands: { a: "1101", b: "0111" } };
+    expect(NumericSpec.safeParse({ kind: "numeric", base: 10, answer: "20", context }).success).toBe(true);
+    expect(MultipleChoiceSpec.safeParse({ kind: "multiple-choice", options: [{ id: "a", text: "20" }, { id: "b", text: "13" }], correctOptionId: "a", context }).success).toBe(true);
+    expect(NumericSpec.safeParse({ kind: "numeric", base: 10, answer: "20", context: { ...context, operands: { a: "1101", b: "111" } } }).success).toBe(false);
   });
 });

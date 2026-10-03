@@ -41,8 +41,8 @@ diagram with standard symbols and right-angle wires — PR #23; #21 Vercel proje
 division is its own checked step. Feedback 2 (unclear circuit): drawing fixed, but the question still
 asks for Y across three gates in one answer, the same size problem. Condition to close M1.1: a
 gate-by-gate circuit walk (stage uses `activeGateId`; one checked answer per gate), pedagogy-reviewed,
-and owner re-walk. Pedagogy vetoes #42 (High), #44 and #45 are pending owner decision
-(DECISIONS_FOR_OWNER item 6; team recommends accepting all three). M1.2 approved with conditions on #47.
+and owner re-walk. Pedagogy vetoes #42 (High), #44 and #45 accepted by the owner and added to the close-out, with the
+phone fixes #52–#54. M1.2 approved with conditions on #47.
 
 **M1.1 close-out (before M1.2 frontend, tutor and content work).** #32 gate-by-gate circuit walk
 (Frontend); pedagogy vetoes on #25 (pending owner decision, #48): #42 retry on another variant after Explain Slowly (AI Tutor,
@@ -79,6 +79,7 @@ Owner supplies slides/questions for one CET course; Backend/Data + Pedagogy stru
 the M1 schema and record what the schema lacks (input to the Instructor Studio design).
 
 ## Status log (newest first)
+- 2026-10-03 — Owner accepted vetoes #42/#44/#45; rule: each step is its own goal. M1.1 close-out = #32, #42, #44, #45, #52–#54.
 - 2026-10-03 — Director: M1.1 close-out = #32; vetoes #42/#44/#45 pending owner; M1.2 approved with conditions (#47); PR #26 resolved (owner approved).
 - 2026-10-03 — M1.1 opened from owner feedback; course renamed to ECET 111, Chapter 1 method adopted.
 - 2026-10-03 — M1 complete on `main`; 9 tasks closed via PRs #10–#18; 73 unit + 8 e2e tests green.
