@@ -236,6 +236,8 @@ export const VariantSchema = z.object({
 
 export const QuestionSchema = z.object({
   id,
+  /** Short challenge name for progress dots and the topic's "Today" line (R1, #110). */
+  label: z.string().min(1).max(24).optional(),
   conceptId: id,
   objectiveId: id,
   variants: z.array(VariantSchema).min(1),
@@ -255,6 +257,8 @@ export const TopicSchema = z.object({
   id,
   title: z.string(),
   summary: z.string(),
+  /** Visual preview on the topic page, e.g. a worked conversion chain. Never uses the activity's own numbers. */
+  preview: z.string().min(1).optional(),
   concepts: z.array(ConceptSchema).min(1),
   objectives: z.array(LearningObjectiveSchema).min(1),
   prerequisites: z.array(id).default([]),

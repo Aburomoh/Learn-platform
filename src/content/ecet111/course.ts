@@ -61,6 +61,7 @@ export const ecet111: CourseInput = {
               questions: [
                 {
                   id: "lg.q.predict",
+                  label: "Gate by gate",
                   conceptId: "lg.signal-flow",
                   objectiveId: "lg.obj.predict",
                   variants: [
@@ -158,6 +159,7 @@ export const ecet111: CourseInput = {
                 },
                 {
                   id: "lg.q.identify",
+                  label: "Name the gate",
                   conceptId: "lg.basic-gates",
                   objectiveId: "lg.obj.identify",
                   variants: [
