@@ -1,7 +1,7 @@
 # Current State — Backend / Data Engineer
 
-Current assignment: #44 octal/hex grouping — schema, grader, step contract (this PR); Q3/Q4 content after Frontend's stage wiring.
-Recent important decision: `bit-grouping` kind with 1 + G steps (group, then one digit per group); `hintsByStep` + `hintsForStep` (ADR-0007 §3).
+Current assignment: None open; #44 grouping delivered (schema #91, content + wiring #92).
+Recent important decision: `bit-grouping` with 1 + G steps and per-step hints (`hintsByStep`/`hintsForStep`, ADR-0007 §3).
 Blocker: None
-Relevant issue/PR: #44; merged #61, #65, #69, #71, #76.
-Next expected action: migrate Chapter 1 Q3/Q4 to `bit-grouping` once the BitGrouping stage is wired; then #55 notation token; #38/#39 content.
+Relevant issue/PR: merged #61, #65, #69, #71, #76, #91, #92 (content); queued #55, #38, #39.
+Next expected action: #55 notation token when `ready`; #38/#39 content once #34/#36 land.
