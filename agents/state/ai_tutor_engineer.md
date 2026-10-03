@@ -1,7 +1,7 @@
 # Current State — AI Tutor Engineer
 
-Current assignment: #62 gate-walk tutor rules (ADR-0007 structural vars); #80 skip explained variants.
-Recent important decision: Gate wording built from structural step vars + catalog (TUTOR_ENGINE rule 8); retry after Explain Slowly uses another variant (#42, merged).
+Current assignment: #83 (#80) awaiting merge; #70 (ar slots) in review.
+Recent important decision: Gate wording from structural step vars + catalog (#62, ADR-0007); retry after Explain Slowly prefers an unexplained variant.
 Blocker: None
-Relevant issue/PR: #62, #83 (#80), #68/#70 (ar, draft, stacked on #62), #37 after #33/#35.
-Next expected action: After #62 merges, wake frontend (#73 cleanup) and un-draft #70; rebase #83 on main.
+Relevant issue/PR: #83, #70 (#68), #37 after #33/#35.
+Next expected action: #37 tutor messages for column addition and bit complement once its dependencies are merged.

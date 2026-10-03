@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getActivity } from "@/content";
 import { createRunnerReducer, initialRunnerState, currentVariant, type RunnerAction, type RunnerState } from "./runnerReducer";
+import type { Activity } from "@/content/schema";
 
 const activity = getActivity("ecet111", "number-systems", "decimal-to-binary")!.activity;
 const reducer = createRunnerReducer(activity);
@@ -10,6 +11,16 @@ const chain26: RunnerAction[] = [step(0, 13, 0), step(1, 6, 1), step(2, 3, 0), s
 
 function run(actions: RunnerAction[], start = initialRunnerState(activity)): RunnerState {
   return actions.reduce((s, a) => reducer(s, a), start);
+}
+
+/** Walks a running Explain Slowly to its end, answering each prediction. */
+function explainAll(s: RunnerState, r = reducer, a: Activity = activity): RunnerState {
+  while (s.explanation) {
+    const ask = currentVariant(a, s).explanation[s.explanation.step].ask;
+    if (ask && !s.explanation.prediction) s = r(s, { type: "PREDICT", index: ask.correctIndex });
+    s = r(s, { type: "CONTINUE" });
+  }
+  return s;
 }
 
 describe("runner reducer: walked division", () => {
@@ -86,6 +97,32 @@ describe("runner reducer: walked division", () => {
     expect(s.completed[0]).toBe(false);
     expect(s.last?.result.correct).toBe(false);
     expect(s.stepIndex).toBe(0);
+  });
+
+  it("#80: explaining twice never retries on the variant explained last", () => {
+    let s = explainAll(run([{ type: "OPEN" }, step(0, 1, 1), { type: "EXPLAIN" }]));
+    expect(currentVariant(activity, s).id).toBe("v37");
+    s = explainAll(run([step(0, 1, 1), { type: "EXPLAIN" }], s));
+    expect(s.explained[0]).toEqual(["v26", "v37"]);
+    expect(currentVariant(activity, s).id).toBe("v26"); // all explained: still switches
+  });
+
+  it("#80: with three variants, an unexplained one is always preferred", () => {
+    const q = activity.questions[0];
+    const three: Activity = { ...activity, questions: [{ ...q, variants: [...q.variants, { ...q.variants[0], id: "v26b" }] }, ...activity.questions.slice(1)] };
+    const r = createRunnerReducer(three);
+    const go = (s: RunnerState, actions: RunnerAction[]) => actions.reduce((x, a) => r(x, a), s);
+    const finish = (s: RunnerState) => explainAll(s, r, three);
+    const id = (s: RunnerState) => currentVariant(three, s).id;
+    // explain v26 → v37; skip ahead to v26b; explain v26b → v37 (not yet explained), not v26
+    let s = finish(go(initialRunnerState(three), [{ type: "OPEN" }, step(0, 1, 1), { type: "EXPLAIN" }]));
+    expect(id(s)).toBe("v37");
+    s = go(s, [{ type: "RETRY_VARIANT" }]);
+    expect(id(s)).toBe("v26b");
+    s = finish(go(s, [step(0, 1, 1), { type: "EXPLAIN" }]));
+    expect(id(s)).toBe("v37");
+    s = finish(go(s, [step(0, 1, 1), { type: "EXPLAIN" }]));
+    expect(s.explained[0].sort()).toEqual(["v26", "v26b", "v37"]);
   });
 
   it("moves through read-off, octal and hex, then finishes", () => {
