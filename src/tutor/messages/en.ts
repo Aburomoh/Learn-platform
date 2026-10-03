@@ -23,7 +23,7 @@ export const en: Record<string, string> = {
 
   // misconception nudges referenced by content (nudgeKey)
   "div.remainder": "The division is right. Check the remainder: is {dividend} even or odd?",
-  "div.quotient": "The remainder is right. Check the top number: half of {dividend}, rounded down.",
+  "div.quotient": "The remainder is right. Check the result in the row below: half of {dividend}, rounded down.",
   "div.swapped": "They are swapped. The result of the division goes in the row below; the remainder goes beside the number.",
   "ns.read-reversed": "That is top to bottom. Read the remainders from the bottom (MSB) up to the top (LSB).",
   "ns.group-from-left": "Group from the right-hand side, and add zeros on the left if a group is short.",

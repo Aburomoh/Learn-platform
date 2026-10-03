@@ -18,8 +18,8 @@ const divisionHints: HintInput[] = [
   { rung: 3, text: "Each step: divide by 2. The whole-number result goes in the row below. What is left over (0 or 1) goes beside the number." },
   { rung: 4, text: "Is {dividend} even or odd? What does that tell you about the remainder?" },
   { rung: 5, text: "Work in this column only: {dividend}.", focus: "div-active", highlight: "div-active" },
-  { rung: 6, text: "{dividend} = 2 × (top number) + remainder. Find the top number first." },
-  { rung: 7, text: "Share {dividend} sweets between two people. Each one gets the top number. What cannot be shared is the remainder." },
+  { rung: 6, text: "{dividend} = 2 × (result) + remainder. Find the result first: it goes in the row below." },
+  { rung: 7, text: "Share {dividend} sweets between two people. Each one gets the result. What cannot be shared is the remainder." },
   { rung: 8, text: "Half of {dividend}, rounded down, goes in the row below. Even numbers leave 0, odd numbers leave 1." },
   { rung: 9, text: "{dividend} ÷ 2 = {quotient}, remainder {remainder}." },
 ];
