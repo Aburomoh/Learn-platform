@@ -7,7 +7,7 @@ import { HintReveal } from "@/interactions/HintReveal/HintReveal";
 import { canRequestScaffold } from "@/tutor";
 import { TutorPanel, useFocusEffects } from "@/tutor/ui";
 import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordAttempt, completeActivity, completeQuestion } from "@/learner";
-import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, type RunnerState } from "./runnerReducer";
+import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
 import { KindPrefetch } from "@/kinds/ui";
@@ -214,7 +214,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         </p>
 
         <QuestionView
-          key={`${variant.id}-${state.interactionKey}`}
+          key={questionViewKey(variant, state)}
           variant={variant}
           last={state.last}
           stepIndex={state.stepIndex}

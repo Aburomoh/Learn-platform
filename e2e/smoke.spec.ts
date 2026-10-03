@@ -278,6 +278,10 @@ test("a kind's view is pre-rendered and its chunk is preloaded only where the ki
   expect(kindChunk, "the circuit kind's chunk is referenced by the page that starts with it").toBeDefined();
   const division = await (await request.get("/courses/ecet111/number-systems/decimal-to-binary/")).text();
   expect(division).not.toContain(kindChunk!);
+  // a first-time student still gets challenge 1 at first paint there too (#158), with the resume script beside it (#190)
+  // React separates text from values with <!-- --> in the HTML
+  expect(division).toMatch(/Challenge (<!-- -->)?1(<!-- -->)? of/);
+  expect(division).toContain("data-resume");
 });
 
 test("Continue resumes at the first unfinished challenge; Review starts at challenge 1", async ({ page, request }) => {
