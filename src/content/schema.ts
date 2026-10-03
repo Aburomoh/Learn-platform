@@ -78,6 +78,14 @@ export const MisconceptionDetector = z.discriminatedUnion("type", [
   z.object({ type: z.literal("addition-swapped") }),
   /** Base-2 numeric answer: fires on any other wrong bit string and reports the leftmost wrong bit. */
   z.object({ type: z.literal("first-wrong-bit") }),
+  /** Bit grouping, step 0: grouped from the left (the last group is the short one). */
+  z.object({ type: z.literal("group-from-left") }),
+  /** Bit grouping, step 0: grouped from the right but the short first group was not padded. */
+  z.object({ type: z.literal("group-no-padding") }),
+  /** Bit grouping, step 0: groups of another size (e.g. 3 bits for hex). */
+  z.object({ type: z.literal("group-wrong-size") }),
+  /** Bit grouping, digit step: wrote the group's decimal value (13) instead of its digit (D). */
+  z.object({ type: z.literal("digit-as-decimal") }),
   /** Circuit walk: wrong output for a gate of this type. */
   z.object({ type: z.literal("gate-output"), gate: GateType }),
 ]);
@@ -144,6 +152,20 @@ export const ColumnAdditionSpec = z
   })
   .refine((o) => o.a.length === o.b.length, "operands must have equal width");
 
+/**
+ * Octal/hex by grouping (ECET 111 Ch.1), one goal at a time (ADR-0007): step 0 marks the groups
+ * from the right, padding with zeros on the left; then one step per group, left to right, for its
+ * digit. Groups and digits are computed (`groupBits`); `answer` is checked by a content test.
+ */
+export const BitGroupingSpec = z.object({
+  kind: z.literal("bit-grouping"),
+  /** Unpadded bits, MSB first. */
+  bits: bitString.min(2).max(16),
+  groupSize: z.union([z.literal(3), z.literal(4)]),
+  /** Octal or hex digits, uppercase. */
+  answer: z.string().regex(/^[0-9A-F]+$/),
+});
+
 /** What is shown above a numeric question so the student works from something visible. */
 export const NumericContext = z.discriminatedUnion("type", [
   /** A completed division chain to read the remainders from. */
@@ -187,7 +209,7 @@ export const CircuitSpec = z.object({
   inputsToggleable: z.boolean().default(false),
 });
 
-export const InteractionSpec = z.discriminatedUnion("kind", [PlaceValueSpec, NumericSpec, MultipleChoiceSpec, CircuitSpec, RepeatedDivisionSpec, ColumnAdditionSpec]);
+export const InteractionSpec = z.discriminatedUnion("kind", [PlaceValueSpec, NumericSpec, MultipleChoiceSpec, CircuitSpec, RepeatedDivisionSpec, ColumnAdditionSpec, BitGroupingSpec]);
 
 /** A concrete instance of a question. The first variant is primary; others are retry variations. */
 export const VariantSchema = z.object({
@@ -197,6 +219,8 @@ export const VariantSchema = z.object({
   /** Values for `{name}` slots in templates (hints, steps, messages). */
   vars: z.record(z.string(), z.union([z.string(), z.number()])).default({}),
   hints: z.array(HintSchema).min(1),
+  /** Per-step ladders keyed by `stepTag` (ADR-0007 §3); `hints` is the fallback. Use `hintsForStep`. */
+  hintsByStep: z.record(z.string(), z.array(HintSchema).min(1)).optional(),
   explanation: z.array(ExplanationStepSchema).min(2),
   misconceptions: z.array(MisconceptionSchema).default([]),
   /** Optional overrides for generic tutor reactions (message text, not keys). */
@@ -265,6 +289,7 @@ export type NumericContext = z.infer<typeof NumericContext>;
 export type RepeatedDivisionSpec = z.infer<typeof RepeatedDivisionSpec>;
 export type DivisionStep = z.infer<typeof DivisionStep>;
 export type ColumnAdditionSpec = z.infer<typeof ColumnAdditionSpec>;
+export type BitGroupingSpec = z.infer<typeof BitGroupingSpec>;
 export type MultipleChoiceSpec = z.infer<typeof MultipleChoiceSpec>;
 export type CircuitSpec = z.infer<typeof CircuitSpec>;
 export type InteractionSpec = z.infer<typeof InteractionSpec>;
