@@ -67,7 +67,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         const reminder = ctx.hints.find((h) => h.rung === 3) ?? nextHint(s, ctx);
         if (reminder && reminder.rung > s.hintLevel) grant(s, reminder.rung, out, fill(reminder.text, ctx.vars));
         const focus = ctx.hints.find((h) => h.focus)?.focus;
-        if (focus) out.push({ type: "FOCUS", target: focus });
+        if (focus) out.push({ type: "FOCUS", target: fill(focus, ctx.vars) });
         out.push({ type: "REQUEST_RETRY" });
         break;
       }
@@ -82,7 +82,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       const h = nextHint(s, ctx);
       if (h) {
         grant(s, h.rung, out, fill(h.text, ctx.vars));
-        pointAt(h, out);
+        pointAt(h, out, ctx);
       }
       out.push({ type: "REQUEST_RETRY" });
       break;
@@ -94,7 +94,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       s = { ...s, stage: "await_answer", attempts: 0, hesitationPrompted: false, hintsEverUsed: s.hintsEverUsed || s.hintLevel > 0, hintLevel: 0, grantedRungs: [], lastMisconception: undefined, expression: "encouraging" };
       express("encouraging");
       if (ctx.reactions?.stepNext) sayText("step.next", ctx.reactions.stepNext);
-      else say("step.next");
+      else say(stepNextKey(ctx));
       out.push({ type: "STEP_DONE" });
       break;
     }
@@ -114,7 +114,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       s.expression = h.rung >= 6 ? "explaining" : h.rung === 4 ? "thinking" : "neutral";
       express(s.expression);
       grant(s, h.rung, out, fill(h.text, ctx.vars));
-      pointAt(h, out);
+      pointAt(h, out, ctx);
       break;
     }
 
@@ -202,6 +202,13 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
   return { state: s, actions: out };
 }
 
+/** Circuit walks name the next gate, and say when it is the last one (vars are for the new step). */
+function stepNextKey(ctx: ActivityContext): string {
+  const { gateName, stepNumber, gateCount } = ctx.vars;
+  if (gateName === undefined) return "step.next";
+  return stepNumber !== undefined && stepNumber === gateCount ? "step.last-gate" : "step.next-gate";
+}
+
 function misconceptionKey(ctx: ActivityContext, id: string): string | undefined {
   return ctx.misconceptionKeys?.[id];
 }
@@ -213,11 +220,13 @@ function grant(s: TutorState, rung: number, out: TutorAction[], text: string) {
   out.push({ type: "SAY", messageKey: `hint.rung-${rung}`, text });
 }
 
-function pointAt(h: { focus?: string; highlight?: string; rung: number }, out: TutorAction[]) {
-  if (h.focus) out.push({ type: "FOCUS", target: h.focus });
+/** Pointer targets may name the current step's element, e.g. "gate-{gateId}"; filled here. */
+function pointAt(h: { focus?: string; highlight?: string; rung: number }, out: TutorAction[], ctx: ActivityContext) {
+  if (h.focus) out.push({ type: "FOCUS", target: fill(h.focus, ctx.vars) });
   if (h.highlight) {
-    out.push({ type: "HIGHLIGHT", target: h.highlight });
-    if (h.rung >= 5) out.push({ type: "PULSE", target: h.highlight });
+    const target = fill(h.highlight, ctx.vars);
+    out.push({ type: "HIGHLIGHT", target });
+    if (h.rung >= 5) out.push({ type: "PULSE", target });
   }
 }
 
