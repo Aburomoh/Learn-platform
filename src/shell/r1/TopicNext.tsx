@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import type { Course, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
-import { practiceHref, reviewHref, topicAction } from "../primaryAction";
+import { practiceAction, topicAction } from "../primaryAction";
 import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
 import { PrimaryAction, effortCue } from "./PrimaryAction";
 import styles from "./r1.module.css";
@@ -27,15 +27,26 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
   const record = progress.activities[activity.id];
   const done = record?.status === "completed" ? activity.questions.map((q) => q.id) : (record?.completedQuestions ?? []);
   const finished = action.kind === "next-topic" || action.kind === "review";
+  const several = topic.activities.length > 1;
 
   return (
     <div className={styles.next} style={ready ? undefined : { visibility: "hidden" }} aria-busy={!ready} data-action={action.kind}>
       <PrimaryAction
         primary={action.primary}
         secondary={action.secondary}
-        effort={finished ? "Completed. You can review it any time." : effortCue(activity.questions.length, activity.minutes)}
+        effort={finished ? "Completed. You can review it any time." : several ? `About ${activity.minutes} min` : effortCue(activity.questions.length, activity.minutes)}
       />
-      {!finished && <ChallengeSteps steps={stepsFrom(activity.questions, done, record?.status === "started")} />}
+      {!finished && (
+        <div className={styles.stepsBlock}>
+          {/* with several practices, say which one the steps belong to */}
+          {several && (
+            <p className={styles.stepsLabel}>
+              {activity.title} · {activity.questions.length} short challenge{activity.questions.length === 1 ? "" : "s"}
+            </p>
+          )}
+          <ChallengeSteps steps={stepsFrom(activity.questions, done, record?.status === "started")} label={several ? `Challenges of ${activity.title}` : "Challenges"} />
+        </div>
+      )}
 
       {topic.activities.length > 1 && (
         <section className={styles.practices} aria-labelledby="practices-h">
@@ -44,23 +55,24 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
           </h2>
           <ol className={styles.practiceList}>
             {topic.activities.map((a) => {
-              const status = progress.activities[a.id]?.status ?? "new";
+              const own = practiceAction(course, topic, a, progress);
               const count = progress.activities[a.id]?.completedQuestions?.length ?? 0;
-              const line =
-                status === "completed" ? "Completed" : status === "started" ? `${count} of ${a.questions.length} challenges done` : effortCue(a.questions.length, a.minutes);
-              const link =
-                status === "completed"
-                  ? { label: "Review", href: reviewHref(course, topic, a) }
-                  : { label: status === "started" ? "Continue" : "Start", href: practiceHref(course, topic, a) };
+              const line = own.kind === "review" ? "Completed" : own.kind === "continue" ? `${count} of ${a.questions.length} challenges done` : effortCue(a.questions.length, a.minutes);
+              // The practice the page button is about has no second button: the primary is its button.
+              const upNext = !finished && a.id === activity.id;
               return (
-                <li key={a.id} className={styles.practiceRow} data-status={status}>
+                <li key={a.id} className={styles.practiceRow} data-status={own.kind} data-up-next={upNext || undefined}>
                   <div className={styles.practiceText}>
                     <h3 className={styles.topicTitle}>{a.title}</h3>
-                    <p className={`${styles.topicStatus} ${status === "completed" ? styles.topicDone : styles.statusMuted}`}>{line}</p>
+                    <p className={`${styles.topicStatus} ${own.kind === "review" ? styles.topicDone : styles.statusMuted}`}>{line}</p>
                   </div>
-                  <Link href={link.href} className={styles.quiet} aria-label={`${link.label}: ${a.title}`}>
-                    {link.label} <span aria-hidden="true">→</span>
-                  </Link>
+                  {upNext ? (
+                    <span className={styles.upNext}>{own.kind === "continue" ? "In progress" : "Up next"}</span>
+                  ) : (
+                    <Link href={own.link.href} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`${own.link.label}: ${a.title}`}>
+                      {own.link.label} <span aria-hidden="true">→</span>
+                    </Link>
+                  )}
                 </li>
               );
             })}

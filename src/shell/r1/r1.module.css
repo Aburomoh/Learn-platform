@@ -191,7 +191,7 @@
 
 .tile sub {
   font-family: var(--font-sans);
-  font-size: 0.7em;
+  font-size: var(--sub-size);
   font-weight: 600;
   line-height: 0;
   color: var(--text-muted);
@@ -554,9 +554,20 @@
   list-style: none;
 }
 
+.stepsBlock {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.stepsLabel {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+/* the action stays on the title row at every width, so all rows match */
 .practiceRow {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2) var(--space-4);
@@ -566,9 +577,23 @@
 }
 
 .practiceText {
+  flex: 1;
   display: grid;
   gap: var(--space-1);
   min-width: 0;
+}
+
+.rowAction,
+.upNext {
+  flex: none;
+  white-space: nowrap;
+}
+
+.upNext {
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 650;
+  color: var(--text-muted);
 }
 
 .practiceText > * {

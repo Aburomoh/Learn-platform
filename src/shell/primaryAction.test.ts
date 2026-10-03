@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getCourse } from "@/content";
 import type { ActivityProgress, OfferingProgress } from "@/learner/progress";
-import { courseAction, topicAction, topicRowAction } from "./primaryAction";
+import { courseAction, practiceAction, topicAction, topicRowAction } from "./primaryAction";
 
 const course = getCourse("ecet111")!;
 const topics = course.modules.flatMap((m) => m.topics);
@@ -91,5 +91,16 @@ describe("topics with more than one practice", () => {
     const action = topicAction(course, multi!, progress({ [a.id]: record("completed") }));
     expect(action).toMatchObject({ kind: "start", primary: { href: `/courses/ecet111/${multi!.id}/${b.id}/` } });
     expect(topicAction(course, multi!, progress({ [a.id]: record("completed"), [b.id]: record("started") })).kind).toBe("continue");
+  });
+});
+
+describe("practiceAction: one practice's own row", () => {
+  it("is Start, Continue or Review from that practice's status alone", () => {
+    const a = practice(0);
+    const href = `/courses/ecet111/${first.id}/${a.id}/`;
+    expect(practiceAction(course, first, a, progress())).toEqual({ kind: "start", link: { label: "Start", href } });
+    expect(practiceAction(course, first, a, progress({ [a.id]: record("new") })).kind).toBe("start");
+    expect(practiceAction(course, first, a, progress({ [a.id]: record("started") }))).toEqual({ kind: "continue", link: { label: "Continue", href } });
+    expect(practiceAction(course, first, a, progress({ [a.id]: record("completed") }))).toEqual({ kind: "review", link: { label: "Review", href: `${href}?review=1` } });
   });
 });
