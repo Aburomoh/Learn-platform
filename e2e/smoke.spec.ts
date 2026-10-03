@@ -162,6 +162,24 @@ test("logic gates activity: walk the circuit gate by gate, then explore inputs",
   await expect(page.getByText("Question 2 of 2")).toBeVisible();
 });
 
+test("circuit text stays at 12 px or more on a 390 px phone, with the whole circuit visible", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/courses/ecet111/logic-gates/predict-gate-output/");
+  await page.getByLabel("1", { exact: true }).check();
+  await page.getByRole("button", { name: "Check" }).click();
+  await expect(page.getByText("Gate 2 of 3: AND")).toBeVisible();
+  const report = await page.evaluate(() => {
+    const box = document.querySelector("[data-diagram]")!;
+    const svg = box.querySelector("svg")!;
+    const scale = svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;
+    const sizes = [...svg.querySelectorAll("text")].map((t) => parseFloat(getComputedStyle(t).fontSize) * scale);
+    return { smallest: Math.min(...sizes), count: sizes.length, boxOverflow: box.scrollWidth - box.clientWidth };
+  });
+  expect(report.count).toBeGreaterThan(8);
+  expect(report.smallest).toBeGreaterThanOrEqual(12);
+  expect(report.boxOverflow).toBeLessThanOrEqual(0);
+});
+
 test("settings: clear local data resets progress", async ({ page }) => {
   await page.goto(ACTIVITY);
   await expect(page.getByTestId("learning-stage")).toBeVisible();

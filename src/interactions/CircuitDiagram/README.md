@@ -23,6 +23,7 @@ drawn like a textbook schematic: standard gate symbols, one pin per gate input, 
   channel, so wires of different signals never share a segment; a signal that feeds two gates
   shows a junction dot; a wire that would pass through a gate is moved to a free lane.
   `layout.test.ts` asserts these rules on several circuits.
-- The SVG scales with its box down to 0.6× (a three-column circuit fits a 390 px phone). Below
-  that the box scrolls sideways, fades the hidden edge(s), becomes keyboard-focusable and keeps the
-  active gate in view. Toggleable inputs have an enlarged hit area.
+- Text never renders below 12 px: all diagram text is 16 units and the SVG scales with its box
+  down to 0.75× only. The layout is compact so a three-column circuit fits a 390 px phone at that
+  scale. Narrower, the box scrolls sideways, fades the hidden edge(s), becomes keyboard-focusable
+  and keeps the active gate in view. Toggleable inputs have an enlarged hit area.
