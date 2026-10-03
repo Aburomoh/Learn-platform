@@ -23,18 +23,19 @@ describe("topicStatus", () => {
   const minutes = first.activities.reduce((n, a) => n + a.minutes, 0);
 
   it("not started: the effort cue for the whole topic, from authored values", () => {
-    expect(topicStatus(first, { activities: {} })).toEqual({ text: `${total} short challenges · about ${minutes} min`, completed: false });
+    const text = first.activities.length > 1 ? `${first.activities.length} short practices · about ${minutes} min` : `${total} short challenges · about ${minutes} min`;
+    expect(topicStatus(first, { activities: {} })).toEqual({ text, completed: false, started: false });
   });
 
   it("in progress: challenges done across the topic", () => {
     const a = first.activities[0];
     const p = completeQuestion(startActivity({ version: 1, offeringId: "x", activities: {}, concepts: {} }, a.id), a.id, a.questions[0].id);
-    expect(topicStatus(first, p)).toEqual({ text: `1 of ${total} challenges done`, completed: false });
+    expect(topicStatus(first, p)).toEqual({ text: `1 of ${total} challenges done`, completed: false, started: true });
   });
 
   it("completed only when every practice of the topic is", () => {
     const all = Object.fromEntries(first.activities.map((a) => [a.id, { status: "completed" as const, attempts: 1, hintsUsed: 0, independent: true, lastAt: 1 }]));
-    expect(topicStatus(first, { activities: all })).toEqual({ text: "Completed", completed: true });
+    expect(topicStatus(first, { activities: all })).toEqual({ text: "Completed", completed: true, started: true });
   });
 });
 

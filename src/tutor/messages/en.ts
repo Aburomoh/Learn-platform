@@ -7,7 +7,7 @@ export const en = {
   // pages outside the stage (R1 redesign): set expectations, never method hints
   "page.home.first": "Start with the first topic. We'll go one step at a time.",
   "page.home.returning": "Welcome back. We'll carry on from where you stopped.",
-  "page.course.intro": "Take the topics in order. Each one is short, and you can stop and come back at any point.",
+  "page.course.intro": "Take the topics in order. Each challenge is short, and your progress is saved, so you can stop at any point.",
   "page.topic.intro": "We'll do this one step at a time. Try first; I'm here if you need me.",
 
   "open": "Give it a try. I will step in only if you want me to.",
@@ -52,6 +52,7 @@ export const en = {
   "add.wrote-two.carry": "This last step has no bits of its own. Look at the carry out of the column on its right.",
   "ba.copied-bits": "That is the binary number itself. Add up the weights of its 1s: 1, 2, 4, 8, … from the right.",
   "ba.weights-reversed": "The weights start at 1 on the right-hand end. Read them from the right.",
+  "sub.missed-negative": "There is no end carry, so the result is negative. The sum bits are its 2's complement: complement them again to read its size.",
   "sub.kept-carry": "The end carry is not part of the answer. An end carry of 1 means positive: discard it and read the other bits.",
   "add.swapped": "They are swapped. The bit that stays in this column goes underneath; the carry goes up to the next column.",
   "c1.copied": "Those are the bits you started with. The 1's complement flips every bit.",

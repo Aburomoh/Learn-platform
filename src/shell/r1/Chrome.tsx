@@ -56,10 +56,14 @@ export interface TopicRowProps {
   route?: string;
   /** Status or effort line, e.g. "2 of 4 challenges done" or "3 short challenges · about 6 min". */
   status?: string;
+  /** Muted, normal weight for an effort cue; the default (semibold) is for progress. */
+  statusMuted?: boolean;
   /** True for a finished topic: the status gets a check mark as well as its text. */
   completed?: boolean;
   /** Small visual on the left (a `PreviewBoard size="sm"`, a gate glyph…); hidden on phones. */
   visual?: ReactNode;
+  /** Keep the visual column even when this row has no visual, so titles line up down the list. */
+  reserveVisual?: boolean;
   action: ActionLink;
   /** Filled button for the next topic to do; quiet text action for the rest. */
   emphasis?: "primary" | "quiet";
@@ -69,10 +73,14 @@ export interface TopicRowProps {
  * One topic on the course page: a plain surface with a visual, the title and route, a status
  * line and one button. The row itself is never the click target.
  */
-export function TopicRow({ title, href, route, status, completed = false, visual, action, emphasis = "quiet" }: TopicRowProps) {
+export function TopicRow({ title, href, route, status, statusMuted = false, completed = false, visual, reserveVisual = false, action, emphasis = "quiet" }: TopicRowProps) {
   return (
     <li className={styles.topicRow}>
-      {visual && <div className={styles.topicVisual}>{visual}</div>}
+      {(visual || reserveVisual) && (
+        <div className={styles.topicVisual} aria-hidden={visual ? undefined : true}>
+          {visual}
+        </div>
+      )}
       <div className={styles.topicText}>
         <h3 className={styles.topicTitle}>
           {href ? (
@@ -85,7 +93,7 @@ export function TopicRow({ title, href, route, status, completed = false, visual
         </h3>
         {route && <p className={styles.topicRoute}>{route}</p>}
         {status && (
-          <p className={`${styles.topicStatus} ${completed ? styles.topicDone : ""}`}>
+          <p className={`${styles.topicStatus} ${completed ? styles.topicDone : statusMuted ? styles.statusMuted : ""}`}>
             {completed && (
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={styles.check}>
                 <path d="M5 12.5l4.5 4.5L19 7.5" />
