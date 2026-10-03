@@ -152,6 +152,18 @@ describe("content registry", () => {
     expect(grade(v, { kind: "column-addition", step: 5, sum: 0, carry: 0 })).toMatchObject({ correct: true, partial: false });
   });
 
+  it("walks subtraction by 2's complement on 13 − 9 and 12 − 6 (#40), one checked step each", () => {
+    const x = getActivity(COURSE, "binary-arithmetic", "subtraction-positive")!.activity;
+    for (const q of x.questions) expect(q.variants.map((v) => v.id), q.id).toEqual(["v13-9", "v12-6"]);
+    const answer = (qi: number, vi: number) => {
+      const spec = x.questions[qi].variants[vi].spec;
+      return "answer" in spec ? spec.answer : spec.kind === "repeated-division" ? spec.value : spec.kind === "multiple-choice" ? spec.correctOptionId : "";
+    };
+    // B in binary → 1's → 2's → A + 2's (end carry 1) → positive, discard → result
+    expect(x.questions.map((_, i) => answer(i, 0))).toEqual([9, "1001", "0110", "0111", "10100", "positive", "4"]);
+    expect(x.questions.map((_, i) => answer(i, 1))).toEqual([6, "110", "1001", "1010", "10110", "positive", "6"]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
