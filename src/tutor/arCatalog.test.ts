@@ -4,13 +4,13 @@ import { en } from "./messages/en";
 import { ar } from "./messages/ar";
 import { messageKeys, resolveMessage, untranslatedKeys } from "./messages";
 
-describe("ar catalog slots", () => {
+describe("ar catalog", () => {
   afterEach(() => {
-    ar["gate.rule.AND"] = "";
+    delete ar["gate.rule.AND"];
   });
 
-  it("has exactly the en keys", () => {
-    expect(Object.keys(ar).sort()).toEqual(messageKeys().sort());
+  it("only uses en keys", () => {
+    for (const k of Object.keys(ar)) expect(messageKeys(), k).toContain(k);
   });
 
   it("any filled translation keeps every {slot} of the English text", () => {
@@ -21,7 +21,7 @@ describe("ar catalog slots", () => {
     }
   });
 
-  it("untranslated slots fall back to en; filled slots win, including gate wording", () => {
+  it("untranslated keys fall back to en; translations win, including gate wording", () => {
     expect(resolveMessage("open", {}, "ar")).toBe(en.open);
     expect(untranslatedKeys("ar")).toContain("gate.rule.AND");
     ar["gate.rule.AND"] = "AND-ar";

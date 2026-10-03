@@ -1,81 +1,8 @@
 /**
- * Arabic catalog slots. Every `en` key is listed (the type enforces it); an empty string means
- * "not translated yet" and falls back to `en`. Fill only with instructor-approved Arabic, keep
- * every `{slot}` from the English text, and keep messages as short as the English ones.
+ * Arabic catalog. Add a key only when its instructor-approved translation exists; any key not
+ * here falls back to `en`. Keep every `{slot}` from the English text (tested) and keep messages
+ * as short as the English ones. `untranslatedKeys("ar")` lists what is still missing.
  */
 import type { MessageKey } from "./en";
 
-export const ar: Record<MessageKey, string> = {
-  // generic flow
-  "open": "",
-  "wrong.first": "",
-  "wrong.second": "",
-  "wrong.again": "",
-  "correct": "",
-  "correct.after-hints": "",
-  "hint.try-first": "",
-  "hints.exhausted": "",
-  "hesitation": "",
-  "explain.start": "",
-  "explain.done": "",
-  "explain.done-variant": "",
-  "retry.variant": "",
-  "retry.same": "",
-  "step.next": "",
-  "step.next-column": "",
-  "step.next-column-carry": "",
-  "step.last-carry": "",
-  "step.next-gate": "",
-  "step.last-gate": "",
-  "prediction.correct": "",
-  "prediction.wrong": "",
-
-  // misconception nudges referenced by content (nudgeKey)
-  "div.remainder": "",
-  "div.quotient": "",
-  "div.swapped": "",
-  "ns.read-reversed": "",
-  "ns.group-from-left": "",
-  "ns.group-no-padding": "",
-  "ns.wrong-group-size": "",
-  "ns.reversed": "",
-  "ns.missing-largest": "",
-  "ns.extra-place": "",
-  "ns.hex-letter": "",
-  "ns.copied-decimal": "",
-  "add.wrote-two": "",
-  "add.carry-ignored": "",
-  "add.carry-ignored.carry": "",
-  "add.wrote-two.carry": "",
-  "ba.copied-bits": "",
-  "ba.weights-reversed": "",
-  "add.swapped": "",
-  "c1.copied": "",
-  "c1.gave-twos": "",
-  "c1.first-wrong-bit": "",
-  "lg.check-not": "",
-  "lg.check-and": "",
-  "lg.check-or": "",
-  "lg.follow-through": "",
-  "lg.or-vs-and": "",
-  "lg.xor-vs-and": "",
-  "lg.nand-inverted": "",
-  "lg.nor-inverted": "",
-
-  // gate-by-gate circuit walk: filled into {gateRule}, {gateAnalogy}, {gateInputs} for the active gate
-  "gate.rule.NOT": "",
-  "gate.rule.AND": "",
-  "gate.rule.OR": "",
-  "gate.rule.XOR": "",
-  "gate.rule.NAND": "",
-  "gate.rule.NOR": "",
-  "gate.analogy.NOT": "",
-  "gate.analogy.AND": "",
-  "gate.analogy.OR": "",
-  "gate.analogy.XOR": "",
-  "gate.analogy.NAND": "",
-  "gate.analogy.NOR": "",
-  "gate.output-of": "",
-  "gate.input": "",
-  "gate.inputs-two": "",
-};
+export const ar: Partial<Record<MessageKey, string>> = {};
