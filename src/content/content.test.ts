@@ -138,6 +138,14 @@ describe("content registry", () => {
     expect(shared).toBeGreaterThan(0);
   });
 
+  it("walks 1's and 2's complement on the slide examples (#39): flip, rule, then + 1", () => {
+    const x = getActivity(COURSE, "binary-arithmetic", "complements")!.activity;
+    expect(x.questions.map((q) => q.variants.map((v) => v.id))).toEqual([["v100101", "v110010"], ["v100101", "v110010"], ["v100101", "v110010"]]);
+    const [ones, , plus] = x.questions;
+    expect(ones.variants.map((v) => (v.spec.kind === "numeric" ? v.spec.answer : ""))).toEqual(["011010", "001101"]);
+    expect(plus.variants.map((v) => (v.spec.kind === "column-addition" ? `${v.spec.a}+${v.spec.b}=${additionResult(v.spec.a, v.spec.b).slice(1)}` : ""))).toEqual(["011010+000001=011011", "001101+000001=001110"]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -149,7 +157,8 @@ describe("pedagogy guard", () => {
     // Owner feedback (issue #20): the conversion must be walked through the divide-by-2 rule.
     for (const { path, variant } of allVariants()) {
       expect(variant.spec.kind, path).not.toBe("place-value");
-      if (variant.spec.kind === "numeric" && variant.spec.base === 2) expect(variant.spec.context?.type, path).toBe("division-chain");
+      // A binary answer is read off a finished chain, or written bit by bit under a source row (1's complement).
+      if (variant.spec.kind === "numeric" && variant.spec.base === 2) expect(["division-chain", "bit-row"], path).toContain(variant.spec.context?.type);
       if (variant.spec.kind === "numeric" && (variant.spec.base === 8 || variant.spec.base === 16)) expect(variant.spec.context?.type, path).toBe("bits");
     }
   });
@@ -322,7 +331,8 @@ describe("authored truth is internally consistent", () => {
     // Pedagogy #45: a nudge must be right for its question (e.g. octal vs hex group size).
     for (const { path, variant } of allVariants())
       for (const m of variant.misconceptions)
-        for (const vars of varSets(variant)) expect(resolveMessage(m.nudgeKey, vars), `${path}: ${m.id}`).not.toMatch(/\{[a-zA-Z0-9_]+\}/);
+        // `wrongBitNumber` comes with the wrong answer itself (first-wrong-bit), not from the variant.
+        for (const vars of varSets(variant)) expect(resolveMessage(m.nudgeKey, { ...vars, wrongBitNumber: 1 }), `${path}: ${m.id}`).not.toMatch(/\{[a-zA-Z0-9_]+\}/);
   });
 
   it("prediction questions have a valid correctIndex", () => {

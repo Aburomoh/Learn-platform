@@ -6,7 +6,7 @@
  */
 import type { z } from "zod";
 import type { TopicSchema, HintSchema, VariantSchema } from "../schema";
-import { additionResult, additionSteps } from "../grade";
+import { additionResult, additionSteps, complementBits } from "../grade";
 
 type TopicInput = z.input<typeof TopicSchema>;
 type HintInput = z.input<typeof HintSchema>;
@@ -186,6 +186,130 @@ function checkVariant(a: string, b: string, which: "a" | "b" | "sum"): VariantIn
   };
 }
 
+/* ---------- 1's and 2's complement (#39): flip, concept check, then + 1 column by column ---------- */
+
+const onesHints: HintInput[] = [
+  { rung: 2, text: "Not yet. Check each bit against the one above it." },
+  { rung: 3, text: "The 1's complement flips every bit: a 1 becomes 0 and a 0 becomes 1." },
+  { rung: 4, text: "Look at the first bit of {bits}. What does it become?" },
+  { rung: 5, text: "Work from the left, one cell at a time.", focus: "bit-row", highlight: "bit-row" },
+  { rung: 6, text: "Nothing is added or moved: each answer cell is the opposite of the bit above it." },
+  { rung: 7, text: "Like a light switch for every bit: on becomes off, off becomes on." },
+  { rung: 8, text: "Write the opposite under each bit, left to right, until all {width} cells are filled." },
+  { rung: 9, text: "The 1's complement of {bits} is {ones}." },
+];
+
+const ruleHints: HintInput[] = [
+  { rung: 2, text: "Not yet. The 2's complement starts from the 1's complement." },
+  { rung: 3, text: "First flip every bit (1's complement), then add one more step." },
+  { rung: 9, text: "2's complement = 1's complement + 1." },
+];
+
+function complementVars(bits: string) {
+  const ones = complementBits(bits);
+  const twos = additionResult(ones, "1".padStart(bits.length, "0")).slice(1);
+  // `value` names the number set, so later challenges follow the one the student worked on (#141).
+  return { value: parseInt(bits, 2), bits, ones, twos, width: bits.length };
+}
+
+/** One prediction per bit (owner rule: every step a goal). */
+function flipWalk(bits: string): ExplanationInput {
+  const ones = complementBits(bits);
+  return [
+    { id: "s1", say: "The 1's complement flips every bit. We go from the left, one bit at a time.", stage: { revealed: 0 } },
+    ...[...bits].map((b, i) => ({
+      id: `s${i + 2}`,
+      say: `Bit ${i + 1} is ${b}.`,
+      stage: { revealed: i, attention: i },
+      ask: {
+        prompt: `What does ${b} become?`,
+        options: ["0", "1"],
+        correctIndex: Number(ones[i]),
+        afterCorrect: `Yes: ${b} flips to ${ones[i]}.`,
+        afterWrong: `It flips: ${b} becomes ${ones[i]}.`,
+      },
+    })),
+    { id: `s${bits.length + 2}`, say: `So the 1's complement of ${bits} is ${ones}.`, stage: { revealed: bits.length } },
+  ];
+}
+
+function onesVariant(bits: string): VariantInput {
+  const v = complementVars(bits);
+  return {
+    id: `v${bits}`,
+    prompt: "Write the 1's complement of {bits}: change each 1 to 0 and each 0 to 1.",
+    spec: { kind: "numeric", base: 2, answer: v.ones, context: { type: "bit-row", bits } },
+    vars: v,
+    hints: onesHints,
+    misconceptions: [
+      { id: "c1.copied", title: "Copied the bits unchanged", nudgeKey: "c1.copied", detect: { type: "equals", value: bits } },
+      { id: "c1.gave-twos", title: "Gave the 2's complement", nudgeKey: "c1.gave-twos", detect: { type: "equals", value: v.twos } },
+      { id: "c1.first-wrong-bit", title: "A bit not flipped", nudgeKey: "c1.first-wrong-bit", detect: { type: "first-wrong-bit" } },
+    ],
+    explanation: flipWalk(bits),
+  };
+}
+
+function ruleVariant2s(bits: string): VariantInput {
+  const v = complementVars(bits);
+  return {
+    id: `v${bits}`,
+    prompt: "The 1's complement of {bits} is {ones}. How do you get the 2's complement?",
+    spec: {
+      kind: "multiple-choice",
+      options: [
+        { id: "add-one", text: "Add 1 to the 1's complement" },
+        { id: "add-original", text: "Add 1 to the original number" },
+        { id: "flip-again", text: "Flip the bits again" },
+        { id: "minus-one", text: "Subtract 1 from the 1's complement" },
+      ],
+      correctOptionId: "add-one",
+    },
+    vars: v,
+    hints: ruleHints,
+    explanation: [
+      { id: "s1", say: "There are two complements. The 1's complement flips every bit." },
+      {
+        id: "s2",
+        say: "The 2's complement goes one step further, starting from the 1's complement.",
+        ask: { prompt: "Which number do we add 1 to?", options: ["The 1's complement", "The original number"], correctIndex: 0, afterCorrect: "Yes: 2's complement = 1's complement + 1.", afterWrong: "We add 1 to the 1's complement: 2's complement = 1's complement + 1." },
+      },
+    ],
+  };
+}
+
+function plusOneVariant(bits: string): VariantInput {
+  const v = complementVars(bits);
+  const one = "1".padStart(bits.length, "0");
+  const done = `So the 2's complement of ${bits} is ${v.twos}.`;
+  return {
+    id: `v${bits}`,
+    prompt: `Add 1 to the 1's complement, one column at a time: ${v.ones} + ${one}.`,
+    spec: { kind: "column-addition", a: v.ones, b: one, answer: additionResult(v.ones, one) },
+    vars: v,
+    hints: columnHints,
+    hintsByStep: { column: columnHints, carry: lastCarryHints },
+    misconceptions: additionMisconceptions,
+    reactions: { correct: done, correctAfterHints: done },
+    explanation: additionWalk(v.ones, one),
+  };
+}
+
+const COMPLEMENT_SETS = ["100101", "110010"]; // the two slide examples: walk one, retry the other
+
+const complementsActivity: TopicInput["activities"][number] = {
+  id: "complements",
+  title: "1's and 2's complement",
+  summary: "Flip every bit for the 1's complement, then add 1 for the 2's complement.",
+  authority: "DEMO",
+  minutes: 10,
+  questions: [
+    { id: "ba.q.ones", label: "1's complement", conceptId: "ba.complement", objectiveId: "ba.obj.ones", variants: COMPLEMENT_SETS.map(onesVariant) },
+    { id: "ba.q.twos-rule", label: "2's rule", conceptId: "ba.complement", objectiveId: "ba.obj.twos", variants: COMPLEMENT_SETS.map(ruleVariant2s) },
+    { id: "ba.q.plus-one", label: "Add 1", conceptId: "ba.complement", objectiveId: "ba.obj.twos", variants: COMPLEMENT_SETS.map(plusOneVariant) },
+  ],
+};
+
 /* ---------- topic ---------- */
 
 const SLIDE: [string, string] = ["1101", "0111"];
@@ -200,11 +324,14 @@ export const binaryArithmeticTopic: TopicInput = {
     { id: "ba.rules", title: "Single-bit addition", summary: "0 + 0 = 0, 0 + 1 = 1, 1 + 1 = 10 (write 0, carry 1)." },
     { id: "ba.columns", title: "Column addition", summary: "Add from the right, one column at a time, carrying 1 into the next column." },
     { id: "ba.check", title: "Checking in decimal", summary: "Convert both numbers and the sum to decimal; the decimal sum must match." },
+    { id: "ba.complement", title: "1's and 2's complement", summary: "The 1's complement flips every bit; the 2's complement is the 1's complement + 1." },
   ],
   objectives: [
     { id: "ba.obj.rules", conceptId: "ba.rules", text: "State the sum and carry for any two bits." },
     { id: "ba.obj.columns", conceptId: "ba.columns", text: "Add two 4-bit numbers one column at a time, including the end carry." },
     { id: "ba.obj.check", conceptId: "ba.check", text: "Check a binary sum by converting each number to decimal." },
+    { id: "ba.obj.ones", conceptId: "ba.complement", text: "Write the 1's complement of a binary number." },
+    { id: "ba.obj.twos", conceptId: "ba.complement", text: "Form the 2's complement by adding 1 to the 1's complement, one column at a time." },
   ],
   activities: [
     {
@@ -230,5 +357,6 @@ export const binaryArithmeticTopic: TopicInput = {
         { id: "ba.q.check-sum", label: "The sum", conceptId: "ba.check", objectiveId: "ba.obj.check", variants: [checkVariant(...SLIDE, "sum"), checkVariant(...RETRY, "sum")] },
       ],
     },
+    complementsActivity,
   ],
 };
