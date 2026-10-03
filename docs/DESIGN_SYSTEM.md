@@ -67,7 +67,7 @@ Evidence: `docs/design/review-2026-10-03/`. Each row is adopted by the issue tha
 | `--signal-low` | `var(--text-muted)` | Wire carrying logic 0 (once its value is known). Adopted in #32. |
 | `--pending-opacity` | `0.45` | Circuit gates and wires not yet reached in a gate walk. Adopted in #32. |
 | `--focus-halo` | `var(--highlight-soft)` | Rounded halo behind the active gate or active cell group. Adopted in #32. |
-| `--sub-size` | `0.7em` | Base subscript in number notation, e.g. (26)<sub>10</sub>. |
+| `--sub-size` | `max(0.7em, 12px)` | Base subscript in number notation, e.g. (26)<sub>10</sub>. Never below 12 px (#155). |
 | `--diagram-text-min` | `12px` | Floor for labels and values inside SVG diagrams at any width. Adopted in #88. |
 | `--topbar-h` | `52px` | Height of the sticky top bar; replaces literal `52px` / `68px` offsets. Adopted in #54. |
 | `--tutor-strip-h` | `64px` | Height cap of the *collapsed* (stale-message) tutor strip below `lg`. Adopted in #54. |
