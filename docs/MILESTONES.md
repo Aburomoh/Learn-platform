@@ -79,7 +79,7 @@ Owner supplies slides/questions for one CET course; Backend/Data + Pedagogy stru
 the M1 schema and record what the schema lacks (input to the Instructor Studio design).
 
 ## Status log (newest first)
-- 2026-10-04 — Director: M1, M1.1, M1.2 and R1 (#110) closed on the owner's verdict (quoted on #192). Next: ECET 111 complete (#192); plan approval on #193.
+- 2026-10-04 — Director: M1, M1.1, M1.2 and R1 (#110) closed by the Director, treating the owner's statement on #192 as the walkthrough verdict (not an explicit acceptance). Next: ECET 111 complete (#192); plan approval on #193.
 - 2026-10-04 — Director: M1.1, M1.2 and R1 redesign all on main (57624e6; 301 unit, 40 e2e green); combined owner walkthrough requested (DECISIONS item 5).
 - 2026-10-03 — M1.2 complete on `main`: binary addition, 1's/2's complement, subtraction (positive and negative), exercises 88/73 and 15−4/10−14, base subscripts (#55); follow-ups #141, #158, #170 closed. All content DEMO until instructor approval.
 - 2026-10-03 — Owner accepted vetoes #42/#44/#45; rule: each step is its own goal. M1.1 close-out = #32, #42, #44, #45, #52–#54.

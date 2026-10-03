@@ -36,7 +36,7 @@ Option A: keep 53 (team recommendation). Option B: keep 45 and change the practi
 On your phone, type bits into a filled row (e.g. binary addition) and confirm every digit lands in the next cell. Fixed and tested; this is a real-device confirmation only.
 
 ## Resolved
-- 2026-10-04 — Walkthrough of M1.1 + M1.2 + redesign: accepted (owner's words quoted on #192). Milestones closed.
+- 2026-10-04 — Walkthrough of M1.1 + M1.2 + redesign: no explicit "accepted". The Director treated the owner's statement on #192 as the verdict and closed the milestones: "The current platform is developing very well, and the existing Number Conversion and Simple Logic Gates activities demonstrate the intended direction successfully." Tell the team if anything should be reopened.
 - 2026-10-03 — Redesign proposal (epic #110, PR #129, `docs/design/redesign-r1/`): approved as the direction (owner, in Technical Lead session; quoted on #110). Frontend unblocked.
 - 2026-10-03 — Branch protection (old item 4): owner chose Option B. The repo is public and `main` is protected (PR only, green CI, linear history); see #72. Never post secrets or slide content.
 - 2026-10-03 — Pedagogy vetoes #42, #44, #45: accepted (owner, in Technical Lead session; quoted on #44). New rule: each step of a multi-step answer is its own goal, shown only after the previous one is done; be patient with students.
