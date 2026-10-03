@@ -7,6 +7,7 @@
 import type { z } from "zod";
 import type { TopicSchema, HintSchema, VariantSchema } from "../schema";
 import { additionResult, additionSteps, complementBits } from "../grade";
+import { divideVariant, readVariant } from "./chapter1-number-systems";
 
 type TopicInput = z.input<typeof TopicSchema>;
 type HintInput = z.input<typeof HintSchema>;
@@ -233,10 +234,10 @@ function flipWalk(bits: string): ExplanationInput {
   ];
 }
 
-function onesVariant(bits: string): VariantInput {
+function onesVariant(bits: string, id = `v${bits}`): VariantInput {
   const v = complementVars(bits);
   return {
-    id: `v${bits}`,
+    id,
     prompt: "Write the 1's complement of {bits}: change each 1 to 0 and each 0 to 1.",
     spec: { kind: "numeric", base: 2, answer: v.ones, context: { type: "bit-row", bits } },
     vars: v,
@@ -278,12 +279,12 @@ function ruleVariant2s(bits: string): VariantInput {
   };
 }
 
-function plusOneVariant(bits: string): VariantInput {
+function plusOneVariant(bits: string, id = `v${bits}`): VariantInput {
   const v = complementVars(bits);
   const one = "1".padStart(bits.length, "0");
   const done = `So the 2's complement of ${bits} is ${v.twos}.`;
   return {
-    id: `v${bits}`,
+    id,
     prompt: `Add 1 to the 1's complement, one column at a time: ${v.ones} + ${one}.`,
     // A complement keeps its width, so there is no end-carry step (Pedagogy on #150).
     spec: { kind: "column-addition", a: v.ones, b: one, answer: v.twos, endCarry: "drop" },
@@ -305,9 +306,141 @@ const complementsActivity: TopicInput["activities"][number] = {
   authority: "DEMO",
   minutes: 10,
   questions: [
-    { id: "ba.q.ones", label: "1's complement", conceptId: "ba.complement", objectiveId: "ba.obj.ones", variants: COMPLEMENT_SETS.map(onesVariant) },
+    { id: "ba.q.ones", label: "1's complement", conceptId: "ba.complement", objectiveId: "ba.obj.ones", variants: COMPLEMENT_SETS.map((b) => onesVariant(b)) },
     { id: "ba.q.twos-rule", label: "2's rule", conceptId: "ba.complement", objectiveId: "ba.obj.twos", variants: COMPLEMENT_SETS.map(ruleVariant2s) },
-    { id: "ba.q.plus-one", label: "Add 1", conceptId: "ba.complement", objectiveId: "ba.obj.twos", variants: COMPLEMENT_SETS.map(plusOneVariant) },
+    { id: "ba.q.plus-one", label: "Add 1", conceptId: "ba.complement", objectiveId: "ba.obj.twos", variants: COMPLEMENT_SETS.map((b) => plusOneVariant(b)) },
+  ],
+};
+
+/* ---------- Subtraction by 2's complement, positive results (#40): A − B = A + 2's complement of B ---------- */
+
+interface SubtractionSet {
+  id: string;
+  a: number;
+  b: number;
+}
+
+/** Bit strings for A − B at a fixed width: B, its complements, A + 2's complement, and the result. */
+function subtractionBits({ a, b }: SubtractionSet, width = 4) {
+  const A = a.toString(2).padStart(width, "0");
+  const B = b.toString(2).padStart(width, "0");
+  const twos = additionResult(complementBits(B), "1".padStart(width, "0"), false);
+  const sum = additionResult(A, twos);
+  return { A, B, twos, sum, result: sum.slice(1), endCarry: sum[0] };
+}
+
+const endCarryHints: HintInput[] = [
+  { rung: 2, text: "Not yet. Look at the leftmost bit of the sum: the end carry." },
+  { rung: 3, text: "In A − B by 2's complement, an end carry of 1 means the result is positive." },
+  { rung: 9, text: "The end carry is 1: the result is positive, so we discard the carry and keep the other bits." },
+];
+
+const resultHints: HintInput[] = [
+  { rung: 2, text: "Not yet. Leave out the end carry, then read the remaining bits." },
+  { rung: 3, text: "The weights are 8, 4, 2, 1 from the left of the four bits." },
+  { rung: 9, text: "{resultBits} = {resultValue}, and {a} − {b} = {resultValue}." },
+];
+
+function subtractionVars(set: SubtractionSet) {
+  const s = subtractionBits(set);
+  // `value` is B: it names the number set across the practice (#141) and drives the B-in-binary steps.
+  return { value: set.b, a: set.a, b: set.b, aBits: s.A, bBits: s.B, twos: s.twos, sumBits: s.sum, resultBits: s.result, resultValue: parseInt(s.result, 2) };
+}
+
+function addTwosVariant(set: SubtractionSet): VariantInput {
+  const s = subtractionBits(set);
+  return {
+    id: set.id,
+    prompt: `Now add A and the 2's complement of B, one column at a time: ${s.A} + ${s.twos}.`,
+    spec: { kind: "column-addition", a: s.A, b: s.twos, answer: s.sum },
+    vars: subtractionVars(set),
+    hints: columnHints,
+    hintsByStep: { column: columnHints, carry: lastCarryHints },
+    misconceptions: additionMisconceptions,
+    explanation: additionWalk(s.A, s.twos),
+  };
+}
+
+function endCarryVariant(set: SubtractionSet): VariantInput {
+  const s = subtractionBits(set);
+  return {
+    id: set.id,
+    prompt: `${s.A} + ${s.twos} = ${s.sum}. The end carry is ${s.endCarry}. What does it tell you?`,
+    spec: {
+      kind: "multiple-choice",
+      options: [
+        { id: "positive", text: "The result is positive: discard the carry" },
+        { id: "keep", text: `Keep the carry: the answer is ${s.sum}`, misconceptionId: "sub.kept-carry" },
+        { id: "negative", text: "The result is negative: take the 2's complement" },
+      ],
+      correctOptionId: "positive",
+      context: { type: "addition", operands: { a: s.A, b: s.twos } },
+    },
+    vars: subtractionVars(set),
+    hints: endCarryHints,
+    misconceptions: [{ id: "sub.kept-carry", title: "Kept the end carry", nudgeKey: "sub.kept-carry", detect: { type: "option", optionId: "keep" } }],
+    explanation: [
+      { id: "s1", say: "We added A and the 2's complement of B. The sum has one more bit than the numbers: the end carry." },
+      {
+        id: "s2",
+        say: `Here the end carry is ${s.endCarry}.`,
+        ask: { prompt: "An end carry of 1 means the result is…", options: ["Positive: discard the carry", "Negative"], correctIndex: 0, afterCorrect: "Yes. Discard it and keep the other four bits.", afterWrong: "An end carry of 1 means positive. Discard it and keep the other four bits." },
+      },
+    ],
+  };
+}
+
+function resultVariant(set: SubtractionSet): VariantInput {
+  const s = subtractionBits(set);
+  const v = subtractionVars(set);
+  const done = `${set.a} − ${set.b} = ${v.resultValue}. The subtraction checks out.`;
+  return {
+    id: set.id,
+    prompt: `Discard the end carry. What is ${s.result} in decimal?`,
+    spec: { kind: "numeric", base: 10, answer: String(v.resultValue), context: { type: "addition", operands: { a: s.A, b: s.twos } } },
+    vars: v,
+    hints: resultHints,
+    misconceptions: [
+      { id: "sub.kept-carry", title: "Kept the end carry", nudgeKey: "sub.kept-carry", detect: { type: "equals", value: String(parseInt(s.sum, 2)) } },
+      { id: "ba.copied-bits", title: "Copied the bits", nudgeKey: "ba.copied-bits", detect: { type: "equals", value: s.result.replace(/^0+(?=.)/, "") } },
+    ],
+    reactions: { correct: done, correctAfterHints: done },
+    explanation: [
+      { id: "s1", say: `Without the end carry the bits are ${s.result}. The weights are 8, 4, 2, 1.` },
+      {
+        id: "s2",
+        say: `Look at ${s.result}.`,
+        ask: { prompt: `Which weights are switched on in ${s.result}?`, options: [weightSum(s.result), weightSum(s.sum)], correctIndex: 0, afterCorrect: `Yes: ${weightSum(s.result)} = ${v.resultValue}.`, afterWrong: `Leave out the end carry: ${weightSum(s.result)} = ${v.resultValue}.` },
+      },
+    ],
+  };
+}
+
+const SUBTRACTION_SETS: SubtractionSet[] = [
+  { id: "v13-9", a: 13, b: 9 }, // the slide example
+  { id: "v12-6", a: 12, b: 6 },
+];
+
+const subtractionActivity: TopicInput["activities"][number] = {
+  id: "subtraction-positive",
+  title: "Subtraction by 2's complement",
+  summary: "A − B = A + the 2's complement of B: one small step at a time, for a positive result.",
+  authority: "DEMO",
+  minutes: 15,
+  questions: [
+    {
+      id: "sub.q.divide",
+      label: "B: divide by 2",
+      conceptId: "ba.subtraction",
+      objectiveId: "ba.obj.subtract",
+      variants: SUBTRACTION_SETS.map((s) => divideVariant(s.b, `${s.a} − ${s.b}: first write B = ({value})₁₀ in binary. Divide by 2, one step at a time.`, s.id)),
+    },
+    { id: "sub.q.read", label: "B: read off", conceptId: "ba.subtraction", objectiveId: "ba.obj.subtract", variants: SUBTRACTION_SETS.map((s) => readVariant(s.b, s.id)) },
+    { id: "sub.q.ones", label: "1's complement", conceptId: "ba.subtraction", objectiveId: "ba.obj.subtract", variants: SUBTRACTION_SETS.map((s) => onesVariant(subtractionBits(s).B, s.id)) },
+    { id: "sub.q.plus-one", label: "Add 1", conceptId: "ba.subtraction", objectiveId: "ba.obj.subtract", variants: SUBTRACTION_SETS.map((s) => plusOneVariant(subtractionBits(s).B, s.id)) },
+    { id: "sub.q.add", label: "A + 2's complement", conceptId: "ba.subtraction", objectiveId: "ba.obj.subtract", variants: SUBTRACTION_SETS.map(addTwosVariant) },
+    { id: "sub.q.end-carry", label: "End carry", conceptId: "ba.subtraction", objectiveId: "ba.obj.subtract", variants: SUBTRACTION_SETS.map(endCarryVariant) },
+    { id: "sub.q.result", label: "Result", conceptId: "ba.subtraction", objectiveId: "ba.obj.subtract", variants: SUBTRACTION_SETS.map(resultVariant) },
   ],
 };
 
@@ -326,6 +459,7 @@ export const binaryArithmeticTopic: TopicInput = {
     { id: "ba.columns", title: "Column addition", summary: "Add from the right, one column at a time, carrying 1 into the next column." },
     { id: "ba.check", title: "Checking in decimal", summary: "Convert both numbers and the sum to decimal; the decimal sum must match." },
     { id: "ba.complement", title: "1's and 2's complement", summary: "The 1's complement flips every bit; the 2's complement is the 1's complement + 1." },
+    { id: "ba.subtraction", title: "Subtraction by 2's complement", summary: "A − B = A + the 2's complement of B. An end carry of 1 means a positive result: discard it." },
   ],
   objectives: [
     { id: "ba.obj.rules", conceptId: "ba.rules", text: "State the sum and carry for any two bits." },
@@ -333,6 +467,7 @@ export const binaryArithmeticTopic: TopicInput = {
     { id: "ba.obj.check", conceptId: "ba.check", text: "Check a binary sum by converting each number to decimal." },
     { id: "ba.obj.ones", conceptId: "ba.complement", text: "Write the 1's complement of a binary number." },
     { id: "ba.obj.twos", conceptId: "ba.complement", text: "Form the 2's complement by adding 1 to the 1's complement, one column at a time." },
+    { id: "ba.obj.subtract", conceptId: "ba.subtraction", text: "Subtract by adding the 2's complement, and read a positive result after discarding the end carry." },
   ],
   activities: [
     {
@@ -359,5 +494,6 @@ export const binaryArithmeticTopic: TopicInput = {
       ],
     },
     complementsActivity,
+    subtractionActivity,
   ],
 };

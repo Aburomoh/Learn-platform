@@ -1,7 +1,7 @@
 # Current State — Performance / Stress Engineer
 
-Current assignment: #50 first-load JS baseline + CI size report.
-Recent important decision: Baseline activity route 151.3 kB gzip (base 134.0); CI reports per route, does not fail on size until an ADR sets enforcement.
+Current assignment: #154 re-measure after M1.2 interactions.
+Recent important decision: Activity route 160.3 kB gzip (+9.0); question now visible ~3.4 s vs ~1.65 s on a slow phone because #144 stopped pre-rendering the stage.
 Blocker: None
-Relevant issue/PR: #50
-Next expected action: Re-measure when M1.2 interactions (#34, #36) land; propose an enforcement ADR if headroom drops below ~25 kB.
+Relevant issue/PR: #154, #158 (performance-risk, Frontend)
+Next expected action: Re-measure when #158 lands; propose per-component code splitting if activity headroom drops below ~25 kB.
