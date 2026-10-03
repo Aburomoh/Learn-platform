@@ -9,14 +9,16 @@ export type Answer =
   | { kind: "numeric"; text: string }
   | { kind: "multiple-choice"; optionId: string }
   | { kind: "circuit-predict"; output: 0 | 1 }
-  | { kind: "repeated-division"; step: number; quotient: number; remainder: number };
+  | { kind: "repeated-division"; step: number; quotient: number; remainder: number }
+  /** One column (sum bit + carry out), or the final carry step where only `sum` is read. */
+  | { kind: "column-addition"; step: number; sum: number; carry?: number };
 
 export interface GradeResult {
   correct: boolean;
   misconceptionId?: string;
   /** Normalised student answer for evidence (never raw UI state). */
   normalized: string;
-  /** True when a step was right but the question has more steps (repeated-division). */
+  /** True when a step was right but the question has more steps (repeated-division, column-addition). */
   partial?: boolean;
 }
 
@@ -61,6 +63,33 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
             ? "division-remainder"
             : a.remainder === step.remainder
               ? "division-quotient"
+              : undefined;
+      return { correct, normalized, misconceptionId: kind ? variant.misconceptions.find((m) => m.detect.type === kind)?.id : undefined };
+    }
+    case "column-addition": {
+      const a = answer as Extract<Answer, { kind: "column-addition" }>;
+      const steps = additionSteps(spec.a, spec.b);
+      const step = steps[a.step];
+      if (!step) throw new Error(`No addition step ${a.step}`);
+      if (step.final) {
+        const correct = a.sum === step.sum;
+        const normalized = `final=${a.sum}`;
+        if (correct) return { correct, normalized, partial: false };
+        const kind = a.sum > 1 ? "addition-wrote-two" : "addition-carry-ignored";
+        return { correct, normalized, misconceptionId: variant.misconceptions.find((m) => m.detect.type === kind)?.id };
+      }
+      if (a.carry === undefined) throw new Error(`Addition column ${a.step} needs a carry`);
+      const correct = a.sum === step.sum && a.carry === step.carryOut;
+      const normalized = `${step.a}+${step.b}+${step.carryIn}=${a.sum}c${a.carry}`;
+      if (correct) return { correct, normalized, partial: true };
+      const total = step.a + step.b + step.carryIn;
+      const kind =
+        a.sum > 1 && a.sum === total
+          ? "addition-wrote-two"
+          : a.sum === step.carryOut && a.carry === step.sum && step.sum !== step.carryOut
+            ? "addition-swapped"
+            : step.carryIn === 1 && a.sum !== step.sum && a.sum <= 1
+              ? "addition-carry-ignored"
               : undefined;
       return { correct, normalized, misconceptionId: kind ? variant.misconceptions.find((m) => m.detect.type === kind)?.id : undefined };
     }
@@ -149,4 +178,42 @@ export function divisionSteps(value: number): { dividend: number; quotient: numb
 export function groupBits(bits: string, size: number): string[] {
   const padded = bits.padStart(Math.ceil(bits.length / size) * size, "0");
   return padded.match(new RegExp(`.{${size}}`, "g")) ?? [];
+}
+
+export interface AdditionStep {
+  /** Place value of the column (1, 2, 4, …); 0-based column index from the right. */
+  column: number;
+  a: 0 | 1;
+  b: 0 | 1;
+  carryIn: 0 | 1;
+  /** Bit written under the column (for the final step: the end carry). */
+  sum: 0 | 1;
+  carryOut: 0 | 1;
+  /** True for the last step: bring the final carry out down as the leftmost result bit. */
+  final: boolean;
+}
+
+/**
+ * Column-by-column binary addition, LSB first, plus one final step for the end carry.
+ * Used by the grader and by content tests; never authored by hand.
+ */
+export function additionSteps(a: string, b: string): AdditionStep[] {
+  if (a.length !== b.length) throw new Error("operands must have equal width");
+  const out: AdditionStep[] = [];
+  let carry: 0 | 1 = 0;
+  for (let column = 0; column < a.length; column++) {
+    const x = Number(a[a.length - 1 - column]) as 0 | 1;
+    const y = Number(b[b.length - 1 - column]) as 0 | 1;
+    const total = x + y + carry;
+    const step: AdditionStep = { column, a: x, b: y, carryIn: carry, sum: (total % 2) as 0 | 1, carryOut: (total >> 1) as 0 | 1, final: false };
+    out.push(step);
+    carry = step.carryOut;
+  }
+  out.push({ column: a.length, a: 0, b: 0, carryIn: carry, sum: carry, carryOut: 0, final: true });
+  return out;
+}
+
+/** Result bits of a column addition, final carry first (width + 1 bits). */
+export function additionResult(a: string, b: string): string {
+  return additionSteps(a, b).map((s) => s.sum).reverse().join("");
 }
