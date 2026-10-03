@@ -91,7 +91,8 @@ if (mode === "--alarm") {
   // Each stdout line is one alarm, so a session can stream this (e.g. Claude Code Monitor).
   const every = Number(process.env.WAKE_POLL_SECONDS) || 60;
   const seen = new Map();
-  let failing = false;
+  // Brief connection blips are normal (#60): only report once 3 polls in a row have failed.
+  let failures = 0;
   for (;;) {
     try {
       for (const it of openItems(anyOf(all))) {
@@ -99,11 +100,12 @@ if (mode === "--alarm") {
         console.log(`WAKE ${role} ${seen.has(it.number) ? "(updated) " : ""}${line(it, all)}`);
         seen.set(it.number, it.updatedAt);
       }
-      if (failing) console.log(`WAKE-WATCH RECOVERED for ${role}: alarms are being seen again`);
-      failing = false;
+      if (failures >= 3) console.log(`WAKE-WATCH RECOVERED for ${role}: alarms are being seen again`);
+      failures = 0;
     } catch (e) {
-      if (!failing) console.log(`WAKE-WATCH ERROR for ${role}: gh failed, alarms are not being seen (${String(e.message).split("\n")[0]})`);
-      failing = true;
+      // gh's stderr says whether it is the connection, auth or a rate limit.
+      const cause = String(e.stderr || "").trim().split("\n")[0] || String(e.message).split("\n")[0];
+      if (++failures === 3) console.log(`WAKE-WATCH ERROR for ${role}: 3 polls failed, alarms are not being seen (${cause})`);
     }
     await new Promise((r) => setTimeout(r, every * 1000));
   }
