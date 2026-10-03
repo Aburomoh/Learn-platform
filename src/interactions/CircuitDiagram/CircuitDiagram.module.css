@@ -8,7 +8,6 @@
 
 .svg {
   width: 100%;
-  max-width: 560px;
   height: auto;
   display: block;
   font-family: var(--font-sans);
@@ -19,12 +18,31 @@
   fill: none;
   stroke: var(--text-muted);
   stroke-width: 2;
+  stroke-linejoin: miter;
   transition: stroke var(--dur-base) var(--ease);
 }
 
 .wireOn {
   stroke: var(--accent);
   stroke-width: 3;
+}
+
+.junction {
+  fill: var(--text-muted);
+}
+
+.junctionOn {
+  fill: var(--accent);
+}
+
+.backArc {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2;
+}
+
+.gateLit .backArc {
+  stroke: var(--accent);
 }
 
 .inputBox {
@@ -66,6 +84,12 @@
 .gateLit .body {
   fill: var(--highlight-soft);
   stroke: var(--accent);
+}
+
+.gateActive .body,
+.gateActive .backArc {
+  stroke: var(--accent);
+  stroke-width: 3.5;
 }
 
 .gateLabel {

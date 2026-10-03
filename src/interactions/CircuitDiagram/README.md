@@ -1,6 +1,7 @@
 # CircuitDiagram
 
-SVG rendering of a `circuit-predict` spec (up to 3 inputs, 4 gates, layered left to right).
+SVG rendering of a `circuit-predict` spec (up to 3 inputs, 4 gates, layered left to right),
+drawn like a textbook schematic: standard gate symbols, one pin per gate input, right-angle wires.
 
 ```tsx
 <CircuitDiagram id="circ" spec={variant.spec} inputs={inputs}
@@ -14,3 +15,8 @@ SVG rendering of a `circuit-predict` spec (up to 3 inputs, 4 gates, layered left
 - `lit` gates show their evaluated value and light their incoming wires (explanation mode).
 - The output Y is hidden until `revealOutput` so the student predicts first.
 - Values come from `evaluateCircuit` in `src/content/grade.ts`; the diagram never grades.
+- `activeGateId` outlines the gate currently being asked about (independent of `lit`).
+- Layout is pure and lives in `layout.ts`: each wire that needs a vertical run gets its own
+  channel, so wires of different signals never share a segment; a signal that feeds two gates
+  shows a junction dot; a wire that would pass through a gate is moved to a free lane.
+  `layout.test.ts` asserts these rules on several circuits.

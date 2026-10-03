@@ -1,7 +1,8 @@
 # Current State — Frontend / Interaction Engineer
 
-Current assignment: None (M1 components and runner delivered).
-Recent important decision: Explicit-submit contract; keyboard select-then-place drag path.
+Current assignment: #19 circuit diagram (orthogonal wires, pins, `activeGateId`) — PR open, awaiting review.
+Recent important decision: Diagram stays native SVG (interactive, no build-time Python); layout is pure in `CircuitDiagram/layout.ts`.
 Blocker: None
-Relevant issue/PR: PRs #11, #12, #13, #15, #17
-Next expected action: Next components when an M2 activity needs them (Matching, Sortable).
+Relevant issue/PR: #19
+Wake me: label `wake:frontend` on an issue/PR, or message the session holding this role.
+Next expected action: Address review on #19; gate-by-gate walk-through uses `activeGateId` (stage work, follow-up PR).
