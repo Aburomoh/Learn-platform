@@ -25,19 +25,21 @@ const ROLES = {
   "release-devops-engineer": { title: "Release / DevOps Engineer", file: "release_devops_engineer", alarm: "wake:devops", labels: ["release-ready"] },
 };
 
-const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+// Timeout so a stalled network call surfaces as an error instead of silently freezing a watcher.
+const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 30_000 });
 const ISSUE = (n) => `repos/{owner}/{repo}/issues/${n}`;
 
-// Open issues and PRs matching a search query, e.g. label:"wake:qa".
-function openItems(search) {
+// Open issues and PRs carrying any of `labels`. The search index lags label changes, so results
+// are re-checked against each item's actual labels (a just-acked item must not wake anyone).
+function openItems(labels) {
+  const search = "label:" + labels.map((l) => `"${l}"`).join(",");
   const out = [];
   for (const kind of ["issue", "pr"]) {
     const json = gh(kind, "list", "--state", "open", "--search", search, "--json", "number,title,url,updatedAt,labels", "--limit", "50");
     out.push(...JSON.parse(json || "[]"));
   }
-  return out;
+  return out.filter((it) => it.labels.some((l) => labels.includes(l.name)));
 }
-const anyOf = (labels) => "label:" + labels.map((l) => `"${l}"`).join(",");
 const line = (it, labels) => {
   const hit = it.labels.map((l) => l.name).filter((n) => labels.includes(n));
   return `[${hit.join(", ")}] #${it.number} ${it.title}  ${it.url}`;
@@ -59,7 +61,7 @@ if (mode === "--pending") {
   // Never fails a session start: without gh there is simply nothing to report.
   try {
     const alarms = Object.values(ROLES).map((r) => r.alarm);
-    const items = openItems(anyOf(alarms));
+    const items = openItems(alarms);
     if (items.length) console.log("Open wake alarms (npm run wake <role> for context):\n" + items.map((it) => "  " + line(it, alarms)).join("\n"));
   } catch {}
   process.exit(0);
@@ -89,19 +91,24 @@ if (mode === "--alarm") {
 } else if (mode === "--watch") {
   // Each stdout line is one alarm, so a session can stream this (e.g. Claude Code Monitor).
   const every = Number(process.env.WAKE_POLL_SECONDS) || 60;
+  // `ready` is shared by all engineer roles, so it is listed by `npm run wake <role>` but never alarms.
+  const watched = all.filter((l) => l !== "ready");
   const seen = new Map();
-  let failing = false;
+  // Brief connection blips are normal (#60): only report once 3 polls in a row have failed.
+  let failures = 0;
   for (;;) {
     try {
-      for (const it of openItems(anyOf(all))) {
+      for (const it of openItems(watched)) {
         if (seen.get(it.number) === it.updatedAt) continue;
-        console.log(`WAKE ${role} ${seen.has(it.number) ? "(updated) " : ""}${line(it, all)}`);
+        console.log(`WAKE ${role} ${seen.has(it.number) ? "(updated) " : ""}${line(it, watched)}`);
         seen.set(it.number, it.updatedAt);
       }
-      failing = false;
+      if (failures >= 3) console.log(`WAKE-WATCH RECOVERED for ${role}: alarms are being seen again`);
+      failures = 0;
     } catch (e) {
-      if (!failing) console.log(`WAKE-WATCH ERROR for ${role}: gh failed, alarms are not being seen (${String(e.message).split("\n")[0]})`);
-      failing = true;
+      // gh's stderr says whether it is the connection, auth or a rate limit.
+      const cause = String(e.stderr || "").trim().split("\n")[0] || String(e.message).split("\n")[0];
+      if (++failures === 3) console.log(`WAKE-WATCH ERROR for ${role}: 3 polls failed, alarms are not being seen (${cause})`);
     }
     await new Promise((r) => setTimeout(r, every * 1000));
   }
@@ -118,7 +125,7 @@ if (mode === "--alarm") {
 
   console.log("\n=== OPEN ITEMS ===");
   try {
-    const open = openItems(anyOf(all)).map((it) => "  " + line(it, all));
+    const open = openItems(all).map((it) => "  " + line(it, all));
     console.log(open.length ? open.join("\n") : "  (none)");
   } catch {
     console.log("  (gh unavailable or not authenticated)");
