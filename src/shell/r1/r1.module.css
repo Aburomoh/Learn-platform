@@ -534,6 +534,13 @@
   }
 }
 
+/* the activity page: steps, then the stage, straight away */
+.mainStage {
+  display: grid;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+}
+
 /* ---- TopicNext: primary action, steps, practices ---- */
 .next {
   display: grid;

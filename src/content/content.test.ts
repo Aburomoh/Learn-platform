@@ -164,6 +164,25 @@ describe("content registry", () => {
     expect(x.questions.map((_, i) => answer(i, 1))).toEqual([6, "110", "1001", "1010", "10110", "positive", "6"]);
   });
 
+  it("pins the subtraction exercises (#41): 15 − 4 positive, 10 − 14 negative with a re-complement", () => {
+    const chain = (activity: string, vi: number) =>
+      getActivity(COURSE, "binary-arithmetic", activity)!.activity.questions.map((q) => {
+        const spec = q.variants[vi].spec;
+        return "answer" in spec ? spec.answer : spec.kind === "multiple-choice" ? spec.correctOptionId : "";
+      });
+    // B = 0100 → 1011 → 1100; 1111 + 1100 = 1 1011 → positive → 11
+    expect(chain("subtraction-exercise-positive", 0)).toEqual(["1011", "1100", "11011", "positive", "11"]);
+    // B = 1110 → 0001 → 0010; 1010 + 0010 = 0 1100 → negative → 0011 → 0100 → 4 (so −4)
+    expect(chain("subtraction-exercise-negative", 0)).toEqual(["0001", "0010", "01100", "negative", "0011", "0100", "4"]);
+    expect(chain("subtraction-exercise-negative", 1)).toEqual(["0011", "0100", "01011", "negative", "0100", "0101", "5"]);
+    // The size step shows the finished re-complement at four bits, with no end-carry column (QA on #161).
+    const size = getActivity(COURSE, "binary-arithmetic", "subtraction-exercise-negative")!.activity.questions.at(-1)!.variants[0].spec;
+    if (size.kind !== "numeric" || size.context?.type !== "addition") throw new Error("expected an addition context");
+    const shown = { kind: "column-addition" as const, ...size.context.operands };
+    expect(stepCount(shown)).toBe(4);
+    expect(additionResult(shown.a, shown.b, shown.endCarry !== "drop")).toBe("0100");
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
     expect(getActivity("nope", "x", "y")).toBeUndefined();

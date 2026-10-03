@@ -90,8 +90,8 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await expect(page.locator("[data-expression='pleased']:visible")).toBeVisible();
 
   // 6. read the remainders of the set just worked on (37, #141): LSB-first is recognised, MSB-first is right
-  await page.getByRole("button", { name: "Next question" }).click();
-  await expect(page.getByText("Question 2 of 4")).toBeVisible();
+  await page.getByRole("button", { name: "Next challenge" }).click();
+  await expect(page.getByText("Challenge 2 of 4")).toBeVisible();
   await expect(page.getByText("The division of 37 is finished", { exact: false })).toBeVisible();
   await page.getByRole("textbox").fill("101001");
   await page.getByRole("button", { name: "Check" }).click();
@@ -122,7 +122,7 @@ test("octal and hex by grouping, one goal at a time, finish the activity", async
   const correct = page.getByRole("status").filter({ hasText: "Correct." });
 
   // read the remainders: 11010
-  await page.getByRole("button", { name: "Next question" }).click();
+  await page.getByRole("button", { name: "Next challenge" }).click();
   await page.getByRole("textbox").fill("11010");
   await page.getByRole("button", { name: "Check", exact: true }).click();
   await expect(correct).toBeVisible();
@@ -132,7 +132,7 @@ test("octal and hex by grouping, one goal at a time, finish the activity", async
     { size: 3, zeros: 1, cutAt: "Bit 4 of 6", base: "octal", digits: [["011", "3"], ["010", "2"]] },
     { size: 4, zeros: 3, cutAt: "Bit 5 of 8", base: "hexadecimal", digits: [["0001", "1"], ["1010", "a"]] },
   ]) {
-    await page.getByRole("button", { name: "Next question" }).click();
+    await page.getByRole("button", { name: "Next challenge" }).click();
     await expect(page.getByRole("form", { name: `Mark groups of ${size} bits` })).toBeVisible();
     await expect(page.getByRole("textbox")).toHaveCount(0); // no digit is asked before the groups are right
 
@@ -214,8 +214,8 @@ test("logic gates activity: walk the circuit gate by gate, then explore inputs",
   await page.getByRole("switch", { name: /Input C/ }).click();
   await page.getByRole("switch", { name: /Input A/ }).click();
   await expect(page.locator("svg text", { hasText: "Y = 0" })).toBeVisible();
-  await page.getByRole("button", { name: "Next question" }).click();
-  await expect(page.getByText("Question 2 of 2")).toBeVisible();
+  await page.getByRole("button", { name: "Next challenge" }).click();
+  await expect(page.getByText("Challenge 2 of 2")).toBeVisible();
 });
 
 for (const width of [390, 320]) {
@@ -249,12 +249,12 @@ for (const width of [390, 320]) {
 test("Continue resumes at the first unfinished challenge; Review starts at challenge 1", async ({ page, request }) => {
   // the pre-rendered page holds no challenge, so nothing can flash before local progress is read
   const html = await (await request.get(ACTIVITY)).text();
-  expect(html).not.toContain("Question 1 of");
+  expect(html).not.toContain("Challenge 1 of");
 
   // finish challenges 1 and 2 of 4
   await page.goto(ACTIVITY);
   for (const [d, q, r] of [[26, 13, 0], [13, 6, 1], [6, 3, 0], [3, 1, 1], [1, 0, 1]]) await divisionStep(page, d, q, r);
-  await page.getByRole("button", { name: "Next question" }).click();
+  await page.getByRole("button", { name: "Next challenge" }).click();
   await page.getByRole("textbox").fill("11010");
   await page.getByRole("button", { name: "Check", exact: true }).click();
   await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
@@ -265,21 +265,21 @@ test("Continue resumes at the first unfinished challenge; Review starts at chall
   await page.exposeFunction("seenQuestion", (text: string) => seen.push(text));
   await page.addInitScript(() => {
     new MutationObserver(() => {
-      const m = document.body?.innerText.match(/Question \d of \d/);
+      const m = document.body?.textContent?.match(/Challenge \d of \d/);
       if (m) (window as unknown as { seenQuestion: (t: string) => void }).seenQuestion(m[0]);
     }).observe(document, { childList: true, subtree: true });
   });
   await page.reload();
-  await expect(page.getByText("Question 3 of 4")).toBeVisible();
+  await expect(page.getByText("Challenge 3 of 4")).toBeVisible();
   await expect(page.getByRole("form", { name: "Mark groups of 3 bits" })).toBeVisible();
-  expect(new Set(seen)).toEqual(new Set(["Question 3 of 4"]));
+  expect(new Set(seen)).toEqual(new Set(["Challenge 3 of 4"]));
 
   // Review restarts at challenge 1 without losing what was finished
   await page.goto(`${ACTIVITY}?review=1`);
-  await expect(page.getByText("Question 1 of 4")).toBeVisible();
+  await expect(page.getByText("Challenge 1 of 4")).toBeVisible();
   await expect(page.getByLabel("26 divided by 2: result")).toBeVisible();
   await page.goto(ACTIVITY);
-  await expect(page.getByText("Question 3 of 4")).toBeVisible();
+  await expect(page.getByText("Challenge 3 of 4")).toBeVisible();
 });
 
 // The pre-rendered HTML must match the first client render on every route (#100): a hydration
@@ -372,7 +372,7 @@ test("reduced motion: no running animations, tutor text appears at once", async 
 test("binary addition: rules, column by column with the end carry, then the decimal check (#38)", async ({ page }) => {
   await page.goto("/courses/ecet111/binary-arithmetic/binary-addition/");
   const correct = page.getByRole("status").filter({ hasText: "Correct." });
-  const next = page.getByRole("button", { name: "Next question" });
+  const next = page.getByRole("button", { name: "Next challenge" });
 
   // the single-bit rules, one small check each
   for (const [i, answer] of ["0", "1", "10"].entries()) {
