@@ -11,6 +11,7 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
+import { equivalent, parseBool } from "./boolean";
 
 const COURSE = "ecet111";
 
@@ -194,6 +195,32 @@ describe("content registry", () => {
     const shown = { kind: "column-addition" as const, ...size.context.operands };
     expect(stepCount(shown)).toBe(4);
     expect(additionResult(shown.a, shown.b, shown.endCarry !== "drop")).toBe("0100");
+  });
+
+  it("laws and rules (#228): every example is a true identity, every simplification checks, every wrong option is wrong", () => {
+    const x = getActivity(COURSE, "laws-and-rules", "laws-and-rules")!.activity;
+    const [law, rule, simplify] = x.questions;
+    const sides = (text: string) => text.split(" = ").map((t) => parseBool(t));
+    for (const v of law.variants) {
+      const [l, r] = [String(v.vars.left), String(v.vars.right)].map((t) => parseBool(t));
+      expect(equivalent(l, r), v.id).toBe(true);
+    }
+    for (const v of rule.variants) {
+      const [l, r] = sides(String(v.vars.example));
+      expect(equivalent(l, r), v.id).toBe(true);
+      if (v.spec.kind !== "multiple-choice") throw new Error("expected multiple choice");
+      // every option is a true rule, so only the pattern decides; the right one must match the example's shape
+      for (const o of v.spec.options) {
+        const [ol, or] = sides(o.text);
+        expect(equivalent(ol, or), o.text).toBe(true);
+      }
+    }
+    for (const v of simplify.variants) {
+      const spec = v.spec;
+      if (spec.kind !== "multiple-choice") throw new Error("expected multiple choice");
+      const expr = parseBool(String(v.vars.expr));
+      for (const o of spec.options) expect(equivalent(expr, parseBool(o.text)), `${v.id}: ${o.text}`).toBe(o.id === spec.correctOptionId);
+    }
   });
 
   it("resolves an activity by path", () => {
