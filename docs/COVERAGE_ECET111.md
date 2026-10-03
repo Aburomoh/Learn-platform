@@ -1,6 +1,7 @@
 # ECET 111 coverage matrix (#192, #193)
 
-Execution checklist, updated at every merge. Source: the owner's decks in `ECET111 materials/` (read
+Execution checklist, updated at every merge. Content packs (verified answers, layouts): `docs/content-packs/ecet111/` (Ch.2 #269, Ch.3 #274).
+Source: the owner's decks in `ECET111 materials/` (read
 visually, never committed or quoted). Walked procedures: `docs/design/course-map-ecet111.md`.
 Scaffolds, likely mistakes (= detectors) and slide-method constraints per subtopic:
 `docs/design/ecet111-learning-requirements.md` (#253); every kind and content task follows it.
@@ -68,13 +69,13 @@ All K-map rows grade **any** minimal cover: several slide examples have more tha
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
 | Canonical recap | 3–10 | WORKED | via Ch.2 | — | — | #231 |
-| Map anatomy, minterm ↔ bits ↔ index | 11–19, 49–66 | CORE | MISSING | select cells; index | K-map select, numeric | #234, #235 (content filed on merge) |
-| 3-variable maps and the procedure | 20–41 | CORE | MISSING | fill; group + term per goal; F | K-map | content on #203 |
-| Exercises 3-variable | 44–48, 92–95 | PRACTICE | MISSING | exercise mode | K-map | content on #203 |
-| 4-variable maps | 67–75 | CORE | MISSING | as 3-var | K-map | content on #203 |
-| Expression → map | 76–87 | CORE | MISSING | expand, then map | derivation, K-map | content on #203 |
-| Same function by algebra | 88–91 | WORKED | MISSING | compare | derivation | content on #203 |
-| Don't-cares and exercises | 96–111 | CORE / PRACTICE | MISSING | choose which X | K-map | content on #203 |
+| Map anatomy, minterm ↔ bits ↔ index | 11–19, 49–66 | CORE | MISSING | select cells; index | K-map select, numeric | #276 |
+| 3-variable maps and the procedure | 20–41 | CORE | MISSING | fill; group + term per goal; F | K-map | #277 |
+| Exercises 3-variable | 44–48, 92–95 | PRACTICE | MISSING | exercise mode | K-map | #278 |
+| 4-variable maps | 67–75 | CORE | MISSING | as 3-var | K-map | #279 |
+| Expression → map | 76–87 | CORE | MISSING | expand, then map | derivation, K-map | #280 |
+| Same function by algebra | 88–91 | WORKED | MISSING | compare | derivation | #281 |
+| Don't-cares and exercises | 96–111 | CORE / PRACTICE | MISSING | choose which X | K-map | #282 |
 
 ## Chapter 4 — Combinational logic circuits (Ch.4 deck, 62 slides)
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
