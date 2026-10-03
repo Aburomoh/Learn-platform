@@ -84,3 +84,20 @@
   padding-inline-start: 1.2em;
   color: var(--text-muted);
 }
+
+.statusStarted,
+.statusDone {
+  font-size: var(--text-sm);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.statusStarted {
+  background: var(--surface-2);
+  color: var(--text-muted);
+}
+
+.statusDone {
+  background: var(--success-bg);
+  color: var(--success);
+}

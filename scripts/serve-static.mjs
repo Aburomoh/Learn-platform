@@ -19,6 +19,16 @@ async function resolve(urlPath) {
     join(root, clean, "index.html"),
     join(root, clean.replace(/\/$/, "") + ".html"),
   ];
+  // Next.js segment prefetch: the browser asks for `__next.a.b.__PAGE__.txt` while the export
+  // stores it as `__next.a/b/__PAGE__.txt`. Vercel maps this natively; mirror it here.
+  const base = clean.split(/[\\/]/).pop() ?? "";
+  if (base.startsWith("__next.") && base.endsWith(".txt")) {
+    const parts = base.slice(0, -4).split(".");
+    if (parts.length > 2) {
+      const dir = clean.slice(0, clean.length - base.length);
+      candidates.unshift(join(root, dir, `${parts[0]}.${parts[1]}`, ...parts.slice(2)) + ".txt");
+    }
+  }
   for (const c of candidates) {
     try {
       const s = await stat(c);
