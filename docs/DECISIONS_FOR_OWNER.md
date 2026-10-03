@@ -33,7 +33,7 @@ Team recommendation: A until real course content lands; revisit at M2.
 ### 5. Walk through M1.1
 Decision: check that your 2026-10-03 feedback is fixed. Open the preview above (or `npm run dev`) → ECET 111 → Chapter 1.
 Look at: (a) divide-by-2 is now checked one division at a time; (b) the circuit is redrawn with standard symbols and right-angle wires.
-Known gap: the circuit question still asks for Y in one step; a gate-by-gate walk is being ticketed next.
+Best after the close-out lands (#32 circuit walk, #44 grouping step, #42 no copying after Explain Slowly); the team will ping you.
 Why it matters: M2 (real course content) reuses these step sizes and diagrams.
 
 ## Resolved
