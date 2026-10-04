@@ -3,7 +3,8 @@ import { act, render, screen, within } from "@testing-library/react";
 import { getCourse } from "@/content";
 import { clearLocalData, getProgressStore } from "@/learner";
 import { completeActivity, completeQuestion, startActivity } from "@/learner/progress";
-import { CourseTopics, topicStatus } from "./CourseTopics";
+import userEvent from "@testing-library/user-event";
+import { ChapterIndex, CourseTopics, chapterStatus, chapterTitle, topicStatus } from "./CourseTopics";
 
 const course = getCourse("ecet111")!;
 const topics = course.modules.flatMap((m) => m.topics);
@@ -80,5 +81,58 @@ describe("CourseTopics", () => {
     const rows = screen.getAllByRole("listitem");
     expect(rows[1].querySelector("[data-primary-action]")).toHaveTextContent("Continue");
     expect(rows[0].querySelector("[data-primary-action]")).toBeNull();
+  });
+});
+
+describe("chapters (#198 §9, #232)", () => {
+  const [ch1, ch2] = course.modules;
+  const none = { activities: {} };
+  const done = (topicList: typeof topics) =>
+    Object.fromEntries(topicList.flatMap((t) => t.activities).map((a) => [a.id, { status: "completed" as const, attempts: 1, hintsUsed: 0, independent: true, lastAt: 1 }]));
+
+  it("status from local progress only: Not started, In progress · n of m topics, Completed", () => {
+    expect(chapterStatus(ch1, none)).toMatchObject({ state: "new", text: "Not started" });
+    const started = { activities: { [ch1.topics[0].activities[0].id]: { status: "started" as const, attempts: 1, hintsUsed: 0, independent: false, lastAt: 1 } } };
+    expect(chapterStatus(ch1, started)).toMatchObject({ state: "progress", text: `In progress · 0 of ${ch1.topics.length} topics done` });
+    expect(chapterStatus(ch1, { activities: done(ch1.topics.slice(0, 1)) })).toMatchObject({ state: "progress", done: 1 });
+    expect(chapterStatus(ch1, { activities: done(ch1.topics) })).toMatchObject({ state: "done", text: "Completed" });
+  });
+
+  it("the number has its own tile, so the title drops the 'Chapter n ·' prefix", () => {
+    expect(chapterTitle({ ...ch1, title: "Chapter 1 · Digital Systems and Binary Numbers" })).toBe("Digital Systems and Binary Numbers");
+    expect(chapterTitle({ ...ch1, title: "Sequential circuits" })).toBe("Sequential circuits");
+  });
+
+  it("each chapter is a collapsible section named 'Chapter n: title'; only the chapter with the next step is open", () => {
+    act(() => {
+      store().set((p) => ({ ...p, activities: done(ch1.topics) }));
+    });
+    const { container } = render(<CourseTopics course={course} />);
+    const sections = container.querySelectorAll("details");
+    expect(sections).toHaveLength(course.modules.length);
+    // jsdom hides a closed <details> from the role query; browsers keep its summary in the tree (checked in e2e)
+    expect(sections[0].querySelector("summary h2")).toHaveTextContent(`Chapter 1: ${chapterTitle(ch1)}`);
+    expect(sections[0].open).toBe(false);
+    expect(sections[1].open).toBe(true);
+    expect(sections[0]).toHaveTextContent("Completed");
+    expect(sections[1]).toHaveTextContent("Not started");
+  });
+
+  it("the chapter index marks the chapter with the next step and opens a closed chapter when followed", async () => {
+    render(
+      <>
+        <ChapterIndex course={course} />
+        <CourseTopics course={course} />
+      </>,
+    );
+    const nav = screen.getByRole("navigation", { name: "Chapters" });
+    const links = within(nav).getAllByRole("link");
+    expect(links).toHaveLength(course.modules.length);
+    expect(links[0]).toHaveAttribute("aria-current", "step");
+    expect(links[1]).toHaveAccessibleName(`2 · ${chapterTitle(ch2)}, Not started`);
+    const target = document.getElementById(links[1].getAttribute("href")!.slice(1)) as HTMLDetailsElement;
+    expect(target.open).toBe(false);
+    await userEvent.setup().click(links[1]);
+    expect(target.open).toBe(true);
   });
 });

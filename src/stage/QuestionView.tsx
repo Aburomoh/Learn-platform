@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { CircuitSpec, ColumnAdditionSpec, NumericContext, Variant } from "@/content/schema";
+import { createElement, type ComponentType } from "react";
+import type { InteractionSpec, Variant } from "@/content/schema";
 import type { Answer, GradeResult } from "@/content/grade";
-import { stepCount, stepTag, stepVars } from "@/content/steps";
-import { Notation } from "@/interactions/shared/Notation";
 import { fill } from "@/content/template";
-import { MultipleChoice, NumericInput, PlaceValueDiagram, CircuitDiagram, DivisionChain, BitGrouping, ColumnAddition, BitRow, type AdditionColumn, PredictionBeforeReveal, type Bit, type PredictionResult } from "@/interactions";
-import { BitGroups } from "./BitGroups";
+import { Notation } from "@/interactions/shared/Notation";
+import { PredictionBeforeReveal, type PredictionResult } from "@/interactions/PredictionBeforeReveal/PredictionBeforeReveal";
+import type { RegisteredKind } from "@/kinds";
+import type { ExplainProps, PracticeProps } from "@/kinds/types";
+import { kindUI } from "@/kinds/ui";
 import styles from "./Stage.module.css";
 
 export interface QuestionViewProps {
@@ -34,9 +35,9 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
     return (
       <section className={styles.question} aria-label="Explanation">
         <p className={styles.prompt}>
-            <Notation text={prompt} />
-          </p>
-        <ExplainVisual variant={variant} stage={step.stage ?? {}} isLast={isLast} answered={!step.ask || !!explanation.prediction} hasAsk={!!step.ask} />
+          <Notation text={prompt} />
+        </p>
+        {createElement(views[variant.spec.kind].Explain, { variant, stage: step.stage ?? {}, isLast, answered: !step.ask || !!explanation.prediction, hasAsk: !!step.ask })}
         {step.ask && (
           <PredictionBeforeReveal id={step.id} prompt={fill(step.ask.prompt, variant.vars)} options={step.ask.options} onPredict={onPredict} result={explanation.prediction} />
         )}
@@ -54,7 +55,7 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
 
   return (
     <section className={styles.question} aria-label="Question">
-      <PracticeInput variant={variant} prompt={prompt} state={state} last={last} stepIndex={stepIndex} locked={locked} onSubmit={onSubmit} />
+      {createElement(views[variant.spec.kind].Practice, { variant, prompt, state, last, stepIndex, locked, onSubmit })}
       {last && (
         <p className={`${styles.feedback} ${last.result.correct ? styles.ok : styles.no}`} role="status">
           {last.result.correct ? "Correct." : "Not correct yet."}
@@ -64,323 +65,8 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
   );
 }
 
-/** Every step of a column addition as the component draws it, read from the step contract. */
-function additionColumns(spec: ColumnAdditionSpec): AdditionColumn[] {
-  return Array.from({ length: stepCount(spec) }, (_, i) => {
-    const v = stepVars(spec, i) as Record<string, 0 | 1>;
-    return { a: v.aBit, b: v.bBit, carryIn: v.carryIn, sum: v.sum, carryOut: v.carryOut, final: stepTag(spec, i) === "carry" };
-  });
-}
-
-/** A worked result shown above a numeric or multiple-choice question; `stage` drives it in Explain Slowly. */
-function ContextView({ id, context, stage }: { id: string; context: NumericContext | undefined; stage?: Record<string, unknown> }) {
-  if (!context) return null;
-  switch (context.type) {
-    case "division-chain":
-      return <DivisionChain id={id} steps={context.steps} stepIndex={context.steps.length} showOrder={!!stage?.showOrder} attention={stage?.attention as number | undefined} />;
-    case "bits":
-      return <BitGroups bits={context.bits} groups={(stage?.groups as string[] | undefined) ?? []} attention={stage?.attention as number | undefined} done={!!stage?.done} />;
-    case "addition": {
-      const columns = additionColumns({ kind: "column-addition", ...context.operands });
-      return <ColumnAddition id={id} a={context.operands.a} b={context.operands.b} columns={columns} stepIndex={columns.length} attention={stage?.attention as number | undefined} />;
-    }
-    case "bit-row":
-      return <BitRow id={id} bits={context.bits} sourceOnly />;
-    default: {
-      const unhandled: never = context;
-      throw new Error(`No renderer for context ${JSON.stringify(unhandled)}`);
-    }
-  }
-}
-
-function PracticeInput({
-  variant,
-  prompt,
-  state,
-  last,
-  stepIndex,
-  locked,
-  onSubmit,
-}: {
-  variant: Variant;
-  prompt: string;
-  state: "idle" | "correct" | "incorrect";
-  last?: { answer: Answer; result: GradeResult };
-  stepIndex: number;
-  locked: boolean;
-  onSubmit: (a: Answer) => void;
-}) {
-  const spec = variant.spec;
-  const [digits, setDigits] = useState<Bit[]>(() =>
-    spec.kind === "place-value" && last?.answer.kind === "place-value" ? last.answer.digits : Array.from({ length: spec.kind === "place-value" ? spec.slots : 0 }, () => null),
-  );
-
-  switch (spec.kind) {
-    case "place-value":
-      return (
-        <>
-          <p className={styles.prompt}>
-            <Notation text={prompt} />
-          </p>
-          <PlaceValueDiagram id={variant.id} slots={spec.slots} digits={digits} onChange={setDigits} readOnly={locked} state={state} onSubmit={() => onSubmit({ kind: "place-value", digits })} />
-        </>
-      );
-    case "repeated-division": {
-      const finished = state === "correct";
-      return (
-        <>
-          <p className={styles.prompt}>
-            <Notation text={prompt} />
-          </p>
-          <DivisionChain
-            key={stepIndex}
-            id={variant.id}
-            steps={spec.steps}
-            stepIndex={finished ? spec.steps.length : stepIndex}
-            state={state === "incorrect" ? "incorrect" : "idle"}
-            disabled={locked}
-            onStep={(quotient, remainder) => onSubmit({ kind: "repeated-division", step: stepIndex, quotient, remainder })}
-          />
-        </>
-      );
-    }
-    case "numeric":
-      // A bit-row question is answered in the aligned cells themselves: the whole row is one answer.
-      if (spec.context?.type === "bit-row")
-        return (
-          <>
-            <p className={styles.prompt}>
-            <Notation text={prompt} />
-          </p>
-            <BitRow
-              id={variant.id}
-              bits={spec.context.bits}
-              state={state}
-              wrongBit={last?.result.wrongBit}
-              disabled={locked}
-              onAnswer={(text) => onSubmit({ kind: "numeric", text })}
-            />
-          </>
-        );
-      return (
-        <>
-          <ContextView id={`${variant.id}-ctx`} context={spec.context} />
-        <NumericInput
-          id={variant.id}
-          prompt={prompt}
-          base={spec.base}
-          disabled={locked}
-          state={state}
-          submittedText={last?.answer.kind === "numeric" ? last.answer.text : undefined}
-          onAnswer={(text) => onSubmit({ kind: "numeric", text })}
-        />
-        </>
-      );
-    case "multiple-choice":
-      return (
-        <>
-          <ContextView id={`${variant.id}-ctx`} context={spec.context} />
-        <MultipleChoice
-          id={variant.id}
-          prompt={prompt}
-          options={spec.options.map((o) => ({ id: o.id, text: fill(o.text, variant.vars) }))}
-          disabled={locked}
-          state={state}
-          submittedOptionId={last?.answer.kind === "multiple-choice" ? last.answer.optionId : undefined}
-          onAnswer={(optionId) => onSubmit({ kind: "multiple-choice", optionId })}
-        />
-        </>
-      );
-    case "bit-grouping": {
-      // Groups and digits come from the step contract: step k ≥ 1 is the digit of group k.
-      const count = stepCount(spec);
-      const digitSteps = Array.from({ length: count - 1 }, (_, i) => stepVars(spec, i + 1));
-      const finished = state === "correct";
-      return (
-        <>
-          <p className={styles.prompt}>
-            <Notation text={prompt} />
-          </p>
-          <BitGrouping
-            key={stepIndex}
-            id={variant.id}
-            bits={spec.bits}
-            groupSize={spec.groupSize}
-            stepIndex={finished ? count : stepIndex}
-            groups={digitSteps.map((v) => String(v.groupBits))}
-            digits={digitSteps.map((v) => String(v.digit))}
-            state={state === "incorrect" ? "incorrect" : "idle"}
-            disabled={locked}
-            onGroups={(groups) => onSubmit({ kind: "bit-grouping", step: 0, groups })}
-            onDigit={(digit) => onSubmit({ kind: "bit-grouping", step: stepIndex, digit })}
-          />
-        </>
-      );
-    }
-    case "column-addition": {
-      const columns = additionColumns(spec);
-      return (
-        <>
-          <p className={styles.prompt}>
-            <Notation text={prompt} />
-          </p>
-          <ColumnAddition
-            key={stepIndex}
-            id={variant.id}
-            a={spec.a}
-            b={spec.b}
-            columns={columns}
-            stepIndex={state === "correct" ? columns.length : stepIndex}
-            state={state === "incorrect" ? "incorrect" : "idle"}
-            disabled={locked}
-            onStep={(sum, carry) => onSubmit({ kind: "column-addition", step: stepIndex, sum, carry })}
-          />
-        </>
-      );
-    }
-    case "circuit-predict":
-      return <CircuitWalk variant={variant} spec={spec} prompt={prompt} state={state} last={last} stepIndex={stepIndex} locked={locked} onSubmit={onSubmit} />;
-    default: {
-      // A new spec kind must get a renderer here: an unhandled kind is a compile error.
-      const unhandled: never = spec;
-      throw new Error(`No renderer for ${JSON.stringify(unhandled)}`);
-    }
-  }
-}
-
 /**
- * Circuit question answered one gate at a time, in signal-flow order. The gate being asked is
- * outlined; gates already answered stay lit with their value; the last gate gives Y.
+ * Each kind's views come from the registry (ADR-0008), loaded on demand. One cast at the
+ * dispatch: the registry pairs each kind with its own props, which TypeScript cannot correlate.
  */
-function CircuitWalk({
-  variant,
-  spec,
-  prompt,
-  state,
-  last,
-  stepIndex,
-  locked,
-  onSubmit,
-}: {
-  variant: Variant;
-  spec: CircuitSpec;
-  prompt: string;
-  state: "idle" | "correct" | "incorrect";
-  last?: { answer: Answer; result: GradeResult };
-  stepIndex: number;
-  locked: boolean;
-  onSubmit: (a: Answer) => void;
-}) {
-  const [inputs, setInputs] = useState<Record<string, 0 | 1>>({});
-  // Gate order comes from the step contract (ADR-0007): step i asks about one gate.
-  const order = useMemo(() => Array.from({ length: stepCount(spec) }, (_, i) => String(stepVars(spec, i).gateId)), [spec]);
-  const step = Math.min(stepIndex, order.length - 1);
-  const gate = spec.gates.find((g) => g.id === order[step])!;
-  const isOutput = step === order.length - 1;
-  const finished = locked && state === "correct";
-  const explore = finished && spec.inputsToggleable;
-
-  // The answer form is replaced on each step; keep keyboard focus with the new question.
-  const answerRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (step > 0 && !finished) answerRef.current?.querySelector<HTMLInputElement>("input[type='radio']")?.focus();
-  }, [step, finished]);
-
-  return (
-    <>
-      <p className={styles.prompt}>
-            <Notation text={prompt} />
-          </p>
-      <CircuitDiagram
-        id={variant.id}
-        spec={spec}
-        inputs={explore ? inputs : undefined}
-        onToggleInput={explore ? (id, v) => setInputs((prev) => ({ ...prev, [id]: v })) : undefined}
-        revealOutput={finished}
-        lit={finished ? order : order.slice(0, step)}
-        activeGateId={finished ? undefined : gate.id}
-      />
-      {explore && <p className={styles.hintText}>Explore: toggle A, B or C and watch Y change.</p>}
-      {!finished && (
-        <p className={styles.walkStep} aria-live="polite">
-          Gate {step + 1} of {order.length}: {gate.type}
-        </p>
-      )}
-      <div ref={answerRef}>
-        <MultipleChoice
-          key={step}
-          id={`${variant.id}-${gate.id}`}
-          prompt={isOutput ? `What comes out of the ${gate.type} gate? That is Y.` : `What comes out of the ${gate.type} gate?`}
-          options={[
-            { id: "0", text: isOutput ? "Y = 0" : "0" },
-            { id: "1", text: isOutput ? "Y = 1" : "1" },
-          ]}
-          disabled={locked}
-          state={state}
-          submittedOptionId={last?.answer.kind === "circuit-predict" ? String(last.answer.output) : undefined}
-          onAnswer={(optionId) => onSubmit({ kind: "circuit-predict", step, output: optionId === "1" ? 1 : 0 })}
-        />
-      </div>
-    </>
-  );
-}
-
-function ExplainVisual({ variant, stage, isLast, answered, hasAsk }: { variant: Variant; stage: Record<string, unknown>; isLast: boolean; answered: boolean; hasAsk: boolean }) {
-  const spec = variant.spec;
-  switch (spec.kind) {
-    case "place-value":
-      return (
-        <PlaceValueDiagram
-          id={variant.id}
-          slots={spec.slots}
-          digits={Array.from({ length: spec.slots }, () => null)}
-          lit={(stage.lit as number[] | undefined) ?? []}
-          attention={stage.attention as number | undefined}
-          remainder={stage.remainder as number | undefined}
-        />
-      );
-    case "repeated-division":
-      return <DivisionChain id={variant.id} steps={spec.steps} stepIndex={(stage.revealed as number | undefined) ?? 0} attention={stage.attention as number | undefined} />;
-    case "numeric":
-      // stage.revealed = answer cells filled in so far (from the left); stage.attention = column outlined.
-      if (spec.context?.type === "bit-row")
-        return <BitRow id={variant.id} bits={spec.context.bits} answer={spec.answer.padStart(spec.context.bits.length, "0")} revealed={(stage.revealed as number | undefined) ?? 0} attention={stage.attention as number | undefined} />;
-      return <ContextView id={variant.id} context={spec.context} stage={stage} />;
-    case "bit-grouping": {
-      // Content stages: `groups: []` = the bits before grouping; groups shown = `attention` is the
-      // group whose digit is being asked (its digit appears once predicted); `done` = everything.
-      const count = stepCount(spec);
-      const digitSteps = Array.from({ length: count - 1 }, (_, i) => stepVars(spec, i + 1));
-      const grouped = ((stage.groups as string[] | undefined) ?? []).length > 0;
-      const asked = stage.attention as number | undefined;
-      const step = stage.done ? count : !grouped ? 0 : asked === undefined ? 1 : asked + 1 + (answered && hasAsk ? 1 : 0);
-      return (
-        <BitGrouping
-          id={variant.id}
-          bits={spec.bits}
-          groupSize={spec.groupSize}
-          stepIndex={Math.min(step, count)}
-          groups={digitSteps.map((v) => String(v.groupBits))}
-          digits={digitSteps.map((v) => String(v.digit))}
-          attention={grouped ? asked : undefined}
-        />
-      );
-    }
-    case "circuit-predict": {
-      const active = stage.active as string | undefined;
-      const lit = (stage.lit as string[] | undefined) ?? [];
-      return <CircuitDiagram id={variant.id} spec={spec} lit={active && answered ? [...lit, active] : lit} activeGateId={active} revealOutput={isLast} />;
-    }
-    case "column-addition": {
-      // stage.revealed = completed steps shown; stage.attention = step to outline.
-      const columns = additionColumns(spec);
-      return <ColumnAddition id={variant.id} a={spec.a} b={spec.b} columns={columns} stepIndex={(stage.revealed as number | undefined) ?? 0} attention={stage.attention as number | undefined} />;
-    }
-    case "multiple-choice":
-      return <ContextView id={variant.id} context={spec.context} stage={stage} />;
-    default: {
-      const unhandled: never = spec;
-      throw new Error(`No explanation visual for ${JSON.stringify(unhandled)}`);
-    }
-  }
-}
+const views = kindUI as Record<RegisteredKind, { Practice: ComponentType<PracticeProps<InteractionSpec, Answer>>; Explain: ComponentType<ExplainProps<InteractionSpec>> }>;

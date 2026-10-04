@@ -236,7 +236,7 @@ function plusOneVariant(bits: string, id = `v${bits}`): VariantInput {
   };
 }
 
-const COMPLEMENT_SETS = ["100101", "110010"]; // the two slide examples: walk one, retry the other
+const COMPLEMENT_SETS = ["100101", "110010", "101100"]; // the two slide examples, then a third set (#247)
 
 const complementsActivity: TopicInput["activities"][number] = {
   id: "complements",
@@ -372,6 +372,7 @@ function resultVariant(set: SubtractionSet): VariantInput {
 const SUBTRACTION_SETS: SubtractionSet[] = [
   { id: "v13-9", a: 13, b: 9 }, // the slide example
   { id: "v12-6", a: 12, b: 6 },
+  { id: "v11-3", a: 11, b: 3 },
 ];
 
 const subtractionActivity: TopicInput["activities"][number] = {
@@ -443,10 +444,12 @@ function magnitudeVariant(set: SubtractionSet): VariantInput {
 const POSITIVE_EXERCISE: SubtractionSet[] = [
   { id: "v15-4", a: 15, b: 4 }, // slide exercise
   { id: "v14-5", a: 14, b: 5 },
+  { id: "v13-6", a: 13, b: 6 },
 ];
 const NEGATIVE_EXERCISE: SubtractionSet[] = [
   { id: "v10-14", a: 10, b: 14 }, // slide exercise
   { id: "v7-12", a: 7, b: 12 },
+  { id: "v5-11", a: 5, b: 11 },
 ];
 
 const complementSteps = (sets: SubtractionSet[], prefix: string): TopicInput["activities"][number]["questions"] => [
@@ -498,6 +501,7 @@ const subtractionExerciseNegative: TopicInput["activities"][number] = {
 
 const SLIDE: [string, string] = ["1101", "0111"];
 const RETRY: [string, string] = ["1011", "0110"];
+const THIRD: [string, string] = ["1110", "0111"]; // carries in three columns, end carry; 14 + 7 = 21 (#247)
 
 export const binaryArithmeticTopic: TopicInput = {
   id: "binary-arithmetic",
@@ -537,11 +541,12 @@ export const binaryArithmeticTopic: TopicInput = {
           variants: [
             additionVariant(...SLIDE, "Add 1101 + 0111 one column at a time, starting from the right. Write the bit under the line and the carry above the next column."),
             additionVariant(...RETRY, "Another one: add 1011 + 0110 one column at a time, from the right."),
+            additionVariant(...THIRD, "One more: add 1110 + 0111 one column at a time, from the right."),
           ],
         },
-        { id: "ba.q.check-a", label: "First number", conceptId: "ba.check", objectiveId: "ba.obj.check", variants: [checkVariant(...SLIDE, "a"), checkVariant(...RETRY, "a")] },
-        { id: "ba.q.check-b", label: "Second number", conceptId: "ba.check", objectiveId: "ba.obj.check", variants: [checkVariant(...SLIDE, "b"), checkVariant(...RETRY, "b")] },
-        { id: "ba.q.check-sum", label: "The sum", conceptId: "ba.check", objectiveId: "ba.obj.check", variants: [checkVariant(...SLIDE, "sum"), checkVariant(...RETRY, "sum")] },
+        { id: "ba.q.check-a", label: "First number", conceptId: "ba.check", objectiveId: "ba.obj.check", variants: [checkVariant(...SLIDE, "a"), checkVariant(...RETRY, "a"), checkVariant(...THIRD, "a")] },
+        { id: "ba.q.check-b", label: "Second number", conceptId: "ba.check", objectiveId: "ba.obj.check", variants: [checkVariant(...SLIDE, "b"), checkVariant(...RETRY, "b"), checkVariant(...THIRD, "b")] },
+        { id: "ba.q.check-sum", label: "The sum", conceptId: "ba.check", objectiveId: "ba.obj.check", variants: [checkVariant(...SLIDE, "sum"), checkVariant(...RETRY, "sum"), checkVariant(...THIRD, "sum")] },
       ],
     },
     complementsActivity,

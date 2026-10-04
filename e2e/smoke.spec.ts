@@ -33,6 +33,21 @@ test("home lists the course and navigates to an activity", async ({ page }) => {
   await expect(page).toHaveURL(/\/courses\/ecet111\/$/);
   // course page: a chapter map; the topic title is a quiet link, and exactly one button is filled
   await expect(page.locator("[data-primary-action]")).toHaveCount(1);
+  // chapters fold (#232): the chapter with the next step is open; another one opens from the keyboard
+  await expect(page.getByRole("heading", { level: 2, name: /^Chapter 2: / })).toBeVisible();
+  const closed = page.locator("details:not([open]) > summary").first();
+  await closed.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("details:not([open])")).toHaveCount(0);
+  await page.setViewportSize({ width: 320, height: 700 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+  // on phones the row's filled button takes the row's full width (#172)
+  const [button, row] = await page.evaluate(() => {
+    const a = document.querySelector("[data-primary-action]")!;
+    return [a.getBoundingClientRect().width, a.closest("li")!.getBoundingClientRect().width];
+  });
+  expect(button).toBeGreaterThanOrEqual(row - 1);
+  await page.setViewportSize(viewport);
   await page.getByRole("link", { name: "Number-base conversions", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`${TOPIC}$`));
   // topic page: where am I, what am I learning, and one primary button
@@ -109,9 +124,10 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
 
   // 7. no server or third-party calls: the site is a static export, so the only requests allowed
-  //    are GETs of its own files (assets, the brand mark, and pages that links pre-load).
+  //    are GETs of its own files (assets, the brand mark, and pages that links pre-load) and the
+  //    HEAD checks Next's link prefetch sometimes sends for those pages.
   const origin = new URL(page.url()).origin;
-  const nonStatic = requests.filter((r) => !r.startsWith("GET data:") && !r.startsWith(`GET ${origin}/`));
+  const nonStatic = requests.filter((r) => !r.startsWith("GET data:") && !r.startsWith(`GET ${origin}/`) && !r.startsWith(`HEAD ${origin}/`));
   expect(nonStatic).toEqual([]);
 
   // 8. progress persisted locally and visible after navigation
@@ -265,6 +281,24 @@ for (const width of [390, 320]) {
     if (width === 390) expect(report.boxOverflow).toBeLessThanOrEqual(0);
   });
 }
+
+test("a kind's view is pre-rendered and its chunk is preloaded only where the kind is used (ADR-0008)", async ({ request }) => {
+  const chunksOf = (html: string) => [...new Set(html.match(/\/_next\/static\/chunks\/[\w.-]+\.js/g) ?? [])];
+  const gates = await (await request.get("/courses/ecet111/logic-gates/predict-gate-output/")).text();
+  // challenge 1 of the gate walk is in the exported HTML (#158), although its view is a lazy chunk
+  expect(gates).toContain("What comes out of the");
+  let kindChunk: string | undefined;
+  for (const chunk of chunksOf(gates)) {
+    if ((await (await request.get(chunk)).text()).includes("kind:circuit-predict")) kindChunk = chunk;
+  }
+  expect(kindChunk, "the circuit kind's chunk is referenced by the page that starts with it").toBeDefined();
+  const division = await (await request.get("/courses/ecet111/number-systems/decimal-to-binary/")).text();
+  expect(division).not.toContain(kindChunk!);
+  // a first-time student still gets challenge 1 at first paint there too (#158), with the resume script beside it (#190)
+  // React separates text from values with <!-- --> in the HTML
+  expect(division).toMatch(/Challenge (<!-- -->)?1(<!-- -->)? of/);
+  expect(division).toContain("data-resume");
+});
 
 test("Continue resumes at the first unfinished challenge; Review starts at challenge 1", async ({ page, request }) => {
   // the pre-rendered page holds challenge 1, so a new student sees the question at first paint (#158)

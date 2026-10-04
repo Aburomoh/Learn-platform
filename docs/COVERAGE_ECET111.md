@@ -1,6 +1,7 @@
 # ECET 111 coverage matrix (#192, #193)
 
-Execution checklist, updated at every merge. Source: the owner's decks in `ECET111 materials/` (read
+Execution checklist, updated at every merge. Content packs (verified answers, layouts): `docs/content-packs/ecet111/` (Ch.2 #269, Ch.3 #274, Ch.5 Part III #288).
+Source: the owner's decks in `ECET111 materials/` (read
 visually, never committed or quoted). Walked procedures: `docs/design/course-map-ecet111.md`.
 Scaffolds, likely mistakes (= detectors) and slide-method constraints per subtopic:
 `docs/design/ecet111-learning-requirements.md` (#253); every kind and content task follows it.
@@ -68,35 +69,45 @@ All K-map rows grade **any** minimal cover: several slide examples have more tha
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
 | Canonical recap | 3–10 | WORKED | via Ch.2 | — | — | #231 |
-| Map anatomy, minterm ↔ bits ↔ index | 11–19, 49–66 | CORE | MISSING | select cells; index | K-map select, numeric | #234, #235 (content filed on merge) |
-| 3-variable maps and the procedure | 20–41 | CORE | MISSING | fill; group + term per goal; F | K-map | content on #203 |
-| Exercises 3-variable | 44–48, 92–95 | PRACTICE | MISSING | exercise mode | K-map | content on #203 |
-| 4-variable maps | 67–75 | CORE | MISSING | as 3-var | K-map | content on #203 |
-| Expression → map | 76–87 | CORE | MISSING | expand, then map | derivation, K-map | content on #203 |
-| Same function by algebra | 88–91 | WORKED | MISSING | compare | derivation | content on #203 |
-| Don't-cares and exercises | 96–111 | CORE / PRACTICE | MISSING | choose which X | K-map | content on #203 |
+| Map anatomy, minterm ↔ bits ↔ index | 11–19, 49–66 | CORE | MISSING | select cells; index | K-map select, numeric | #276 |
+| 3-variable maps and the procedure | 20–41 | CORE | MISSING | fill; group + term per goal; F | K-map | #277 |
+| Exercises 3-variable | 44–48, 92–95 | PRACTICE | MISSING | exercise mode | K-map | #278 |
+| 4-variable maps | 67–75 | CORE | MISSING | as 3-var | K-map | #279 |
+| Expression → map | 76–87 | CORE | MISSING | expand, then map | derivation, K-map | #280 |
+| Same function by algebra | 88–91 | WORKED | MISSING | compare | derivation | #281 |
+| Don't-cares and exercises | 96–111 | CORE / PRACTICE | MISSING | choose which X | K-map | #282 |
 
 ## Chapter 4 — Combinational logic circuits (Ch.4 deck, 62 slides)
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
-| Half adder | 3–8 | CORE | MISSING | table; S, C; walk | truth-table, expression, circuit-predict | #204 |
-| Full adder (four activities) | 9–22, 33–36 | CORE | MISSING | table; Σ; K-map; S by algebra (optional) | truth-table, K-map, derivation | #204 |
-| Decoder, encoder | 23–32 | CORE | MISSING | predict one output; table | truth-table | #204 |
-| Functions with a decoder | 37 | CORE | MISSING | pick outputs for each OR | truth-table row-select | #204 |
-| Multiplexer | 38–46 | CORE | MISSING | predict one output; select table | MC / truth-table | #204 |
-| Functions with a MUX | 47–61 | CORE / PRACTICE | MISSING | choose 0/1/z/z' per pair | row-select (value per row) | #204 |
+| Half adder | 3–8 | CORE | MISSING | table; S, C; walk | truth-table, expression, circuit-predict | #300 |
+| Full adder, activity 1: 8-row table | 9–22, 33–36 | CORE | MISSING | table | truth-table | #301 |
+| Full adder, activity 2: Σ for S and Co | 9–22, 33–36 | CORE | MISSING | minterm lists | truth-table | #302 |
+| Full adder, activity 3: K-map for Co | 9–22, 33–36 | CORE | MISSING | map, groups, expression | K-map | #303 |
+| Full adder, optional: S → A⊕B⊕Ci by algebra | 9–22, 33–36 | WORKED | MISSING | derivation | derivation | #304 |
+| Decoder, encoder | 23–32 | CORE | MISSING | predict one output; table | truth-table | #305 |
+| Functions with a decoder | 37 | CORE | MISSING | pick outputs for each OR | truth-table row-select | #306 |
+| Multiplexer | 38–46 | CORE | MISSING | predict one output; select table | MC / truth-table | #307 |
+| Functions with a MUX | 47–61 | CORE / PRACTICE | MISSING | choose 0/1/z/z' per pair | row-select (value per row) | #308 |
 
 ## Chapter 5 — Sequential circuits (Parts I–III, 38 + 55 + 35 slides)
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
 | Sequential model, intro | I 4–7 | CONTEXT | N/A | — | — | — |
-| NAND SR latch, gated SR | I 8–13 | CORE (outputs per input pair, incl. invalid); internals CONTEXT | MISSING | predict one output; table | truth-table | #205 |
-| Clock edges; SR, JK, D, T characteristic tables and equations | I 14–37 | CORE | MISSING | table; equation; one edge | truth-table, expression | #205 |
-| Timing diagrams (all types, both edges) | I 18–37 | CORE / PRACTICE | MISSING | Q per active edge | timing | #237, #238 |
-| Analysis: D, JK, T, 3-flip-flop | II 4–52 | CORE | MISSING | stages as separate activities | expression, truth-table groups, state diagram, timing | #205 |
-| Analysis exercises | II 31–33, 53–54 | PRACTICE | MISSING | exercise mode | as above | #205 |
-| Design: state table → excitation → K-maps → equations (D, T, JK) | III 4–27 | CORE | MISSING | stages as separate activities | truth-table (X), K-map, expression | #205 |
-| Design problems (3 flip-flops) | III 28–34 | PRACTICE | MISSING | exercise mode | as above | #205 |
+| NAND SR latch, gated SR | I 8–13 | CORE (outputs per input pair, incl. invalid); internals CONTEXT | MISSING | predict one output; table | truth-table | #295 |
+| Clock edges; SR, JK, D, T characteristic tables | I 14–37 | CORE | MISSING | one edge at a time | truth-table | #296 |
+| Characteristic equations and next state on one edge | I 14–37 | CORE | MISSING | equation; next state | expression | #297 |
+| Timing diagrams (all types, both edges) | I 17–37 | WORKED / PRACTICE | MISSING | Q per active edge | timing | #298 |
+| Analysis stage 1: input equations and output from a circuit | II 4–30 | CORE | MISSING | read equations | expression | #312 |
+| Analysis stage 2: state equations | II 4–30 | CORE | MISSING | substitute into characteristic equation | expression | #313 |
+| Analysis stage 3: state table by column group | II 4–30 | CORE | MISSING | one column group at a time | truth-table | #314 |
+| Analysis stage 4: state diagram | II 4–30 | CORE | MISSING | table → diagram | state-diagram | #315 |
+| Three JK flip-flops: 16-row table, diagram, timing | II 37–52 | WORKED | MISSING | column by column | truth-table, state-diagram, timing | #316 |
+| Analysis exercises | II 31–33, 53–54 | PRACTICE | MISSING | exercise mode; owner confirms machine-worked answers | as above | #317 |
+| Design: spec → state table | III 4–27 | CORE | MISSING | stage 1 | truth-table | #290 |
+| Design: excitation columns (D, T, JK, with X) | III 4–27 | CORE | MISSING | stage 2 | truth-table (X) | #291 |
+| Design: K-map per input → equations (don't-cares) | III 4–27 | CORE | MISSING | stage 3 | K-map, expression | #292 |
+| Design problems (3 flip-flops) | III 28–34 | PRACTICE | MISSING | exercise mode | as above | #293 |
 
 ## Course-level
 | Item | Status |

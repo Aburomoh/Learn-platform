@@ -21,3 +21,10 @@ and expect to be **remounted when the step advances**:
   typing is kept for the retry.
 - The step's truth (what to show for completed steps) is passed in as props from the step contract
   (`src/content/steps.ts`); the component only draws it.
+
+## Kinds live in `src/kinds/`
+
+A component that belongs to one interaction kind only lives in that kind's folder (ADR-0008, see
+`src/kinds/README.md`): `CircuitDiagram` and `PlaceValueDiagram` are there. This folder keeps the
+components several kinds or contexts share. Browser code imports them by file, never through
+`index.ts` (a lint rule enforces it): the barrel would pull every component into one chunk.

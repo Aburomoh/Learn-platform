@@ -31,8 +31,7 @@ Method: symbol, expression, table side by side. p.6 repeats p.4.
 |---|---|
 | p.7 | "Derived gates" built from AND/NOT tables |
 | p.8 | NAND = AND followed by NOT, then the single NAND symbol (bubble); table columns **A, B, A.B, (A.B)′** |
-| p.9 | NOR = OR followed by NOT; columns **A, B, A+B, (A+B)′**; last column left blank (student fills) |
-| p.10 | NOR column filled |
+| p.9–10 | NOR = OR followed by NOT; columns **A, B, A+B, (A+B)′** |
 
 | Gate | Intermediate column | Output | Verified |
 |---|---|---|---|
@@ -41,9 +40,8 @@ Method: symbol, expression, table side by side. p.6 repeats p.4.
 
 ## 3. XOR as AB′+A′B, XNOR — p.11–18 — CORE (worked, filled column by column)
 XOR circuit (p.12): two NOTs, AND(A, B′), AND(A′, B), OR. Labels on each gate output.
-Table column order (p.13): **A, B, A′, B′, A.B′, A′.B, A.B′+A′.B = A⊕B**. Reveal order:
-p.13 blank → p.14 complements and products → p.15 output → p.16 compact 3-column table + rule
-(1 when exactly one input is 1).
+Table column order (p.13–15): **A, B, A′, B′, A.B′, A′.B, A.B′+A′.B = A⊕B**. p.16: compact
+3-column table + rule (1 when exactly one input is 1).
 
 | Column | Rows 00,01,10,11 | Verified |
 |---|---|---|
@@ -54,8 +52,7 @@ p.13 blank → p.14 complements and products → p.15 output → p.16 compact 3-
 | A⊕B | 0 1 1 0 | Σ(1,2), equivalent to A⊕B ✓ |
 
 XNOR (p.17–18): symbol = XOR + bubble, (A⊕B)′. Circuit AND(A,B), AND(A′,B′), OR.
-Columns **A, B, A′, B′, A.B, A′.B′, A.B+A′.B′ = (A⊕B)′**; p.17 shows complements filled,
-p.18 all.
+Columns **A, B, A′, B′, A.B, A′.B′, A.B+A′.B′ = (A⊕B)′**.
 
 | Column | Rows 00,01,10,11 | Verified |
 |---|---|---|
@@ -93,7 +90,7 @@ No maxterms, no POS from 0-rows (title mentions POS; only SOP is derived).
 
 ## 7. Expression ↔ truth table — p.31–36 — CORE
 Expression → table (p.31–33), X = A′B′C + A′BC′ + ABC. Method: each product is colour-coded;
-X = 1 when any one product = 1; columns **A, B, C, X**, X column blank on p.32, filled p.33.
+X = 1 when any one product = 1; columns **A, B, C, X**.
 
 | Row ABC | 000 | 001 | 010 | 011 | 100 | 101 | 110 | 111 |
 |---|---|---|---|---|---|---|---|---|
@@ -101,8 +98,8 @@ X = 1 when any one product = 1; columns **A, B, C, X**, X column blank on p.32, 
 
 Verified Σ(1,2,7) ✓ (A′B′C → 001, A′BC′ → 010, ABC → 111).
 
-Table → SOP (p.34–36): same table given; p.35 highlights the 1-rows; p.36 writes one product
-per 1-row (0 input → complemented literal), giving the same X. Verified ✓. See owner note (p.34).
+Table → SOP (p.34–36): same table given; one product per 1-row (0 input → complemented
+literal), giving the same X. Verified ✓. See owner note (p.34).
 
 ## 8. Laws: commutative, associative, distributive — p.37–40 — CORE (recognition)
 | Law | Form on slide (A, B, C, dot notation) | Verified |
@@ -143,7 +140,7 @@ F2 (p.44–50), textbook pages 47–48:
 
 p.50 shows both circuits with "before/after" labels.
 
-Example 2.1 (p.51–54), textbook page 49; lines revealed one example per page:
+Example 2.1 (p.51–54), textbook page 49:
 
 | Input | Lines (each verified equivalent) | Answer |
 |---|---|---|
@@ -203,22 +200,22 @@ Answer Σ(0,1,2) = A′B + A′B′ + AB′ ✓ (term order as on slide, not ind
 
 p.75–76, F(x,y,z) = xy + x′yz, columns **x, y, z, xy, x′, x′yz, F, m, ✓** (no y or z complement
 columns): xy = 00000011, x′ = 11110000, x′yz = 00010000, F = 00010011 (rows 000…111). Ticks
-m3, m6, m7; p.76 highlights those rows. Answer Σ(3,6,7) = xyz′ + xyz + x′yz ✓.
+m3, m6, m7. Answer Σ(3,6,7) = xyz′ + xyz + x′yz ✓.
 
-## Exercises and blank-then-filled moments (practice candidates)
+## Exercises (practice candidates)
 | Page(s) | Student task | Verified answer |
 |---|---|---|
-| p.9 → 10 | fill NOR output column | 1 0 0 0 |
-| p.13 → 15 | fill XOR columns A′, B′, AB′, A′B, F | see §3 |
-| p.17 → 18 | fill XNOR product and output columns | see §3 |
-| p.21, 23 → 22, 24 | draw circuit for (A′+B)C; (A′+BC)′ | see §5 |
-| p.31–32 → 33 | fill X for A′B′C + A′BC′ + ABC | Σ(1,2,7) |
-| p.34 → 36 | SOP from table | A′B′C + A′BC′ + ABC |
-| p.44 → 47 | simplify F2 | xy′ + x′z |
-| p.51 → 54 | Example 2.1 (three parts) | xy; x; xy + x′z |
-| p.58 → 63 | Example 2.2 complements | (x+y′+z)(x+y+z′); x′ + yz′ + y′z |
-| p.69 → 70 | canonical or not (3 functions) | yes; no; no |
-| p.73 → 74/76 | canonical of xy + x′yz | Σ(3,6,7) |
+| p.9–10 | fill NOR output column | 1 0 0 0 |
+| p.13–15 | fill XOR columns A′, B′, AB′, A′B, F | see §3 |
+| p.17–18 | fill XNOR product and output columns | see §3 |
+| p.21–24 | draw circuit for (A′+B)C; (A′+BC)′ | see §5 |
+| p.31–33 | fill X for A′B′C + A′BC′ + ABC | Σ(1,2,7) |
+| p.34–36 | SOP from table | A′B′C + A′BC′ + ABC |
+| p.44–48 | simplify F2 | xy′ + x′z |
+| p.51–54 | Example 2.1 (three parts) | xy; x; xy + x′z |
+| p.58–63 | Example 2.2 complements | (x+y′+z)(x+y+z′); x′ + yz′ + y′z |
+| p.69–70 | canonical or not (3 functions) | yes; no; no |
+| p.73–76 | canonical of xy + x′yz | Σ(3,6,7) |
 
 No end-of-chapter exercise set in the deck.
 

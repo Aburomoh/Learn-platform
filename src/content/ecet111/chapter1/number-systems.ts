@@ -103,11 +103,12 @@ const conversionExercise: TopicInput["activities"][number] = {
       variants: [
         divideVariant(88, "Exercise: convert ({value})_10 to binary. Divide by 2, one step at a time: the result goes below, the remainder beside it."),
         divideVariant(73, "Now ({value})_10. Divide by 2, one step at a time."),
+        divideVariant(108, "And ({value})_10. Divide by 2, one step at a time."),
       ],
     },
-    { id: "ns.x.read", label: "Read off", conceptId: "ns.bit-order", objectiveId: "ns.obj.read", variants: [readVariant(88), readVariant(73)] },
-    { id: "ns.x.octal", label: "Octal", conceptId: "ns.octal-grouping", objectiveId: "ns.obj.octal", variants: [groupingVariant(88, 3), groupingVariant(73, 3)] },
-    { id: "ns.x.hex", label: "Hex", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [groupingVariant(88, 4), groupingVariant(73, 4)] },
+    { id: "ns.x.read", label: "Read off", conceptId: "ns.bit-order", objectiveId: "ns.obj.read", variants: [readVariant(88), readVariant(73), readVariant(108)] },
+    { id: "ns.x.octal", label: "Octal", conceptId: "ns.octal-grouping", objectiveId: "ns.obj.octal", variants: [groupingVariant(88, 3), groupingVariant(73, 3), groupingVariant(108, 3)] },
+    { id: "ns.x.hex", label: "Hex", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [groupingVariant(88, 4), groupingVariant(73, 4), groupingVariant(108, 4)] },
   ],
 };
 
@@ -212,6 +213,7 @@ export const numberSystemsTopic: TopicInput = {
                 { id: "s5", say: "2 ÷ 2 = 1 remainder 0, and 1 ÷ 2 = 0 remainder 1. The result is 0, so we stop. Now you do it.", stage: { revealed: 6 } },
               ],
             },
+            divideVariant(75, "One more. Convert ({value})_10 to binary by dividing by 2, one step at a time."),
           ],
         },
 
@@ -258,6 +260,7 @@ export const numberSystemsTopic: TopicInput = {
                 { id: "s3", say: "Read from MSB back to LSB: {answerBits}. Now you type it.", stage: { showOrder: true } },
               ],
             },
+            readVariant(75),
           ],
         },
 
@@ -332,6 +335,7 @@ export const numberSystemsTopic: TopicInput = {
                 { id: "s5", say: "4 and 5: ({value})_10 = ({answerOct})_8. Check: 4 × 8 + 5 = {value}.", stage: { groups: ["100", "101"], done: true } },
               ],
             },
+            groupingVariant(75, 3),
           ],
         },
 
@@ -406,6 +410,7 @@ export const numberSystemsTopic: TopicInput = {
                 { id: "s5", say: "2 and 5: ({value})_10 = ({answerHex})_16. Check: 2 × 16 + 5 = {value}.", stage: { groups: ["0010", "0101"], done: true } },
               ],
             },
+            groupingVariant(75, 4),
           ],
         },
       ],

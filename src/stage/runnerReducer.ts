@@ -8,7 +8,8 @@ import { grade, type Answer, type GradeResult } from "@/content/grade";
 import { fill } from "@/content/template";
 import { hintsForStep, stepTag, stepVars as specStepVars } from "@/content/steps";
 import { reduce, initialTutorState, contextFromVariant, type TutorState, type TutorAction, type Expression, type LearningEvent } from "@/tutor";
-import type { RevealedHint, PredictionResult } from "@/interactions";
+import type { RevealedHint } from "@/interactions/HintReveal/HintReveal";
+import type { PredictionResult } from "@/interactions/PredictionBeforeReveal/PredictionBeforeReveal";
 
 export interface RunnerState {
   qIndex: number;
@@ -58,6 +59,15 @@ const EFFECT_TYPES = new Set<TutorAction["type"]>(["FOCUS", "HIGHLIGHT", "PULSE"
 /** Template variables for the step currently being worked on (ADR-0007: asked of the step contract). */
 export function stepVars(variant: Variant, stepIndex: number): Record<string, string | number> {
   return specStepVars(variant.spec, stepIndex);
+}
+
+/**
+ * React key of the question view. A new variant (retry on other numbers) or a reset gives a fresh
+ * view, so a kind's view never shows the previous variant's input (owner rule: retry on a
+ * different number). Kind views own their input state (ADR-0008), so this key is what clears it.
+ */
+export function questionViewKey(variant: { id: string }, state: Pick<RunnerState, "interactionKey">): string {
+  return `${variant.id}-${state.interactionKey}`;
 }
 
 export function currentVariant(activity: Activity, s: Pick<RunnerState, "qIndex" | "vIndex">): Variant {
@@ -199,7 +209,10 @@ export function createRunnerReducer(activity: Activity) {
           return runTutor(stepped, { type: "STEP_COMPLETED" });
         }
         const withLast: RunnerState = { ...s, last: { answer: action.answer, result }, attemptSeq: s.attemptSeq + 1 };
-        const vars = result.wrongBit === undefined ? undefined : { wrongBitNumber: result.wrongBit + 1 };
+        const vars = {
+          ...(result.wrongBit === undefined ? {} : { wrongBitNumber: result.wrongBit + 1 }),
+          ...(result.wrongCells === undefined ? {} : { wrongCount: result.wrongCells.count }),
+        };
         return runTutor(withLast, { type: "ANSWER_SUBMITTED", correct: result.correct, misconceptionId: result.misconceptionId, vars });
       }
 
