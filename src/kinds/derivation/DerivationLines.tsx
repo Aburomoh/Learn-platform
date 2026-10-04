@@ -9,6 +9,24 @@ export interface DerivationRow {
   state: "done" | "now" | "later";
 }
 
+/** Splits a line into its top-level terms ("x'z(y' + y)", "xy'"), so a long line wraps only between terms. */
+export function terms(expr: string): string[] {
+  const out: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < expr.length; i++) {
+    const c = expr[i];
+    if (c === "(") depth++;
+    else if (c === ")") depth--;
+    else if (c === "+" && depth === 0) {
+      out.push(expr.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  out.push(expr.slice(start).trim());
+  return out;
+}
+
 /**
  * The derivation so far (#198 §4): one numbered line per step in mono, the law muted on the right
  * (under the line on phones). The line being worked on is an empty dashed slot with the halo;
@@ -30,7 +48,12 @@ export function DerivationLines({ id, rows }: { id: string; rows: DerivationRow[
                 next line<span className="sr-only"> (to find)</span>
               </span>
             ) : (
-              r.expr
+              terms(r.expr).map((t, k) => (
+                <span key={k} className={styles.term}>
+                  {k > 0 && " + "}
+                  {t}
+                </span>
+              ))
             )}
           </span>
           {r.law && <span className={styles.law}>{r.law}</span>}

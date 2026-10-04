@@ -5,6 +5,7 @@ import { useReducer } from "react";
 import { VariantSchema, type Activity } from "@/content/schema";
 import { createRunnerReducer, currentVariant, initialRunnerState, questionViewKey } from "@/stage/runnerReducer";
 import { QuestionView } from "@/stage/QuestionView";
+import { terms } from "./DerivationLines";
 
 // The pack's F2 (ch2 §10), one law per line, through the stage: registry, steps, grader, lazy view.
 const variant = (lineMode: "choose" | "type") =>
@@ -48,6 +49,13 @@ function Harness({ lineMode }: { lineMode: "choose" | "type" }) {
 }
 
 const lines = () => within(screen.getByRole("list", { name: "Derivation" })).getAllByRole("listitem");
+
+describe("DerivationLines", () => {
+  it("splits a line into whole terms at the top-level + only", () => {
+    expect(terms("x'z(y' + y) + xy'")).toEqual(["x'z(y' + y)", "xy'"]);
+    expect(terms("(A + B)'")).toEqual(["(A + B)'"]);
+  });
+});
 
 describe("derivation kind in the stage (#221)", () => {
   it("each line is two goals: the law, then the line; later lines stay hidden", async () => {

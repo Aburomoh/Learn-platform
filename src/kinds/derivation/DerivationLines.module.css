@@ -39,7 +39,11 @@
   min-width: 0;
   font-size: var(--text-lg);
   font-weight: 600;
-  overflow-wrap: anywhere;
+}
+
+/* a term never breaks inside; a long line wraps only between terms (before " + ") */
+.term {
+  white-space: nowrap;
 }
 
 .slot {
