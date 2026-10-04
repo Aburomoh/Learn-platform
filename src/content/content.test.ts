@@ -11,6 +11,7 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
+import { columnTruth } from "@/kinds/truth-table/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 
 const COURSE = "ecet111";
@@ -211,6 +212,23 @@ describe("content registry", () => {
     expect(n).toBeGreaterThan(0);
   });
 
+  it("gate tables (#224): each table's stated answer is the column computed from its gate", () => {
+    const tables = getActivity(COURSE, "logic-gates", "gate-tables")!.activity;
+    const columns = tables.questions.map((q) =>
+      q.variants.map((v) => {
+        if (v.spec.kind !== "truth-table") throw new Error("expected a truth table");
+        const col = columnTruth(v.spec, v.spec.columns[0]).join(" ");
+        expect(col, v.id).toBe(v.vars.answerColumn);
+        return col;
+      }),
+    );
+    expect(columns).toEqual([
+      ["0 0 0 1", "0 0 0 1", "0 0 0 0 0 0 0 1"],
+      ["0 1 1 1", "0 1 1 1", "0 1 1 1 1 1 1 1"],
+      ["1 0", "1 0", "1 0"],
+    ]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -232,7 +250,7 @@ describe("pedagogy guard", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
-    const PENDING = new Set(["lg.q.predict", "lg.q.identify"]); // the Logic gates demo, until #224 replaces it
+    const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
       for (const m of c.modules)
         for (const t of m.topics)
