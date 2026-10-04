@@ -14,6 +14,7 @@ import { resolveMessage } from "@/tutor/messages";
 import { isPOS, isSOP, parseBool } from "./boolean";
 import { columnTruth } from "@/kinds/truth-table/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
+import { exactValue } from "@/kinds/base-to-decimal/logic";
 
 const COURSE = "ecet111";
 
@@ -228,6 +229,24 @@ describe("content registry", () => {
       ["0 1 1 1", "0 1 1 1 1 1 1 1", "0 1 1 1"],
       ["1 0"],
     ]);
+  });
+
+  it("place value (#213): every sum matches the content pack (ch1 §1–3, §7), and only fitting nudges are offered", () => {
+    const x = getActivity(COURSE, "place-value", "place-value")!.activity;
+    const sums = x.questions.map((q) => q.variants.map((v) => (v.spec.kind === "base-to-decimal" ? exactValue(v.spec) : "")));
+    expect(sums).toEqual([
+      ["276.384", "908.125", "731.062"],
+      ["6.375", "7.125", "4.75", "6.625"],
+      ["179.6875", "207.53125", "70.453125"],
+      ["709", "993", "439"],
+    ]);
+    for (const q of x.questions)
+      for (const v of q.variants) {
+        if (v.spec.kind !== "base-to-decimal") throw new Error("expected base-to-decimal");
+        const types = v.misconceptions.map((m) => m.detect.type);
+        expect(types.includes("negative-powers-wrong"), v.id).toBe(v.spec.number.includes("."));
+        expect(types.includes("hex-letter-as-digit"), v.id).toBe(v.spec.base === 16);
+      }
   });
 
   it("SOP and POS (#227): forms, tables and SOPs are computed and consistent", () => {
