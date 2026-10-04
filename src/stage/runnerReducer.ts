@@ -209,7 +209,10 @@ export function createRunnerReducer(activity: Activity) {
           return runTutor(stepped, { type: "STEP_COMPLETED" });
         }
         const withLast: RunnerState = { ...s, last: { answer: action.answer, result }, attemptSeq: s.attemptSeq + 1 };
-        const vars = result.wrongBit === undefined ? undefined : { wrongBitNumber: result.wrongBit + 1 };
+        const vars = {
+          ...(result.wrongBit === undefined ? {} : { wrongBitNumber: result.wrongBit + 1 }),
+          ...(result.wrongCells === undefined ? {} : { wrongCount: result.wrongCells.count }),
+        };
         return runTutor(withLast, { type: "ANSWER_SUBMITTED", correct: result.correct, misconceptionId: result.misconceptionId, vars });
       }
 

@@ -53,7 +53,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         express("thinking");
         const key = event.misconceptionId && misconceptionKey(ctx, event.misconceptionId);
         if (key) say(key, event.vars);
-        else say("wrong.first");
+        else say(genericWrongKey(ctx, event, "wrong.first"), event.vars);
         out.push({ type: "REQUEST_RETRY" });
         break;
       }
@@ -74,7 +74,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       express("concern");
       const key = event.misconceptionId && misconceptionKey(ctx, event.misconceptionId);
       if (key) say(key, event.vars);
-      else say("wrong.again");
+      else say(genericWrongKey(ctx, event, "wrong.again"), event.vars);
       const h = nextHint(s, ctx);
       if (h) {
         grant(s, h.rung, out, fill(h.text, ctx.vars));
@@ -198,9 +198,17 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
   return { state: s, actions: out };
 }
 
+/** A grid answer with wrong cells and no recognised mistake points at the marked cell instead of a flat "not quite". */
+function genericWrongKey(ctx: ActivityContext, event: { vars?: Record<string, string | number> }, fallback: string): string {
+  if (event.vars?.wrongCount === undefined) return fallback;
+  const key = "wrong.cell";
+  return ctx.stepTag && hasMessage(`${key}.${ctx.stepTag}`) ? `${key}.${ctx.stepTag}` : key;
+}
+
 /** The line after a correct step names the next goal (ctx is for the new step). */
 function stepNextKey(ctx: ActivityContext): string {
-  const { gateName, stepNumber, gateCount, carryIn } = ctx.vars;
+  const { gateName, stepNumber, gateCount, carryIn, columnLabel, columnCount } = ctx.vars;
+  if (columnLabel !== undefined) return stepNumber !== undefined && stepNumber === columnCount ? "step.last-table-column" : "step.next-table-column";
   if (ctx.stepTag === "column") return carryIn === 1 ? "step.next-column-carry" : "step.next-column";
   if (ctx.stepTag === "carry") return "step.last-carry";
   if (ctx.stepTag !== "gate" && gateName === undefined) return "step.next";
