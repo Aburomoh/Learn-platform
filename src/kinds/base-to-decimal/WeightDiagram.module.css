@@ -125,3 +125,28 @@
 .actions {
   display: flex;
 }
+
+/* #414: the base at full size, the exponent raised beside it like a superscript */
+.cell[data-state="done"],
+.cell[data-state="now"] {
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+.power {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  line-height: 1;
+}
+
+.power sup {
+  align-self: flex-start;
+  margin-bottom: 14px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.cell[data-state="done"] sup {
+  font-size: max(0.7em, 12px);
+}
