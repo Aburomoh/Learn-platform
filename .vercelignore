@@ -3,6 +3,8 @@
 *.ppt
 *.pdf
 source-material
+ECET111 materials
+MyPics
 .tmp
 .env*
 .claude
