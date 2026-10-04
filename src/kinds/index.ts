@@ -16,6 +16,7 @@ import { placeValue, type PlaceValueAnswer } from "./place-value/logic";
 import { repeatedDivision, type RepeatedDivisionAnswer } from "./repeated-division/logic";
 import { device, type DeviceAnswer } from "./device/logic";
 import { timing, type TimingAnswer } from "./timing/logic";
+import { stateDiagram, type StateDiagramAnswer } from "./state-diagram/logic";
 import { truthTable, type TruthTableAnswer } from "./truth-table/logic";
 
 export const kinds = {
@@ -32,13 +33,14 @@ export const kinds = {
   "repeated-division": repeatedDivision,
   device,
   timing,
+  "state-diagram": stateDiagram,
   "truth-table": truthTable,
 } as const;
 
 export type RegisteredKind = keyof typeof kinds;
 
 /** The student's answer, one shape per kind. */
-export type KindAnswer = DerivationAnswer | ExpressionAnswer | BaseToDecimalAnswer | BitGroupingAnswer | CircuitAnswer | ColumnAdditionAnswer | KmapAnswer | MultipleChoiceAnswer | NumericAnswer | PlaceValueAnswer | RepeatedDivisionAnswer | DeviceAnswer | TimingAnswer | TruthTableAnswer;
+export type KindAnswer = DerivationAnswer | ExpressionAnswer | BaseToDecimalAnswer | BitGroupingAnswer | CircuitAnswer | ColumnAdditionAnswer | KmapAnswer | MultipleChoiceAnswer | NumericAnswer | PlaceValueAnswer | RepeatedDivisionAnswer | DeviceAnswer | TimingAnswer | StateDiagramAnswer | TruthTableAnswer;
 
 export function isRegisteredKind(kind: string): kind is RegisteredKind {
   return Object.hasOwn(kinds, kind);
