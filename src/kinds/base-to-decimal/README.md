@@ -14,5 +14,15 @@ in the three lines the Chapter 1 slides write (content pack ch1 §1–3, §7):
 - Wrong weights or terms set `wrongCells` (first wrong position, count), as in the truth table.
 - Step vars: `number`, `base`, `digitCount`, `terms` ("(1 × 2^2) + …"), `values`, `value`, `stepNumber`.
 
-**Status:** spec, grading, step contract and tests. The view (weight diagram: arrows from each digit
-to its weight, then the expansion and value lines) and the three registry lines come from Frontend.
+## View (`ui.tsx`, `WeightDiagram.tsx`)
+
+- The slides' weight diagram: the digits boxed in a row around the point; under each digit its
+  weight (base with the power as a superscript) and its term; then the sum line.
+- One goal at a time: the powers (a small field in the superscript; the true minus sign is
+  accepted), then the terms, then the sum. Done rows show their values, the current row has
+  the halo, later rows are dim. After a wrong check only `wrongCells.first` is marked and focused.
+- Finished: (number)<sub>base</sub> = (value)<sub>10</sub>.
+- Explain Slowly stage: `revealed` = goals shown done (0 to 3).
+- A long number scrolls inside its well with a fade edge.
+
+**Status:** spec, grading, tests and the view; registered.

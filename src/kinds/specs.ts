@@ -2,9 +2,10 @@
  * Build-time side of the kind registry (ADR-0008): the Zod specs and misconception detectors that
  * `src/content/schema.ts` assembles. Kept apart from `index.ts` so Zod stays out of the client.
  */
+import { BaseToDecimalSpec, baseToDecimalDetectors } from "./base-to-decimal/spec";
 import { CircuitSpec, circuitDetectors } from "./circuit-predict/spec";
 import { PlaceValueSpec, placeValueDetectors } from "./place-value/spec";
 
-export const kindSpecs = [PlaceValueSpec, CircuitSpec] as const;
+export const kindSpecs = [PlaceValueSpec, CircuitSpec, BaseToDecimalSpec] as const;
 
-export const kindDetectors = [...placeValueDetectors, ...circuitDetectors] as const;
+export const kindDetectors = [...placeValueDetectors, ...circuitDetectors, ...baseToDecimalDetectors] as const;
