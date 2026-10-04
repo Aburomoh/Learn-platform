@@ -53,11 +53,13 @@
 }
 
 .cell {
+  box-sizing: border-box;
   display: grid;
   place-items: center;
-  min-width: 56px;
+  width: 100%;
+  min-width: 0;
   min-height: 44px;
-  padding: 0 var(--space-1);
+  padding: 0 2px;
   border-radius: var(--radius-sm);
   font-size: var(--text-base);
 }
@@ -89,8 +91,9 @@
   font-size: var(--text-base);
 }
 
+/* a term input fills its column */
 .wide {
-  width: 88px;
+  width: 100%;
 }
 
 .input:focus-visible {

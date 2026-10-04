@@ -132,7 +132,7 @@ export function WeightDiagram({
         <div
           className={styles.grid}
           style={{
-            gridTemplateColumns: `repeat(${n + (pointAt >= 0 ? 1 : 0)}, auto)`,
+            gridTemplateColumns: Array.from({ length: n + (pointAt >= 0 ? 1 : 0) }, (_, c) => (pointAt >= 0 && c === pointAt ? "auto" : "72px")).join(" "),
           }}
         >
           {digits.map((d, i) => (
