@@ -11,6 +11,7 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
+import { isPOS, isSOP, parseBool } from "./boolean";
 import { columnTruth } from "@/kinds/truth-table/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 
@@ -232,7 +233,17 @@ describe("content registry", () => {
   it("SOP and POS (#227): forms, tables and SOPs are computed and consistent", () => {
     const x = getActivity(COURSE, "sop-and-pos", "sop-and-pos")!.activity;
     const [form, toTable, pick, toSop] = x.questions;
-    expect(form.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.correctOptionId : ""))).toEqual(["sop", "pos", "neither"]);
+    // every set shows one SOP and one POS (neither expression is both), the asked form varies (Pedagogy on #342)
+    for (const v of form.variants) {
+      if (v.spec.kind !== "multiple-choice") throw new Error("expected multiple choice");
+      const kinds = v.spec.options.map((o) => {
+        const e = parseBool(o.text.replace(/′/g, "'"));
+        expect(isSOP(e) && isPOS(e), `${v.id}: ${o.text} is both forms`).toBe(false);
+        return isSOP(e) ? "sop" : isPOS(e) ? "pos" : "none";
+      });
+      expect(kinds.sort(), v.id).toEqual(["pos", "sop"]);
+    }
+    expect(new Set(form.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.correctOptionId : ""))).size).toBe(2);
     // F's column has its 1s exactly on the product rows
     for (const v of toTable.variants) {
       if (v.spec.kind !== "truth-table") throw new Error("expected a truth table");

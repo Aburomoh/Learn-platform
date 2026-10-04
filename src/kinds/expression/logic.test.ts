@@ -73,6 +73,7 @@ describe("expression kind (#219)", () => {
     expect(answer(m, "A'B + AB")).toMatchObject({ correct: true });
     expect(answer(m, "B")).toMatchObject({ correct: false, misconceptionId: "ex.wrong-form" }); // right function, simplified
     expect(answer(m, "A'B + AB + AB")).toMatchObject({ correct: true }); // a repeated minterm is still canonical
+    expect(answer(m, "A''B + A'B")).toMatchObject({ correct: false, misconceptionId: "ex.wrong-form" }); // A″ is not a literal (Reviewer on #342)
   });
 
   it("validates the spec", () => {

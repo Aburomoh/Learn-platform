@@ -6,7 +6,7 @@
  */
 import type { z } from "zod";
 import type { HintSchema, TopicSchema, VariantSchema } from "../../schema";
-import { envFor, isPOS, isSOP, parseBool } from "../../boolean";
+import { envFor } from "../../boolean";
 
 type TopicInput = z.input<typeof TopicSchema>;
 type HintInput = z.input<typeof HintSchema>;
@@ -20,37 +20,35 @@ const bitsText = (m: number) => VARS.map((v) => rowBits(m)[v]).join(" ");
 const minterm = (m: number) => VARS.map((v) => (rowBits(m)[v] ? v : `${v}'`)).join("");
 const show = (t: string) => t.replace(/'/g, "′");
 
-/* ---------- Q1: SOP, POS, or neither (p.26–29) ---------- */
+/* ---------- Q1: which one is the SOP / the POS? (p.26–29) ---------- */
 
-const FORMS = [
-  { id: "sop", text: "SOP: a sum of products" },
-  { id: "pos", text: "POS: a product of sums" },
-  { id: "neither", text: "Neither: the forms are mixed" },
-];
-
-function formVariant(id: string, expr: string, k: number): VariantInput {
-  const e = parseBool(expr);
-  const form = isSOP(e) ? "sop" : isPOS(e) ? "pos" : "neither";
-  // the real mix-up is SOP ↔ POS; picking either for a mixed expression is a plain wrong answer
-  const swapped = form === "sop" ? "pos" : form === "pos" ? "sop" : undefined;
-  const why = form === "sop" ? "products joined by +" : form === "pos" ? "bracketed sums multiplied together" : "a product and a sum mixed at the top level";
+/**
+ * Every set shows one SOP and one POS and asks for one of them, so each attempt exercises both
+ * forms (Pedagogy on #342). Neither expression may be both forms at once (like A + B).
+ */
+function formVariant(id: string, ask: "sop" | "pos", sop: string, pos: string, k: number): VariantInput {
+  const options = rotate([{ id: "sop", text: show(sop) }, { id: "pos", text: show(pos) }], k).map((o) => ({ ...o, misconceptionId: o.id !== ask ? "sp.sop-pos" : undefined }));
+  const name = ask.toUpperCase();
+  const answer = ask === "sop" ? sop : pos;
   return {
     id,
-    prompt: `F = ${show(expr)}. Which form is it?`,
-    spec: { kind: "multiple-choice", options: rotate(FORMS.map((f) => ({ ...f, misconceptionId: f.id === swapped ? "sp.sop-pos" : undefined })), k), correctOptionId: form },
+    prompt: `Which of these is the ${name}?`,
+    spec: { kind: "multiple-choice", options, correctOptionId: ask },
     hints: [
-      { rung: 2, text: "Not yet. Look at what joins the outermost parts." },
-      { rung: 3, text: "SOP: products (AND) joined by +. POS: sums in brackets, multiplied together." },
-      { rung: 9, text: `It is ${form === "neither" ? "neither" : form.toUpperCase()}: ${why}.` },
+      { rung: 2, text: "Not yet. In each expression, what joins the outermost parts?" },
+      { rung: 3, text: "Is the outside a + between parts, or brackets multiplied together?" },
+      { rung: 4, text: "SOP: products (AND) joined by +. POS: sums in brackets, multiplied together." },
+      { rung: 9, text: `The ${name} is ${show(answer)}.` },
     ],
-    misconceptions: swapped ? [{ id: "sp.sop-pos", title: "SOP and POS swapped", nudgeKey: "sp.sop-pos", detect: { type: "option", optionId: swapped } }] : [],
+    misconceptions: [{ id: "sp.sop-pos", title: "SOP and POS swapped", nudgeKey: "sp.sop-pos", detect: { type: "option", optionId: ask === "sop" ? "pos" : "sop" } }],
     explanation: [
-      { id: "s1", say: "Read from the outside in: what joins the biggest parts of F?" },
+      { id: "s1", say: "Read each expression from the outside in: what joins its biggest parts?" },
       {
         id: "s2",
-        say: `F = ${show(expr)}.`,
-        ask: { prompt: "The outermost parts are joined by…", options: ["+ (OR)", "multiplication (AND)"], correctIndex: e.type === "or" ? 0 : 1, afterCorrect: `Yes. Then look inside each part: F is ${form === "neither" ? "neither form" : form.toUpperCase()}.`, afterWrong: `They are joined by ${e.type === "or" ? "+" : "multiplication"}. Inside each part, F is ${form === "neither" ? "neither form" : form.toUpperCase()}.` },
+        say: `Look at ${show(sop)}.`,
+        ask: { prompt: "Its outermost parts are joined by…", options: ["+ (OR)", "multiplication (AND)"], correctIndex: 0, afterCorrect: "Yes: products joined by +. That one is the SOP.", afterWrong: "They are joined by +: products added together. That one is the SOP." },
       },
+      { id: "s3", say: `The other, ${show(pos)}, multiplies bracketed sums together: that is the POS.` },
     ],
   };
 }
@@ -159,14 +157,14 @@ const PICK_SETS: [string, number[]][] = [
 export const sopPosTopic: TopicInput = {
   id: "sop-and-pos",
   title: "SOP and POS",
-  summary: "Tell SOP from POS, fill a table from an SOP, then write the SOP from a table's 1-rows.",
+  summary: "Pick out the SOP and the POS, fill a table from an SOP, then write the SOP from a table's 1-rows.",
   preview: "rows 1, 3 → A′B + AB",
   concepts: [
     { id: "sp.forms", title: "SOP and POS", summary: "SOP: products joined by +. POS: bracketed sums multiplied together." },
     { id: "sp.table", title: "SOP ↔ truth table", summary: "Each product is 1 on one row; F is 1 where any product is; each 1-row gives one product." },
   ],
   objectives: [
-    { id: "sp.obj.form", conceptId: "sp.forms", text: "Tell whether an expression is SOP, POS or neither." },
+    { id: "sp.obj.form", conceptId: "sp.forms", text: "Tell an SOP from a POS." },
     { id: "sp.obj.to-table", conceptId: "sp.table", text: "Fill a truth table from an SOP, one product at a time." },
     { id: "sp.obj.to-sop", conceptId: "sp.table", text: "Write the SOP from a table's 1-rows, one product per row." },
   ],
@@ -183,7 +181,11 @@ export const sopPosTopic: TopicInput = {
           label: "SOP or POS",
           conceptId: "sp.forms",
           objectiveId: "sp.obj.form",
-          variants: [formVariant("vf-1", "AB' + A'C + BC", 1), formVariant("vf-2", "(A + B')(A' + C)", 2), formVariant("vf-3", "AB + C(A' + B)", 0)],
+          variants: [
+            formVariant("vf-1", "pos", "AB' + A'C + BC", "(A + B')(A' + C)", 0),
+            formVariant("vf-2", "sop", "A'B + BC' + AC", "(A' + B)(B + C')", 0),
+            formVariant("vf-3", "pos", "AB + A'C'", "(A + C')(B' + C)(A' + B)", 1),
+          ],
         },
         { id: "sp.q.to-table", label: "SOP → table", conceptId: "sp.table", objectiveId: "sp.obj.to-table", variants: TABLE_SETS.map(([id, rows]) => tableVariant(id, rows)) },
         { id: "sp.q.pick", label: "Tick the 1-rows", conceptId: "sp.table", objectiveId: "sp.obj.to-sop", variants: PICK_SETS.map(([id, rows]) => pickVariant(id, rows)) },
