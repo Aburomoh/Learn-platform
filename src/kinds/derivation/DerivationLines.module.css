@@ -1,0 +1,95 @@
+.root {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunk);
+  list-style: none;
+  min-width: 0;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  min-height: 48px;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+}
+
+/* Now: the halo behind the line being worked on */
+.line[data-state="now"] {
+  background: var(--focus-halo);
+}
+
+/* Later: only "…" */
+.line[data-state="later"] {
+  opacity: var(--pending-opacity);
+}
+
+.num {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.expr {
+  min-width: 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.slot {
+  display: inline-block;
+  padding: var(--space-1) var(--space-6);
+  border: 2px dashed var(--accent);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.law {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* phones: the law goes under the line */
+@media (max-width: 640px) {
+  .line {
+    grid-template-columns: 24px minmax(0, 1fr);
+  }
+  .law {
+    grid-column: 2;
+    text-align: left;
+  }
+}
+
+/* type mode */
+.typed {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.field {
+  flex: 1 1 220px;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 var(--space-3);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-lg);
+}
+
+.field[aria-invalid="true"] {
+  border-color: var(--error);
+  background: var(--error-bg);
+}

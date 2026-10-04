@@ -16,5 +16,17 @@ name the law (chips from `lawOptions`), then give the line.
 - Content tests must check each line is equivalent to the one before (the Boolean module does it).
 - Step vars: `lineNumber`, `lineCount`, `previous`, `lawName`, `stepNumber`.
 
-**Status:** spec, grading, step contract and tests. The view (UX §4: numbered lines, law chips,
-dashed slot for the next line) and the three registry lines come from Frontend.
+## View (`ui.tsx`, `DerivationLines.tsx`)
+
+- Numbered lines in mono with the law muted on the right (under the line on phones); line 1
+  reads "Given". The line being worked on has the halo and an empty dashed "next line" slot with
+  "Law: ?"; later lines show only "…".
+- Goal 1 (law): the shared `MultipleChoice` with the line's law chips ("Check law"). Goal 2 (line):
+  the line options (`lineOptions`) in choose mode, or a mono field in type mode ("Check line").
+  The sub-expression a law applies to is not highlighted (hint rung 5, Pedagogy #245).
+- Explain Slowly stages: `line` (1-based; omit for the whole derivation), `law` (show its law),
+  `shown` (show the line too).
+- Type mode uses a plain field for now; the expression kind's key row and overbar reading move to
+  `kinds/shared` once both kinds have landed.
+
+**Status:** spec, grading, tests and the view (UX §4); registered.

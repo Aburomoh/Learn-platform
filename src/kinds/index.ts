@@ -4,17 +4,19 @@
  * No Zod here: this file is part of the client bundle.
  */
 import { circuitPredict, type CircuitAnswer } from "./circuit-predict/logic";
+import { derivation, type DerivationAnswer } from "./derivation/logic";
 import { placeValue, type PlaceValueAnswer } from "./place-value/logic";
 
 export const kinds = {
   "circuit-predict": circuitPredict,
+  derivation,
   "place-value": placeValue,
 } as const;
 
 export type RegisteredKind = keyof typeof kinds;
 
 /** Answers of the registered kinds. */
-export type KindAnswer = CircuitAnswer | PlaceValueAnswer;
+export type KindAnswer = CircuitAnswer | DerivationAnswer | PlaceValueAnswer;
 
 export function isRegisteredKind(kind: string): kind is RegisteredKind {
   return Object.hasOwn(kinds, kind);

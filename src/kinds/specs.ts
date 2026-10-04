@@ -3,8 +3,9 @@
  * `src/content/schema.ts` assembles. Kept apart from `index.ts` so Zod stays out of the client.
  */
 import { CircuitSpec, circuitDetectors } from "./circuit-predict/spec";
+import { DerivationSpec, derivationDetectors } from "./derivation/spec";
 import { PlaceValueSpec, placeValueDetectors } from "./place-value/spec";
 
-export const kindSpecs = [PlaceValueSpec, CircuitSpec] as const;
+export const kindSpecs = [PlaceValueSpec, CircuitSpec, DerivationSpec] as const;
 
-export const kindDetectors = [...placeValueDetectors, ...circuitDetectors] as const;
+export const kindDetectors = [...placeValueDetectors, ...circuitDetectors, ...derivationDetectors] as const;

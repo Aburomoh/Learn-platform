@@ -16,6 +16,7 @@ describe("kind registry (ADR-0008)", () => {
   it("each kind's UI module exports Practice, Explain and Preload, and carries its size-report marker", async () => {
     const modules: Record<string, () => Promise<{ Practice: { displayName?: string }; Explain: unknown; Preload: () => null }>> = {
       "circuit-predict": () => import("./circuit-predict/ui"),
+      derivation: () => import("./derivation/ui"),
       "place-value": () => import("./place-value/ui"),
     };
     expect(Object.keys(modules).sort()).toEqual(names);
