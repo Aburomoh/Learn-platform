@@ -2,43 +2,37 @@
  * Deterministic grading against content. Components never grade themselves; the ActivityRunner
  * calls `grade` and passes the result to the tutor engine. Course truth lives in the spec.
  */
-import type { CircuitSpec, InteractionSpec, Variant } from "./schema";
+import { isRegisteredKind, kinds, type KindAnswer } from "@/kinds";
+import type { GradeResult } from "@/kinds/types";
+import type { Variant } from "./schema";
 
+export type { GradeResult };
+// Helpers of migrated kinds keep their old import path.
+export { evaluateCircuit, gateOrder, gateOutput } from "@/kinds/circuit-predict/logic";
+export { bitsToValue, valueToBits } from "@/kinds/place-value/logic";
+
+/** Answers of the registered kinds (`src/kinds/`) plus the kinds not migrated yet (ADR-0008). */
 export type Answer =
-  | { kind: "place-value"; digits: (0 | 1 | null)[] }
+  | KindAnswer
   | { kind: "numeric"; text: string }
   | { kind: "multiple-choice"; optionId: string }
-  /** `step` indexes gateOrder(spec): the gate being answered. Omitted = the output gate. */
-  | { kind: "circuit-predict"; output: 0 | 1; step?: number }
   | { kind: "repeated-division"; step: number; quotient: number; remainder: number }
   /** One column (sum bit + carry out), or the final carry step where only `sum` is read. */
   | { kind: "column-addition"; step: number; sum: number; carry?: number }
   /** Step 0: `groups` as marked, padding included, left to right. Steps 1…G: `digit` of group G. */
   | { kind: "bit-grouping"; step: number; groups?: string[]; digit?: string };
 
-export interface GradeResult {
-  correct: boolean;
-  misconceptionId?: string;
-  /** Normalised student answer for evidence (never raw UI state). */
-  normalized: string;
-  /** True when a step was right but the question has more steps (repeated-division, column-addition, circuit-predict). */
-  partial?: boolean;
-  /** Leftmost wrong bit, 0-based from the left (set with a `first-wrong-bit` misconception). */
-  wrongBit?: number;
-}
-
 export function grade(variant: Variant, answer: Answer): GradeResult {
   const spec = variant.spec;
   if (spec.kind !== answer.kind) {
     throw new Error(`Answer kind ${answer.kind} does not match spec kind ${spec.kind}`);
   }
+  if (isRegisteredKind(spec.kind)) {
+    // one cast at the dispatch: the kinds match (checked above), TypeScript cannot correlate them
+    const logic = kinds[spec.kind] as { grade(variant: Variant, answer: Answer): GradeResult };
+    return logic.grade(variant, answer);
+  }
   switch (spec.kind) {
-    case "place-value": {
-      const a = answer as Extract<Answer, { kind: "place-value" }>;
-      const digits = a.digits.map((d) => d ?? 0);
-      const correct = digits.length === spec.answer.length && digits.every((d, i) => d === spec.answer[i]);
-      return { correct, normalized: digits.join(""), misconceptionId: correct ? undefined : detectBits(variant, digits) };
-    }
     case "numeric": {
       const a = answer as Extract<Answer, { kind: "numeric" }>;
       const text = normaliseNumeric(a.text, spec.base);
@@ -125,18 +119,6 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
               : undefined;
       return { correct, normalized, misconceptionId: kind ? variant.misconceptions.find((m) => m.detect.type === kind)?.id : undefined };
     }
-    case "circuit-predict": {
-      const a = answer as Extract<Answer, { kind: "circuit-predict" }>;
-      const order = gateOrder(spec);
-      const step = a.step ?? order.length - 1;
-      const gate = spec.gates.find((g) => g.id === order[step]);
-      if (!gate) throw new Error(`No gate step ${step}`);
-      const correct = a.output === evaluateCircuit(spec)[gate.id];
-      const normalized = `${gate.id}=${a.output}`;
-      if (correct) return { correct, normalized, partial: step < order.length - 1 };
-      const hit = variant.misconceptions.find((m) => m.detect.type === "gate-output" && m.detect.gate === gate.type);
-      return { correct, normalized, misconceptionId: hit?.id };
-    }
   }
 }
 
@@ -156,79 +138,6 @@ function firstWrongBit(answer: string, text: string): number | undefined {
   const padded = text.padStart(answer.length, "0");
   const i = [...padded].findIndex((d, k) => d !== answer[k]);
   return i >= 0 ? i : undefined;
-}
-
-function detectBits(variant: Variant, digits: number[]): string | undefined {
-  const spec = variant.spec as Extract<InteractionSpec, { kind: "place-value" }>;
-  const places = spec.answer.map((_, i) => 2 ** (spec.answer.length - 1 - i));
-  for (const m of variant.misconceptions) {
-    const d = m.detect;
-    if (d.type === "reversed-bits" && digits.every((v, i) => v === spec.answer[spec.answer.length - 1 - i])) return m.id;
-    if (d.type === "missing-place") {
-      const i = places.indexOf(d.place);
-      if (i >= 0 && spec.answer[i] === 1 && digits[i] === 0) return m.id;
-    }
-    if (d.type === "extra-place") {
-      const i = places.indexOf(d.place);
-      if (i >= 0 && spec.answer[i] === 0 && digits[i] === 1) return m.id;
-    }
-    if (d.type === "equals" && digits.join("") === String(d.value)) return m.id;
-  }
-  return undefined;
-}
-
-/** Evaluates a circuit spec; used by content tests to confirm authored answers. */
-export function evaluateCircuit(spec: CircuitSpec, inputOverride?: Record<string, 0 | 1>): Record<string, 0 | 1> {
-  const values: Record<string, 0 | 1> = {};
-  for (const inp of spec.inputs) values[inp.id] = inputOverride?.[inp.id] ?? inp.value;
-  const pending = [...spec.gates];
-  let guard = 0;
-  while (pending.length && guard++ < 50) {
-    const g = pending.shift()!;
-    if (!g.from.every((f) => f in values)) {
-      pending.push(g);
-      continue;
-    }
-    const [x, y] = g.from.map((f) => values[f]);
-    values[g.id] = gateOutput(g.type, x, y);
-  }
-  if (pending.length) throw new Error("Circuit has unresolved gates (cycle or missing input)");
-  return values;
-}
-
-/** Gate ids in signal-flow order (every gate after its sources), the output gate last. */
-export function gateOrder(spec: CircuitSpec): string[] {
-  const ready = new Set(spec.inputs.map((i) => i.id));
-  const order: string[] = [];
-  const pending = spec.gates.filter((g) => g.id !== spec.outputGateId);
-  while (pending.length) {
-    const i = pending.findIndex((g) => g.from.every((f) => ready.has(f)));
-    if (i < 0) throw new Error("Circuit has unresolved gates (cycle or missing input)");
-    const [g] = pending.splice(i, 1);
-    ready.add(g.id);
-    order.push(g.id);
-  }
-  return [...order, spec.outputGateId];
-}
-
-export function gateOutput(type: CircuitSpec["gates"][number]["type"], x: 0 | 1, y: 0 | 1 = 0): 0 | 1 {
-  switch (type) {
-    case "AND": return x && y ? 1 : 0;
-    case "OR": return x || y ? 1 : 0;
-    case "NOT": return x ? 0 : 1;
-    case "XOR": return x !== y ? 1 : 0;
-    case "NAND": return x && y ? 0 : 1;
-    case "NOR": return x || y ? 0 : 1;
-  }
-}
-
-/** Decimal value of a binary digit row, most significant first. */
-export function bitsToValue(digits: (0 | 1 | null)[]): number {
-  return digits.reduce<number>((acc, d) => acc * 2 + (d ?? 0), 0);
-}
-
-export function valueToBits(value: number, slots: number): (0 | 1)[] {
-  return Array.from({ length: slots }, (_, i) => ((value >> (slots - 1 - i)) & 1) as 0 | 1);
 }
 
 /** Division-by-2 chain for a value; used by content tests to confirm authored steps. */

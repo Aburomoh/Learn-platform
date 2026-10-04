@@ -50,4 +50,6 @@ next-env.d.ts
 *.ppt
 *.pdf
 /source-material/
+# owner's personal photos: never committed; a processed portrait is added deliberately
+/MyPics/
 /.tmp/

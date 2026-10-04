@@ -1,7 +1,7 @@
 # Current State — Product Manager
 
-Current assignment: R1 redesign pages (#122–#125; #124 after #158) and last Ch.1 task #41; course map Ch.2–5 merged (#131).
-Recent important decision: Owner approved R1 direction; TL: restore pre-rendered challenge 1 (#158) before #124.
-Blocker: None. Merge wakes work since #130.
-Relevant issue/PR: #41, #55, #110, #122–#125, #158.
-Next expected action: After #41 merges, ready #55 (subscripts); promote #124 after #158; plan Ch.2 tasks from docs/design/course-map-ecet111.md when owner allows.
+Current assignment: Complete ECET 111 (epic #192). Matrix docs/COVERAGE_ECET111.md (#244) is the checklist; epics C1–C6 #201–#206, tasks #207–#252.
+Recent important decision: Three variants per question (owner); backfill #247. Director conditions in the matrix header.
+Blocker: Kind registry #196/#260 gates every new-kind task; Boolean module #197 merged.
+Relevant issue/PR: #196, #260, #247, #215, #228, #232.
+Next expected action: After #260 merges ready #208, #210, #217, #219, #221, #234, #237, #239 (UI/tutor/content follow their kinds); update the matrix per merge; file C3–C5 content when kinds land.

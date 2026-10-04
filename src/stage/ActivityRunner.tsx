@@ -1,15 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { Activity, Course, Topic } from "@/content/schema";
 import { product } from "../../config/product";
-import { HintReveal } from "@/interactions";
+import { HintReveal } from "@/interactions/HintReveal/HintReveal";
 import { canRequestScaffold } from "@/tutor";
 import { TutorPanel, useFocusEffects } from "@/tutor/ui";
 import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordAttempt, completeActivity, completeQuestion } from "@/learner";
-import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, type RunnerState } from "./runnerReducer";
+import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
+import { KindPrefetch } from "@/kinds/ui";
 import { useHydrated } from "@/shell/useHydrated";
 import { RESUME_ATTR } from "./resumeMarker";
 import { ChallengeSteps, type ChallengeStep } from "@/shell/r1";
@@ -51,6 +52,19 @@ export function ActivityRunner(props: ActivityRunnerProps) {
   const start = useMemo(() => (client ? startState(course.offeringId, activity) : initialRunnerState(activity)), [client, course.offeringId, activity]);
   const resumed = start.qIndex > 0 || start.completed.some(Boolean);
 
+  // Once the browser is idle, download the views of every kind this practice uses, so moving to
+  // a challenge of another kind does not wait on the network (ADR-0008).
+  const [idle, setIdle] = useState(false);
+  useEffect(() => {
+    if (typeof window.requestIdleCallback === "function") {
+      const handle = window.requestIdleCallback(() => setIdle(true));
+      return () => window.cancelIdleCallback(handle);
+    }
+    const timer = window.setTimeout(() => setIdle(true), 1500);
+    return () => window.clearTimeout(timer);
+  }, []);
+  const kindsUsed = useMemo(() => activity.questions.flatMap((q) => q.variants.map((v) => v.spec.kind)), [activity]);
+
   // Once the runner shows the right challenge, the pre-paint marker has done its job.
   useEffect(() => {
     if (client) document.documentElement.removeAttribute(RESUME_ATTR);
@@ -59,6 +73,7 @@ export function ActivityRunner(props: ActivityRunnerProps) {
   return (
     <div className={styles.runner}>
       <Runner key={resumed ? "resumed" : "first"} {...props} initial={start} />
+      {idle && <KindPrefetch kinds={kindsUsed} />}
     </div>
   );
 }
@@ -199,7 +214,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         </p>
 
         <QuestionView
-          key={`${variant.id}-${state.interactionKey}`}
+          key={questionViewKey(variant, state)}
           variant={variant}
           last={state.last}
           stepIndex={state.stepIndex}

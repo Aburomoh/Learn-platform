@@ -22,6 +22,7 @@ Agent memory is useful context. Repository artifacts are authoritative context.
 ## Team
 - Product / Engineering Director
 - Product Manager
+- Course Material Analyst
 - Educational / Pedagogy Engineer
 - UX / Design Engineer
 - Technical Lead

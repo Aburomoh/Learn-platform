@@ -44,13 +44,59 @@ const rows = htmlFiles(OUT)
   })
   .sort((a, b) => b.gzip - a.gzip);
 
+// Attribute each chunk to a kind by searching for its marker (kind:*), or "stage" if shared.
+function kindOf(chunk) {
+  try {
+    const content = readFileSync(join(OUT, chunk), "utf8");
+    const match = content.match(/kind:([a-z-]+)/);
+    return match ? `kind:${match[1]}` : "stage";
+  } catch {
+    return "stage";
+  }
+}
+
 const lines = [
   `### First-load JS per route (budget ${BUDGET_KB} kB gzip)`,
   "",
   "| Route | Chunks | Raw kB | Gzip kB | |",
   "|---|---:|---:|---:|---|",
   ...rows.map((r) => `| \`${r.route}\` | ${r.chunks} | ${kb(r.raw)} | ${kb(r.gzip)} | ${r.gzip > BUDGET_KB * 1024 ? "⚠️ over" : "ok"} |`),
+  "",
+  "### Kind chunks (activity routes)",
+  "",
 ];
+
+// Show kind breakdown for activity routes.
+const activities = rows.filter(
+  (r) => r.route.includes("/courses/") && r.route.match(/\/[a-z-]+\/$/)
+);
+for (const activity of activities) {
+  const html = readFileSync(
+    join(OUT, activity.route.replace(/^\//, "").replace(/\/$/, ""), "index.html"),
+    "utf8"
+  );
+  const chunks = [...new Set(html.match(CHUNK) ?? [])].filter(
+    (c) => !new Set([...html.matchAll(NOMODULE)].map((m) => m[1])).has(c)
+  );
+  const byKind = {};
+  for (const c of chunks) {
+    const k = kindOf(c);
+    if (!byKind[k]) byKind[k] = { raw: 0, gzip: 0 };
+    const [r, g] = size(c);
+    byKind[k].raw += r;
+    byKind[k].gzip += g;
+  }
+  const kindLines = Object.entries(byKind)
+    .sort((a, b) => b[1].gzip - a[1].gzip)
+    .map(([k, s]) => `| ${k} | ${kb(s.raw)} | ${kb(s.gzip)} |`);
+  lines.push(`**${activity.route.split("/").slice(-2, -1)[0]}**`);
+  lines.push("");
+  lines.push("| Kind | Raw kB | Gzip kB |");
+  lines.push("|---|---:|---:|");
+  lines.push(...kindLines);
+  lines.push("");
+}
+
 console.log(lines.join("\n"));
 for (const r of rows.filter((r) => r.gzip > BUDGET_KB * 1024)) {
   console.error(`::warning::${r.route} first-load JS ${kb(r.gzip)} kB gzip exceeds ${BUDGET_KB} kB budget`);
