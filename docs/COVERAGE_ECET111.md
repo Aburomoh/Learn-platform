@@ -61,7 +61,7 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 | Rules and postulates | 41–43 | CORE | COVERED (Match the rule, Simplify) | match rule to example | MC | #228 |
 | Algebraic simplification (+ gate count) | 44–54 | CORE | COVERED (law then line; gates saved) | law, then line | derivation | #229 |
 | De Morgan | 55–63 | CORE | COVERED (identities; complement one law per line) | one step at a time | derivation | #230 |
-| Minterms; canonical form (two methods) | 64–76 | CORE | MISSING | expansion; table with m column | derivation, truth-table | #231 |
+| Minterms; canonical form (two methods) | 64–76 | CORE | COVERED (spot; expansion + Σ; table with m column) | expansion; table with m column | derivation, truth-table | #231 |
 
 ## Chapter 3 — K-map simplification (Ch.3 deck, 112 slides)
 All K-map rows grade **any** minimal cover: several slide examples have more than one.

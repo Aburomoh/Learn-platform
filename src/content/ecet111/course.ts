@@ -12,6 +12,7 @@ import { sopPosTopic } from "./chapter2/sop-pos";
 import { lawsAndRulesTopic } from "./chapter2/laws-and-rules";
 import { simplificationTopic } from "./chapter2/simplification";
 import { deMorganTopic } from "./chapter2/de-morgan";
+import { mintermsTopic } from "./chapter2/minterms";
 
 export const ecet111: CourseInput = {
   id: "ecet111",
@@ -33,7 +34,7 @@ export const ecet111: CourseInput = {
     {
       id: "chapter-2",
       title: "Chapter 2 · Boolean Algebra and Logic Gates",
-      topics: [basicGatesTopic, sopPosTopic, lawsAndRulesTopic, simplificationTopic, deMorganTopic],
+      topics: [basicGatesTopic, sopPosTopic, lawsAndRulesTopic, simplificationTopic, deMorganTopic, mintermsTopic],
     },
   ],
 };
