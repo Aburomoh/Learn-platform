@@ -112,7 +112,7 @@ export function WeightDiagram({ id, base, number, digits, stepIndex, value, stat
             </span>
           )}
           {digits.map((d, i) => (
-            <span key={`w${i}`} className={styles.cell} data-state={rowState(0)} style={{ gridColumn: col(i), gridRow: 2 }}>
+            <span key={`w${i}`} className={`${styles.cell} ${styles.weight}`} data-state={rowState(0)} style={{ gridColumn: col(i), gridRow: 2 }}>
               {rowState(0) === "now" && editing ? (
                 <span className={`${styles.power} mono`}>
                   {base}

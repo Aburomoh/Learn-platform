@@ -127,8 +127,8 @@
 }
 
 /* #414: the base at full size, the exponent raised beside it like a superscript */
-.cell[data-state="done"],
-.cell[data-state="now"] {
+/* the weight row only, in every state */
+.weight {
   font-size: var(--text-xl);
   font-weight: 700;
 }
@@ -145,8 +145,4 @@
   margin-bottom: 14px;
   font-weight: 400;
   line-height: 1;
-}
-
-.cell[data-state="done"] sup {
-  font-size: max(0.7em, 12px);
 }
