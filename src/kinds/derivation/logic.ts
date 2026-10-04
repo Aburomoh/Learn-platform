@@ -9,8 +9,7 @@ export type DerivationAnswer = { kind: "derivation"; step: number; law?: LawId; 
 export const LAW_NAMES: Record<LawId, string> = {
   commutative: "Commutative",
   associative: "Associative",
-  distributive: "Distributive (multiply out)",
-  factor: "Distributive (factor out)",
+  distributive: "Distributive (multiply out or factor)",
   "or-0": "A + 0 = A",
   "or-1": "A + 1 = 1",
   "or-not": "A + A′ = 1",
@@ -23,7 +22,6 @@ export const LAW_NAMES: Record<LawId, string> = {
   absorb: "A + AB = A",
   "absorb-not": "A + A′B = A + B",
   "de-morgan": "De Morgan",
-  consensus: "Consensus",
 };
 
 /**
@@ -81,7 +79,8 @@ export const derivation: KindLogic<DerivationSpec, DerivationAnswer> = {
     const previous = parse(spec, i === 0 ? spec.start : spec.lines[i - 1].expr);
     if (!equivalent(typed, previous, spec.vars)) return { correct, normalized, misconceptionId: find("line-not-equivalent") };
     const later = spec.lines.slice(i + 1).some((l) => canonical(parse(spec, l.expr)) === canonical(typed));
-    return { correct, normalized, misconceptionId: later ? find("line-skipped") : undefined };
+    // valid algebra either way: a skip ahead, or another path than this law gives (Pedagogy on #324)
+    return { correct, normalized, misconceptionId: find(later ? "line-skipped" : "line-other") };
   },
 
   // Two goals per line (ADR-0007): the law, then the line.

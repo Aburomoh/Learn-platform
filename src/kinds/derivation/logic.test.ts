@@ -29,7 +29,7 @@ const f2 = {
   vars: ["x", "y", "z"],
   start: "x'y'z + x'yz + xy'",
   lines: [
-    { law: "factor", expr: "x'z(y' + y) + xy'", lawOptions: ["factor", "commutative", "absorb"], wrongLines: [{ id: "w1", expr: "x'(y'z + yz) + xy'", misconceptionId: "dv.wrong-factor" }, { id: "w2", expr: "x'z(y' + y)" }] },
+    { law: "distributive", expr: "x'z(y' + y) + xy'", lawOptions: ["distributive", "commutative", "absorb"], wrongLines: [{ id: "w1", expr: "x'(y'z + yz) + xy'", misconceptionId: "dv.wrong-factor" }, { id: "w2", expr: "x'z(y' + y)" }] },
     { law: "or-not", expr: "x'z·1 + xy'", lawOptions: ["or-not", "and-not", "or-1"], wrongLines: [{ id: "w1", expr: "x'z·0 + xy'", misconceptionId: "dv.or-and" }] },
     { law: "and-1", expr: "x'z + xy'", lawOptions: ["and-1", "or-1", "and-0"], wrongLines: [{ id: "w1", expr: "1 + xy'" }] },
   ],
@@ -39,6 +39,7 @@ const misconceptions: Misconception[] = [
   { id: "dv.or-and", title: "Used A·A′ = 0 for A + A′", nudgeKey: "dv.or-and", detect: detector("line-skipped") },
   { id: "dv.slip", title: "Algebra slip", nudgeKey: "dv.slip", detect: detector("line-not-equivalent") },
   { id: "dv.skip", title: "Skipped a step", nudgeKey: "dv.skip", detect: detector("line-skipped") },
+  { id: "dv.other", title: "Valid, but not this law's step", nudgeKey: "dv.other", detect: detector("line-other") },
 ];
 const step = (n: number, a: Omit<DerivationAnswer, "kind" | "step">): DerivationAnswer => ({ kind: "derivation", step: n, ...a });
 
@@ -57,7 +58,7 @@ describe("derivation kind (#221)", () => {
   });
 
   it("choose mode: the law, then the line, partial until the last line", () => {
-    expect(derivation.grade(v, step(0, { law: "factor" }))).toMatchObject({ correct: true, partial: true });
+    expect(derivation.grade(v, step(0, { law: "distributive" }))).toMatchObject({ correct: true, partial: true }); // factoring is the distributive law (deck)
     expect(derivation.grade(v, step(0, { law: "absorb" }))).toMatchObject({ correct: false });
     expect(derivation.grade(v, step(1, { line: "right" }))).toMatchObject({ correct: true, partial: true });
     expect(derivation.grade(v, step(1, { line: "w1" }))).toMatchObject({ correct: false, misconceptionId: "dv.wrong-factor" });
@@ -71,6 +72,7 @@ describe("derivation kind (#221)", () => {
     expect(derivation.grade(typed, step(1, { line: "xy' + x'z(y + y')" }))).toMatchObject({ correct: true, partial: true });
     expect(derivation.grade(typed, step(1, { line: "x'z + xy'" }))).toMatchObject({ correct: false, misconceptionId: "dv.skip" }); // jumps to the last line
     expect(derivation.grade(typed, step(1, { line: "x'z(y' + y)" }))).toMatchObject({ correct: false, misconceptionId: "dv.slip" }); // dropped xy'
+    expect(derivation.grade(typed, step(1, { line: "x'(y'z + yz) + xy'" }))).toMatchObject({ correct: false, misconceptionId: "dv.other" }); // valid, but another factoring
     expect(derivation.grade(typed, step(1, { line: "x'(z" })).correct).toBe(false); // unreadable: no throw
   });
 

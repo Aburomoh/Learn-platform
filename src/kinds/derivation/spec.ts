@@ -2,12 +2,14 @@ import { z } from "zod";
 import { id } from "@/content/primitives";
 import { BooleanParseError, MAX_VARIABLES, parseBool } from "@/content/boolean";
 
-/** The laws and rules a derivation line can name (Chapter 2: laws p.37–40, rules p.41–43, De Morgan, consensus). */
+/**
+ * The laws and rules a derivation line can name, as the deck names them (Chapter 2: laws p.37–40,
+ * rules p.41–43, De Morgan p.55–63). Distributive covers both directions (multiply out, factor).
+ */
 export const LawId = z.enum([
   "commutative",
   "associative",
   "distributive",
-  "factor",
   "or-0",
   "or-1",
   "or-not",
@@ -20,7 +22,6 @@ export const LawId = z.enum([
   "absorb",
   "absorb-not",
   "de-morgan",
-  "consensus",
 ]);
 export type LawId = z.infer<typeof LawId>;
 
@@ -74,4 +75,6 @@ export const derivationDetectors = [
   z.object({ type: z.literal("line-not-equivalent") }),
   /** Typed line: still equivalent, but it jumps ahead to a later line (a step skipped). */
   z.object({ type: z.literal("line-skipped") }),
+  /** Typed line: valid algebra (equivalent), but not the step this law gives here. */
+  z.object({ type: z.literal("line-other") }),
 ] as const;
