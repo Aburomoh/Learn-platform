@@ -41,7 +41,7 @@ function derivationVariant(id: string, vars: string[], start: string, lines: Lin
   return {
     id,
     prompt: `Simplify F = ${show(start)}, one law per line: first name the law, then pick the line it gives.`,
-    spec: { kind: "derivation", vars, start, lines, lineMode: "choose" },
+    spec: { kind: "derivation", vars, start, lines, lineMode: "choose", shift: k },
     hints: lineHints,
     misconceptions: lineMisconceptions,
     explanation: [
