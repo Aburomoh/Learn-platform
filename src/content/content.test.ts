@@ -383,6 +383,29 @@ describe("content registry", () => {
     expect(gates.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.correctOptionId : ""))).toEqual(["g5", "g1", "g1"]);
   });
 
+  it("De Morgan (#230): identities and every complement step check; wrong lines are not equivalent", () => {
+    const x = getActivity(COURSE, "de-morgan", "de-morgan")!.activity;
+    const [rule, steps] = x.questions;
+    const p = (t: string, vars?: string[]) => parseBool(t.replace(/″/g, "''").replace(/′/g, "'"), vars ? { vars } : undefined);
+    for (const v of rule.variants) {
+      if (v.spec.kind !== "multiple-choice") throw new Error("expected multiple choice");
+      const expr = p(v.prompt.replace(/^By De Morgan, /, "").replace(/ = \?$/, ""));
+      for (const o of v.spec.options) expect(equivalent(expr, p(o.text)), `${v.id}: ${o.text}`).toBe(o.id === v.spec.correctOptionId);
+    }
+    for (const v of steps.variants) {
+      if (v.spec.kind !== "derivation") throw new Error("expected a derivation");
+      const spec = v.spec;
+      spec.lines.forEach((l, i) => {
+        const prev = p(i === 0 ? spec.start : spec.lines[i - 1].expr, spec.vars);
+        for (const w of l.wrongLines) expect(equivalent(prev, p(w.expr, spec.vars), spec.vars), `${v.id} line ${i + 1}: ${w.expr}`).toBe(false);
+      });
+    }
+    // the slide's answer (Example 2.2): (x′yz′ + x′y′z)′ = (x + y′ + z)(x + y + z′)
+    const f1 = steps.variants[0].spec;
+    if (f1.kind !== "derivation") throw new Error("shape");
+    expect(f1.lines.at(-1)!.expr).toBe("(x + y' + z)(x + y + z')");
+  });
+
   it("minterms (#231): the slide's Σ lists, wrong expansion lines are not equivalent", () => {
     const x = getActivity(COURSE, "minterms", "minterms")!.activity;
     const [, canonical, expand, sig, table] = x.questions;

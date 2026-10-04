@@ -52,6 +52,8 @@ export const en = {
   "ns.extra-place": "One of the lit places is too big for what is left. Check the remainder after each step.",
   "ns.hex-letter": "In hex, 10 to 15 are single letters A to F, not two digits.",
   "sm.absorb-mixup": "Look at the second term again: A + AB gives A, but here it is A + A′B. Which rule has the complement?",
+  "dm.operator-kept": "You broke the bar. Now look at the operator under it: does it stay the same?",
+  "dm.bar-dropped": "A double bar cancels, but a single bar stays. Count the bars on each letter.",
   "mt.not-canonical": "Check each term of that function: is one of them missing a letter?",
   "mt.only-full": "The expanded term counts too: it became more than one minterm. Which rows does it add?",
   "drv.line-not-equivalent": "That line does not equal the line before it. Check the law you applied.",
