@@ -6,13 +6,21 @@ columns in order, as on the slides (UX: docs/design/ecet111-representations.md �
 - **fill** (default): one goal per column the student writes, left to right. With `fillInputs`
   the input columns come first. Answer `{ step, values }`, one cell per row (0, 1 or X).
 - **row-select**: one goal, pick the rows where `target` is 1. Answer `{ step: 0, rows }`.
+- **mux-pairs** (#308, function with a MUX): the last input is the data variable v; rows 2p and
+  2p + 1 share the select bits p. One goal per pair: what data input Ip gets, from `target` (F):
+  0 0 → 0, 1 1 → 1, 0 1 → v, 1 0 → v′. Answer `{ step, choice: "0" | "1" | "v" | "v'" }`.
+  `muxPairs` lists the pairs for the view.
 - Truth is computed from each column's `expr` with the Boolean module; `values` (with X) is for
   columns an expression cannot state, such as excitation tables. `given` columns are shown filled;
   `group` gives state tables their two-level header; `mintermColumn` places m0…m15.
 - After a wrong check, `wrongCells` gives the first wrong row and the count; mark only that one.
 - Detectors: `and-or-swapped`, `not-missing` (column of the expression without its complements),
-  `rows-out-of-order` (another input's column written), `rows-inverted` (0-rows picked).
-- Step vars: `columnLabel`, `columnExpr`, `stepNumber`, `columnCount`, `rowCount`, `inputCount`.
+  `rows-out-of-order` (another input's column written), `rows-inverted` (0-rows picked);
+  mux-pairs: `pair-complement-swapped` (v for v′), `pair-constant-for-variable` (0/1 where v
+  applies), `pair-variable-for-constant`.
+- Step vars: `columnLabel`, `columnExpr`, `stepNumber`, `columnCount`, `rowCount`, `inputCount`;
+  mux-pairs: `pairNumber`, `pairCount`, `inputName` (I3), `dataVar`, `selectBits`, `pairValues`
+  (F on the pair, "0 1"), `pairChoice`.
 
 ## View (`ui.tsx`, `TruthTable.tsx`)
 

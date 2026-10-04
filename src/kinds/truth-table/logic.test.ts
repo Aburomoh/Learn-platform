@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { VariantOf } from "../types";
 import { TruthTableSpec } from "./spec";
-import { truthTable, columnTruth, goals, inputColumn, rowLabel, type TruthTableAnswer } from "./logic";
+import { truthTable, columnTruth, goals, inputColumn, muxPairs, rowLabel, type TruthTableAnswer } from "./logic";
 
 type Misconception = VariantOf<TruthTableSpec>["misconceptions"][number];
 // The kind's detectors join the schema when it is registered with its view (Frontend, ADR-0008).
@@ -138,6 +138,46 @@ describe("truth-table kind: row-select", () => {
   it("recognises the 0-rows picked instead, and counts wrong rows", () => {
     expect(truthTable.grade(canon, pick([3]))).toMatchObject({ correct: false, misconceptionId: "tt.inverted" });
     expect(truthTable.grade(canon, pick([0, 1]))).toMatchObject({ correct: false, wrongCells: { first: 2, count: 1 } });
+  });
+});
+
+describe("truth-table kind: mux-pairs (#308, ch4 pack §6)", () => {
+  /** F from its Σ, as a given column. */
+  const muxTable = (inputs: string[], minterms: number[]) => ({
+    kind: "truth-table",
+    inputs,
+    mode: "mux-pairs",
+    target: "f",
+    columns: [{ id: "f", label: "F", values: Array.from({ length: 2 ** inputs.length }, (_, m) => (minterms.includes(m) ? 1 : 0)), given: true }],
+  });
+  const choices = (spec: unknown, data: string) => muxPairs(TruthTableSpec.parse(spec)).map((p) => (p.choice === "v" ? data : p.choice === "v'" ? `${data}'` : p.choice)).join(", ");
+  const pairDetectors: Misconception[] = ["pair-complement-swapped", "pair-constant-for-variable", "pair-variable-for-constant"].map((t) => ({ id: t, title: t, nudgeKey: t, detect: detector(t) }));
+
+  it("reproduces the slides' data inputs (s.48–51, s.52–55, s.57–61)", () => {
+    expect(choices(muxTable(["x", "y", "z"], [1, 2, 6, 7]), "z")).toBe("z, z', 0, 1");
+    expect(choices(muxTable(["w", "x", "y", "z"], [1, 2, 5, 11, 13]), "z")).toBe("z, z', z, 0, 0, z, z, 0");
+    expect(choices(muxTable(["A", "B", "C", "D"], [1, 3, 4, 11, 12, 13, 14, 15]), "D")).toBe("D, D, D', 0, 0, D, 1, 1");
+  });
+
+  it("one goal per pair; names the slip", () => {
+    const v = variant(muxTable(["x", "y", "z"], [1, 2, 6, 7]), pairDetectors);
+    expect(truthTable.steps!.count(v.spec)).toBe(4);
+    expect(truthTable.steps!.tag(v.spec, 0)).toBe("pair");
+    expect(truthTable.steps!.vars(v.spec, 1)).toMatchObject({ inputName: "I1", selectBits: "0 1", pairValues: "1 0", pairChoice: "z′", dataVar: "z" });
+    const g = (step: number, choice: "0" | "1" | "v" | "v'") => truthTable.grade(v, { kind: "truth-table", step, choice });
+    expect(g(0, "v")).toMatchObject({ correct: true, partial: true });
+    expect(g(3, "1")).toMatchObject({ correct: true });
+    expect(g(3, "1").partial).toBeUndefined();
+    expect(g(1, "v").misconceptionId).toBe("pair-complement-swapped");
+    expect(g(1, "1").misconceptionId).toBe("pair-constant-for-variable");
+    expect(g(2, "v'").misconceptionId).toBe("pair-variable-for-constant");
+    expect(g(2, "1").misconceptionId).toBeUndefined();
+  });
+
+  it("needs a target, two inputs and no don't-cares", () => {
+    expect(TruthTableSpec.safeParse({ ...muxTable(["x", "y"], [1]), target: undefined }).success).toBe(false);
+    expect(TruthTableSpec.safeParse(muxTable(["x"], [1])).success).toBe(false);
+    expect(TruthTableSpec.safeParse({ ...muxTable(["x", "y"], [1]), columns: [{ id: "f", label: "F", values: [0, 1, "X", 0], given: true }] }).success).toBe(false);
   });
 });
 

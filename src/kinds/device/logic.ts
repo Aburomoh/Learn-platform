@@ -60,7 +60,7 @@ export const device: KindLogic<DeviceSpec, DeviceAnswer> = {
     const normalized = `${pickName(spec, ask)}:${pick ?? ""}`;
     if (pick === right) return { correct: true, normalized, partial: answer.step < spec.asks.length - 1 || undefined };
     const find = (type: string) => variant.misconceptions.find((m) => m.detect.type === type)?.id;
-    const slip = pick === undefined ? undefined : pick === reverse(right, spec.bits) && pick !== right ? "bits-reversed" : pick === right + 1 ? "counted-from-one" : undefined;
+    const slip = pick === undefined ? undefined : pick === reverse(right, spec.bits) && pick !== right ? "code-reversed" : pick === right + 1 ? "counted-from-one" : undefined;
     return { correct: false, normalized, misconceptionId: slip ? find(slip) : undefined };
   },
 

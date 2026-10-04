@@ -33,7 +33,7 @@ export type DeviceSpec = z.infer<typeof DeviceSpec>;
 
 export const deviceDetectors = [
   /** The code read (or written) with its bits in reverse order: LSB first. */
-  z.object({ type: z.literal("bits-reversed") }),
+  z.object({ type: z.literal("code-reversed") }),
   /** Lines counted from 1 instead of 0 (D1 for code 000). */
   z.object({ type: z.literal("counted-from-one") }),
 ] as const;
