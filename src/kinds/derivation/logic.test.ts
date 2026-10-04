@@ -71,6 +71,8 @@ describe("derivation kind (#221)", () => {
     expect(new Set(v.spec.lines.map((l, i) => lawChips(v.spec, i).indexOf(l.law))).size).toBeGreaterThan(1);
     const patterns = new Set(["x'y'z + x'yz + xy'", "x'yz + x'y'z + xy'", "xy' + x'y'z + x'yz"].map((start) => pattern(DerivationSpec.parse({ ...f2, start }))));
     expect(patterns.size).toBeGreaterThan(1);
+    // an authored shift (the set's index) moves a two-option line's right answer from set to set
+    expect([0, 1, 2].map((shift) => lineOptions(DerivationSpec.parse({ ...f2, shift }), 1).findIndex((o) => o.id === "right"))).toEqual([0, 1, 0]);
     expect(v.spec.lines.map((l, i) => [...lawChips(v.spec, i)].sort())).toEqual(v.spec.lines.map((l) => [...l.lawOptions].sort()));
   });
 

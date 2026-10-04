@@ -49,6 +49,8 @@ export const DerivationSpec = z
     start: z.string().min(1),
     lines: z.array(DerivationLine).min(1).max(8),
     lineMode: z.enum(["choose", "type"]).default("choose"),
+    /** The set's place among its question's sets, so choice positions differ set to set (QA on #344). */
+    shift: z.number().int().min(0).max(99).optional(),
   })
   .superRefine((d, ctx) => {
     const check = (label: string, text: string): BoolExpr | undefined => {
