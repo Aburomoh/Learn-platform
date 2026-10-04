@@ -83,6 +83,7 @@ export const en = {
   "wrong.first.sum": "Not quite. Add the terms one by one, and keep the point where it is.",
   "pv.weights-reversed": "Power 0 sits just left of the point, or at the right end. The powers grow as you move left.",
   "pv.negative-powers": "After the point the powers keep counting down below 0. Which power comes right after 0?",
+  "pv.tens-tenths": "Places ending in -s sit left of the point; places ending in -ths sit right of it. Which side is this one on?",
   "pv.hex-letter-value": "The letters A to F stand for 10 to 15. Use that value in the term.",
   "tt.and-or-swapped": "Look at the AND and OR signs again. AND needs every part to be 1; OR needs just one.",
   "tt.not-missing": "A bar or prime flips a value. Did you flip it before using it?",
