@@ -1,6 +1,8 @@
 /**
- * DEMO / NOT AUTHORITATIVE COURSE CONTENT — a temporary Chapter 2 placeholder (#207) until the
- * Chapter 2 content (C2, #192) replaces it. Ids are unchanged so saved progress still matches.
+ * DEMO / NOT AUTHORITATIVE COURSE CONTENT — pending instructor approval.
+ * ECET 111 Chapter 2, basic gates (#224, content pack ch2 §1 and §4): AND, OR and NOT truth tables,
+ * then a gate-by-gate walk. It replaces the demo topic; the topic, practice and question ids of the
+ * gate walk are kept so saved progress still matches.
  */
 import type { CourseInput, VariantInput } from "../../schema";
 
@@ -24,10 +26,82 @@ const gateWalkMisconceptions: NonNullable<VariantInput["misconceptions"]> = [
   { id: "lg.rule-or", title: "Wrong OR output", nudgeKey: "lg.check-or", detect: { type: "gate-output", gate: "OR" } },
 ];
 
-export const logicGatesTopic: TopicInput = {
+/* ---------- Gate tables (#224, content pack ch2 §1 and §4): fill the output column ---------- */
+
+type Gate = "AND" | "OR" | "NOT";
+
+const tableHints: NonNullable<VariantInput["hints"]> = [
+  { rung: 2, text: "Not yet. Go row by row: work out {columnLabel} for each row's inputs." },
+  { rung: 3, text: "{rule}" },
+  { rung: 4, text: "Which rows make {columnLabel} equal 1?" },
+  { rung: 6, text: "Rows count up in binary, all zeros first; the output column follows the same rows." },
+  { rung: 8, text: "{onesHint}" },
+  { rung: 9, text: "The {columnLabel} column reads {answerColumn}, top to bottom." },
+];
+
+const tableMisconceptions: NonNullable<VariantInput["misconceptions"]> = [
+  { id: "tt.and-or-swapped", title: "AND and OR swapped", nudgeKey: "tt.and-or-swapped", detect: { type: "and-or-swapped" } },
+  { id: "tt.not-missing", title: "NOT not applied", nudgeKey: "tt.not-missing", detect: { type: "not-missing" } },
+];
+
+const RULE: Record<Gate, string> = {
+  AND: "AND gives 1 only when every input is 1.",
+  OR: "OR gives 1 when at least one input is 1.",
+  NOT: "NOT flips its input: 0 becomes 1 and 1 becomes 0.",
+};
+
+/** One gate's table over `inputs`; its output column is computed from the expression. */
+function gateTable(gate: Gate, inputs: string[]): VariantInput {
+  const expr = gate === "AND" ? inputs.join("") : gate === "OR" ? inputs.join(" + ") : `${inputs[0]}'`;
+  const label = gate === "AND" ? inputs.join("·") : gate === "OR" ? inputs.join(" + ") : `${inputs[0]}′`;
+  const rows = 2 ** inputs.length;
+  const column = Array.from({ length: rows }, (_, r) => (gate === "AND" ? (r === rows - 1 ? 1 : 0) : gate === "OR" ? (r === 0 ? 0 : 1) : r === 0 ? 1 : 0));
+  const onesHint = gate === "AND" ? "Only the last row, where every input is 1, gives 1." : gate === "OR" ? "Only the first row, where every input is 0, gives 0." : "The output is the opposite of the input on each row.";
+  const keyRow = gate === "AND" ? rows - 1 : 0;
+  const keyBits = keyRow.toString(2).padStart(inputs.length, "0").split("").join(" ");
+  return {
+    id: `v${gate.toLowerCase()}-${inputs.join("").toLowerCase()}`,
+    prompt: `Fill the ${gate} column: ${label} for each row.`,
+    spec: { kind: "truth-table", inputs, columns: [{ id: "f", label, expr }] },
+    vars: { rule: RULE[gate], onesHint, answerColumn: column.join(" ") },
+    hints: tableHints,
+    misconceptions: tableMisconceptions,
+    explanation: [
+      { id: "s1", say: `${RULE[gate]} ${inputs.length} input${inputs.length > 1 ? "s" : ""} give ${rows} rows: 2^${inputs.length}.`, stage: { step: 0, revealed: 0 } },
+      {
+        id: "s2",
+        say: `Take the row ${keyBits}.`,
+        stage: { step: 0, revealed: keyRow },
+        ask: {
+          prompt: `What is ${label} on that row?`,
+          options: ["0", "1"],
+          correctIndex: column[keyRow],
+          afterCorrect: `Yes: ${column[keyRow]}.`,
+          afterWrong: `${RULE[gate]} So it is ${column[keyRow]}.`,
+        },
+      },
+      { id: "s3", say: onesHint, stage: { step: 0, revealed: rows } },
+    ],
+  };
+}
+
+const gateTables: TopicInput["activities"][number] = {
+  id: "gate-tables",
+  title: "AND, OR, NOT tables",
+  summary: "Fill each gate's truth table, one column at a time.",
+  authority: "DEMO",
+  minutes: 8,
+  questions: [
+    { id: "bg.q.and", label: "AND table", conceptId: "lg.basic-gates", objectiveId: "lg.obj.table", variants: [gateTable("AND", ["x", "y"]), gateTable("AND", ["A", "B", "C"]), gateTable("AND", ["A", "B"])] }, // first retry is a different table (Pedagogy on #337)
+    { id: "bg.q.or", label: "OR table", conceptId: "lg.basic-gates", objectiveId: "lg.obj.table", variants: [gateTable("OR", ["x", "y"]), gateTable("OR", ["A", "B", "C"]), gateTable("OR", ["A", "B"])] },
+    { id: "bg.q.not", label: "NOT table", conceptId: "lg.basic-gates", objectiveId: "lg.obj.table", variants: [gateTable("NOT", ["x"])] }, // one fixed fact: exempt from the three-set rule (content.test)
+  ],
+};
+
+export const basicGatesTopic: TopicInput = {
   id: "logic-gates",
-  title: "Logic gates",
-  summary: "AND, OR, NOT and friends: predict outputs and read small circuits.",
+  title: "Basic gates",
+  summary: "AND, OR and NOT: fill their truth tables, then follow a small circuit one gate at a time.",
   concepts: [
     { id: "lg.basic-gates", title: "Basic gates", summary: "AND outputs 1 only when all inputs are 1. OR outputs 1 when any input is 1. NOT flips its input." },
     { id: "lg.signal-flow", title: "Signal flow", summary: "Evaluate a circuit one gate at a time, from inputs towards the output." },
@@ -35,9 +109,11 @@ export const logicGatesTopic: TopicInput = {
   objectives: [
     { id: "lg.obj.predict", conceptId: "lg.signal-flow", text: "Predict the output of a three-gate circuit for given inputs." },
     { id: "lg.obj.identify", conceptId: "lg.basic-gates", text: "Identify a gate from its truth-table behaviour." },
+    { id: "lg.obj.table", conceptId: "lg.basic-gates", text: "Fill the truth table of AND, OR and NOT, rows in binary order (2^n rows)." },
   ],
   prerequisites: [],
   activities: [
+    gateTables,
     {
       id: "predict-gate-output",
       title: "Predict the output",
@@ -141,6 +217,51 @@ export const logicGatesTopic: TopicInput = {
               ],
               misconceptions: gateWalkMisconceptions,
             },
+            {
+              id: "v011",
+              prompt: "One more: A = {A}, B = {B}, C = {C}. Find Y, one gate at a time.",
+              spec: {
+                kind: "circuit-predict",
+                inputs: [
+                  { id: "a", label: "A", value: 0 },
+                  { id: "b", label: "B", value: 1 },
+                  { id: "c", label: "C", value: 1 },
+                ],
+                gates: [
+                  { id: "n1", type: "NOT", from: ["b"] },
+                  { id: "g1", type: "AND", from: ["a", "n1"] },
+                  { id: "g2", type: "OR", from: ["g1", "c"], label: "Y" },
+                ],
+                outputGateId: "g2",
+                answer: 1,
+                inputsToggleable: true,
+              },
+              vars: { A: 0, B: 1, C: 1, notB: 0, g1: 0, answer: 1 },
+              hints: gateWalkHints,
+              explanation: [
+                { id: "s1", say: "Same circuit, new inputs. Follow the signals from left to right.", stage: { lit: [] } },
+                {
+                  id: "s2",
+                  say: "B is {B}. The NOT gate flips it.",
+                  stage: { lit: [], active: "n1" },
+                  ask: { prompt: "What comes out of NOT?", options: ["1", "0"], correctIndex: 1, afterCorrect: "Yes: NOT 1 = 0.", afterWrong: "NOT flips 1 to 0." },
+                },
+                {
+                  id: "s3",
+                  say: "AND receives A = {A} and {notB}.",
+                  stage: { lit: ["n1"], active: "g1" },
+                  ask: { prompt: "What does the AND gate output?", options: ["1", "0"], correctIndex: 1, afterCorrect: "Right: one input is 0, so AND is 0.", afterWrong: "One input is 0, so the AND gate outputs 0." },
+                },
+                {
+                  id: "s4",
+                  say: "The OR gate receives {g1} from AND and C = {C}.",
+                  stage: { lit: ["n1", "g1"], active: "g2" },
+                  ask: { prompt: "What does the OR gate output?", options: ["0", "1"], correctIndex: 1, afterCorrect: "Right. C alone is 1, and one 1 is enough for OR.", afterWrong: "C is 1, and one 1 is enough: OR gives 1." },
+                },
+                { id: "s5", say: "The OR gate is the last one, so its output is Y. Y = {answer}.", stage: { lit: ["n1", "g1", "g2"] } },
+              ],
+              misconceptions: gateWalkMisconceptions,
+            },
           ],
         },
         {
@@ -233,6 +354,36 @@ export const logicGatesTopic: TopicInput = {
                 { id: "lg.and-vs-or", title: "Confused AND with OR", nudgeKey: "lg.or-vs-and", detect: { type: "option", optionId: "and" } },
                 { id: "lg.nor-inverted", title: "NOR is the inverse of OR", nudgeKey: "lg.nor-inverted", detect: { type: "option", optionId: "nor" } },
               ],
+            },
+            {
+              id: "v-not",
+              prompt: "Which gate has one input and gives the opposite of it?",
+              spec: {
+                kind: "multiple-choice",
+                options: [
+                  { id: "nand", text: "NAND", misconceptionId: "lg.nand-not" },
+                  { id: "not", text: "NOT" },
+                  { id: "or", text: "OR" },
+                  { id: "and", text: "AND" },
+                ],
+                correctOptionId: "not",
+              },
+              vars: {},
+              hints: [
+                { rung: 2, text: "Not that one. Count the inputs first." },
+                { rung: 3, text: "AND, OR, NAND and NOR take two or more inputs. Only one basic gate takes a single input." },
+                { rung: 9, text: "NOT has one input and flips it: 0 becomes 1, 1 becomes 0." },
+              ],
+              explanation: [
+                { id: "s1", say: "AND and OR combine two or more inputs. One gate works on a single input.", stage: {} },
+                {
+                  id: "s2",
+                  say: "Its symbol is a triangle with a small circle (bubble) at the tip.",
+                  stage: {},
+                  ask: { prompt: "If its input is 1, the output is…", options: ["1", "0"], correctIndex: 1, afterCorrect: "Yes, 0: the opposite. That gate is NOT.", afterWrong: "It gives the opposite: 0. That gate is NOT." },
+                },
+              ],
+              misconceptions: [{ id: "lg.nand-not", title: "NAND for NOT", nudgeKey: "lg.nand-not", detect: { type: "option", optionId: "nand" } }],
             },
           ],
         },
