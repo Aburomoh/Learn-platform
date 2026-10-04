@@ -16,6 +16,8 @@ const Y = "S1'S0'I0 + S1'S0I1 + S1S0'I2 + S1S0I3";
 const Y_VARS = ["S1", "S0", "I0", "I1", "I2", "I3"];
 const yExpr = parseBool(Y, { vars: Y_VARS });
 const TERMS = ["S1'S0'I0", "S1'S0I1", "S1S0'I2", "S1S0I3"];
+/** The select products alone, as the 'which term?' options: no I subscript to match (Pedagogy on #392). */
+const SELECTS = ["S1'S0'", "S1'S0", "S1S0'", "S1S0"];
 
 const sel = (k: number) => k.toString(2).padStart(2, "0");
 const swapSel = (k: number) => ((k & 1) << 1) | (k >> 1); // S1 and S0 read the other way round
@@ -83,12 +85,13 @@ function routeVariant(select: number, i: number): VariantInput {
     spec: { kind: "multiple-choice", options, correctOptionId: `i${select}` },
     hints: [
       { rung: 2, text: "Not yet. Read S1 S0 as a binary number, S1 first." },
-      { rung: 3, text: "00 → I0, 01 → I1, 10 → I2, 11 → I3." },
+      // the rule and the one row no set asks, never the whole table (Pedagogy on #392)
+      { rung: 3, text: "Read S1 S0 as a binary number, S1 first: 00 → I0." },
       { rung: 9, text: `${sel(select)} routes I${select} to Y.` },
     ],
     misconceptions: swapSel(select) !== select ? [{ id: "mux.select-reversed", title: "Read the select bits backwards", nudgeKey: "mux.select-reversed", detect: { type: "option", optionId: `i${swapSel(select)}` } }] : [],
     explanation: [
-      { id: "s1", say: "The select table counts in binary: 00 → I0, 01 → I1, 10 → I2, 11 → I3." },
+      { id: "s1", say: "The select bits, read as a binary number with S1 first, give the input's number: 00 → I0." },
       {
         id: "s2",
         say: `Here S1 = ${select >> 1} and S0 = ${select & 1}.`,
@@ -104,15 +107,15 @@ function routeVariant(select: number, i: number): VariantInput {
 const TERM_SETS = [2, 1, 3];
 
 function termVariant(input: number, i: number): VariantInput {
-  const options = rotate(TERMS.map((t, k) => ({ id: `t${k}`, text: show(t) })), i + 1);
+  const options = rotate(SELECTS.map((t, k) => ({ id: `t${k}`, text: show(t) })), i + 1);
   return {
     id: `t${input}`,
-    prompt: `Y = ${show(Y)}. Which term passes I${input} to Y?`,
+    prompt: `Y = ${show(Y)}. Which select product multiplies I${input}, so that it passes I${input} to Y?`,
     spec: { kind: "multiple-choice", options, correctOptionId: `t${input}` },
     hints: [
-      { rung: 2, text: `Not yet. Find the term that contains I${input}.` },
+      { rung: 2, text: `Not yet. Which select value routes I${input}? Write it as S1 S0, then as a product (0 primed, 1 plain).` },
       { rung: 3, text: "Its select part is 1 only for the select value that routes that input." },
-      { rung: 9, text: `${show(TERMS[input])}: it is 1 only when S1 S0 = ${sel(input)}.` },
+      { rung: 9, text: `${show(SELECTS[input])}: it is 1 only when S1 S0 = ${sel(input)}.` },
     ],
     misconceptions: swapSel(input) !== input ? [{ id: "mux.select-reversed", title: "Read the select bits backwards", nudgeKey: "mux.select-reversed", detect: { type: "option", optionId: `t${swapSel(input)}` } }] : [],
     explanation: [
