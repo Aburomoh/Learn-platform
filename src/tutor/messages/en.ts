@@ -111,6 +111,7 @@ export const en = {
   "lg.check-xor": "Look at the XOR gate again. It gives 1 only when its two inputs are different.",
   "ha.s-as-or": "1 + 1 is 10 in binary. Which bit is the sum S, and which is carried?",
   "ha.s-c-swapped": "S is the right-hand bit of A + B; the carry C is the left-hand bit. Which is which here?",
+  "dec.fn-missed-one": "Count the numbers in the Σ list, then count the outputs you picked. Is one missing?",
   "mux.select-reversed": "S1 is the MSB: read S1 S0 with S1 first. Which input number is that?",
   "dec.read-reversed": "Read the code from x, the MSB, on the left. Which number is that?",
   "enc.code-reversed": "Write the code with x, the MSB, first. Which bit comes first?",

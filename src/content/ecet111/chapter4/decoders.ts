@@ -5,7 +5,7 @@
  * code for one active input and the OR behind each output bit; then functions built from a decoder. Truth is computed (Boolean module).
  */
 import type { CourseInput, VariantInput } from "../../schema";
-import { mintermsOf, parseBool, parseSigma } from "../../boolean";
+import { parseSigma } from "../../boolean";
 
 type TopicInput = CourseInput["modules"][number]["topics"][number];
 type Activity = TopicInput["activities"][number];
@@ -218,16 +218,16 @@ const encoderActivity: Activity = {
 
 const FN_VARS = ["A", "B", "Ci"];
 
-/** Three functions: the full adder's S and Co (as on s.37), and a fresh one given as an SOP to expand first. */
+/** Three functions: the full adder's S and Co (as on s.37), and a fresh one; all as Σ, so the goal is only picking the lines (Pedagogy on #390). */
 const FN_SETS: { id: string; name: string; given: string; vars: string[] }[] = [
   { id: "fs", name: "S", given: "Σ(1, 2, 4, 7)", vars: FN_VARS },
   { id: "fco", name: "Co", given: "Σ(3, 5, 6, 7)", vars: FN_VARS },
-  { id: "ff", name: "F", given: "A'B + AC'", vars: ["A", "B", "C"] },
+  { id: "ff", name: "F", given: "Σ(2, 3, 4, 6)", vars: ["A", "B", "C"] },
 ];
 
-/** The minterms of a set, computed: from its Σ list or by evaluating its SOP. */
+/** The minterms of a set, read from its Σ list. */
 function fnMinterms(set: (typeof FN_SETS)[number]): number[] {
-  return set.given.startsWith("Σ") ? parseSigma(set.given).minterms : mintermsOf(parseBool(set.given, { vars: set.vars }), set.vars);
+  return parseSigma(set.given).minterms;
 }
 
 const outputsText = (ks: number[]) => ks.map((k) => `D${k}`).join(", ");
@@ -243,26 +243,26 @@ function fnVariant(set: (typeof FN_SETS)[number], i: number): VariantInput {
     { id: "reversed", text: outputsText(reversedOnes) },
   ].filter((c, j, all) => all.findIndex((d) => d.text === c.text) === j);
   const vars = set.vars.join(", ");
-  const sop = !set.given.startsWith("Σ");
   return {
     id: set.id,
     prompt: `A 3-to-8 decoder takes ${vars} (${set.vars[0]} is the MSB). ${set.name}(${vars}) = ${show(set.given)} is one OR gate fed by decoder outputs. Which outputs?`,
     spec: { kind: "multiple-choice", options: rotate(choices, i + 1), correctOptionId: "right" },
     hints: [
       { rung: 2, text: `Not yet. Each decoder output Dk is minterm k; the OR needs exactly the minterms of ${set.name}.` },
-      { rung: 3, text: sop ? "Expand each product into its minterms first: a missing letter means both values." : "The numbers in the Σ list are the outputs to connect." },
+      { rung: 3, text: "The numbers in the Σ list are the outputs to connect." },
       { rung: 4, text: `Is D0 one of ${set.name}'s minterms?` },
       { rung: 9, text: `${set.name} = ${outputsText(ones).replace(/, /g, " + ")}.` },
     ],
     misconceptions: [
       { id: "dec.fn-zero-rows", title: "Connected the 0-rows", nudgeKey: "fa.sigma-zero-rows", detect: { type: "option", optionId: "zeros" } },
+      { id: "dec.fn-missed-one", title: "Missed one minterm", nudgeKey: "dec.fn-missed-one", detect: { type: "option", optionId: "short" } },
       ...(choices.some((c) => c.id === "reversed") ? [{ id: "dec.read-reversed", title: "Read the minterm numbers backwards", nudgeKey: "dec.read-reversed", detect: { type: "option" as const, optionId: "reversed" } }] : []),
     ],
     explanation: [
       { id: "s1", say: "A decoder makes every minterm of its inputs, one per output. A function is the OR of its own minterms." },
       {
         id: "s2",
-        say: sop ? `Expand ${show(set.given)}: each product covers the rows that match it.` : `${set.name} = ${set.given}.`,
+        say: `${set.name} = ${set.given}.`,
         ask: { prompt: `Does ${set.name} use D${ones[0]}?`, options: i % 2 ? ["No", "Yes"] : ["Yes", "No"], correctIndex: i % 2 ? 1 : 0, afterCorrect: `Yes: m${ones[0]} is one of its minterms.`, afterWrong: `m${ones[0]} is one of its minterms, so D${ones[0]} feeds the OR.` },
       },
       { id: "s3", say: `So the OR takes ${outputsText(ones)}; the other outputs are left unconnected.` },
