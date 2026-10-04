@@ -18,9 +18,10 @@ function rotate<T>(xs: T[], k: number): T[] {
   return [...xs.slice(r), ...xs.slice(0, r)];
 }
 
-/** Ex.3 (s.33–39) and two fresh SOPs, each with a product that misses a variable. */
+/** Ex.3 (s.33–39), s.76–87 (four variables), and two fresh SOPs, each with a product that misses a variable. */
 const SETS: { id: string; vars: string[]; sop: string }[] = [
   { id: "e3", vars: ["x", "y", "z"], sop: "xy + x'y'z' + x'yz'" },
+  { id: "e76", vars: ["A", "B", "C", "D"], sop: "A'B'C' + B'CD' + A'BCD' + AB'C'" },
   { id: "eab", vars: ["A", "B", "C"], sop: "A' + AB'" },
   { id: "exy", vars: ["x", "y", "z"], sop: "xy' + yz" },
 ];
@@ -39,7 +40,7 @@ function oneEach(sop: string, vars: string[]): number[] {
 
 function expandVariant(set: (typeof SETS)[number], k: number): VariantInput {
   const ones = mintermsOfSop(set.sop, set.vars);
-  const zeros = Array.from({ length: 8 }, (_, m) => m).filter((m) => !ones.includes(m));
+  const zeros = Array.from({ length: 2 ** set.vars.length }, (_, m) => m).filter((m) => !ones.includes(m));
   const slip = oneEach(set.sop, set.vars);
   const choices = [
     { id: "right", text: sigma(ones) },

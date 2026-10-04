@@ -511,9 +511,9 @@ describe("content registry", () => {
     const x = getActivity(COURSE, "kmap-expression", "expression-to-map")!.activity;
     const [expand, map] = x.questions;
     const picked = expand.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
-    expect(picked).toEqual(["Σ(0, 2, 6, 7)", "Σ(0, 1, 2, 3, 4, 5)", "Σ(3, 4, 5, 7)"]);
+    expect(picked).toEqual(["Σ(0, 2, 6, 7)", "Σ(0, 1, 2, 6, 8, 9, 10)", "Σ(0, 1, 2, 3, 4, 5)", "Σ(3, 4, 5, 7)"]);
     const sums = map.variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
-    expect(sums).toEqual([["x'z' + xy"], ["A' + B'"], ["xy' + yz"]]);
+    expect(sums).toEqual([["x'z' + xy"], ["A'CD' + B'C' + B'D'"], ["A' + B'"], ["xy' + yz"]]); // s.80, s.83–87
   });
 
   it("resolves an activity by path", () => {
