@@ -14,10 +14,11 @@ import { NumericSpec, numericDetectors } from "./numeric/spec";
 import { PlaceValueSpec, placeValueDetectors } from "./place-value/spec";
 import { RepeatedDivisionSpec, repeatedDivisionDetectors } from "./repeated-division/spec";
 import { StateDiagramSpec, stateDiagramDetectors } from "./state-diagram/spec";
+import { TimingSpec, timingDetectors } from "./timing/spec";
 import { DeviceSpec, deviceDetectors } from "./device/spec";
 import { TruthTableSpec, truthTableDetectors } from "./truth-table/spec";
 
-export const kindSpecs = [DerivationSpec, ExpressionSpec, BaseToDecimalSpec, BitGroupingSpec, CircuitSpec, ColumnAdditionSpec, KmapSpec, MultipleChoiceSpec, NumericSpec, PlaceValueSpec, RepeatedDivisionSpec, DeviceSpec, StateDiagramSpec, TruthTableSpec] as const;
+export const kindSpecs = [DerivationSpec, ExpressionSpec, BaseToDecimalSpec, BitGroupingSpec, CircuitSpec, ColumnAdditionSpec, KmapSpec, MultipleChoiceSpec, NumericSpec, PlaceValueSpec, RepeatedDivisionSpec, DeviceSpec, TimingSpec, StateDiagramSpec, TruthTableSpec] as const;
 
 /** Each kind's own misconception detectors; `equals` is shared by every kind (schema.ts). */
 export const detectorsByKind = {
@@ -33,6 +34,7 @@ export const detectorsByKind = {
   "place-value": placeValueDetectors,
   "repeated-division": repeatedDivisionDetectors,
   device: deviceDetectors,
+  timing: timingDetectors,
   "state-diagram": stateDiagramDetectors,
   "truth-table": truthTableDetectors,
 } as const;
@@ -50,6 +52,7 @@ export const kindDetectors = [
   ...placeValueDetectors,
   ...repeatedDivisionDetectors,
   ...deviceDetectors,
+  ...timingDetectors,
   ...stateDiagramDetectors,
   ...truthTableDetectors,
 ] as const;

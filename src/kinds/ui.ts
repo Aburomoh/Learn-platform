@@ -71,6 +71,11 @@ export const kindUI = {
     Explain: dynamic(() => import("./device/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./device/ui").then((m) => m.Preload)),
   },
+  timing: {
+    Practice: dynamic(() => import("./timing/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./timing/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./timing/ui").then((m) => m.Preload)),
+  },
   "state-diagram": {
     Practice: dynamic(() => import("./state-diagram/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./state-diagram/ui").then((m) => m.Explain)),
