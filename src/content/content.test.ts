@@ -14,6 +14,8 @@ import { resolveMessage } from "@/tutor/messages";
 import { isPOS, isSOP, parseBool } from "./boolean";
 import { columnTruth } from "@/kinds/truth-table/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
+import { lawChips, lineOptions } from "@/kinds/derivation/logic";
+import type { DerivationSpec } from "@/kinds/derivation/spec";
 
 const COURSE = "ecet111";
 
@@ -69,6 +71,21 @@ describe("content registry", () => {
               expect(objectives.has(q.objectiveId), q.id).toBe(true);
             }
         }
+  });
+
+  it("moves derivation choices from set to set: the right line and law are not in one place every time (QA on #344)", () => {
+    for (const c of courses)
+      for (const m of c.modules)
+        for (const t of m.topics)
+          for (const a of t.activities)
+            for (const q of a.questions) {
+              const specs = q.variants.map((v) => v.spec).filter((s): s is DerivationSpec => s.kind === "derivation");
+              if (specs.length < 2) continue;
+              const pattern = (s: DerivationSpec) =>
+                s.lines.map((l, i) => `${lawChips(s, i).indexOf(l.law)}/${lineOptions(s, i).findIndex((o) => o.id === "right")}`).join(" ");
+              expect(new Set(specs.map(pattern)).size, `${q.id} positions repeat in every set`).toBeGreaterThan(1);
+              expect(specs.every((s) => lineOptions(s, 0).findIndex((o) => o.id === "right") === 0), `${q.id} right line first in every set`).toBe(false);
+            }
   });
 
   it("has unique ids within each scope", () => {

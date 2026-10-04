@@ -64,9 +64,13 @@ describe("derivation kind (#221)", () => {
     expect(derivation.grade(v, step(1, { line: "w1" }))).toMatchObject({ correct: false, misconceptionId: "dv.wrong-factor" });
     expect(derivation.grade(v, step(5, { line: "right" }))).toMatchObject({ correct: true });
     expect(derivation.grade(v, step(5, { line: "right" })).partial).toBeUndefined();
-    expect(lineOptions(v.spec, 1).map((o) => o.id)).toEqual(["w1", "right"]); // the right line is not always first
+    expect(lineOptions(v.spec, 1).map((o) => o.id).sort()).toEqual(["right", "w1"]);
     // law chips: the right law moves (2nd, 3rd, 1st), whatever order they were authored in
-    expect(v.spec.lines.map((l, i) => lawChips(v.spec, i).indexOf(l.law))).toEqual([1, 2, 0]);
+    // positions move from line to line, and a different set (another start) gets another pattern (QA on #344)
+    const pattern = (spec: typeof v.spec) => spec.lines.map((l, i) => `${lawChips(spec, i).indexOf(l.law)}/${lineOptions(spec, i).findIndex((o) => o.id === "right")}`).join(" ");
+    expect(new Set(v.spec.lines.map((l, i) => lawChips(v.spec, i).indexOf(l.law))).size).toBeGreaterThan(1);
+    const patterns = new Set(["x'y'z + x'yz + xy'", "x'yz + x'y'z + xy'", "xy' + x'y'z + x'yz"].map((start) => pattern(DerivationSpec.parse({ ...f2, start }))));
+    expect(patterns.size).toBeGreaterThan(1);
     expect(v.spec.lines.map((l, i) => [...lawChips(v.spec, i)].sort())).toEqual(v.spec.lines.map((l) => [...l.lawOptions].sort()));
   });
 
