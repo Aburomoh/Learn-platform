@@ -124,9 +124,10 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
 
   // 7. no server or third-party calls: the site is a static export, so the only requests allowed
-  //    are GETs of its own files (assets, the brand mark, and pages that links pre-load).
+  //    are GETs of its own files (assets, the brand mark, and pages that links pre-load) and the
+  //    HEAD checks Next's link prefetch sometimes sends for those pages.
   const origin = new URL(page.url()).origin;
-  const nonStatic = requests.filter((r) => !r.startsWith("GET data:") && !r.startsWith(`GET ${origin}/`));
+  const nonStatic = requests.filter((r) => !r.startsWith("GET data:") && !r.startsWith(`GET ${origin}/`) && !r.startsWith(`HEAD ${origin}/`));
   expect(nonStatic).toEqual([]);
 
   // 8. progress persisted locally and visible after navigation
