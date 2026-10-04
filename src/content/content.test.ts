@@ -110,12 +110,12 @@ describe("content registry", () => {
     expect([(53).toString(2), (53).toString(8), (53).toString(16)]).toEqual(["110101", "65", "35"]);
   });
 
-  it("walks the 88 and 73 exercise (#43) with the slide answers, two variants per question", () => {
+  it("walks the 88 and 73 exercise (#43) with the slide answers, plus a third set (108, #247)", () => {
     const x = getActivity(COURSE, "number-systems", "conversion-exercise")!.activity;
     expect(x.questions.map((q) => q.label)).toEqual(["Divide by 2", "Read off", "Octal", "Hex"]);
-    for (const q of x.questions) expect(q.variants.map((v) => v.id), q.id).toEqual(["v88", "v73"]);
+    for (const q of x.questions) expect(q.variants.map((v) => v.id), q.id).toEqual(["v88", "v73", "v108"]);
     const answers = x.questions.map((q) => q.variants.map((v) => ("answer" in v.spec ? v.spec.answer : v.spec.kind === "repeated-division" ? v.spec.steps.length : "")));
-    expect(answers).toEqual([[7, 7], ["1011000", "1001001"], ["130", "111"], ["58", "49"]]);
+    expect(answers).toEqual([[7, 7, 7], ["1011000", "1001001", "1101100"], ["130", "111", "154"], ["58", "49", "6C"]]);
   });
 
   it("has activity ids unique within each course: local progress is keyed by activity id (#145)", () => {
@@ -153,10 +153,10 @@ describe("content registry", () => {
 
   it("walks 1's and 2's complement on the slide examples (#39): flip, rule, then + 1", () => {
     const x = getActivity(COURSE, "binary-arithmetic", "complements")!.activity;
-    expect(x.questions.map((q) => q.variants.map((v) => v.id))).toEqual([["v100101", "v110010"], ["v100101", "v110010"], ["v100101", "v110010"]]);
+    expect(x.questions.map((q) => q.variants.map((v) => v.id))).toEqual([["v100101", "v110010", "v101100"], ["v100101", "v110010", "v101100"], ["v100101", "v110010", "v101100"]]);
     const [ones, , plus] = x.questions;
-    expect(ones.variants.map((v) => (v.spec.kind === "numeric" ? v.spec.answer : ""))).toEqual(["011010", "001101"]);
-    expect(plus.variants.map((v) => (v.spec.kind === "column-addition" ? `${v.spec.a}+${v.spec.b}=${v.spec.answer}` : ""))).toEqual(["011010+000001=011011", "001101+000001=001110"]);
+    expect(ones.variants.map((v) => (v.spec.kind === "numeric" ? v.spec.answer : ""))).toEqual(["011010", "001101", "010011"]);
+    expect(plus.variants.map((v) => (v.spec.kind === "column-addition" ? `${v.spec.a}+${v.spec.b}=${v.spec.answer}` : ""))).toEqual(["011010+000001=011011", "001101+000001=001110", "010011+000001=010100"]);
     // Fixed width: no end-carry step, and the last column completes the question (Pedagogy on #150).
     const v = plus.variants[0];
     expect(stepCount(v.spec)).toBe(6);
@@ -167,7 +167,7 @@ describe("content registry", () => {
 
   it("walks subtraction by 2's complement on 13 − 9 and 12 − 6 (#40), one checked step each", () => {
     const x = getActivity(COURSE, "binary-arithmetic", "subtraction-positive")!.activity;
-    for (const q of x.questions) expect(q.variants.map((v) => v.id), q.id).toEqual(["v13-9", "v12-6"]);
+    for (const q of x.questions) expect(q.variants.map((v) => v.id), q.id).toEqual(["v13-9", "v12-6", "v11-3"]);
     const answer = (qi: number, vi: number) => {
       const spec = x.questions[qi].variants[vi].spec;
       return "answer" in spec ? spec.answer : spec.kind === "repeated-division" ? spec.value : spec.kind === "multiple-choice" ? spec.correctOptionId : "";
@@ -175,6 +175,7 @@ describe("content registry", () => {
     // B in binary → 1's → 2's → A + 2's (end carry 1) → positive, discard → result
     expect(x.questions.map((_, i) => answer(i, 0))).toEqual([9, "1001", "0110", "0111", "10100", "positive", "4"]);
     expect(x.questions.map((_, i) => answer(i, 1))).toEqual([6, "110", "1001", "1010", "10110", "positive", "6"]);
+    expect(x.questions.map((_, i) => answer(i, 2))).toEqual([3, "11", "1100", "1101", "11000", "positive", "8"]); // 11 − 3 (#247)
   });
 
   it("pins the subtraction exercises (#41): 15 − 4 positive, 10 − 14 negative with a re-complement", () => {
@@ -188,6 +189,9 @@ describe("content registry", () => {
     // B = 1110 → 0001 → 0010; 1010 + 0010 = 0 1100 → negative → 0011 → 0100 → 4 (so −4)
     expect(chain("subtraction-exercise-negative", 0)).toEqual(["0001", "0010", "01100", "negative", "0011", "0100", "4"]);
     expect(chain("subtraction-exercise-negative", 1)).toEqual(["0011", "0100", "01011", "negative", "0100", "0101", "5"]);
+    // third sets (#247): 13 − 6 = 7 and 5 − 11 = −6
+    expect(chain("subtraction-exercise-positive", 2)).toEqual(["1001", "1010", "10111", "positive", "7"]);
+    expect(chain("subtraction-exercise-negative", 2)).toEqual(["0100", "0101", "01010", "negative", "0101", "0110", "6"]);
     // The size step shows the finished re-complement at four bits, with no end-carry column (QA on #161).
     const size = getActivity(COURSE, "binary-arithmetic", "subtraction-exercise-negative")!.activity.questions.at(-1)!.variants[0].spec;
     if (size.kind !== "numeric" || size.context?.type !== "addition") throw new Error("expected an addition context");
@@ -211,6 +215,23 @@ describe("pedagogy guard", () => {
       if (variant.spec.kind === "numeric" && variant.spec.base === 2) expect(["division-chain", "bit-row"], path).toContain(variant.spec.context?.type);
       if (variant.spec.kind === "numeric" && (variant.spec.base === 8 || variant.spec.base === 16)) expect(variant.spec.context?.type, path).toBe("bits");
     }
+  });
+
+  it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
+    // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule"]);
+    // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
+    const PENDING = new Set(["lg.q.predict", "lg.q.identify"]); // the Logic gates demo, until #224 replaces it
+    for (const c of courses)
+      for (const m of c.modules)
+        for (const t of m.topics)
+          for (const a of t.activities)
+            for (const q of a.questions) {
+              const path = `${c.id}/${t.id}/${a.id}/${q.id}`;
+              if (EXEMPT.has(q.id)) continue;
+              if (PENDING.has(q.id)) expect(q.variants.length, `${path} has three sets now: remove it from PENDING`).toBeLessThan(3);
+              else expect(q.variants.length, `${path} needs at least three number sets`).toBeGreaterThanOrEqual(3);
+            }
   });
 });
 

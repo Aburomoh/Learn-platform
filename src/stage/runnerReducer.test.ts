@@ -100,16 +100,21 @@ describe("runner reducer: walked division", () => {
   });
 
   it("#80: explaining twice never retries on the variant explained last", () => {
-    let s = explainAll(run([{ type: "OPEN" }, step(0, 1, 1), { type: "EXPLAIN" }]));
-    expect(currentVariant(activity, s).id).toBe("v37");
-    s = explainAll(run([step(0, 1, 1), { type: "EXPLAIN" }], s));
+    // Two number sets, so both get explained (content now has three, #247).
+    const q = activity.questions[0];
+    const two: Activity = { ...activity, questions: [{ ...q, variants: q.variants.slice(0, 2) }, ...activity.questions.slice(1)] };
+    const r = createRunnerReducer(two);
+    const go = (s: RunnerState, actions: RunnerAction[]) => actions.reduce((x, a) => r(x, a), s);
+    let s = explainAll(go(initialRunnerState(two), [{ type: "OPEN" }, step(0, 1, 1), { type: "EXPLAIN" }]), r, two);
+    expect(currentVariant(two, s).id).toBe("v37");
+    s = explainAll(go(s, [step(0, 1, 1), { type: "EXPLAIN" }]), r, two);
     expect(s.explained[0]).toEqual(["v26", "v37"]);
-    expect(currentVariant(activity, s).id).toBe("v26"); // all explained: still switches
+    expect(currentVariant(two, s).id).toBe("v26"); // all explained: still switches
   });
 
   it("#80: with three variants, an unexplained one is always preferred", () => {
     const q = activity.questions[0];
-    const three: Activity = { ...activity, questions: [{ ...q, variants: [...q.variants, { ...q.variants[0], id: "v26b" }] }, ...activity.questions.slice(1)] };
+    const three: Activity = { ...activity, questions: [{ ...q, variants: [...q.variants.slice(0, 2), { ...q.variants[0], id: "v26b" }] }, ...activity.questions.slice(1)] };
     const r = createRunnerReducer(three);
     const go = (s: RunnerState, actions: RunnerAction[]) => actions.reduce((x, a) => r(x, a), s);
     const finish = (s: RunnerState) => explainAll(s, r, three);
