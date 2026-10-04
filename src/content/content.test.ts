@@ -533,6 +533,19 @@ describe("content registry", () => {
     expect(right).toEqual(["D1, D2, D4, D7", "D3, D5, D6, D7", "D2, D3, D4, D6"]);
   });
 
+  it("multiplexers (#307): Y is the selected input, by the mux equation; routes and terms match S1 S0", () => {
+    const x = getActivity(COURSE, "multiplexers", "multiplexers")!.activity;
+    const [predict, route, term] = x.questions;
+    const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(pick(predict)).toEqual(["Y = 1", "Y = 0", "Y = 0"]);
+    expect(pick(route)).toEqual(["I1", "I2", "I3"]);
+    expect(pick(term)).toEqual(["S1S0′I2", "S1′S0I1", "S1S0I3"]);
+    // a slip nudge never points at the right option
+    for (const q of x.questions)
+      for (const v of q.variants)
+        for (const m of v.misconceptions) if (m.detect.type === "option" && v.spec.kind === "multiple-choice") expect(m.detect.optionId, v.id).not.toBe(v.spec.correctOptionId);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
