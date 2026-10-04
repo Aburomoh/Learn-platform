@@ -144,7 +144,7 @@ function equationVariant(ff: Exclude<FlipFlop, "SR">): VariantInput {
       { rung: 9, text: `Q(t+1) = ${shown}.` },
     ],
     misconceptions: [
-      { id: "ex.complement", title: "Wrote the 0-rows", nudgeKey: "sp.zero-rows", detect: { type: "expression-complement" } },
+      { id: "ex.complement", title: "Wrote the 0-rows", nudgeKey: "ff.zero-rows", detect: { type: "expression-complement" } },
       { id: "ex.unreadable", title: "Unreadable", nudgeKey: "expr.unreadable", detect: { type: "expression-unreadable" } },
       ...(ff === "JK" ? [{ id: "ex.not-simplified", title: "Right function, not simplified", nudgeKey: "ff.not-simplified", detect: { type: "expression-not-simplified" as const } }] : []),
     ],
@@ -159,7 +159,14 @@ function equationVariant(ff: Exclude<FlipFlop, "SR">): VariantInput {
             ? { prompt: "With T = 1 and Q = 1, what is Q(t+1)?", options: ["1", "0"], correctIndex: 1, afterCorrect: "Yes, it flips to 0.", afterWrong: "T = 1 flips it: 0." }
             : { prompt: "With D = 1 and Q = 0, what is Q(t+1)?", options: ["0", "1"], correctIndex: 1, afterCorrect: "Yes: D.", afterWrong: "It copies D: 1." },
       },
-      { id: "s3", say: `So Q(t+1) = ${shown}.` },
+      // one set each: the walk ends on the asked piece, the student assembles the rest (Pedagogy on #408)
+      {
+        id: "s3",
+        say:
+          ff === "JK" ? "So K′Q is one product. The other covers Q = 0: which input sets it?"
+          : ff === "T" ? "So Q(t+1) is 1 exactly when T and Q differ. Which gate gives that?"
+          : `So Q(t+1) = ${shown}.`,
+      },
     ],
   };
 }
