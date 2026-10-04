@@ -16,6 +16,11 @@ export const kindUI = {
     Explain: dynamic(() => import("./circuit-predict/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./circuit-predict/ui").then((m) => m.Preload)),
   },
+  expression: {
+    Practice: dynamic(() => import("./expression/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./expression/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./expression/ui").then((m) => m.Preload)),
+  },
   "place-value": {
     Practice: dynamic(() => import("./place-value/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./place-value/ui").then((m) => m.Explain)),
