@@ -20,11 +20,17 @@ export const StateDiagramSpec = z
     /** The output equation (y = …), when the circuit has one. */
     output: z.object({ name: z.string().min(1), expr: z.string().min(1) }).optional(),
     mode: z.enum(["label", "next"]).default("label"),
+    /** Grid cell [column, row] of each state circle, in code order; default: table order, four per row. */
+    positions: z.array(z.tuple([z.number().int().min(0).max(3), z.number().int().min(0).max(3)])).optional(),
   })
   .superRefine((s, ctx) => {
     const vars = [...s.stateVars, s.input];
     if (new Set(vars).size !== vars.length) ctx.addIssue({ code: "custom", message: "state variables and the input must be distinct" });
     if (s.next.length !== s.stateVars.length) ctx.addIssue({ code: "custom", message: "one next-state equation per state variable" });
+    if (s.positions) {
+      if (s.positions.length !== 2 ** s.stateVars.length) ctx.addIssue({ code: "custom", message: "one position per state" });
+      if (new Set(s.positions.map(([c, r]) => `${c},${r}`)).size !== s.positions.length) ctx.addIssue({ code: "custom", message: "two states share a position" });
+    }
     for (const [label, text] of [...s.next.map((t, i) => [`${s.stateVars[i]}(t+1)`, t]), ...(s.output ? [[s.output.name, s.output.expr]] : [])]) {
       try {
         parseBool(text, { vars });

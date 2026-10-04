@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { VariantOf } from "../types";
 import { StateDiagramSpec } from "./spec";
-import { labelOptions, nextOptions, stateCodes, stateDiagram, transitions, type StateDiagramAnswer } from "./logic";
+import { arrowSteps, labelOptions, nextOptions, stateCodes, stateDiagram, statePositions, transitions, type StateDiagramAnswer } from "./logic";
 
 type Misconception = VariantOf<StateDiagramSpec>["misconceptions"][number];
 // The kind's detectors join the schema when it is registered with its view (Frontend, ADR-0008).
@@ -78,6 +78,26 @@ describe("state diagram: grading one arrow at a time", () => {
     expect(grade(n, { step: 3, next: "01" }).misconceptionId).toBe("next-is-present");
     expect(grade(n, { step: 3, next: "10" }).misconceptionId).toBeUndefined();
     expect(nextOptions(n.spec, 3)).toEqual(["00", "01", "10", "11"]);
+  });
+
+  it("shared arrows: either open label is accepted (Reviewer on #394)", () => {
+    // §5: 110 goes to 011 on both inputs, so steps 12 and 13 share one arrow
+    const three = variant({ kind: "state-diagram", stateVars: ["A", "B", "C"], input: "x", next: ["x'A' + AB'", "xAB' + BC'", "AC' + x'C"], output: { name: "y", expr: "x + B'" } });
+    expect(arrowSteps(three.spec, 12)).toEqual([12, 13]);
+    expect(arrowSteps(three.spec, 13)).toEqual([12, 13]);
+    expect(arrowSteps(three.spec, 0)).toEqual([0]);
+    expect(grade(three, { step: 12, label: "1/1" })).toMatchObject({ correct: true, partial: true }); // row 13's label first
+    expect(grade(three, { step: 13, label: "0/0", taken: ["1/1"] }).correct).toBe(true);
+    expect(grade(three, { step: 13, label: "1/1", taken: ["1/1"] }).correct).toBe(false); // already on the arrow
+    expect(grade(three, { step: 0, label: "1/1" }).correct).toBe(false); // not shared: table order
+  });
+
+  it("positions: authored, or table order four per row", () => {
+    expect(statePositions(d.spec)).toEqual([[0, 0], [1, 0], [2, 0], [3, 0]]);
+    const placed = variant({ ...dSpec, positions: [[0, 0], [1, 0], [1, 1], [0, 1]] });
+    expect(statePositions(placed.spec)).toEqual([[0, 0], [1, 0], [1, 1], [0, 1]]);
+    expect(StateDiagramSpec.safeParse({ ...dSpec, positions: [[0, 0], [0, 0], [1, 1], [0, 1]] }).success).toBe(false);
+    expect(StateDiagramSpec.safeParse({ ...dSpec, positions: [[0, 0], [1, 0]] }).success).toBe(false);
   });
 
   it("rejects malformed specs", () => {
