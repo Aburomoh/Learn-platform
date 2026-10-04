@@ -17,6 +17,7 @@ describe("kind registry (ADR-0008)", () => {
     const modules: Record<string, () => Promise<{ Practice: { displayName?: string }; Explain: unknown; Preload: () => null }>> = {
       "circuit-predict": () => import("./circuit-predict/ui"),
       "place-value": () => import("./place-value/ui"),
+      "truth-table": () => import("./truth-table/ui"),
     };
     expect(Object.keys(modules).sort()).toEqual(names);
     for (const name of names) {

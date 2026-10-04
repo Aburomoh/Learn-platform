@@ -14,5 +14,17 @@ columns in order, as on the slides (UX: docs/design/ecet111-representations.md �
   `rows-out-of-order` (another input's column written), `rows-inverted` (0-rows picked).
 - Step vars: `columnLabel`, `columnExpr`, `stepNumber`, `columnCount`, `rowCount`, `inputCount`.
 
-**Status:** spec, grading, step contract and tests. The view (`ui.tsx`) and the three registry
-lines come from Frontend; until then the kind is not registered and content cannot use it.
+## View (`ui.tsx`, `TruthTable.tsx`)
+
+- Inputs (given unless `fillInputs`), the optional `m` column, then the columns; the last is the
+  output. 2 px rules after the inputs and before the output; alternate rows banded; `group`
+  gives a header row with one soft band per group.
+- Fill: the active column is one ARIA grid stop. Arrows / Home / End move; Space or Enter
+  cycles empty → 0 → 1 (→ X when the column's truth has X); 0, 1, x type and move down.
+  Done columns show values; later ones are dim and announced as "later".
+- Row-select: a pick column (`aria-selected`), toggled by tap, Space or Enter; Check sends the rows.
+- After a wrong Check only `wrongCells.first` is marked (✕, border, background) and focused;
+  the student's entries stay. Cells are 36 × 44 px; a wide table scrolls inside its well with a
+  fade edge.
+- Explain Slowly stages: `step` (goal shown; omit for the finished table) and `revealed` (rows
+  filled so far); row-select: `rows` (shown as picked).

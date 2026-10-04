@@ -4,7 +4,8 @@
  */
 import { CircuitSpec, circuitDetectors } from "./circuit-predict/spec";
 import { PlaceValueSpec, placeValueDetectors } from "./place-value/spec";
+import { TruthTableSpec, truthTableDetectors } from "./truth-table/spec";
 
-export const kindSpecs = [PlaceValueSpec, CircuitSpec] as const;
+export const kindSpecs = [PlaceValueSpec, CircuitSpec, TruthTableSpec] as const;
 
-export const kindDetectors = [...placeValueDetectors, ...circuitDetectors] as const;
+export const kindDetectors = [...placeValueDetectors, ...circuitDetectors, ...truthTableDetectors] as const;
