@@ -484,6 +484,8 @@ describe("content registry", () => {
     expect(mts).toEqual([[1, 4, 5, 6], [1, 2], [2, 3]]); // JK, T, D (pack ch5-parti §3)
     const picked = x.questions[3].variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
     expect(picked).toEqual(["1", "1", "0"]);
+    // every JK set catches the swapped equation (JQ + KQ′): it gives the other answer
+    for (const v of x.questions[3].variants.filter((v) => v.id.startsWith("xjk"))) expect(v.misconceptions.map((m) => m.id), v.id).toContain("ff.equation-swapped");
   });
 
   it("resolves an activity by path", () => {

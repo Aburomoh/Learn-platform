@@ -155,8 +155,11 @@ function equationVariant(ff: Exclude<FlipFlop, "SR">): VariantInput {
   };
 }
 
-/** Next state from the equation: type, inputs, Q(t). The JK sets keep J ≠ K, so the swapped form (JQ + KQ′) gives a different answer. */
-const NEXT_SETS: [FlipFlop, Bit[], Bit][] = [["JK", [1, 0], 1], ["T", [1], 0], ["JK", [0, 1], 0]];
+/**
+ * Next state from the equation: type, inputs, Q(t). With J ≠ K the swapped form (JQ + KQ′) differs
+ * only when Q = 0, so every JK set has Q = 0 and the slip is always its own answer (Reviewer on #408).
+ */
+const NEXT_SETS: [FlipFlop, Bit[], Bit][] = [["JK", [1, 0], 0], ["T", [1], 0], ["JK", [0, 1], 0]];
 const SWAPPED = parseBool("JQ + KQ'", { vars: ["J", "K", "Q"] });
 
 function nextVariant([ff, inputs, q]: [FlipFlop, Bit[], Bit], k: number): VariantInput {
