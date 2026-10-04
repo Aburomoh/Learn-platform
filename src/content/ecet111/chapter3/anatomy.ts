@@ -118,7 +118,7 @@ export const anatomyTopic: TopicInput = {
   id: "kmap-anatomy",
   title: "Map anatomy",
   summary: "The K-map's cells in Gray order: a cell's number is its row bits then its column bits, and each literal is half the map.",
-  preview: "row 1, column 10 → m6",
+  preview: "row 1, column 01 → m5", // a cell no set asks (Reviewer on #429)
   concepts: [{ id: "km.anatomy", title: "Map layout", summary: "Axes in Gray order 00, 01, 11, 10; m-index = row bits then column bits; a literal is the cells inside (or outside) its bar." }],
   objectives: [{ id: "km.obj.anatomy", conceptId: "km.anatomy", text: "Locate a minterm on a 3- or 4-variable map and name the cells of a literal." }],
   activities: [anatomyActivity],
