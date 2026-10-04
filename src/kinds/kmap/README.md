@@ -29,5 +29,25 @@ slides' order:
 - Step vars: `sigma`, `varList`, `rowVars`, `colVars`, `cellCount`, `groupCount`, `groupNumber`,
   `answer` (one minimal SOP), `stepNumber`.
 
-**Status:** spec, grading and tests. The view, and registration with it (ADR-0008), are next
-(Frontend).
+## View (`ui.tsx`, `KarnaughMap.tsx`; representations §5)
+
+- **Map:** the slides' layout from `kmapLayout`: Gray-order axes, a corner split by a diagonal (row
+  variables bottom-left, column variables top-right), bars outside the grid where each variable is
+  1. Cells are 56 px (52 px on phones, 44 px at 320 px) with the minterm number top-left at 12 px
+  and the value centred; a don't-care is an italic x.
+- **One ARIA grid, one tab stop.** Arrows, Home and End move.
+  - fill: Space / Enter cycle empty → 0 → 1 (→ X); 0, 1, x type and move on in reading order;
+    Backspace clears. After a wrong check only `wrongCells.first` is marked (✕) and focused.
+  - group: Space / Enter (or a tap) puts a cell in or out of the group (`aria-selected`, halo plus
+    an accent inset); Escape clears.
+- **Groups:** a rounded outline per accepted group with its own line style (solid, dashed,
+  dotted, double) and a numbered badge; the same badge prefixes its term in the list beside the
+  map (below it on phones). A wrapping group is open halves at opposite edges; four corners are
+  four quarters (`groupPieces`). Outlines, not fills, so the values stay readable.
+- **Goals:** fill (unless given) → for each group: mark, then its term → F. Terms and F use the
+  shared `ExpressionEntry` (prime typing, overbar reading, key row).
+- **Focus targets:** `kmap`, `cell-m<n>`, `expression`.
+- **Explain Slowly stages:** `groups` (minterm numbers per group shown), `active` (index of the
+  group discussed; its term shows "?" until `term` is true), `answer` (show F).
+
+**Status:** spec, grading, tests and the view; registered.

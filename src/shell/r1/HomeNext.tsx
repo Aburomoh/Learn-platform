@@ -90,7 +90,13 @@ export function HomeNext({ courses }: { courses: Course[] }) {
           />
         </div>
         <div className={styles.panelTutor}>
-          <TutorCard name={product.owner.shortName} message={resolveMessage(returning ? "page.home.returning" : "page.home.first")} portraitSrc={product.brand.tutorPortrait} />
+          {/* the welcome pose on a first visit; nothing is fetched before progress is read */}
+          <TutorCard
+            name={product.owner.shortName}
+            message={resolveMessage(returning ? "page.home.returning" : "page.home.first")}
+            portrait={product.brand.tutorPortrait}
+            pose={ready ? (returning ? "neutral" : "welcome") : null}
+          />
         </div>
       </section>
 

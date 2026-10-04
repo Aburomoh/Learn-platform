@@ -5,7 +5,7 @@ import type { Activity, Course, Topic } from "@/content/schema";
 import { product } from "../../config/product";
 import { HintReveal } from "@/interactions/HintReveal/HintReveal";
 import { canRequestScaffold } from "@/tutor";
-import { TutorPanel, useFocusEffects } from "@/tutor/ui";
+import { TutorPanel, TutorPosePreload, useFocusEffects } from "@/tutor/ui";
 import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordAttempt, completeActivity, completeQuestion } from "@/learner";
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
@@ -74,6 +74,7 @@ export function ActivityRunner(props: ActivityRunnerProps) {
     <div className={styles.runner}>
       <Runner key={resumed ? "resumed" : "first"} {...props} initial={start} />
       {idle && <KindPrefetch kinds={kindsUsed} />}
+      <TutorPosePreload portrait={product.brand.tutorPortrait} />
     </div>
   );
 }

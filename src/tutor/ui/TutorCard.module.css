@@ -44,6 +44,34 @@
   font-size: 1.6rem;
 }
 
+/* pose art: the head crop fills the disc; from 900 px (rails, home card) the waist-up pose sits in a
+   fixed 168 × 224 box above the bubble, so the card never shifts when the pose arrives */
+.art {
+  position: relative;
+  overflow: hidden;
+}
+
+.art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+@media (min-width: 900px) {
+  .card[data-art] {
+    flex-direction: column;
+  }
+  .art {
+    width: 168px;
+    height: 224px;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+}
+
 /* soft bubble; the squared top-left corner points at the avatar */
 .say {
   padding: var(--space-3) var(--space-4);
