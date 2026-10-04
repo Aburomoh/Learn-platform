@@ -11,7 +11,7 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
-import { equivalent, formatCube, isPOS, isSOP, parseBool } from "./boolean";
+import { equivalent, formatCube, isPOS, isSOP, literalCount, mintermsOf, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
 import { columnTruth } from "@/kinds/truth-table/logic";
@@ -514,6 +514,22 @@ describe("content registry", () => {
     expect(picked).toEqual(["Σ(0, 2, 6, 7)", "Σ(0, 1, 2, 6, 8, 9, 10)", "Σ(0, 1, 2, 3, 4, 5)", "Σ(3, 4, 5, 7)"]);
     const sums = map.variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
     expect(sums).toEqual([["x'z' + xy"], ["A'CD' + B'C' + B'D'"], ["A' + B'"], ["xy' + yz"]]); // s.80, s.83–87
+  });
+
+  it("same function by algebra (#281): every wrong line is wrong, and each chain ends on the map's minimal sum", () => {
+    const x = getActivity(COURSE, "kmap-algebra", "kmap-algebra")!.activity;
+    for (const v of x.questions[0].variants) {
+      if (v.spec.kind !== "derivation") throw new Error("expected a derivation");
+      const spec = v.spec;
+      spec.lines.forEach((l, i) => {
+        const prev = parseBool(i === 0 ? spec.start : spec.lines[i - 1].expr, { vars: spec.vars });
+        for (const w of l.wrongLines) expect(equivalent(prev, parseBool(w.expr, { vars: spec.vars }), spec.vars), `${v.id} line ${i + 1} ${w.expr}`).toBe(false);
+      });
+      const last = parseBool(spec.lines.at(-1)!.expr, { vars: spec.vars });
+      const ones = mintermsOf(parseBool(spec.start, { vars: spec.vars }), spec.vars);
+      const cover = kmapCovers({ kind: "kmap", vars: spec.vars, minterms: ones, dontCares: [], fill: true })[0];
+      expect(literalCount(last), v.id).toBe(cover.reduce((s, c) => s + formatCube(c, spec.vars).replace(/'/g, "").length, 0));
+    }
   });
 
   it("resolves an activity by path", () => {

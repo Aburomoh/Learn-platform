@@ -8,6 +8,7 @@ import { threeVariableTopic } from "./three-variable";
 import { threeVariableExercisesTopic } from "./three-variable-exercises";
 import { fourVariableTopic } from "./four-variable";
 import { expressionToMapTopic } from "./expression-to-map";
+import { byAlgebraTopic } from "./by-algebra";
 import { dontCaresTopic } from "./dont-cares";
 
 export const chapter3: ModuleInput = {
@@ -19,6 +20,7 @@ export const chapter3: ModuleInput = {
     threeVariableExercisesTopic,
     fourVariableTopic,
     expressionToMapTopic,
+    byAlgebraTopic,
     dontCaresTopic,
   ],
 };
