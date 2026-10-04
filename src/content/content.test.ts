@@ -11,7 +11,7 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue29, placeValue45 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
-import { equivalent, formatCube, isPOS, isSOP, parseBool } from "./boolean";
+import { equivalent, formatCube, isPOS, isSOP, mintermsOf, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
 import { columnTruth } from "@/kinds/truth-table/logic";
@@ -493,6 +493,59 @@ describe("content registry", () => {
     expect(sums).toEqual([["C"], ["A + BC'"], ["x + z"], ["A + B'D"]]);
   });
 
+  it("full adder table (#301): S = Σ(1,2,4,7), Co = Σ(3,5,6,7) as in the pack; one-row answers are the binary count", () => {
+    const x = getActivity(COURSE, "full-adder", "full-adder-table")!.activity;
+    const [row, table] = x.questions;
+    if (table.variants[0].spec.kind !== "truth-table") throw new Error("expected a truth table");
+    const spec = table.variants[0].spec;
+    expect(spec.columns.map((c) => columnTruth(spec, c).join(""))).toEqual(["01101001", "00010111"]);
+    const picked = row.variants.map(({ spec: s }) => (s.kind === "multiple-choice" ? s.options.find((o) => o.id === s.correctOptionId)!.text : ""));
+    expect(picked).toEqual(["S = 1, Co = 1", "S = 0, Co = 1", "S = 1, Co = 0"]);
+  });
+
+  it("full adder Σ (#302): each list is the computed 1-rows of its column", () => {
+    const x = getActivity(COURSE, "full-adder", "full-adder-sigma")!.activity;
+    const [rows, sig] = x.questions;
+    const ones = rows.variants.map(({ spec }) => {
+      if (spec.kind !== "truth-table") throw new Error("expected a truth table");
+      return columnTruth(spec, spec.columns.find((c) => c.id === spec.target)!).flatMap((v, m) => (v === 1 ? [m] : []));
+    });
+    expect(ones).toEqual([[3, 5, 6, 7], [1, 2, 4, 7]]);
+    const picked = sig.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(picked).toEqual(ones.map((r) => `Σ(${r.join(", ")})`));
+  });
+
+  it("full adder by algebra (#304): every wrong line is wrong; the sets end on parity and its complement", () => {
+    const x = getActivity(COURSE, "full-adder", "full-adder-algebra")!.activity;
+    const ends: number[][] = [];
+    for (const v of x.questions[0].variants) {
+      if (v.spec.kind !== "derivation") throw new Error("expected a derivation");
+      const spec = v.spec;
+      spec.lines.forEach((l, i) => {
+        const prev = parseBool(i === 0 ? spec.start : spec.lines[i - 1].expr, { vars: spec.vars });
+        for (const w of l.wrongLines) expect(equivalent(prev, parseBool(w.expr, { vars: spec.vars }), spec.vars), `${v.id} line ${i + 1} ${w.expr}`).toBe(false);
+      });
+      ends.push(mintermsOf(parseBool(spec.lines.at(-1)!.expr, { vars: spec.vars }), spec.vars));
+    }
+    expect(ends).toEqual([[1, 2, 4, 7], [1, 2, 4, 7], [0, 3, 5, 6]]);
+  });
+
+  it("decoders and encoders (#305): Dk is minterm k; each encoder bit's OR is the inputs whose code has that bit", () => {
+    const dec = getActivity(COURSE, "decoders-encoders", "decoders")!.activity;
+    const [predict, mt, table] = dec.questions;
+    const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(pick(predict)).toEqual(["D6", "D3", "D4"]);
+    for (const v of mt.variants) if (v.spec.kind === "expression") expect(v.spec.minterms).toEqual([Number(v.id.slice(1))]);
+    for (const v of table.variants) {
+      if (v.spec.kind !== "truth-table") throw new Error("expected a truth table");
+      const spec = v.spec;
+      spec.columns.forEach((c, k) => expect(columnTruth(spec, c).flatMap((x, r) => (x === 1 ? [r] : [])), c.label).toEqual([k]));
+    }
+    const enc = getActivity(COURSE, "decoders-encoders", "encoders")!.activity;
+    expect(pick(enc.questions[0])).toEqual(["110", "001", "011"]);
+    expect(pick(enc.questions[1])).toEqual(["I4 + I5 + I6 + I7", "I2 + I3 + I6 + I7", "I1 + I3 + I5 + I7"]); // pack ch4 §3
+  });
+
   it("three-variable exercises (#278): the pack's machine-worked covers, s.47 with both", () => {
     const x = getActivity(COURSE, "kmap-three-exercises", "kmap-three-exercises")!.activity;
     const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")).sort() : []));
@@ -527,7 +580,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
@@ -633,7 +686,7 @@ describe("authored truth is internally consistent", () => {
   });
 
   it("every multi-step kind follows the step contract: partial until the last step (ADR-0007)", () => {
-    expect([...MULTI_STEP_KINDS].sort()).toEqual(["base-to-decimal", "bit-grouping", "circuit-predict", "column-addition", "derivation", "kmap", "repeated-division", "truth-table"]);
+    expect([...MULTI_STEP_KINDS].sort()).toEqual(["base-to-decimal", "bit-grouping", "circuit-predict", "column-addition", "derivation", "device", "kmap", "repeated-division", "truth-table"]);
     for (const { path, variant } of allVariants()) {
       const spec = variant.spec;
       const n = stepCount(spec);
