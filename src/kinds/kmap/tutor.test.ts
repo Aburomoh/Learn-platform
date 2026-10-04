@@ -156,7 +156,7 @@ describe("#236 K-map: a wrong answer with no recognised slip gets a line for its
   });
 
   it("group, term and F", () => {
-    expect(play(ex1, [fillOk, { group: [], previous: [] }]).message).toBe("Not quite. Tap the cells of one group of 1s: a rectangle of 2, 4 or 8 cells.");
+    expect(play(ex1, [fillOk, { group: [], previous: [] }]).message).toBe("Not quite. Tap the cells of one group of 1s: a rectangle of 1, 2, 4 or 8 cells.");
     expect(play(ex1, [fillOk, groupBC, { group: [3, 7], term: "B +" }]).message).toBe("Not quite. Write the product of the variables that stay the same across the group.");
     expect(play(ex1, [...allGroupsDone, { expr: "A" }]).message).toBe("Not quite. F is the sum of the terms of your groups.");
   });

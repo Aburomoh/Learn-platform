@@ -75,7 +75,7 @@ export const en = {
   "km.answer-misses-ones": "Every term is a good group, but some 1 is not covered yet. Check each 1 on the map.",
   "km.answer-not-minimal": "Correct function, but it can be simpler. Check that every group is as large as possible and none is unneeded.",
   "wrong.cell.kmap.fill": "Cells not right yet: {wrongCount}. Check the marked one first: is its minterm number in the list?",
-  "wrong.first.kmap.group": "Not quite. Tap the cells of one group of 1s: a rectangle of 2, 4 or 8 cells.",
+  "wrong.first.kmap.group": "Not quite. Tap the cells of one group of 1s: a rectangle of 1, 2, 4 or 8 cells.",
   "wrong.first.kmap.term": "Not quite. Write the product of the variables that stay the same across the group.",
   "wrong.first.kmap.answer": "Not quite. F is the sum of the terms of your groups.",
   "step.next-kmap-group": "Good. Now mark a group of 1s.",
