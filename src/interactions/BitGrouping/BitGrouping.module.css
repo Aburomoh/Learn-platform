@@ -191,6 +191,27 @@
   background: var(--error-bg);
 }
 
+/* the binary point between the whole part and the fraction */
+.point {
+  flex: none;
+  align-self: center;
+  padding: 0 var(--space-2);
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+/* to-bits: the slot holds 3 or 4 bits */
+.slotBits {
+  min-width: 72px;
+  letter-spacing: 0.1em;
+}
+
+.inputBits {
+  width: 72px;
+  height: var(--touch-min);
+  letter-spacing: 0.1em;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
