@@ -244,6 +244,21 @@ export function KarnaughMap({ id, layout, values, mode, groups = [], allowX = fa
           <button type="button" className="btn btn-primary" disabled={!editing || !complete} onClick={() => (mode === "fill" ? onFill?.(cells.map((c) => c ?? 0)) : onGroup?.(picked))}>
             {checkLabel ?? (mode === "fill" ? "Check map" : "Check group")}
           </button>
+          {mode === "group" && (
+            <>
+              {/* touch users have no Escape: a quiet action clears the selection */}
+              <button type="button" className="btn btn-quiet" disabled={!editing || picked.length === 0} onClick={() => setPicked([])}>
+                Clear selection
+              </button>
+              <span className={styles.count} aria-live="polite">
+                <span className={styles.badge} aria-hidden="true">
+                  {groups.length + 1}
+                </span>
+                <span className="sr-only">Group {groups.length + 1}: </span>
+                {picked.length} {picked.length === 1 ? "cell" : "cells"} selected
+              </span>
+            </>
+          )}
         </div>
       )}
     </div>

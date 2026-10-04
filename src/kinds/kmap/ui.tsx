@@ -94,6 +94,7 @@ export function Practice({ variant, prompt, state, last, stepIndex, locked, onSu
             id={`${variant.id}-term-${goal.group}`}
             label={`Term for group ${goal.group! + 1}`}
             vars={spec.vars}
+            keys="product"
             state={state}
             disabled={locked}
             submittedText={lastHere?.answer.kind === "kmap" ? lastHere.answer.term : undefined}
