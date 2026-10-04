@@ -78,27 +78,31 @@ function predictVariant({ id, select, data }: (typeof PREDICT_SETS)[number], i: 
 
 const ROUTE_SETS = [1, 2, 3];
 
+/** On the device view (#382): the mux drawn with its select values; the student picks the input that reaches Y. */
 function routeVariant(select: number, i: number): VariantInput {
-  const options = rotate([0, 1, 2, 3].map((k) => ({ id: `i${k}`, text: `I${k}` })), i + select);
   return {
     id: `r${sel(select)}`,
     prompt: `In a 4-to-1 multiplexer, S1 S0 = ${sel(select).split("").join(" ")}. Which input reaches Y?`,
-    spec: { kind: "multiple-choice", options, correctOptionId: `i${select}` },
+    spec: { kind: "device", device: "mux", bits: 2, asks: [select] },
     hints: [
       { rung: 2, text: "Not yet. Read S1 S0 as a binary number, S1 first." },
       // the rule and the one row no set asks, never the whole table (Pedagogy on #392)
       { rung: 3, text: "Read S1 S0 as a binary number, S1 first: 00 → I0." },
       { rung: 9, text: `${sel(select)} routes I${select} to Y.` },
     ],
-    misconceptions: swapSel(select) !== select ? [{ id: "mux.select-reversed", title: "Read the select bits backwards", nudgeKey: "mux.select-reversed", detect: { type: "option", optionId: `i${swapSel(select)}` } }] : [],
+    misconceptions: [
+      { id: "mux.select-reversed", title: "Read the select bits backwards", nudgeKey: "mux.select-reversed", detect: { type: "code-reversed" } },
+      { id: "dev.counted-from-one", title: "Counted the inputs from 1", nudgeKey: "dev.counted-from-one", detect: { type: "counted-from-one" } },
+    ],
     explanation: [
-      { id: "s1", say: "The select bits, read as a binary number with S1 first, give the input's number: 00 → I0." },
+      { id: "s1", say: "The select bits, read as a binary number with S1 first, give the input's number: 00 → I0.", stage: { ask: 0 } },
       {
         id: "s2",
         say: `Here S1 = ${select >> 1} and S0 = ${select & 1}.`,
+        stage: { ask: 0 },
         ask: { prompt: `${sel(select)} in decimal is…`, options: i % 2 ? [String(slipOf(select)), String(select)] : [String(select), String(slipOf(select))], correctIndex: i % 2, afterCorrect: "Yes.", afterWrong: `S1 is the MSB: ${sel(select)} is ${select}.` },
       },
-      { id: "s3", say: `So I${select} reaches Y.` },
+      { id: "s3", say: `So I${select} reaches Y.`, stage: { ask: 0, answer: true } },
     ],
   };
 }

@@ -136,6 +136,7 @@ export const en = {
   "mx.pair-variable": "F is the same on both rows of this pair, so the input does not depend on the variable. Which constant is it?",
   "mx.data-first": "The data inputs take the last variable; the first ones go on the selects, the first on the highest select.",
   "mux.select-reversed": "S1 is the MSB: read S1 S0 with S1 first. Which input number is that?",
+  "dev.counted-from-one": "The lines are numbered from 0. Which number does this code give?",
   "dec.read-reversed": "Read the code from x, the MSB, on the left. Which number is that?",
   "enc.code-reversed": "Write the code with x, the MSB, first. Which bit comes first?",
   "enc.or-reversed": "That OR is for the bit at the other end of the code. Which position is this output?",

@@ -16,6 +16,7 @@ import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
 import { columnTruth, muxPairs } from "@/kinds/truth-table/logic";
 import { kmapCovers } from "@/kinds/kmap/logic";
+import { pickName, rightPick } from "@/kinds/device/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 import { lawChips, lineOptions } from "@/kinds/derivation/logic";
 import type { DerivationSpec } from "@/kinds/derivation/spec";
@@ -539,7 +540,7 @@ describe("content registry", () => {
   it("decoders and encoders (#305): Dk is minterm k; each encoder bit's OR is the inputs whose code has that bit", () => {
     const dec = getActivity(COURSE, "decoders-encoders", "decoders")!.activity;
     const [predict, mt, table] = dec.questions;
-    const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : spec.kind === "device" ? pickName(spec, rightPick(spec, spec.asks[0])) : ""));
     expect(pick(predict)).toEqual(["D6", "D3", "D4"]);
     for (const v of mt.variants) if (v.spec.kind === "expression") expect(v.spec.minterms).toEqual([Number(v.id.slice(1))]);
     for (const v of table.variants) {
@@ -561,7 +562,7 @@ describe("content registry", () => {
   it("multiplexers (#307): Y is the selected input, by the mux equation; routes and terms match S1 S0", () => {
     const x = getActivity(COURSE, "multiplexers", "multiplexers")!.activity;
     const [predict, route, term] = x.questions;
-    const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : spec.kind === "device" ? pickName(spec, rightPick(spec, spec.asks[0])) : ""));
     expect(pick(predict)).toEqual(["Y = 1", "Y = 0", "Y = 0"]);
     expect(pick(route)).toEqual(["I1", "I2", "I3"]);
     expect(pick(term)).toEqual(["S1S0′", "S1′S0", "S1S0"]);
