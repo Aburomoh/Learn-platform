@@ -11,10 +11,11 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
-import { equivalent, isPOS, isSOP, parseBool } from "./boolean";
+import { equivalent, formatCube, isPOS, isSOP, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
 import { columnTruth } from "@/kinds/truth-table/logic";
+import { kmapCovers } from "@/kinds/kmap/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 import { lawChips, lineOptions } from "@/kinds/derivation/logic";
 import type { DerivationSpec } from "@/kinds/derivation/spec";
@@ -472,6 +473,12 @@ describe("content registry", () => {
       expect([out.gs, out.gc], v.id).toEqual([a ^ b, a & b]);
       expect(v.id).toBe(add.variants[walk.variants.indexOf(v)].id); // same pair, same id (#141)
     }
+  });
+
+  it("three-variable maps (#277): the minimal sums are the pack's, and every set is solvable step by step", () => {
+    const x = getActivity(COURSE, "kmap-three", "kmap-three")!.activity;
+    const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
+    expect(sums).toEqual([["AC' + BC"], ["x'y + z'"], ["y + z'"]]);
   });
 
   it("resolves an activity by path", () => {
