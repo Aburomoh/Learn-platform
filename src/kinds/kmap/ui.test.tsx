@@ -75,6 +75,15 @@ describe("KarnaughMap", () => {
     await user.click(cell(4));
     await user.keyboard("{Escape}");
     expect(cell(4)).toHaveAttribute("aria-selected", "false");
+    // touch: the quiet Clear selection action does the same, and the count follows the picks (#384)
+    const clear = screen.getByRole("button", { name: "Clear selection" });
+    expect(clear).toBeDisabled();
+    await user.click(cell(4));
+    await user.click(cell(6));
+    expect(screen.getByText(/2 cells selected/)).toHaveTextContent("Group 1: 2 cells selected");
+    await user.click(clear);
+    expect(screen.getByText(/0 cells selected/)).toBeInTheDocument();
+    expect(cell(6)).toHaveAttribute("aria-selected", "false");
     await user.click(cell(7));
     cell(3).focus();
     await user.keyboard(" ");
@@ -146,6 +155,9 @@ describe("kmap kind in the stage (#235)", () => {
 
     // its term: the group is outlined, its entry in the list still "?"
     expect(await screen.findByText("Group 1 of 2: write its term.")).toBeInTheDocument();
+    // a term is one product: the key row offers the variables, the prime and delete only (#384)
+    const keyNames = () => within(screen.getByRole("group", { name: "Expression keys" })).getAllByRole("button").map((b) => b.getAttribute("aria-label") ?? b.textContent);
+    expect(keyNames()).toEqual(["A", "B", "C", "complement (NOT)", "delete"]);
     expect(document.querySelectorAll("[data-group='0']")).toHaveLength(1);
     expect(screen.getByRole("list", { name: "Groups" })).toHaveTextContent("Group 1: ?");
     await term(/Term for group 1/, "BC");
@@ -159,6 +171,9 @@ describe("kmap kind in the stage (#235)", () => {
     await term(/Term for group 2/, "AC'");
     expect([...document.querySelectorAll("[data-group='1']")].map((o) => o.getAttribute("data-open"))).toEqual(["left", "right"]);
 
+    // F is a sum of terms: the full key row is back
+    await screen.findByRole("textbox", { name: /F, the simplified function/ });
+    expect(keyNames()).toContain("OR");
     await term(/F, the simplified function/, "AC' + BC");
     expect(await screen.findByText("Correct.")).toBeInTheDocument();
     expect(screen.getByRole("list", { name: "Groups" })).toHaveTextContent("F = AC' + BC");
