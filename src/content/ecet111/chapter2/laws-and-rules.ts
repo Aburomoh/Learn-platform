@@ -133,7 +133,7 @@ function ruleVariant(id: string, example: string, rule: Rule, counterpart: { rul
 
 const simplifyHints: HintInput[] = [
   { rung: 2, text: "Not yet. Which of the rules you just matched fits this expression?" },
-  { rung: 3, text: "A + AB = A (absorption), A + A′B = A + B, and A″ = A are the ones with two or more variables." },
+  { rung: 3, text: "The rules that shorten an expression here: A + AB = A, A + A′B = A + B, and A″ = A." },
   { rung: 9, text: "{expr} = {answer}, by {ruleText}." },
 ];
 
@@ -191,9 +191,10 @@ export const lawsAndRulesTopic: TopicInput = {
           conceptId: "br.laws",
           objectiveId: "br.obj.law",
           variants: [
-            lawVariant("vlaw-c", "X + Y", "Y + X", "commutative", 0),
-            lawVariant("vlaw-a", "P(QR)", "(PQ)R", "associative", 1),
-            lawVariant("vlaw-d", "W(X + Y)", "WX + WY", "distributive", 2),
+            // offsets chosen so the right law is never the first chip (QA on #273)
+            lawVariant("vlaw-c", "X + Y", "Y + X", "commutative", 2),
+            lawVariant("vlaw-a", "P(QR)", "(PQ)R", "associative", 2),
+            lawVariant("vlaw-d", "W(X + Y)", "WX + WY", "distributive", 1),
           ],
         },
         {

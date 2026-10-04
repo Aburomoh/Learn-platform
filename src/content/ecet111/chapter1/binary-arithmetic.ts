@@ -187,19 +187,22 @@ function onesVariant(bits: string, id = `v${bits}`): VariantInput {
   };
 }
 
-function ruleVariant2s(bits: string): VariantInput {
+function ruleVariant2s(bits: string, k = 0): VariantInput {
   const v = complementVars(bits);
+  const options = [
+    { id: "add-one", text: "Add 1 to the 1's complement" },
+    { id: "add-original", text: "Add 1 to the original number" },
+    { id: "flip-again", text: "Flip the bits again" },
+    { id: "minus-one", text: "Subtract 1 from the 1's complement" },
+  ];
+  // a different position per number set, never always first (QA on #273)
+  const r = (k + 1) % options.length;
   return {
     id: `v${bits}`,
     prompt: "The 1's complement of {bits} is {ones}. How do you get the 2's complement?",
     spec: {
       kind: "multiple-choice",
-      options: [
-        { id: "add-one", text: "Add 1 to the 1's complement" },
-        { id: "add-original", text: "Add 1 to the original number" },
-        { id: "flip-again", text: "Flip the bits again" },
-        { id: "minus-one", text: "Subtract 1 from the 1's complement" },
-      ],
+      options: [...options.slice(r), ...options.slice(0, r)],
       correctOptionId: "add-one",
     },
     vars: v,
@@ -243,7 +246,7 @@ const complementsActivity: TopicInput["activities"][number] = {
   minutes: 10,
   questions: [
     { id: "ba.q.ones", label: "1's complement", conceptId: "ba.complement", objectiveId: "ba.obj.ones", variants: COMPLEMENT_SETS.map((b) => onesVariant(b)) },
-    { id: "ba.q.twos-rule", label: "2's rule", conceptId: "ba.complement", objectiveId: "ba.obj.twos", variants: COMPLEMENT_SETS.map(ruleVariant2s) },
+    { id: "ba.q.twos-rule", label: "2's rule", conceptId: "ba.complement", objectiveId: "ba.obj.twos", variants: COMPLEMENT_SETS.map((b, k) => ruleVariant2s(b, k)) },
     { id: "ba.q.plus-one", label: "Add 1", conceptId: "ba.complement", objectiveId: "ba.obj.twos", variants: COMPLEMENT_SETS.map((b) => plusOneVariant(b)) },
   ],
 };
@@ -301,19 +304,23 @@ function addTwosVariant(set: SubtractionSet): VariantInput {
   };
 }
 
-function endCarryVariant(set: SubtractionSet): VariantInput {
+function endCarryVariant(set: SubtractionSet, k = 0): VariantInput {
   const s = subtractionBits(set);
   const positive = s.endCarry === "1";
+  const rotate = <T,>(xs: T[]) => {
+    const r = (k + 1) % xs.length; // a different position per number set (QA on #273)
+    return [...xs.slice(r), ...xs.slice(0, r)];
+  };
   return {
     id: set.id,
     prompt: `${s.A} + ${s.twos} = ${s.sum}. The end carry is ${s.endCarry}. What does it tell you?`,
     spec: {
       kind: "multiple-choice",
-      options: [
+      options: rotate([
         { id: "positive", text: "The result is positive: discard the carry", misconceptionId: positive ? undefined : "sub.missed-negative" },
         { id: "keep", text: `Keep the carry: the answer is ${s.sum}`, misconceptionId: "sub.kept-carry" },
         { id: "negative", text: "The result is negative: take the 2's complement of the sum for its size" },
-      ],
+      ]),
       correctOptionId: positive ? "positive" : "negative",
       context: { type: "addition", operands: { a: s.A, b: s.twos } },
     },

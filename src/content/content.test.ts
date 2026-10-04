@@ -228,6 +228,18 @@ describe("content registry", () => {
     }
   });
 
+  it("no multiple-choice question has its right answer first in every set (QA on #273)", () => {
+    for (const c of courses)
+      for (const m of c.modules)
+        for (const t of m.topics)
+          for (const a of t.activities)
+            for (const q of a.questions) {
+              const firsts = q.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.options[0].id === v.spec.correctOptionId : null));
+              if (firsts.includes(null) || firsts.length < 2) continue;
+              expect(firsts.every(Boolean), `${a.id}/${q.id}: right answer is always first`).toBe(false);
+            }
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
