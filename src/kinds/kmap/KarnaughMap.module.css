@@ -185,16 +185,17 @@
   background: color-mix(in srgb, var(--focus-halo) 55%, transparent);
 }
 
-/* top-right of the outline: clear of the minterm number (top-left) and the value (centre) */
+/* centred on the outline's top-right corner, above the line, so it never covers a value */
 .badge {
   position: absolute;
-  right: 1px;
-  top: 1px;
+  right: -7px;
+  top: -7px;
+  z-index: 1;
   display: grid;
   place-items: center;
-  min-width: 16px;
-  height: 16px;
-  border-radius: 8px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
   background: var(--text);
   color: var(--surface);
   font-size: 12px;
