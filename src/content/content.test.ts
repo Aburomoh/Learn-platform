@@ -539,7 +539,7 @@ describe("content registry", () => {
     const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
     expect(pick(predict)).toEqual(["Y = 1", "Y = 0", "Y = 0"]);
     expect(pick(route)).toEqual(["I1", "I2", "I3"]);
-    expect(pick(term)).toEqual(["S1S0′I2", "S1′S0I1", "S1S0I3"]);
+    expect(pick(term)).toEqual(["S1S0′", "S1′S0", "S1S0"]);
     // a slip nudge never points at the right option
     for (const q of x.questions)
       for (const v of q.variants)

@@ -111,6 +111,7 @@ export const en = {
   "lg.check-xor": "Look at the XOR gate again. It gives 1 only when its two inputs are different.",
   "ha.s-as-or": "1 + 1 is 10 in binary. Which bit is the sum S, and which is carried?",
   "ha.s-c-swapped": "S is the right-hand bit of A + B; the carry C is the left-hand bit. Which is which here?",
+  "dec.fn-missed-one": "Count the numbers in the Σ list, then count the outputs you picked. Is one missing?",
   "mx.pair-swapped": "Check the pair again: F is 1 on the row where the variable is 1, or where it is 0? That decides v or v′.",
   "mx.pair-constant": "F is not the same on both rows of this pair, so a constant cannot give it. Which form of the variable matches?",
   "mx.pair-variable": "F is the same on both rows of this pair, so the input does not depend on the variable. Which constant is it?",
