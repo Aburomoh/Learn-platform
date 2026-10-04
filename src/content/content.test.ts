@@ -11,6 +11,7 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
+import { equivalent, parseBool } from "./boolean";
 import { columnTruth } from "@/kinds/truth-table/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 
@@ -227,6 +228,22 @@ describe("content registry", () => {
       ["0 1 1 1", "0 1 1 1 1 1 1 1", "0 1 1 1"],
       ["1 0"],
     ]);
+  });
+
+  it("minterms (#231): the slide's Σ lists, wrong expansion lines are not equivalent", () => {
+    const x = getActivity(COURSE, "minterms", "minterms")!.activity;
+    const [, expand, sig] = x.questions;
+    for (const v of expand.variants) {
+      if (v.spec.kind !== "derivation") throw new Error("expected a derivation");
+      const spec = v.spec;
+      spec.lines.forEach((l, i) => {
+        const prev = parseBool(i === 0 ? spec.start : spec.lines[i - 1].expr, { vars: spec.vars });
+        for (const w of l.wrongLines) expect(equivalent(prev, parseBool(w.expr, { vars: spec.vars }), spec.vars), `${v.id} line ${i + 1}: ${w.expr}`).toBe(false);
+      });
+    }
+    // A′ + AB′ = Σ(0, 1, 2) and xy + x′yz = Σ(3, 6, 7), as on p.71–74
+    const right = sig.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.options.find((o) => o.id === "right")!.text : ""));
+    expect(right).toEqual(["Σ(0, 1, 2)", "Σ(3, 6, 7)", "Σ(0, 2, 3)"]);
   });
 
   it("resolves an activity by path", () => {
