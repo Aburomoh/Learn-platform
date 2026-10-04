@@ -31,6 +31,8 @@ export const circuitDetectors = [
   z.object({ type: z.literal("gate-not-applied") }),
   /** Expression mode: AND written for OR (or NAND for NOR), or the other way round. */
   z.object({ type: z.literal("gate-and-or-swapped") }),
+  /** Expression mode: a bar (NOT) on the wrong part, e.g. (A + B)′ written as A′ + B (p.23–25). */
+  z.object({ type: z.literal("gate-bar-misplaced") }),
   /** Expression mode: text that does not parse, or a variable the circuit does not have. */
   z.object({ type: z.literal("gate-expression-unreadable") }),
 ] as const;

@@ -127,6 +127,32 @@ function gradeExpression(misconceptions: { id: string; detect: { type: string } 
   const notApplied = gate.from.some((f) => equivalent(e, exprs[f], vars));
   const swappedType = SWAP[gate.type];
   const swapped = swappedType ? gateExpressions({ ...spec, gates: spec.gates.map((g) => (g.id === gate.id ? { ...g, type: swappedType } : g)) })[gate.id] : undefined;
-  const kind = notApplied ? "gate-not-applied" : swapped && equivalent(e, swapped, vars) ? "gate-and-or-swapped" : undefined;
+  const kind = notApplied
+    ? "gate-not-applied"
+    : swapped && equivalent(e, swapped, vars)
+      ? "gate-and-or-swapped"
+      : barMoves(exprs[gate.id]).some((m) => equivalent(e, m, vars) && !equivalent(m, exprs[gate.id], vars))
+        ? "gate-bar-misplaced"
+        : undefined;
   return { correct: false, normalized, misconceptionId: kind ? find(kind) : undefined };
+}
+
+/** Every node of an expression, with a function that rebuilds the tree with that node replaced. */
+function nodes(e: BoolExpr, rebuild: (x: BoolExpr) => BoolExpr = (x) => x): { node: BoolExpr; put: (x: BoolExpr) => BoolExpr }[] {
+  const here = [{ node: e, put: rebuild }];
+  if (e.type === "not") return [...here, ...nodes(e.arg, (x) => rebuild({ type: "not", arg: x }))];
+  if (e.type === "and" || e.type === "or" || e.type === "xor")
+    return [...here, ...e.args.flatMap((a, i) => nodes(a, (x) => rebuild({ ...e, args: e.args.map((b, j) => (j === i ? x : b)) })))];
+  return here;
+}
+
+/** The expression with one bar taken off and one bar put somewhere else: the moved-bar slips. */
+function barMoves(e: BoolExpr): BoolExpr[] {
+  const out: BoolExpr[] = [];
+  for (const { node, put } of nodes(e)) {
+    if (node.type !== "not") continue;
+    const without = put(node.arg);
+    for (const { node: n, put: put2 } of nodes(without)) if (n !== node.arg) out.push(put2({ type: "not", arg: n }));
+  }
+  return out;
 }

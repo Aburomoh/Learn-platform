@@ -5,7 +5,7 @@ import { CircuitSpec } from "./spec";
 import { circuitPredict, gateExpressions, gateOrder, type CircuitAnswer } from "./logic";
 
 type Misconception = VariantOf<CircuitSpec>["misconceptions"][number];
-const misconceptions: Misconception[] = (["gate-not-applied", "gate-and-or-swapped", "gate-expression-unreadable"] as const).map((t) => ({ id: `ce.${t}`, title: t, nudgeKey: `ce.${t}`, detect: { type: t } }));
+const misconceptions: Misconception[] = (["gate-not-applied", "gate-and-or-swapped", "gate-bar-misplaced", "gate-expression-unreadable"] as const).map((t) => ({ id: `ce.${t}`, title: t, nudgeKey: `ce.${t}`, detect: { type: t } }));
 
 function variant(spec: unknown): VariantOf<CircuitSpec> {
   return {
@@ -82,6 +82,9 @@ describe("circuit-predict, expression mode (#226)", () => {
     expect(formatBool(gateExpressions(nor.spec).g2)).toBe("(A' + BC)'");
     expect(circuitPredict.grade(nor, at(2, "(A' + BC)'")).correct).toBe(true);
     expect(circuitPredict.grade(nor, at(2, "(A'BC)'"))).toMatchObject({ misconceptionId: "ce.gate-and-or-swapped" }); // NAND for NOR
+    // the bar on the wrong part (Pedagogy on #226, p.23–25): over A instead of the whole sum
+    expect(circuitPredict.grade(nor, at(2, "A + BC"))).toMatchObject({ misconceptionId: "ce.gate-bar-misplaced" });
+    expect(circuitPredict.grade(nor, at(2, "A' + (BC)'"))).toMatchObject({ misconceptionId: "ce.gate-bar-misplaced" });
   });
 
   it("leaves predict mode unchanged", () => {
