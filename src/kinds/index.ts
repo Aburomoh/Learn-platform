@@ -10,6 +10,7 @@ import { multipleChoice, type MultipleChoiceAnswer } from "./multiple-choice/log
 import { numeric, type NumericAnswer } from "./numeric/logic";
 import { placeValue, type PlaceValueAnswer } from "./place-value/logic";
 import { repeatedDivision, type RepeatedDivisionAnswer } from "./repeated-division/logic";
+import { truthTable, type TruthTableAnswer } from "./truth-table/logic";
 
 export const kinds = {
   "bit-grouping": bitGrouping,
@@ -19,12 +20,13 @@ export const kinds = {
   numeric,
   "place-value": placeValue,
   "repeated-division": repeatedDivision,
+  "truth-table": truthTable,
 } as const;
 
 export type RegisteredKind = keyof typeof kinds;
 
 /** The student's answer, one shape per kind. */
-export type KindAnswer = BitGroupingAnswer | CircuitAnswer | ColumnAdditionAnswer | MultipleChoiceAnswer | NumericAnswer | PlaceValueAnswer | RepeatedDivisionAnswer;
+export type KindAnswer = BitGroupingAnswer | CircuitAnswer | ColumnAdditionAnswer | MultipleChoiceAnswer | NumericAnswer | PlaceValueAnswer | RepeatedDivisionAnswer | TruthTableAnswer;
 
 export function isRegisteredKind(kind: string): kind is RegisteredKind {
   return Object.hasOwn(kinds, kind);

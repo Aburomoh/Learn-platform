@@ -9,8 +9,9 @@ import { MultipleChoiceSpec, multipleChoiceDetectors } from "./multiple-choice/s
 import { NumericSpec, numericDetectors } from "./numeric/spec";
 import { PlaceValueSpec, placeValueDetectors } from "./place-value/spec";
 import { RepeatedDivisionSpec, repeatedDivisionDetectors } from "./repeated-division/spec";
+import { TruthTableSpec, truthTableDetectors } from "./truth-table/spec";
 
-export const kindSpecs = [BitGroupingSpec, CircuitSpec, ColumnAdditionSpec, MultipleChoiceSpec, NumericSpec, PlaceValueSpec, RepeatedDivisionSpec] as const;
+export const kindSpecs = [BitGroupingSpec, CircuitSpec, ColumnAdditionSpec, MultipleChoiceSpec, NumericSpec, PlaceValueSpec, RepeatedDivisionSpec, TruthTableSpec] as const;
 
 /** Each kind's own misconception detectors; `equals` is shared by every kind (schema.ts). */
 export const detectorsByKind = {
@@ -21,6 +22,7 @@ export const detectorsByKind = {
   numeric: numericDetectors,
   "place-value": placeValueDetectors,
   "repeated-division": repeatedDivisionDetectors,
+  "truth-table": truthTableDetectors,
 } as const;
 
 export const kindDetectors = [
@@ -31,4 +33,5 @@ export const kindDetectors = [
   ...numericDetectors,
   ...placeValueDetectors,
   ...repeatedDivisionDetectors,
+  ...truthTableDetectors,
 ] as const;

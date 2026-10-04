@@ -1,0 +1,154 @@
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  gap: var(--space-3);
+}
+
+/* sunken well; a wide table scrolls inside it, never the page */
+.well {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunk);
+}
+
+.well[data-fade="end"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+
+.well[data-fade="start"] {
+  mask-image: linear-gradient(to left, #000 calc(100% - 24px), transparent);
+}
+
+.well[data-fade="both"] {
+  mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 var(--space-2);
+  background: var(--surface-sunk);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.cell {
+  min-width: 36px;
+  height: 44px;
+  padding: 0 var(--space-1);
+  font-size: var(--text-base);
+  text-align: center;
+}
+
+/* alternate rows lightly banded */
+.row:nth-child(even) .cell {
+  background: color-mix(in srgb, var(--surface-2) 45%, transparent);
+}
+
+/* state-table header bands: a soft grouping cue; the group header carries the meaning */
+.group {
+  height: 28px;
+  padding: 0 var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: 650;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.table [data-band="0"] {
+  background: color-mix(in srgb, var(--accent-soft) 60%, transparent);
+}
+
+.table [data-band="1"] {
+  background: color-mix(in srgb, var(--brand-soft) 60%, transparent);
+}
+
+.table [data-band="2"] {
+  background: color-mix(in srgb, var(--success-soft) 60%, transparent);
+}
+
+.table [data-band="3"] {
+  background: color-mix(in srgb, var(--surface-2) 80%, transparent);
+}
+
+/* 2 px rule between inputs and derived columns, and before the output */
+.rule {
+  border-left: 2px solid var(--text-muted);
+}
+
+/* Now: the halo behind the active column */
+.head.now,
+.cell.now {
+  background: var(--focus-halo);
+}
+
+/* Later: visible headers, no values */
+.later {
+  opacity: var(--pending-opacity);
+}
+
+.head.later {
+  color: var(--accent);
+}
+
+.input {
+  cursor: pointer;
+}
+
+.input:focus-visible {
+  outline: none;
+}
+
+.box {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-weight: 700;
+}
+
+.input:focus-visible .box {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* the first wrong cell: border, background and a cross, never colour alone */
+.wrong .box {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
+
+.cross {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--error);
+}
+
+.unknown {
+  color: var(--text-muted);
+}
+
+.actions {
+  display: flex;
+}

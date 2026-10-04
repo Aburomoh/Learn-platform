@@ -18,6 +18,8 @@ export interface GradeResult {
   partial?: boolean;
   /** Leftmost wrong bit, 0-based from the left (set with a `first-wrong-bit` misconception). */
   wrongBit?: number;
+  /** Grids (truth table): the first wrong row and how many cells are wrong; only the first is marked (UX §1). */
+  wrongCells?: { first: number; count: number };
 }
 
 /** The step contract of a multi-step kind (ADR-0007). Single-answer kinds have none. */
