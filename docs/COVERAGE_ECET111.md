@@ -91,9 +91,10 @@ All K-map rows grade **any** minimal cover: several slide examples have more tha
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
 | Sequential model, intro | I 4–7 | CONTEXT | N/A | — | — | — |
-| NAND SR latch, gated SR | I 8–13 | CORE (outputs per input pair, incl. invalid); internals CONTEXT | MISSING | predict one output; table | truth-table | #205 |
-| Clock edges; SR, JK, D, T characteristic tables and equations | I 14–37 | CORE | MISSING | table; equation; one edge | truth-table, expression | #205 |
-| Timing diagrams (all types, both edges) | I 18–37 | CORE / PRACTICE | MISSING | Q per active edge | timing | #237, #238 |
+| NAND SR latch, gated SR | I 8–13 | CORE (outputs per input pair, incl. invalid); internals CONTEXT | MISSING | predict one output; table | truth-table | #295 |
+| Clock edges; SR, JK, D, T characteristic tables | I 14–37 | CORE | MISSING | one edge at a time | truth-table | #296 |
+| Characteristic equations and next state on one edge | I 14–37 | CORE | MISSING | equation; next state | expression | #297 |
+| Timing diagrams (all types, both edges) | I 17–37 | WORKED / PRACTICE | MISSING | Q per active edge | timing | #298 |
 | Analysis: D, JK, T, 3-flip-flop | II 4–52 | CORE | MISSING | stages as separate activities | expression, truth-table groups, state diagram, timing | #205 |
 | Analysis exercises | II 31–33, 53–54 | PRACTICE | MISSING | exercise mode | as above | #205 |
 | Design: state table → excitation → K-maps → equations (D, T, JK) | III 4–27 | CORE | MISSING | stages as separate activities | truth-table (X), K-map, expression | #205 |
