@@ -47,7 +47,11 @@ attention-left, attention-right` (placeholders until approved assets exist).
    ADR-0007 step tag: `column` → `step.next-column` (or `step.next-column-carry` when a 1 is
    carried in), `carry` → `step.last-carry`, `gate` → rule 8; content `stepNext` still wins.
    A nudge key may have a step-specific form `<key>.<stepTag>` that is used on that step.
-   `ANSWER_SUBMITTED.vars` carries structural details of the wrong answer (e.g. `wrongBitNumber`).
+   `ANSWER_SUBMITTED.vars` carries structural details of the wrong answer (`wrongBitNumber`,
+   `wrongCount` for grids). Truth-table steps (`columnLabel` in the step vars) say
+   `step.next-table-column` / `step.last-table-column`. A grid answer with wrong cells and no
+   recognised slip says `wrong.cell` (or `wrong.cell.<stepTag>`): the view marks the first wrong
+   cell, so the line points at it instead of naming a row.
 8. Gate-by-gate circuit walk (ADR-0007 step tag `"gate"`): `stepVars` supplies structural vars
    only — `gateId`, `gateName` (type), `stepNumber`, `gateCount`, `gateOut`, and per input n = 1, 2
    `in{n}` plus `in{n}Label` (circuit input) or `in{n}Gate` (feeding gate's type).
