@@ -11,7 +11,7 @@ export function Practice({ variant, prompt, state, last, locked, onSubmit }: Pra
   const { spec } = variant;
   return (
     <>
-      <ContextView id={`${variant.id}-ctx`} context={spec.context} />
+      <ContextView id={`${variant.id}-ctx`} context={spec.context} revealed={locked && state === "correct"} />
       <MultipleChoice
         id={variant.id}
         prompt={prompt}
@@ -25,8 +25,8 @@ export function Practice({ variant, prompt, state, last, locked, onSubmit }: Pra
   );
 }
 
-export function Explain({ variant, stage }: ExplainProps<MultipleChoiceSpec>) {
-  return <ContextView id={variant.id} context={variant.spec.context} stage={stage} />;
+export function Explain({ variant, stage, isLast }: ExplainProps<MultipleChoiceSpec>) {
+  return <ContextView id={variant.id} context={variant.spec.context} stage={stage} revealed={isLast} />;
 }
 
 /** Draws nothing: mounting it downloads this kind's chunk ahead of use (see `KindPrefetch`). */
