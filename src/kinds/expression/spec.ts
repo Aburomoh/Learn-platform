@@ -15,7 +15,8 @@ export const ExpressionSpec = z
     target: z.string().min(1).optional(),
     minterms: z.array(z.number().int().min(0)).optional(),
     dontCares: z.array(z.number().int().min(0)).default([]),
-    form: z.enum(["sop", "pos", "any"]).default("any"),
+    /** `minterms`: a sum of products that each contain every variable once (canonical form, #227). */
+    form: z.enum(["sop", "pos", "minterms", "any"]).default("any"),
     /** Most literals a right answer may have (simplification questions). */
     maxLiterals: z.number().int().positive().optional(),
   })
