@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { VariantOf } from "../types";
 import { StateDiagramSpec } from "./spec";
-import { arrowSteps, labelOptions, nextOptions, stateCodes, stateDiagram, statePositions, transitions, type StateDiagramAnswer } from "./logic";
+import { arrowSteps, labelOptions, nextOptions, stateCodes, stateDiagram, stateCells, transitions, type StateDiagramAnswer } from "./logic";
 
 type Misconception = VariantOf<StateDiagramSpec>["misconceptions"][number];
 // The kind's detectors join the schema when it is registered with its view (Frontend, ADR-0008).
@@ -93,9 +93,13 @@ describe("state diagram: grading one arrow at a time", () => {
   });
 
   it("positions: authored, or table order four per row", () => {
-    expect(statePositions(d.spec)).toEqual([[0, 0], [1, 0], [2, 0], [3, 0]]);
+    expect(stateCells(d.spec)).toEqual([[0, 0], [1, 0], [0, 1], [1, 1]]); // 4 states: 2 × 2
+    const eight = variant({ kind: "state-diagram", stateVars: ["A", "B", "C"], input: "x", next: ["A", "B", "C"] });
+    expect(stateCells(eight.spec)).toEqual([[0, 0], [1, 0], [2, 0], [3, 0], [0, 1], [1, 1], [2, 1], [3, 1]]);
+    const two = variant({ kind: "state-diagram", stateVars: ["A"], input: "x", next: ["x"] });
+    expect(stateCells(two.spec)).toEqual([[0, 0], [1, 0]]);
     const placed = variant({ ...dSpec, positions: [[0, 0], [1, 0], [1, 1], [0, 1]] });
-    expect(statePositions(placed.spec)).toEqual([[0, 0], [1, 0], [1, 1], [0, 1]]);
+    expect(stateCells(placed.spec)).toEqual([[0, 0], [1, 0], [1, 1], [0, 1]]);
     expect(StateDiagramSpec.safeParse({ ...dSpec, positions: [[0, 0], [0, 0], [1, 1], [0, 1]] }).success).toBe(false);
     expect(StateDiagramSpec.safeParse({ ...dSpec, positions: [[0, 0], [1, 0]] }).success).toBe(false);
   });
