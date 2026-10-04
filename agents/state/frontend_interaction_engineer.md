@@ -1,8 +1,8 @@
 # Current State — Frontend / Interaction Engineer
 
-Current assignment: complete ECET 111 (epic #192). In review: #260 kind registry part 1 (ADR-0008; circuit-predict, place-value), #272 course-page chapters (#232).
-Recent important decision: Kinds live in `src/kinds/<kind>/` (spec / logic / ui) with three registries (`index.ts` logic, `specs.ts` Zod at build time, `ui.ts` next/dynamic). The stage imports shared components by file, never the `@/interactions` barrel. The question view is keyed by `questionViewKey(variant, state)`.
-Blocker: None
-Relevant issue/PR: #196, #260, #232, #272; UX spec `docs/design/ecet111-representations.md`.
+Current assignment: complete ECET 111 (epic #192); my lane is the kind views (screens). Open, QA passed or in QA: #391 bit-grouping binary point, #393 timing view, #394 state-diagram view, #397 circuit channels, #412 superscript powers, #416 weight diagram. Open: the #440 input-group header for state tables.
+Recent important decision: a view PR targets `main`, never a Backend logic branch (the PR is auto-closed when that branch is deleted); merge the logic branch in instead. Detector names are unique across kinds.
+Blocker: #393 and #394 need #367 and #370 (logic halves) merged first; then merge `main` into them and fix the registries.
+Relevant issue/PR: UX spec `docs/design/ecet111-representations.md`; ADR-0007, ADR-0008.
 Wake me: `npm run alarm frontend-interaction-engineer <#> "<reason>" <your-role>` (label `wake:frontend`).
-Next expected action: after #260 merges, part 2 as a new PR against main: migrate repeated-division, numeric (+contexts), multiple-choice, bit-grouping, column-addition, bit-row; remove fallbacks; lint rule against the barrel in src/stage; detector-ownership test (Backend's note). Then the truth-table kind.
+Next expected action: answer reviews on the open PRs. Not done yet: timing 56 px periods on phones and Q′ rows; derivation lines with overbars; K-map "Fill the rest with 0" (waits on Pedagogy, #371); the latch figure of #440 point 2 (waits on Product).
