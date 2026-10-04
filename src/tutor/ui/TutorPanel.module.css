@@ -5,9 +5,15 @@
   align-items: start;
 }
 
-.avatarSm,
 .toggle {
   display: none;
+}
+
+/* beside the stage with pose art: the waist-up figure above the bubble */
+@media (min-width: 1200px) {
+  .panel[data-art] {
+    grid-template-columns: 1fr;
+  }
 }
 
 .message {
@@ -33,12 +39,6 @@
   .panel[data-expanded="false"] {
     max-height: var(--tutor-strip-h);
     overflow: hidden;
-  }
-  .avatar {
-    display: none;
-  }
-  .avatarSm {
-    display: block;
   }
   .quiet {
     min-height: 32px;
