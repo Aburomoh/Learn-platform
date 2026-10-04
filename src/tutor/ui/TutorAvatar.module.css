@@ -4,8 +4,11 @@
   width: var(--avatar);
 }
 
-.sm {
-  --avatar: 40px;
+/* the strip above the stage */
+@media (max-width: 1199px) {
+  .root {
+    --avatar: 40px;
+  }
 }
 
 /* warm monogram disc, same look as TutorCard outside the stage */
@@ -21,5 +24,81 @@
   font-weight: 750;
   letter-spacing: -0.02em;
   box-shadow: inset 0 0 0 2px var(--surface), 0 0 0 1px var(--border);
+}
+
+/* pose art: a fixed box (the head-crop disc, or 168 × 224 beside the stage); poses stack inside it,
+   so a pose change never shifts the layout */
+.frame {
+  position: relative;
+  display: block;
+  width: var(--avatar);
+  height: var(--avatar);
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+/* the same inner ring as the monogram disc, drawn over the image */
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--surface);
+  pointer-events: none;
+}
+
+@media (min-width: 1200px) {
+  .root[data-art] {
+    width: 168px;
+  }
+  .root[data-art] .frame {
+    width: 168px;
+    height: 224px;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .root[data-art] .frame::after {
+    content: none;
+  }
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+.layer img {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  object-position: top;
+}
+
+/* crossfade once the new pose has loaded; --dur-fast is 0 under reduced motion */
+.pending {
+  opacity: 0;
+}
+
+.in {
+  animation: pose-in var(--dur-fast) var(--ease) both;
+}
+
+.out {
+  animation: pose-out var(--dur-fast) var(--ease) both;
+}
+
+@keyframes pose-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pose-out {
+  to {
+    opacity: 0;
+  }
 }
