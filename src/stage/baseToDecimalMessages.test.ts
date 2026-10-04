@@ -69,7 +69,7 @@ describe("#212 base to decimal: every detector has its own nudge, none gives the
 
   it("hex-letter-as-digit", () => {
     const m = runOn(hex, [open, powers([2, 1, 0]), terms(["256", "16", "3"])]).message; // A used as 1
-    expect(m).toBe("The letters A to F stand for 10 to 15. Use that value as the digit.");
+    expect(m).toBe("The letters A to F stand for 10 to 15. Use that value in the term.");
     expect(m).not.toContain("160");
   });
 
