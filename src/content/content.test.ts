@@ -70,6 +70,17 @@ describe("content registry", () => {
         }
   });
 
+  it("never shows the same option twice, in a multiple-choice question or an Explain Slowly prediction (Reviewer on #338)", () => {
+    for (const { path, variant } of allVariants()) {
+      if (variant.spec.kind === "multiple-choice") {
+        const texts = variant.spec.options.map((o) => o.text);
+        expect(new Set(texts).size, `${path} options`).toBe(texts.length);
+      }
+      for (const step of variant.explanation)
+        if (step.ask) expect(new Set(step.ask.options).size, `${path} ${step.id} prediction`).toBe(step.ask.options.length);
+    }
+  });
+
   it("has unique ids within each scope", () => {
     const paths = listActivityParams().map((p) => `${p.course}/${p.topic}/${p.activity}`);
     expect(new Set(paths).size).toBe(paths.length);
