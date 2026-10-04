@@ -129,12 +129,15 @@ const checkBackHints = (base: 8 | 16): HintInput[] => [
 ];
 
 /** One checked step: the octal or hex answer back to decimal, which must give the starting number. */
-function checkBackVariant(value: number, base: 8 | 16): VariantInput {
+function checkBackVariant(value: number, base: 8 | 16, k: number): VariantInput {
   const text = value.toString(base).toUpperCase();
   const reversed = [...text].reverse().join("");
   const reversedValue = parseInt(reversed, base);
   const name = base === 8 ? "octal" : "hexadecimal";
   const done = `${value}: the number we started with. The ${name} answer checks out.`;
+  // the right sum moves from set to set (QA on #271)
+  const sums = [placeTerms(text, base), placeTerms(reversed, base)].filter((o, i, all) => all.indexOf(o) === i).concat(reversedValue === value ? [`${[...text].map((d) => parseInt(d, 16)).join(" + ")}`] : []);
+  const sumOptions = [...sums.slice(k % sums.length), ...sums.slice(0, k % sums.length)];
   const misconceptions: VariantInput["misconceptions"] = [];
   if (/^\d+$/.test(text) && text !== String(value)) misconceptions.push({ id: "ns.copied-digits", title: "Copied the digits", nudgeKey: "ns.copied-digits", detect: { type: "equals", value: text } });
   if (reversedValue !== value) misconceptions.push({ id: "ns.weights-reversed", title: "Weights from the wrong end", nudgeKey: "ba.weights-reversed", detect: { type: "equals", value: String(reversedValue) } });
@@ -151,7 +154,7 @@ function checkBackVariant(value: number, base: 8 | 16): VariantInput {
       {
         id: "s2",
         say: `Write ${text} as digit × weight.`,
-        ask: { prompt: `Which sum is (${text})_${base}?`, options: [placeTerms(text, base), placeTerms(reversed, base)].filter((o, k, all) => all.indexOf(o) === k).concat(reversedValue === value ? [`${[...text].map((d) => parseInt(d, 16)).join(" + ")}`] : []), correctIndex: 0, afterCorrect: `Yes: ${placeTerms(text, base)}.`, afterWrong: `Weights go from the right: ${placeTerms(text, base)}.` },
+        ask: { prompt: `Which sum is (${text})_${base}?`, options: sumOptions, correctIndex: sumOptions.indexOf(placeTerms(text, base)), afterCorrect: `Yes: ${placeTerms(text, base)}.`, afterWrong: `Weights go from the right: ${placeTerms(text, base)}.` },
       },
       { id: "s3", say: `${placeTerms(text, base)} = ${value}: the number we started with.` },
     ],
@@ -443,7 +446,7 @@ export const numberSystemsTopic: TopicInput = {
             groupingVariant(75, 3),
           ],
         },
-        { id: "ns.q.octal-check", label: "Octal check", conceptId: "ns.octal-grouping", objectiveId: "ns.obj.octal", variants: [26, 37, 75].map((v) => checkBackVariant(v, 8)) },
+        { id: "ns.q.octal-check", label: "Octal check", conceptId: "ns.octal-grouping", objectiveId: "ns.obj.octal", variants: [26, 37, 75].map((v, k) => checkBackVariant(v, 8, k)) },
 
         /* ---- Q4: hexadecimal by grouping four bits, one goal at a time (#44) ---- */
         {
@@ -519,7 +522,7 @@ export const numberSystemsTopic: TopicInput = {
             groupingVariant(75, 4),
           ],
         },
-        { id: "ns.q.hex-check", label: "Hex check", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [26, 37, 75].map((v) => checkBackVariant(v, 16)) },
+        { id: "ns.q.hex-check", label: "Hex check", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [26, 37, 75].map((v, k) => checkBackVariant(v, 16, k)) },
       ],
     },
     hexDigitsActivity,
