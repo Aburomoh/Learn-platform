@@ -4,3 +4,5 @@ export { TutorPanel, type TutorPanelProps } from "./TutorPanel";
 export { useFocusEffects, FOCUS_CLASS, HIGHLIGHT_CLASS, PULSE_CLASS } from "./useFocusEffects";
 export { useReducedMotion } from "./useReducedMotion";
 export { TutorCard, monogram, type TutorCardProps } from "./TutorCard";
+export { TutorPosePrefetch } from "./TutorPosePrefetch";
+export { poseSrc, stageCrops, type Pose, type PoseKey, type TutorPoseTable } from "./poses";

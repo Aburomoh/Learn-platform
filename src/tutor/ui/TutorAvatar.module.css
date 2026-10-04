@@ -23,3 +23,48 @@
   box-shadow: inset 0 0 0 2px var(--surface), 0 0 0 1px var(--border);
   object-fit: cover;
 }
+
+/* pose art: the disc keeps its fixed box; images stack inside it */
+.photo {
+  position: relative;
+  overflow: hidden;
+}
+
+/* the same inner ring as the monogram disc, drawn over the image */
+.photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--surface);
+  pointer-events: none;
+}
+
+.pose {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* crossfade between poses; --dur-fast is 0 under reduced motion, where no old pose is kept */
+.in {
+  animation: pose-in var(--dur-fast) var(--ease) both;
+}
+
+.out {
+  animation: pose-out var(--dur-fast) var(--ease) both;
+}
+
+@keyframes pose-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pose-out {
+  to {
+    opacity: 0;
+  }
+}

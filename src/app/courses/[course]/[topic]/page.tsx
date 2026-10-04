@@ -35,7 +35,7 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
   const labels = topic.activities[0].questions.map((q) => q.label).filter(Boolean);
   const route = labels.length > 1 ? `Today: ${labels.join(" → ")}` : topic.summary;
   const tutorLine = resolveMessage("page.topic.intro");
-  const tutor = { name: product.owner.shortName, message: tutorLine, portraitSrc: product.brand.tutorPortrait };
+  const tutor = { name: product.owner.shortName, message: tutorLine, portrait: product.brand.tutorPortrait };
 
   return (
     <PageFrame back={{ label: course.code, href: `/courses/${course.id}/` }} demo={course.authority === "DEMO"} aside={<TutorCard {...tutor} size="lg" />}>

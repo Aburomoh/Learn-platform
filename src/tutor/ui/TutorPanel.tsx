@@ -99,10 +99,10 @@ export function TutorPanel({ name, expression, message, messageSeq, typingSpeed,
       }}
     >
       <div className={styles.avatar}>
-        <TutorAvatar expression={expression} name={name} portraitSrc={product.brand.tutorPortrait} />
+        <TutorAvatar expression={expression} name={name} portrait={product.brand.tutorPortrait} />
       </div>
       <div className={styles.avatarSm}>
-        <TutorAvatar expression={expression} name={name} size="sm" portraitSrc={product.brand.tutorPortrait} />
+        <TutorAvatar expression={expression} name={name} size="sm" portrait={product.brand.tutorPortrait} />
       </div>
       {message ? (
         <div id={bubbleId} className={styles.message}>

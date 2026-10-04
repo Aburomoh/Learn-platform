@@ -4,7 +4,9 @@ The instructor beside the whiteboard. Small, quiet, reacts in short messages.
 
 | Piece | Purpose |
 |-------|---------|
-| `TutorAvatar` | Monogram disc from the tutor's name (56 px beside the stage, 40 px in the strip); the expression is kept as `data-expression` and in the accessible label. No caption. `portraitSrc` (`product.brand.tutorPortrait`) replaces the disc later; the API stays. |
+| `TutorAvatar` | Disc (56 px beside the stage, 40 px in the strip) showing the pose for the current expression from `portrait` (`product.brand.tutorPortrait`, see `poses.ts`), else the monogram; also the monogram if a file fails. Alt text is the expression label; pose changes crossfade in `--dur-fast`, none under reduced motion. |
+| `TutorPosePrefetch` | Activity pages: preloads the neutral crop, fetches the other stage crops once idle. |
+| `poses.ts` | `TutorPoseTable` type, `poseSrc` (168 px crop or 480 px `-waist`), `stageCrops`. Files come from `scripts/tutor-assets.py` (#354). |
 | `TutorBubble` | Typewriter bubble. Click/Enter reveals all; reduced motion or `speed=0` renders instantly; full text goes to a polite live region at once. |
 | `TutorPanel` | Avatar + bubble; shrinks the avatar below 900 px. |
 | `useFocusEffects` | Executes FOCUS / HIGHLIGHT / PULSE on `data-focus-target` elements inside a container; clears on RESET_INTERACTION, ADVANCE_EXPLANATION, COMPLETE. Styles in `tutor-effects.css` (import once globally). |

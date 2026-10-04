@@ -128,11 +128,18 @@ describe("TutorCard", () => {
     expect(card.querySelector("img")).toBeNull();
   });
 
-  it("uses the portrait from config when one exists, and never invents a message", () => {
-    render(<TutorCard name="Dr. Mohannad" size="lg" portraitSrc="/brand/tutor.jpg" />);
+  it("uses the pose art from config when it exists, and never invents a message", () => {
+    render(<TutorCard name="Dr. Mohannad" size="lg" portrait={product.brand.tutorPortrait} />);
     const card = screen.getByRole("complementary", { name: "Tutor" });
-    expect(card.querySelector("img")).toHaveAttribute("src", "/brand/tutor.jpg");
+    expect(card.querySelector("img")).toHaveAttribute("src", "/tutor/neutral.webp");
     expect(card.querySelector("[data-monogram]")).toBeNull();
     expect(card.querySelectorAll("p")).toHaveLength(1); // the name only
+  });
+
+  it("shows the welcome pose when asked, and fetches nothing while the pose is unknown", () => {
+    const { rerender } = render(<TutorCard name="Dr. Mohannad" portrait={product.brand.tutorPortrait} pose={null} />);
+    expect(document.querySelector("img")).toBeNull();
+    rerender(<TutorCard name="Dr. Mohannad" portrait={product.brand.tutorPortrait} pose="welcome" />);
+    expect(document.querySelector("img")).toHaveAttribute("src", "/tutor/welcome.webp");
   });
 });
