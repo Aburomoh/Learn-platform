@@ -211,6 +211,15 @@ describe("content registry", () => {
     expect(n).toBeGreaterThan(0);
   });
 
+  it("TEMPORARY (Reviewer on #328): no bit-grouping content uses to-bits or a binary point until the view supports them", () => {
+    // Remove this test in the PR that extends the bit-grouping view (#210).
+    for (const { path, variant } of allVariants())
+      if (variant.spec.kind === "bit-grouping") {
+        expect(variant.spec.direction, path).toBe("to-digits");
+        expect(variant.spec.bits.includes("."), path).toBe(false);
+      }
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
     expect(getActivity("nope", "x", "y")).toBeUndefined();

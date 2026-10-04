@@ -14,8 +14,8 @@ import { z } from "zod";
 export const BitGroupingSpec = z
   .object({
     kind: z.literal("bit-grouping"),
-    /** Unpadded bits, MSB first, with an optional binary point. */
-    bits: z.string().regex(/^[01]+(\.[01]+)?$/, "bits, with an optional point"),
+    /** Unpadded bits, MSB first (a leading 1, or 0 before the point), with an optional binary point. */
+    bits: z.string().regex(/^(1[01]*|0(?=\.))(\.[01]+)?$/, "bits without leading zeros, with an optional point"),
     groupSize: z.union([z.literal(3), z.literal(4)]),
     /** Octal or hex digits, uppercase, with a point where `bits` has one. */
     answer: z.string().regex(/^[0-9A-F]+(\.[0-9A-F]+)?$/),

@@ -80,5 +80,7 @@ describe("bit-grouping: outward from the binary point (#210, s.22)", () => {
     expect(ok({ bits: "101.1", answer: "5" })).toBe(false); // point in one, not the other
     expect(ok({ bits: "1.2", answer: "1.2" })).toBe(false);
     expect(ok({ bits: "101.1", answer: "5.4" })).toBe(true);
+    expect(ok({ bits: "0011", answer: "3" })).toBe(false); // leading zeros would add a group (QA on #328)
+    expect(ok({ bits: "0.101", answer: "0.5" })).toBe(true);
   });
 });
