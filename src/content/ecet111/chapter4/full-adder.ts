@@ -95,12 +95,103 @@ export const fullAdderTableActivity: Activity = {
   ],
 };
 
+/* ---------- activity 2 (#302): the minterm lists Σ for S and Co ---------- */
+
+type Output = "S" | "Co";
+const EXPR: Record<Output, string> = { S: "A ⊕ B ⊕ Ci", Co: "AB + BCi + ACi" };
+const ROWS_OF: Record<Output, number[]> = { S: [1, 2, 4, 7], Co: [3, 5, 6, 7] }; // pack ch4 §2, checked by content.test
+const OTHER: Record<Output, Output> = { S: "Co", Co: "S" };
+const sigmaText = (rows: number[]) => `Σ(${rows.join(", ")})`;
+const bitsOf = (m: number) => m.toString(2).padStart(3, "0");
+
+/** The full table, both outputs given, for the row questions. */
+const givenTable = (target: Output): VariantInput["spec"] => ({
+  kind: "truth-table",
+  inputs: INPUTS,
+  mode: "row-select",
+  target: target.toLowerCase(),
+  columns: [
+    { id: "s", label: "S", expr: EXPR.S, given: true },
+    { id: "co", label: "Co", expr: EXPR.Co, given: true },
+  ],
+});
+
+function rowsVariant(out: Output): VariantInput {
+  const rows = ROWS_OF[out];
+  return {
+    id: `v${out.toLowerCase()}`,
+    prompt: `Here is the full adder's table. Tick the rows where ${out} = 1.`,
+    spec: givenTable(out),
+    hints: [
+      { rung: 2, text: `Not yet. Read down the ${out} column only.` },
+      { rung: 3, text: `Tick a row only where ${out} shows 1; the other output does not matter here.` },
+      { rung: 9, text: `${out} = 1 on the rows ${rows.map(bitsOf).join(", ")}.` },
+    ],
+    misconceptions: [{ id: "tt.rows-inverted", title: "Picked the 0-rows", nudgeKey: "tt.rows-inverted", detect: { type: "rows-inverted" } }],
+    explanation: [
+      { id: "s1", say: `A minterm list names the rows where the output is 1. Read down the ${out} column.` },
+      { id: "s2", say: `${out} is 1 on ${rows.length} rows.` },
+    ],
+  };
+}
+
+function sigmaVariant(out: Output, k: number): VariantInput {
+  const rows = ROWS_OF[out];
+  const zeros = [0, 1, 2, 3, 4, 5, 6, 7].filter((m) => !rows.includes(m));
+  const choices = [
+    { id: "right", text: sigmaText(rows) },
+    { id: "other", text: sigmaText(ROWS_OF[OTHER[out]]) },
+    { id: "zeros", text: sigmaText(zeros) },
+    { id: "short", text: sigmaText(rows.slice(0, -1)) },
+  ];
+  return {
+    id: `v${out.toLowerCase()}`,
+    prompt: `${out}(A, B, Ci) as a minterm list: which one is it?`,
+    spec: { kind: "multiple-choice", options: rotate(choices, k + 1), correctOptionId: "right" },
+    hints: [
+      { rung: 2, text: `Not yet. Each number is a row where ${out} = 1, read as a binary number A B Ci.` },
+      { rung: 3, text: `Which rows did you tick for ${out}? Turn each into its number: 011 is 3.` },
+      { rung: 4, text: "Check the last row, 111 = 7: is it in the list?" },
+      { rung: 9, text: `${out} = ${sigmaText(rows)}.` },
+    ],
+    misconceptions: [
+      { id: "fa.sigma-other-output", title: "The other output's list", nudgeKey: "fa.sigma-other-output", detect: { type: "option", optionId: "other" } },
+      { id: "fa.sigma-zero-rows", title: "The 0-rows listed", nudgeKey: "fa.sigma-zero-rows", detect: { type: "option", optionId: "zeros" } },
+    ],
+    explanation: [
+      { id: "s1", say: `Each 1-row of ${out} is one minterm; its number is the row's bits A B Ci read in binary.` },
+      {
+        id: "s2",
+        say: `${out} is 1 on the row ${bitsOf(rows[0])}.`,
+        ask: { prompt: `What number is ${bitsOf(rows[0])}?`, options: k % 2 ? [String(rows[0] + 1), String(rows[0])] : [String(rows[0]), String(rows[0] + 1)], correctIndex: k % 2, afterCorrect: "Yes.", afterWrong: `${bitsOf(rows[0])} is ${rows[0]} in binary.` },
+      },
+      { id: "s3", say: `So ${out} = ${sigmaText(rows)}.` },
+    ],
+  };
+}
+
+export const fullAdderSigmaActivity: Activity = {
+  id: "full-adder-sigma",
+  title: "Full adder: minterm lists",
+  summary: "From the table to Σ: tick each output's 1-rows, then name its list.",
+  authority: "DEMO",
+  minutes: 8,
+  questions: [
+    // two outputs, one fixed table: exempt from the three-set rule (as #357, Pedagogy)
+    { id: "fa.q.rows", label: "Tick the 1-rows", conceptId: "fa.adder", objectiveId: "fa.obj.sigma", variants: [rowsVariant("Co"), rowsVariant("S")] },
+    { id: "fa.q.sigma", label: "Name the list", conceptId: "fa.adder", objectiveId: "fa.obj.sigma", variants: [sigmaVariant("Co", 0), sigmaVariant("S", 1)] },
+  ],
+};
+
 export const fullAdderTopic: TopicInput = {
   id: "full-adder",
   title: "Full adder",
   summary: "Add three bits, A + B + a carry in: the table first, then its minterms and maps, in separate activities.",
   preview: "1 + 1 + 1 → 11 → S = 1, Co = 1",
   concepts: [{ id: "fa.adder", title: "Full adder", summary: "Adds A, B and the carry in Ci: S is 1 for an odd count of 1s, Co for two or more." }],
-  objectives: [{ id: "fa.obj.table", conceptId: "fa.adder", text: "Fill the full adder's 8-row table, S then Co." }],
-  activities: [fullAdderTableActivity],
+  objectives: [
+    { id: "fa.obj.table", conceptId: "fa.adder", text: "Fill the full adder's 8-row table, S then Co." },
+    { id: "fa.obj.sigma", conceptId: "fa.adder", text: "Write S and Co as minterm lists from the table." },
+  ],
+  activities: [fullAdderTableActivity, fullAdderSigmaActivity],
 };

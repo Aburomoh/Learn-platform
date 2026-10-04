@@ -110,6 +110,8 @@ export const en = {
   "lg.check-xor": "Look at the XOR gate again. It gives 1 only when its two inputs are different.",
   "ha.s-as-or": "1 + 1 is 10 in binary. Which bit is the sum S, and which is carried?",
   "ha.s-c-swapped": "S is the right-hand bit of A + B; the carry C is the left-hand bit. Which is which here?",
+  "fa.sigma-other-output": "That is the other output's list. Which column are you reading?",
+  "fa.sigma-zero-rows": "Those are the rows where it is 0. A minterm list names the 1-rows.",
   "fa.carry-in-dropped": "That is A + B alone. The carry in Ci counts too: add all three bits.",
   "ha.c-as-xor": "Check the row 1 1. The carry is 1 there; what does XOR give on equal inputs?",
   "lg.nor-inverted": "NOR is the opposite of OR. Which gate outputs 1 when any input is 1?",
