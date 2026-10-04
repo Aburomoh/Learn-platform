@@ -58,14 +58,14 @@ describe("#223 truth table: step lines", () => {
   it("a wrong cell without a recognised slip points at the marked cell, not a flat 'not quite'", () => {
     const s = runOn(fillTable, [open, cells(0, "0111")]);
     expect(s.last?.result.wrongCells).toMatchObject({ first: 1 });
-    expect(s.message).toBe("Check the marked cell first. The inputs count up in binary, starting from all zeros.");
+    expect(s.message).toBe("Cells not right yet: 1. The inputs count up in binary, starting from all zeros.");
     const col = runOn(fillTable, [open, cells(0, "0011"), cells(1, "0101"), cells(2, "1001")]);
-    expect(col.message).toBe("Check the marked cell first. Work out AB for that row on its own.");
+    expect(col.message).toBe("Cells not right yet: 2. Check the marked one first: work out AB for that row on its own.");
   });
 
   it("row-select wrong picks point at the marked row", () => {
     const s = runOn(pickRows, [open, rows([1, 2])]); // A + B is 1 on rows 1, 2, 3
-    expect(s.message).toBe("Check the marked row first. Is A + B 1 or 0 there?");
+    expect(s.message).toBe("Rows not right yet: 1. Check the marked row first: is A + B 1 or 0 there?");
   });
 });
 
@@ -96,6 +96,25 @@ describe("#223 truth table: every detector has its own short nudge, none gives t
 
   it("none of the lines contains an unfilled slot, and every nudge key resolves", () => {
     for (const d of detectors) expect(hasMessage(d.nudgeKey), d.nudgeKey).toBe(true);
-    for (const k of ["wrong.cell", "wrong.cell.inputs", "wrong.cell.rows", "step.next-table-column", "step.last-table-column"]) expect(hasMessage(k), k).toBe(true);
+    for (const k of ["wrong.cell", "wrong.cell.column", "wrong.cell.inputs", "wrong.cell.rows", "step.next-table-column", "step.last-table-column"]) expect(hasMessage(k), k).toBe(true);
+  });
+});
+
+describe("#223 every kind that reports wrongCells gets a generic line with no unfilled slot", () => {
+  const open: RunnerAction = { type: "OPEN" };
+  const baseToDecimal = VariantSchema.parse({ ...base, id: "v-b2d", spec: { kind: "base-to-decimal", base: 2, number: "101.101" }, misconceptions: [] });
+
+  it("truth table (every step tag) and base to decimal", () => {
+    const wrongs: [Variant, RunnerAction[]][] = [
+      [fillTable, [open, cells(0, "0111")]], // inputs
+      [fillTable, [open, cells(0, "0011"), cells(1, "0101"), cells(2, "1001")]], // column
+      [pickRows, [open, rows([1, 2])]], // rows
+      [baseToDecimal, [open, { type: "SUBMIT", answer: { kind: "base-to-decimal", step: 0, powers: [2, 1, 1, -1, -2, -3] } }]], // weights
+    ];
+    for (const [v, actions] of wrongs) {
+      const m = runOn(v, actions).message;
+      expect(m, m).not.toMatch(/\{[a-zA-Z0-9_]+\}|missing message/);
+      expect(m, m).toMatch(/not right yet: \d/);
+    }
   });
 });
