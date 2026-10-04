@@ -4,11 +4,13 @@
  */
 import type { ModuleInput } from "../../schema";
 import { latchesTopic } from "./latches";
+import { flipFlopsTopic } from "./flip-flops";
 
 export const chapter5: ModuleInput = {
   id: "chapter-5",
   title: "Chapter 5 · Sequential Circuits",
   topics: [
     latchesTopic,
+    flipFlopsTopic,
   ],
 };

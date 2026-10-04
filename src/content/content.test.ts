@@ -465,6 +465,19 @@ describe("content registry", () => {
     expect([nandLatch(1, 1, 1), gatedLatch(1, 0, 0, 1), gatedLatch(1, 1, 1, 0)]).toEqual(["q1", "q1", "invalid"]);
   });
 
+  it("flip-flop tables (#296): each table is its equation, as verified in the pack (JK = Σ(1,4,5,6), T = Σ(1,2))", () => {
+    const x = getActivity(COURSE, "flip-flops", "flip-flop-tables")!.activity;
+    const [row, ...tables] = x.questions;
+    const column = (q: (typeof tables)[number]) => {
+      const spec = q.variants[0].spec;
+      if (spec.kind !== "truth-table") throw new Error("expected a truth table");
+      return columnTruth(spec, spec.columns[0]).join("");
+    };
+    expect(tables.map(column)).toEqual(["010011XX", "01001110", "0011", "0110"]); // SR, JK, D, T
+    const picked = row.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(picked).toEqual(["Q(t+1) = 1", "Q(t+1) = 0", "Q(t+1) = 1", "Q(t+1) = 0"]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -485,7 +498,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)

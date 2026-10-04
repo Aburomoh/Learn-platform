@@ -99,6 +99,8 @@ export const en = {
   "tt.not-missing": "A bar or prime flips a value. Did you flip it before using it?",
   "tt.rows-out-of-order": "The rows count up in binary, starting from all zeros. The last input changes on every row.",
   "tt.rows-inverted": "Those are the rows where it is 0. Pick the rows where it is 1.",
+  "ff.jk-11-invalid": "1 1 is not allowed on an SR flip-flop, but JK was built to fix that. What does JK do with 1 1?",
+  "ff.t-as-d": "T is not copied into Q. T = 1 means complement: what is Q′ here?",
   "lt.active-high": "On a NAND latch the inputs act at 0, not 1. Which input is 0 here?",
   "lt.nand-00-hold": "Both inputs at 0 is not 'no change' on a NAND latch: both NAND outputs are forced to 1. What does that make it?",
   "lt.enable-ignored": "Look at En first. While En = 0, can S and R reach the latch?",
