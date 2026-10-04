@@ -14,6 +14,7 @@ at 1280 and 390 px. Examples in the mock-ups are illustrative, not content.
 | `kinds-b-*` | K-map (3 variables, wrapping group) |
 | `kinds-c-*` | Timing diagram · state table · state diagram |
 | `kinds-d-*` | Mux and decoder views |
+| `kinds-e-*` | K-map, 4 variables: four-corner group, top–bottom wrap, overlap (also at 320 px) |
 
 ## 1. Shared grammar for every kind
 - **One goal at a time** (PEDAGOGY.md). A goal line under the prompt names it in words
@@ -154,3 +155,60 @@ Build order follows the course map. Each kind's README links back to its section
 - its 390 and 1280 renders match the sections above
 - a test asserts no text under 12 px and no tappable element under 44 px tall
 - states are distinguishable in grayscale
+
+## 13. Build notes for the K-map, timing and state-diagram views (#235, #238, #240)
+Added before Frontend builds these views. Mock-up: `kinds-e-*` (4-variable map at 1280, 390 and 320 px).
+Where this section and §5–7 differ, this section wins.
+
+### 13.1 K-map view
+- **Cell size `--k`:** 56 px from 641 px up; 52 px (2- and 3-variable) or 48 px (4-variable) at ≤ 640 px.
+  The row-label column is 44 / 36 px and the column-label row 32 px.
+  - A 4-variable map fits a 390 px phone whole.
+  - At 320 px all 16 cells fit; only the row-variable bars on the right need the well's sideways scroll (fade edge).
+- **Variable bars** (where the variable is 1), labelled on the bar line:
+  - 3 variables (A | BC): B under columns 3–4, C under columns 2–3 on a second track, A beside row 2.
+  - 4 variables (AB | CD): C under columns 3–4, D under columns 2–3 on a second track; A beside rows 3–4, B beside rows 2–3 on a second track.
+  - 2 variables (A | B): A beside row 2, B under column 2.
+- **Fill goal:** tap cycles empty → 1 → 0 (→ x when the spec has don't-cares) → empty; keys 1 / 0 / x.
+  - A quiet action **"Fill the rest with 0"** appears once any cell is filled. Placing the 1s (and x's) from Σ is the skill; typing twelve zeros is not. *Pedagogy to confirm.*
+  - "Check map" is enabled when no cell is empty. Wrong: count plus the first wrong cell only (§1).
+- **Group goal:** cells toggle (`aria-pressed`), selected = halo fill plus a 2 px accent inset.
+  - The group list shows the next badge with "n cells selected".
+  - Actions: **Check group** (filled), **Clear selection** (quiet, also Escape), Hint.
+  - Students may find the groups in any order; badges number them in the order found (any minimal cover is accepted).
+  - Wrong: the selection stays, nothing is drawn, the tutor gives the detector's nudge.
+- **Term goal:** the term field sits in the group list beside its badge. It uses the expression entry's field and "Reads as"; the key row offers only the map's variables, `'` and ⌫.
+- **Drawing an accepted group** (a wrapping rectangle of rows × columns on the 4-cycle):
+  - No wrap: one rounded rectangle (radius 14 px), inset from the cell edges.
+  - Wraps left–right or top–bottom: two pieces. Each piece has no border and square corners on the side that touches the map edge, and runs to that edge.
+  - Wraps both ways (four corners): four pieces, each open on its two map-edge sides.
+  - A full row or column of 4 is closed (no wrap needed).
+  - **Inset** = 4 px + 3 px × (group number mod 3), so overlapping outlines never coincide.
+  - **Identity:** badge number first. Line style and colour cycle together: solid `--brand`, dashed `--accent`, dotted `--signal-high`, then the same three colours with the styles rotated. All pieces of one group share one badge.
+  - **Badge:** 22 px, on the top-left corner of the group's first piece in reading order (for an open piece, on its inner corner). If that lands within 20 px of another badge or over a cell's value, use the next corner clockwise.
+- **F goal:** the list's last row becomes "F =" with the full expression field (variables, `'`, `+`, brackets).
+- **Explain slowly / read-only:** the same view; stages are the filled map, then each group with its term, then F. The group being explained has the halo.
+- **Screen reader:** each cell reads "m5, AB 01, CD 01, value 1, in group 2". After a group is accepted the live region says "Group 2 accepted: 4 cells".
+
+### 13.2 Timing-diagram view
+- **Geometry:** one clock period is 64 px (56 px at ≤ 640 px). Each row is 28 px with a 20 px swing; rows are 16 px apart. Lines are 2 px, the student's output 3 px in `--signal-high`. A small "1" and "0" (12 px, muted) mark the levels at the left of each row.
+- **Active edges:** a small triangle on the clock at each active edge, pointing up for rising and down for falling, with the dotted guide. **Edge numbers** 1…n sit under the diagram at 12 px, so "Edge 4" can be found by eye.
+- **Initial value:** printed at the start of each output row ("Q = 0").
+- **Answering:** choose 0 or 1, then **Check edge** (Enter confirms). After a correct answer the trace draws to the next active edge. After a wrong one nothing is drawn.
+- **Several outputs** (two or three flip-flops, #316): one row per output. The goal asks all of them for the same edge, with one labelled 0/1 control per output ("A after edge 4", "B after edge 4") and one Check. A wrong check says how many are wrong and names the first only.
+- **Q' rows**, when the slide shows them, are drawn by the view after each correct answer; they are not asked.
+- **Content rule (for the kind's content test):** an input never changes on an active edge; transitions sit at least a quarter period away, so the value to read is never ambiguous.
+- **Hint rung 5:** a dot on each input row at the active edge, with its value printed.
+- **Scrolling:** the names column stays fixed. The active edge is kept at least one period from the right edge of the well.
+
+### 13.3 State-diagram view
+- **Two modes** (the kind supports both, #239):
+  - *Label mode* (§7): the arrow exists; the student picks its input/output label from chips.
+  - *Next-state mode:* the goal names a source state and an input ("From 01 with x = 1"). The source circle has the halo. The student taps the destination circle (it gets the accent ring), then **Check**. The arrow is then drawn with its label. Arrows not yet answered are not shown at all in this mode.
+- **Layout:** content gives each state a grid position; the view computes the arrows.
+  - Different states: a curve, bent 18 units to its right-hand side, so the two directions between one pair never overlap.
+  - Same state: a loop above the circle (below it for bottom-row states).
+  - Two inputs along the same arrow: one arrow, labels stacked ("0/0" above "1/1").
+- **Size:** circles have a 30-unit radius and labels are 16-unit mono. The diagram never renders below 0.75× (text 12 px, circles 45 px, which is also the tap target in next-state mode). A 4-state diagram is 360 units wide and fits a phone. An 8-state diagram is 2 rows of 4 (about 620 units) and scrolls inside the well on phones, with the active state or arrow scrolled into view.
+- **State table beside the diagram** (≥ 900 px, below it on phones): read-only, as the source the student reads from. Its matching row is highlighted only at hint rung 5.
+- **Screen reader:** the diagram is `role="img"` with a summary of the arrows done so far. In next-state mode the state circles are a `radiogroup` ("Next state: 00, 01, 11, 10").
