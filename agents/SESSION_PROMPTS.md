@@ -37,6 +37,7 @@ two sessions for one role.
 - **Content PRs** register a topic only in `src/content/ecet111/chapter<N>/index.ts`, put topic-specific tests
   next to the topic, and never edit `docs/COVERAGE_ECET111.md` (Product Manager only). The Technical Lead
   resolves one-line registry/catalog conflicts at merge time.
+- **Git hygiene.** Delete only branches or worktrees you created, by exact name. Never delete by pattern (`git branch -D qa*`, `--merged` sweeps) in a shared repository; other roles' local branches live there too.
 - **Local source paths** (git-ignored; put the exact path in any wake that needs them):
   - ECET111 materials: `C:\Users\mnabu\OneDrive\Documents\Claude\Learn_platform\ECET111 materials`
   - Syllabus: `C:\Users\mnabu\OneDrive\Documents\Claude\Learn_platform\ECET111 materials\ECET111- Syllabus-Fall2026.pdf`

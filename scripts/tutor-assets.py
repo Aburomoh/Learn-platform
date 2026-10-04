@@ -1,8 +1,8 @@
 """Tutor pose assets (#354): owner's local pose PNGs -> small WebP files in public/tutor/.
 
 Usage: python scripts/tutor-assets.py [SOURCE_DIR]
-SOURCE_DIR defaults to MyPics/tutor-pose-library (git-ignored, local only). The source PNGs are
-never committed; only the outputs are:
+SOURCE_DIR defaults to MyPics/tutor-pose-library (git-ignored, local only); the expressive poses
+(#378) are read from SOURCE_DIR/expressive. The source PNGs are never committed; only the outputs are:
   public/tutor/<pose>.webp        168 px square head-and-shoulders crop (3x the 56 px disc)
   public/tutor/<pose>-waist.webp  480 px wide waist-up figure
 Edges are cleaned first: near-invisible speckles dropped, alpha eroded by 1 px, and the colour of
@@ -22,6 +22,9 @@ SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "MyPics" / "tutor-pose-
 OUT = ROOT / "public" / "tutor"
 
 POSES = ["neutral", "explaining", "thinking", "focus", "encouraging", "try_again", "correct", "point_left", "point_right", "welcome"]
+# The expressive extension (#378): only the five poses the design system uses (DESIGN_SYSTEM.md, Tutor
+# area); they live in SOURCE_DIR/expressive. The other thirteen are deliberately not generated.
+EXPRESSIVE = ["aha", "proud", "reassuring", "caution", "curious"]
 CROP_PX, WAIST_W = 168, 480
 BUDGET = {"crop": 15_000, "waist": 45_000}
 # Head-and-shoulders square, as fractions of the source width: side, and margin above the hair.
@@ -77,8 +80,9 @@ def webp(im: Image.Image, budget: int) -> bytes:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    for pose in POSES:
-        im = clean(Image.open(SRC / f"tutor_{pose}.png"))
+    for pose in POSES + EXPRESSIVE:
+        source = SRC / ("expressive" if pose in EXPRESSIVE else "") / f"tutor_{pose}.png"
+        im = clean(Image.open(source))
         crop = im.crop(head_box(im)).resize((CROP_PX, CROP_PX), Image.LANCZOS)
         waist = im.resize((WAIST_W, round(im.height * WAIST_W / im.width)), Image.LANCZOS)
         for name, img, kind in ((f"{pose}.webp", crop, "crop"), (f"{pose}-waist.webp", waist, "waist")):

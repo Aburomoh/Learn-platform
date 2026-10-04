@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { courses, getActivity, listActivityParams } from "./index";
-import { evaluateCircuit, gateOrder, grade, valueToBits, bitsToValue, divisionSteps, groupBits, additionSteps, additionResult, additionStepVars, complementBits } from "./grade";
-import { MULTI_STEP_KINDS, hintsForStep, stepCount, stepTag, stepVars } from "./steps";
+import { additionResult, additionSteps, additionStepVars, bitsToValue, complementBits, divisionSteps, evaluateCircuit, gateOrder, grade, groupBits, valueToBits } from "./grade";
+import { hintsForStep, MULTI_STEP_KINDS, stepCount, stepTag, stepVars } from "./steps";
 import { contextFromVariant } from "@/tutor";
 import { InteractionSpec, MultipleChoiceSpec, NumericSpec, VariantSchema } from "./schema";
 import { addition1101 } from "./fixtures/columnAddition";
@@ -9,7 +9,7 @@ import { complement100101, complement110010 } from "./fixtures/onesComplement";
 import { hex26, octal88 } from "./fixtures/bitGrouping";
 import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
-import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
+import { placeValue29, placeValue45 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
 import { equivalent, formatCube, isPOS, isSOP, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
