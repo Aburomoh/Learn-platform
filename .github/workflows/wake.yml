@@ -4,7 +4,7 @@ name: Wake
 
 on:
   pull_request:
-    types: [opened, reopened, ready_for_review, closed]
+    types: [opened, reopened, ready_for_review, closed, labeled]
   pull_request_review:
     types: [submitted]
   workflow_run:
@@ -37,6 +37,9 @@ jobs:
               const pr = context.payload.pull_request;
               if (context.payload.action === 'closed') {
                 if (pr.merged) await setWake(pr.number, 'wake:product-manager');
+              } else if (context.payload.action === 'labeled') {
+                // QA often labels after CI has finished, so the workflow_run path never fires (#355).
+                if (context.payload.label?.name === 'qa:passed') await setWake(pr.number, 'wake:tech-lead');
               } else if (!pr.draft) {
                 await setWake(pr.number, 'wake:reviewer');
               }
