@@ -80,13 +80,26 @@
   outline-offset: -3px;
 }
 
+/* above the group outlines, on a backing, so an outline never strikes through "m5" (#384) */
 .minterm {
   position: absolute;
+  z-index: 2;
   top: 2px;
-  left: 4px;
+  left: 3px;
+  padding: 0 2px 1px;
+  border-radius: 3px;
+  background: var(--surface);
   font-size: 12px;
   line-height: 1;
   color: var(--text-muted);
+}
+
+.picked .minterm {
+  background: var(--focus-halo);
+}
+
+.wrong .minterm {
+  background: var(--error-bg);
 }
 
 .value {
@@ -190,7 +203,8 @@
   position: absolute;
   right: -7px;
   top: -7px;
-  z-index: 1;
+  /* above the minterm labels (2); the outline itself stays under them */
+  z-index: 3;
   display: grid;
   place-items: center;
   min-width: 18px;
@@ -233,6 +247,23 @@
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+/* while picking: the next group's badge and how many cells are selected */
+.count {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.count .badge {
+  position: static;
 }
 
 @media (max-width: 640px) {
