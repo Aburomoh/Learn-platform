@@ -3,10 +3,12 @@
  * and one entry per topic, in the deck's order. Chapters with no topics yet are left out.
  */
 import type { ModuleInput } from "../../schema";
+import { latchesTopic } from "./latches";
 
 export const chapter5: ModuleInput = {
   id: "chapter-5",
   title: "Chapter 5 · Sequential Circuits",
   topics: [
+    latchesTopic,
   ],
 };

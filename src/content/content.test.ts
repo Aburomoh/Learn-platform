@@ -15,6 +15,7 @@ import { equivalent, isPOS, isSOP, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
 import { columnTruth } from "@/kinds/truth-table/logic";
+import { gatedLatch, nandLatch } from "./ecet111/chapter5/latches";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 import { lawChips, lineOptions } from "@/kinds/derivation/logic";
 import type { DerivationSpec } from "@/kinds/derivation/spec";
@@ -453,6 +454,15 @@ describe("content registry", () => {
     // A′ + AB′ = Σ(0, 1, 2) and xy + x′yz = Σ(3, 6, 7), as on p.71–74
     const right = sig.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.options.find((o) => o.id === "right")!.text : ""));
     expect(right).toEqual(["Σ(0, 1, 2)", "Σ(3, 6, 7)", "Σ(0, 2, 3)"]);
+  });
+
+  it("latches (#295): outputs from the latch equations match the pack's tables (ch5-parti §2)", () => {
+    const x = getActivity(COURSE, "latches", "latches")!.activity;
+    const pick = (q: (typeof x.questions)[number]) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    // NAND: 0 1 sets, 1 0 resets, 1 1 holds, 0 0 invalid; gated: En = 0 holds, then set and reset
+    expect(pick(x.questions[0])).toEqual(["Q = 1", "Q = 0", "Q = 0", "Invalid"]);
+    expect(pick(x.questions[1])).toEqual(["Q = 0", "Q = 1", "Q = 0"]);
+    expect([nandLatch(1, 1, 1), gatedLatch(1, 0, 0, 1), gatedLatch(1, 1, 1, 0)]).toEqual(["q1", "q1", "invalid"]);
   });
 
   it("resolves an activity by path", () => {
