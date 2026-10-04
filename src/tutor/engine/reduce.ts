@@ -217,6 +217,8 @@ function stepNextKey(ctx: ActivityContext): string {
   if (ctx.stepTag === "digit") return "step.next-digit";
   if (ctx.stepTag === "bits") return "step.next-bits";
   if (ctx.stepTag === "carry") return "step.last-carry";
+  if (ctx.stepTag === "terms") return "step.next-terms";
+  if (ctx.stepTag === "sum") return "step.next-sum";
   if (ctx.stepTag !== "gate" && gateName === undefined) return "step.next";
   return stepNumber !== undefined && stepNumber === gateCount ? "step.last-gate" : "step.next-gate";
 }
