@@ -3,20 +3,30 @@
  * and one line here, one in `specs.ts` (build time) and one in `ui.ts` (lazy views).
  * No Zod here: this file is part of the client bundle.
  */
+import { bitGrouping, type BitGroupingAnswer } from "./bit-grouping/logic";
 import { circuitPredict, type CircuitAnswer } from "./circuit-predict/logic";
 import { expression, type ExpressionAnswer } from "./expression/logic";
+import { columnAddition, type ColumnAdditionAnswer } from "./column-addition/logic";
+import { multipleChoice, type MultipleChoiceAnswer } from "./multiple-choice/logic";
+import { numeric, type NumericAnswer } from "./numeric/logic";
 import { placeValue, type PlaceValueAnswer } from "./place-value/logic";
+import { repeatedDivision, type RepeatedDivisionAnswer } from "./repeated-division/logic";
 
 export const kinds = {
+  "bit-grouping": bitGrouping,
   "circuit-predict": circuitPredict,
-  expression,
+  expression: expression,
+  "column-addition": columnAddition,
+  "multiple-choice": multipleChoice,
+  numeric,
   "place-value": placeValue,
+  "repeated-division": repeatedDivision,
 } as const;
 
 export type RegisteredKind = keyof typeof kinds;
 
-/** Answers of the registered kinds. */
-export type KindAnswer = CircuitAnswer | ExpressionAnswer | PlaceValueAnswer;
+/** The student's answer, one shape per kind. */
+export type KindAnswer = ExpressionAnswer | BitGroupingAnswer | CircuitAnswer | ColumnAdditionAnswer | MultipleChoiceAnswer | NumericAnswer | PlaceValueAnswer | RepeatedDivisionAnswer;
 
 export function isRegisteredKind(kind: string): kind is RegisteredKind {
   return Object.hasOwn(kinds, kind);
