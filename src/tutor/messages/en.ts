@@ -52,6 +52,8 @@ export const en = {
   "ns.extra-place": "One of the lit places is too big for what is left. Check the remainder after each step.",
   "ns.hex-letter": "In hex, 10 to 15 are single letters A to F, not two digits.",
   "sm.absorb-mixup": "Look at the second term again: A + AB gives A, but here it is A + A′B. Which rule has the complement?",
+  "dm.operator-kept": "You broke the bar. Now look at the operator under it: does it stay the same?",
+  "dm.bar-dropped": "A double bar cancels, but a single bar stays. Count the bars on each letter.",
   "drv.line-not-equivalent": "That line does not equal the line before it. Check the law you applied.",
   "drv.line-skipped": "That is true, but it skips a step. Apply only this one law to the line before.",
   "drv.line-other": "That is valid algebra, but it is not the step this law gives. Apply only the law you named.",
