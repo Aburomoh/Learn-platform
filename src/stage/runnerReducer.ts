@@ -8,7 +8,8 @@ import { grade, type Answer, type GradeResult } from "@/content/grade";
 import { fill } from "@/content/template";
 import { hintsForStep, stepTag, stepVars as specStepVars } from "@/content/steps";
 import { reduce, initialTutorState, contextFromVariant, type TutorState, type TutorAction, type Expression, type LearningEvent } from "@/tutor";
-import type { RevealedHint, PredictionResult } from "@/interactions";
+import type { RevealedHint } from "@/interactions/HintReveal/HintReveal";
+import type { PredictionResult } from "@/interactions/PredictionBeforeReveal/PredictionBeforeReveal";
 
 export interface RunnerState {
   qIndex: number;

@@ -113,8 +113,9 @@ function Harness() {
 describe("stage: 1's complement in a bit row", () => {
   it("a wrong row highlights the first wrong bit, keeps the other cells, and is fixed in place", async () => {
     render(<Harness />);
+    // the kind's view is loaded on demand (ADR-0008): wait for it once
+    const cells = await screen.findAllByRole("textbox");
     const user = userEvent.setup();
-    const cells = screen.getAllByRole("textbox");
     cells[0].focus();
     await user.keyboard("010010{Enter}"); // bit 3 should be 1
     expect(screen.getByTestId("message")).toHaveTextContent("Look at bit 3 from the left.");

@@ -64,6 +64,8 @@ function Harness() {
 describe("stage: column addition rendered through QuestionView", () => {
   it("walks 1101 + 0111 column by column by keyboard to 10100", async () => {
     render(<Harness />);
+    // the kind's view is loaded on demand (ADR-0008): wait for it once
+    await screen.findByLabelText(/first column from the right, 1 \+ 1: sum bit/);
     const user = userEvent.setup();
     // column 1: 1 + 1 → writing 2 is recognised and the column is retried
     await user.type(screen.getByLabelText(/first column from the right, 1 \+ 1: sum bit/), "2");

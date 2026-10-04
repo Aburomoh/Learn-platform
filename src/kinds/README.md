@@ -23,16 +23,28 @@ Nothing else is edited: the schema, grader, step helpers and stage pick the kind
 
 ## Rules
 
-- A kind imports shared helpers (`src/interactions/shared`, shared components such as
-  `MultipleChoice`, `src/kinds/shared`, `src/content/template`, `notation`), never another kind.
+- A kind imports shared helpers (`src/interactions/*` components by file, `src/kinds/shared`,
+  `src/content/template`, `binary`, `notation`), never another kind.
+- Browser code never imports the `@/interactions` barrel (lint rule): it would put every
+  component in one chunk.
 - `logic.ts` imports types only from `spec.ts` (`import type`), so Zod stays out of the browser.
 - Views never grade: they call `onSubmit` with the kind's answer.
 - In `ui.ts` every `import()` is written inside its `dynamic()` call. The build reads it there to
   pre-render the view and preload its chunk, which keeps challenge 1 in the exported HTML (#158).
 - Other chunks are fetched ahead of use by `KindPrefetch`, which the runner mounts when the browser is idle.
 
-## Migration state
+## Kinds
 
-Registered: `circuit-predict`, `place-value`. Still wired by hand in the shared files:
-`repeated-division`, `numeric` (with its contexts), `multiple-choice`, `bit-grouping`,
-`column-addition`. They move here next (#196); the hand-wired fallbacks are then removed.
+`bit-grouping`, `circuit-predict`, `column-addition`, `multiple-choice`, `numeric` (with its
+contexts, including the bit row), `place-value`, `repeated-division`.
+
+`shared/` holds what several kinds use: `Prompt`, the worked contexts above a numeric or
+multiple-choice question (`ContextView`, `BitGroups`, `contextSpec.ts`), and their text styles.
+Arithmetic helpers (`divisionSteps`, `groupBits`, `additionSteps`…) live in `src/content/binary.ts`
+because content tests use them too.
+
+## Detectors
+
+A kind's misconception detectors are exported from its `spec.ts` and listed in `specs.ts`.
+`equals` is the only detector every kind may use. `kinds.test.ts` fails if a variant uses another
+kind's detector, which would validate and then never fire.
