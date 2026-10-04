@@ -32,7 +32,7 @@ export function ContextView({ id, context, stage, revealed }: { id: string; cont
     case "bit-row":
       return <BitRow id={id} bits={context.bits} sourceOnly />;
     case "latch":
-      return <LatchFigure id={id} latch={context.latch} values={context.values} after={context.after} revealed={revealed} />;
+      return <LatchFigure id={id} latch={context.latch} values={context.values} revealed={revealed} />;
     default: {
       const unhandled: never = context;
       throw new Error(`No renderer for context ${JSON.stringify(unhandled)}`);

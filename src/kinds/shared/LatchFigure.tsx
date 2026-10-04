@@ -1,16 +1,13 @@
+import { latchAfter, type LatchType, type LatchValues } from "./latch";
 import styles from "./LatchFigure.module.css";
-
-type Bit = 0 | 1;
 
 export interface LatchFigureProps {
   id: string;
   /** `nand-sr`: two cross-coupled NANDs. `gated-sr`: the same with two input NANDs and the enable line. */
-  latch: "nand-sr" | "gated-sr";
+  latch: LatchType;
   /** The given state, printed on the wires: the inputs and the Q the latch holds. */
-  values: { s: Bit; r: Bit; q: Bit; en?: Bit };
-  /** The outputs once the inputs act (both 1 for the invalid NAND input). Drawn only when `revealed`. */
-  after: { q: Bit; qn: Bit };
-  /** The student has answered: the new Q and Q′ are drawn with their values. */
+  values: LatchValues;
+  /** The student has answered: the new Q and Q′ (computed from the values) are drawn. */
   revealed?: boolean;
 }
 
@@ -32,14 +29,15 @@ function Nand({ x, y }: { x: number; y: number }) {
  * printed on the wires; the answer is not shown until `revealed`. The feedback wires cross between
  * the gates without a dot; dots mark the two real branches only (#387).
  */
-export function LatchFigure({ id, latch, values, after, revealed = false }: LatchFigureProps) {
+export function LatchFigure({ id, latch, values, revealed = false }: LatchFigureProps) {
+  const after = latchAfter(latch, values);
   const gated = latch === "gated-sr";
   // x of the two latch gates; the feedback wires run from `back` (before the gates) to `out` (after them)
   const gx = gated ? 188 : 150;
   const back = gx - 16;
   const out = gx + 80;
   const end = 296;
-  const given = [`S = ${values.s}`, `R = ${values.r}`, ...(gated ? [`En = ${values.en ?? 0}`] : []), `Q = ${values.q}`].join(", ");
+  const given = [`S = ${values.s}`, `R = ${values.r}`, ...(gated ? [`En = ${values.en}`] : []), `Q = ${values.q}`].join(", ");
   const result = revealed ? ` Now Q = ${after.q} and Q′ = ${after.qn}.` : "";
   return (
     <div className={styles.root} data-diagram={id}>
@@ -56,7 +54,7 @@ export function LatchFigure({ id, latch, values, after, revealed = false }: Latc
             <path d={`M 144 39 H ${gx}`} className={styles.wire} />
             <path d={`M 144 161 H ${gx}`} className={styles.wire} />
             <text x="4" y="20" className={styles.label}>{`S = ${values.s}`}</text>
-            <text x="4" y="92" className={styles.label}>{`En = ${values.en ?? 0}`}</text>
+            <text x="4" y="92" className={styles.label}>{`En = ${values.en}`}</text>
             <text x="4" y="190" className={styles.label}>{`R = ${values.r}`}</text>
           </>
         ) : (

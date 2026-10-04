@@ -32,15 +32,16 @@ export const NumericContext = z.discriminatedUnion("type", [
   /** A source bit string shown in aligned cells, with one answer cell under each bit (e.g. 1's complement). */
   z.object({ type: z.literal("bit-row"), bits: z.string().regex(/^[01]+$/).min(2).max(8) }),
   /**
-   * A read-only latch figure (#440): the given inputs and held Q are printed on the wires; `after`
-   * (the outputs once the inputs act; both 1 when invalid) is drawn only once the student has answered.
+   * A read-only latch figure (#440): the given inputs and held Q are printed on the wires. The new
+   * outputs are computed from them (`latchAfter`) and drawn only once the student has answered.
    */
-  z.object({
-    type: z.literal("latch"),
-    latch: z.enum(["nand-sr", "gated-sr"]),
-    values: z.object({ s: bit, r: bit, q: bit, en: bit.optional() }),
-    after: z.object({ q: bit, qn: bit }),
-  }),
+  z
+    .object({
+      type: z.literal("latch"),
+      latch: z.enum(["nand-sr", "gated-sr"]),
+      values: z.object({ s: bit, r: bit, q: bit, en: bit.optional() }),
+    })
+    .refine((c) => (c.latch === "gated-sr") === (c.values.en !== undefined), "en is given for gated-sr only"),
 ]);
 
 export type DivisionStep = z.infer<typeof DivisionStep>;
