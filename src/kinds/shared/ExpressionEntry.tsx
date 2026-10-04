@@ -11,6 +11,11 @@ export interface ExpressionEntryProps {
   label: string;
   /** The variables the question uses, shown as keys. */
   vars: string[];
+  /**
+   * Which operator keys the key row offers. `product`: only the prime, for an answer that is a
+   * single product of literals (a K-map group's term). Typing is not restricted.
+   */
+  keys?: "all" | "product";
   onAnswer?: (text: string) => void;
   state?: AnswerState;
   /** Last submitted text, kept in the field. */
@@ -64,7 +69,7 @@ function preview(text: string, vars: string[]): ReactNode | null {
  * question's variables and the operators helps on phones; "Reads as" draws the overbar as on the
  * slides. The component never grades: Check sends the text.
  */
-export function ExpressionEntry({ id, label, vars, onAnswer, state = "idle", submittedText, disabled = false, shown }: ExpressionEntryProps) {
+export function ExpressionEntry({ id, label, vars, keys = "all", onAnswer, state = "idle", submittedText, disabled = false, shown }: ExpressionEntryProps) {
   const [text, setText] = useState(submittedText ?? "");
   const field = useRef<HTMLInputElement>(null);
   const previewId = useId();
@@ -133,7 +138,7 @@ export function ExpressionEntry({ id, label, vars, onAnswer, state = "idle", sub
                 {v}
               </button>
             ))}
-            {OPERATORS.map((o) => (
+            {OPERATORS.filter((o) => keys === "all" || o.key === "'").map((o) => (
               <button key={o.key} type="button" className={`${styles.key} ${styles.op}`} aria-label={o.label} disabled={disabled} onClick={() => insert(o.insert)}>
                 {o.key}
               </button>
