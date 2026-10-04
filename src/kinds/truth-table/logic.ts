@@ -4,9 +4,33 @@ import type { Cell, TableColumn, TruthTableSpec } from "./spec";
 
 /**
  * `values`: one cell per row for the column of this step (fill mode; input columns too when the
- * spec says `fillInputs`). `rows`: the picked row indices (row-select mode).
+ * spec says `fillInputs`). `rows`: the picked row indices (row-select mode). `choice`: what the
+ * pair's data input gets (mux-pairs mode).
  */
-export type TruthTableAnswer = { kind: "truth-table"; step: number; values?: (Cell | null)[]; rows?: number[] };
+export type TruthTableAnswer = { kind: "truth-table"; step: number; values?: (Cell | null)[]; rows?: number[]; choice?: PairChoice };
+
+/** A mux data input: a constant, the data variable v, or its complement. */
+export type PairChoice = "0" | "1" | "v" | "v'";
+
+export interface MuxPair {
+  /** The select value, = the data input's number (I0, I1 …). */
+  select: number;
+  /** Its two rows: data variable 0, then 1. */
+  rows: [number, number];
+  f: [Cell, Cell];
+  choice: PairChoice;
+}
+
+/** The row pairs of a mux-pairs table: rows 2p and 2p + 1 share the select bits (the last input is the data variable). */
+export function muxPairs(spec: TruthTableSpec): MuxPair[] {
+  const target = spec.columns.find((c) => c.id === spec.target)!;
+  const f = columnTruth(spec, target);
+  return Array.from({ length: rowCount(spec) / 2 }, (_, p) => {
+    const pair: [Cell, Cell] = [f[2 * p], f[2 * p + 1]];
+    const choice: PairChoice = pair[0] === pair[1] ? (pair[0] === 1 ? "1" : "0") : pair[1] === 1 ? "v" : "v'";
+    return { select: p, rows: [2 * p, 2 * p + 1], f: pair, choice };
+  });
+}
 
 export const rowCount = (spec: TruthTableSpec) => 2 ** spec.inputs.length;
 
@@ -58,6 +82,22 @@ export const truthTable: KindLogic<TruthTableSpec, TruthTableAnswer> = {
     const spec = variant.spec;
     const find = (type: string) => variant.misconceptions.find((m) => m.detect.type === type)?.id;
 
+    if (spec.mode === "mux-pairs") {
+      const pairs = muxPairs(spec);
+      const pair = pairs[answer.step];
+      if (!pair) throw new Error(`No mux-pairs step ${answer.step}`);
+      const given = answer.choice;
+      const normalized = `I${pair.select}=${given ?? ""}`;
+      if (given === pair.choice) return { correct: true, normalized, partial: answer.step < pairs.length - 1 || undefined };
+      const variable = (c?: PairChoice) => c === "v" || c === "v'";
+      const kind =
+        variable(given) && variable(pair.choice) ? "pair-complement-swapped"
+        : !variable(given) && given !== undefined && variable(pair.choice) ? "pair-constant-for-variable"
+        : variable(given) && !variable(pair.choice) ? "pair-variable-for-constant"
+        : undefined;
+      return { correct: false, normalized, misconceptionId: kind ? find(kind) : undefined };
+    }
+
     if (spec.mode === "row-select") {
       const target = spec.columns.find((c) => c.id === spec.target)!;
       const truth = columnTruth(spec, target);
@@ -103,10 +143,26 @@ export const truthTable: KindLogic<TruthTableSpec, TruthTableAnswer> = {
 
   // One goal per column (ADR-0007); row-select is a single goal.
   steps: {
-    count: (spec) => (spec.mode === "row-select" ? 1 : goals(spec).length),
-    tag: (spec, i) => (spec.mode === "row-select" ? "rows" : goals(spec)[i].type === "input" ? "inputs" : "column"),
+    count: (spec) => (spec.mode === "row-select" ? 1 : spec.mode === "mux-pairs" ? rowCount(spec) / 2 : goals(spec).length),
+    tag: (spec, i) => (spec.mode === "row-select" ? "rows" : spec.mode === "mux-pairs" ? "pair" : goals(spec)[i].type === "input" ? "inputs" : "column"),
     vars: (spec, i) => {
       const base = { rowCount: rowCount(spec), inputCount: spec.inputs.length, stepNumber: i + 1 };
+      if (spec.mode === "mux-pairs") {
+        const pairs = muxPairs(spec);
+        const p = pairs[i];
+        const data = spec.inputs.at(-1)!;
+        const name = (c: PairChoice) => (c === "v" ? data : c === "v'" ? `${data}′` : c);
+        return {
+          ...base,
+          pairNumber: i + 1,
+          pairCount: pairs.length,
+          inputName: `I${p.select}`,
+          dataVar: data,
+          selectBits: rowLabel(spec, p.rows[0]).split(" ").slice(0, -1).join(" "),
+          pairValues: p.f.join(" "),
+          pairChoice: name(p.choice),
+        };
+      }
       if (spec.mode === "row-select") {
         const target = spec.columns.find((c) => c.id === spec.target)!;
         return { ...base, columnLabel: target.label, columnCount: 1 };
