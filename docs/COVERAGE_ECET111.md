@@ -55,8 +55,8 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 | XOR as AB'+A'B, XNOR | 11–18 | CORE | COVERED (Derived gates, column by column) | A', B', products, F | truth-table | #225 |
 | 3-input gates, rows = 2ⁿ | 19–20 | CORE | COVERED (Rows = 2ⁿ check; 3-input AND/OR tables in #224) | row count, fill | truth-table | #225 |
 | Expression → circuit, circuit → expression | 21–25 | CORE | MISSING | one gate output per goal | expression, MC | #226 |
-| SOP vs POS | 26–30 | CORE (POS recognition only) | MISSING | tag parts; no 0-rows → POS, no maxterms | MC | #227 |
-| Expression ↔ truth table | 31–36 | CORE | MISSING | 1-rows; rows → SOP | truth-table row-select, expression | #227 |
+| SOP vs POS | 26–30 | CORE (POS recognition only) | COVERED (SOP or POS check) | tag parts; no 0-rows → POS, no maxterms | MC | #227 |
+| Expression ↔ truth table | 31–36 | CORE | COVERED (SOP → table; 1-rows → SOP) | 1-rows; rows → SOP | truth-table row-select, expression | #227 |
 | Laws (commutative, associative, distributive) | 37–40 | CORE | MISSING | match law to example | MC | #228 |
 | Rules and postulates | 41–43 | CORE | MISSING | match rule to example | MC | #228 |
 | Algebraic simplification (+ gate count) | 44–54 | CORE | MISSING | law, then line | derivation | #229 |
