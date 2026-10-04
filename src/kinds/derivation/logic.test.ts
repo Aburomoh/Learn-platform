@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { equivalent, parseBool } from "@/content/boolean";
 import type { VariantOf } from "../types";
 import { DerivationSpec } from "./spec";
-import { canonical, derivation, lineOptions, type DerivationAnswer } from "./logic";
+import { canonical, derivation, lawChips, lineOptions, type DerivationAnswer } from "./logic";
 
 type Misconception = VariantOf<DerivationSpec>["misconceptions"][number];
 // The kind's detectors join the schema when it is registered with its view (Frontend, ADR-0008).
@@ -65,6 +65,9 @@ describe("derivation kind (#221)", () => {
     expect(derivation.grade(v, step(5, { line: "right" }))).toMatchObject({ correct: true });
     expect(derivation.grade(v, step(5, { line: "right" })).partial).toBeUndefined();
     expect(lineOptions(v.spec, 1).map((o) => o.id)).toEqual(["w1", "right"]); // the right line is not always first
+    // law chips: the right law moves (2nd, 3rd, 1st), whatever order they were authored in
+    expect(v.spec.lines.map((l, i) => lawChips(v.spec, i).indexOf(l.law))).toEqual([1, 2, 0]);
+    expect(v.spec.lines.map((l, i) => [...lawChips(v.spec, i)].sort())).toEqual(v.spec.lines.map((l) => [...l.lawOptions].sort()));
   });
 
   it("type mode: graded by structure, so order does not matter but skipping or a slip does", () => {

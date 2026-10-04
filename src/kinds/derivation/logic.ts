@@ -101,6 +101,18 @@ export const derivation: KindLogic<DerivationSpec, DerivationAnswer> = {
   },
 };
 
+/**
+ * The law chips of line `i`, rotated so the right law lands in a different place on each line,
+ * never first on line 1 (Reviewer on #324, as for multiple choice on #273).
+ */
+export function lawChips(spec: DerivationSpec, i: number): LawId[] {
+  const opts = spec.lines[i].lawOptions;
+  const at = opts.indexOf(spec.lines[i].law);
+  const want = (i + 1) % opts.length; // where the right law should end up
+  const r = (((at - want) % opts.length) + opts.length) % opts.length;
+  return [...opts.slice(r), ...opts.slice(0, r)];
+}
+
 /** The options of a choose-mode line goal: the right line (id "right") and the wrong ones, in a fixed rotation. */
 export function lineOptions(spec: DerivationSpec, i: number): { id: string; expr: string }[] {
   const line = spec.lines[i];

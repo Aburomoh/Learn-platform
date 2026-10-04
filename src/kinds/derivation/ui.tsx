@@ -6,7 +6,7 @@ import { Prompt } from "../shared/Prompt";
 import shared from "../shared/shared.module.css";
 import type { ExplainProps, PracticeProps } from "../types";
 import { DerivationLines, type DerivationRow } from "./DerivationLines";
-import { LAW_NAMES, lineOptions, type DerivationAnswer } from "./logic";
+import { LAW_NAMES, lawChips, lineOptions, type DerivationAnswer } from "./logic";
 import type { DerivationSpec } from "./spec";
 import styles from "./DerivationLines.module.css";
 
@@ -48,7 +48,7 @@ export function Practice({ variant, prompt, state, last, stepIndex, locked, onSu
               key={`law-${step}`}
               id={`${variant.id}-law-${i}`}
               prompt={`Which law takes line ${i + 1} one step further?`}
-              options={line.lawOptions.map((law) => ({ id: law, text: LAW_NAMES[law] }))}
+              options={lawChips(spec, i).map((law) => ({ id: law, text: LAW_NAMES[law] }))}
               disabled={locked}
               state={state}
               submittedOptionId={submitted?.law}
