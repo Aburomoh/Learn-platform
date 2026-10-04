@@ -16,6 +16,7 @@ import { mintermsTopic } from "./chapter2/minterms";
 import { derivedGatesTopic } from "./chapter2/derived-gates";
 import { halfAdderTopic } from "./chapter4/half-adder";
 import { fullAdderTopic } from "./chapter4/full-adder";
+import { decodersTopic } from "./chapter4/decoders";
 
 export const ecet111: CourseInput = {
   id: "ecet111",
@@ -42,7 +43,7 @@ export const ecet111: CourseInput = {
     {
       id: "chapter-4",
       title: "Chapter 4 · Combinational Logic Circuits",
-      topics: [halfAdderTopic, fullAdderTopic],
+      topics: [halfAdderTopic, fullAdderTopic, decodersTopic],
     },
   ],
 };
