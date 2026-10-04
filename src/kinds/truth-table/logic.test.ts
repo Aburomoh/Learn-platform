@@ -182,6 +182,12 @@ describe("truth-table kind: mux-pairs (#308, ch4 pack §6)", () => {
 });
 
 describe("truth-table spec", () => {
+  it("inputGroups must span every input (#440)", () => {
+    const base = { kind: "truth-table", inputs: ["A", "B", "x"], columns: [{ id: "f", label: "F", expr: "Ax" }] };
+    expect(TruthTableSpec.safeParse({ ...base, inputGroups: [{ label: "Present state", span: 2 }, { label: "Input", span: 1 }] }).success).toBe(true);
+    expect(TruthTableSpec.safeParse({ ...base, inputGroups: [{ label: "Present state", span: 2 }] }).success).toBe(false);
+  });
+
   const bad = (spec: unknown) => TruthTableSpec.safeParse(spec).success;
   it("rejects unknown variables, wrong lengths, missing targets and nothing to fill", () => {
     expect(bad({ kind: "truth-table", inputs: ["A", "B"], columns: [{ id: "f", label: "F", expr: "A + C" }] })).toBe(false);

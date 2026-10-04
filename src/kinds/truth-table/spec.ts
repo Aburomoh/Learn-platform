@@ -44,10 +44,16 @@ export const TruthTableSpec = z
     fillInputs: z.boolean().default(false),
     /** Where the m0…m15 column sits, if shown (decoder tables put it first, canonical forms last). */
     mintermColumn: z.enum(["left", "right"]).optional(),
+    /**
+     * Two-level header over the input columns, left to right (#440): state tables put "Present
+     * state" over the flip-flops and "Input" over x. The spans must cover every input.
+     */
+    inputGroups: z.array(z.object({ label: z.string().min(1), span: z.number().int().min(1) })).optional(),
   })
   .superRefine((t, ctx) => {
     const rows = 2 ** t.inputs.length;
     if (new Set(t.inputs).size !== t.inputs.length) ctx.addIssue({ code: "custom", message: "inputs must be distinct" });
+    if (t.inputGroups && t.inputGroups.reduce((s, g) => s + g.span, 0) !== t.inputs.length) ctx.addIssue({ code: "custom", message: "inputGroups must span every input exactly once" });
     const ids = t.columns.map((c) => c.id);
     if (new Set(ids).size !== ids.length) ctx.addIssue({ code: "custom", message: "column ids must be distinct" });
     for (const c of t.columns) {
