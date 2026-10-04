@@ -19,5 +19,6 @@ export function contextFromVariant(variant: Variant, locale = "en", extraVars: R
     misconceptionKeys,
     locale,
     stepTag,
+    kind: variant.spec.kind,
   };
 }
