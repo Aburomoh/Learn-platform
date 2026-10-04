@@ -10,12 +10,12 @@ import { formatCube, sigma, type Cube } from "../../boolean";
 
 type HintInput = NonNullable<VariantInput["hints"]>[number];
 
-const fillHints: HintInput[] = [
-  { rung: 2, text: "Not yet. Each minterm number in {sigma} is one cell: put 1 there and 0 everywhere else." },
+const fillHints = (dontCares: boolean): HintInput[] => [
+  { rung: 2, text: dontCares ? "Not yet. The Σ numbers are 1s, the d numbers are X, and every other cell is 0." : "Not yet. Each minterm number in {sigma} is one cell: put 1 there and 0 everywhere else." },
   { rung: 3, text: "Find a cell by its number: the row bits ({rowVars}) then the column bits ({colVars}) make its minterm number." },
   { rung: 4, text: "Read the column labels: 00, 01, 11, 10. Which cell is 3, and which is 2?" },
   { rung: 5, text: "Start with the first number in the list.", focus: "kmap", highlight: "kmap" },
-  { rung: 9, text: "Every number in {sigma} is a 1; the other cells are 0." },
+  { rung: 9, text: dontCares ? "The Σ numbers are 1, the d numbers X, the rest 0: {sigma}." : "Every number in {sigma} is a 1; the other cells are 0." },
 ];
 
 const groupHints: HintInput[] = [
@@ -81,7 +81,7 @@ export function kmapVariant(set: KmapSet, k: number): VariantInput {
     prompt: `${given}. ${set.filled ? "The map is filled." : "Fill the map,"} then group the 1s one group at a time, name each group's term, and write F as a minimal sum.`,
     spec,
     hints: groupHints,
-    hintsByStep: { fill: fillHints, group: groupHints, term: termHints, answer: answerHints },
+    hintsByStep: { fill: fillHints(dontCares.length > 0), group: groupHints, term: termHints, answer: answerHints },
     misconceptions: kmapMisconceptions,
     explanation: [
       { id: "s1", say: "Largest groups, fewest groups: every 1 in some group, each group a rectangle of 1, 2, 4 or 8 cells, and the edges touch.", stage: { groups: [] } },

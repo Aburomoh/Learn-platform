@@ -487,6 +487,12 @@ describe("content registry", () => {
     expect(sums).toEqual([["A + B'CD + BC'D"], ["w'z' + wxz + wy + x'z'"], ["wz' + x'z + y'z"]]);
   });
 
+  it("don't-cares (#282): the slides' single minimal covers (C, A + BC′, x + z, A + B′D)", () => {
+    const x = getActivity(COURSE, "kmap-dont-cares", "kmap-dont-cares")!.activity;
+    const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
+    expect(sums).toEqual([["C"], ["A + BC'"], ["x + z"], ["A + B'D"]]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
