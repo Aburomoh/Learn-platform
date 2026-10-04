@@ -80,7 +80,7 @@ function gateTable(gate: Gate, inputs: string[]): VariantInput {
           afterWrong: `${RULE[gate]} So it is ${column[keyRow]}.`,
         },
       },
-      { id: "s3", say: `${onesHint} The column reads ${column.join(" ")}.`, stage: { step: 0, revealed: rows } },
+      { id: "s3", say: onesHint, stage: { step: 0, revealed: rows } },
     ],
   };
 }
@@ -92,9 +92,9 @@ const gateTables: TopicInput["activities"][number] = {
   authority: "DEMO",
   minutes: 8,
   questions: [
-    { id: "bg.q.and", label: "AND table", conceptId: "lg.basic-gates", objectiveId: "lg.obj.table", variants: [gateTable("AND", ["x", "y"]), gateTable("AND", ["A", "B"]), gateTable("AND", ["A", "B", "C"])] },
-    { id: "bg.q.or", label: "OR table", conceptId: "lg.basic-gates", objectiveId: "lg.obj.table", variants: [gateTable("OR", ["x", "y"]), gateTable("OR", ["A", "B"]), gateTable("OR", ["A", "B", "C"])] },
-    { id: "bg.q.not", label: "NOT table", conceptId: "lg.basic-gates", objectiveId: "lg.obj.table", variants: [gateTable("NOT", ["x"]), gateTable("NOT", ["A"]), gateTable("NOT", ["B"])] },
+    { id: "bg.q.and", label: "AND table", conceptId: "lg.basic-gates", objectiveId: "lg.obj.table", variants: [gateTable("AND", ["x", "y"]), gateTable("AND", ["A", "B", "C"]), gateTable("AND", ["A", "B"])] }, // first retry is a different table (Pedagogy on #337)
+    { id: "bg.q.or", label: "OR table", conceptId: "lg.basic-gates", objectiveId: "lg.obj.table", variants: [gateTable("OR", ["x", "y"]), gateTable("OR", ["A", "B", "C"]), gateTable("OR", ["A", "B"])] },
+    { id: "bg.q.not", label: "NOT table", conceptId: "lg.basic-gates", objectiveId: "lg.obj.table", variants: [gateTable("NOT", ["x"])] }, // one fixed fact: exempt from the three-set rule (content.test)
   ],
 };
 
@@ -218,14 +218,14 @@ export const basicGatesTopic: TopicInput = {
               misconceptions: gateWalkMisconceptions,
             },
             {
-              id: "v110",
+              id: "v011",
               prompt: "One more: A = {A}, B = {B}, C = {C}. Find Y, one gate at a time.",
               spec: {
                 kind: "circuit-predict",
                 inputs: [
-                  { id: "a", label: "A", value: 1 },
+                  { id: "a", label: "A", value: 0 },
                   { id: "b", label: "B", value: 1 },
-                  { id: "c", label: "C", value: 0 },
+                  { id: "c", label: "C", value: 1 },
                 ],
                 gates: [
                   { id: "n1", type: "NOT", from: ["b"] },
@@ -233,10 +233,10 @@ export const basicGatesTopic: TopicInput = {
                   { id: "g2", type: "OR", from: ["g1", "c"], label: "Y" },
                 ],
                 outputGateId: "g2",
-                answer: 0,
+                answer: 1,
                 inputsToggleable: true,
               },
-              vars: { A: 1, B: 1, C: 0, notB: 0, g1: 0, answer: 0 },
+              vars: { A: 0, B: 1, C: 1, notB: 0, g1: 0, answer: 1 },
               hints: gateWalkHints,
               explanation: [
                 { id: "s1", say: "Same circuit, new inputs. Follow the signals from left to right.", stage: { lit: [] } },
@@ -256,7 +256,7 @@ export const basicGatesTopic: TopicInput = {
                   id: "s4",
                   say: "The OR gate receives {g1} from AND and C = {C}.",
                   stage: { lit: ["n1", "g1"], active: "g2" },
-                  ask: { prompt: "What does the OR gate output?", options: ["1", "0"], correctIndex: 1, afterCorrect: "Right. Both inputs are 0, so OR gives 0.", afterWrong: "Both inputs are 0, so OR gives 0." },
+                  ask: { prompt: "What does the OR gate output?", options: ["0", "1"], correctIndex: 1, afterCorrect: "Right. C alone is 1, and one 1 is enough for OR.", afterWrong: "C is 1, and one 1 is enough: OR gives 1." },
                 },
                 { id: "s5", say: "The OR gate is the last one, so its output is Y. Y = {answer}.", stage: { lit: ["n1", "g1", "g2"] } },
               ],

@@ -223,9 +223,9 @@ describe("content registry", () => {
       }),
     );
     expect(columns).toEqual([
-      ["0 0 0 1", "0 0 0 1", "0 0 0 0 0 0 0 1"],
-      ["0 1 1 1", "0 1 1 1", "0 1 1 1 1 1 1 1"],
-      ["1 0", "1 0", "1 0"],
+      ["0 0 0 1", "0 0 0 0 0 0 0 1", "0 0 0 1"],
+      ["0 1 1 1", "0 1 1 1 1 1 1 1", "0 1 1 1"],
+      ["1 0"],
     ]);
   });
 
@@ -248,7 +248,8 @@ describe("pedagogy guard", () => {
 
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule"]);
+    // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
