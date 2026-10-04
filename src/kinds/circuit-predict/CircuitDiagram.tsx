@@ -43,7 +43,7 @@ const MIN_SCALE = 0.75;
 export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], activeGateId, revealOutput = false, disabled = false }: CircuitDiagramProps) {
   const values = evaluateCircuit(spec, inputs);
   const layout = useMemo(() => layoutCircuit(spec), [spec]);
-  const { viewBox, output } = layout;
+  const { viewBox } = layout;
   const toggleable = spec.inputsToggleable && !!onToggleInput && !disabled;
   const inputIds = new Set(spec.inputs.map((i) => i.id));
   /** A signal's value is known when it is a given input or its gate has been answered. */
@@ -87,13 +87,20 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
             </g>
           );
         })}
-        {/* output stub */}
-        <g className={walking && !revealOutput ? styles.pending : undefined} data-wire="output" data-signal={revealOutput ? values[spec.outputGateId] : undefined}>
-          <path d={`M ${output.from.x} ${output.from.y} L ${output.to.x} ${output.to.y}`} className={`${styles.wire} ${revealOutput ? (values[spec.outputGateId] === 1 ? styles.wireHigh : styles.wireLow) : ""}`} />
-          <text x={output.to.x + 8} y={output.to.y + 5} className={styles.label}>
-            Y{revealOutput ? ` = ${values[spec.outputGateId]}` : ""}
-          </text>
-        </g>
+        {/* one stub per output: the main one is revealed at the end, another (S of a half adder) once its gate is answered */}
+        {layout.outputs.map((o) => {
+          const main = o.gateId === spec.outputGateId;
+          const shown = main ? revealOutput : revealOutput || lit.includes(o.gateId);
+          return (
+            <g key={o.gateId} className={walking && !shown ? styles.pending : undefined} data-wire={main ? "output" : `output-${o.gateId}`} data-signal={shown ? values[o.gateId] : undefined}>
+              <path d={`M ${o.from.x} ${o.from.y} L ${o.to.x} ${o.to.y}`} className={`${styles.wire} ${shown ? (values[o.gateId] === 1 ? styles.wireHigh : styles.wireLow) : ""}`} />
+              <text x={o.to.x + 8} y={o.to.y + 5} className={styles.label}>
+                {o.label}
+                {shown ? ` = ${values[o.gateId]}` : ""}
+              </text>
+            </g>
+          );
+        })}
 
         {/* inputs */}
         {spec.inputs.map((inp) => {
