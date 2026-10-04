@@ -150,7 +150,7 @@ sub { font-size: max(0.7em, 12px); }
 .vbar { height: 18px; border-bottom: 2px solid var(--text-muted); border-left: 2px solid var(--text-muted); border-right: 2px solid var(--text-muted); display: grid; place-items: center; }
 .vbar span { transform: translateY(14px); background: var(--surface-sunk); padding: 0 4px; }
 .hbar { width: 18px; border-top: 2px solid var(--text-muted); border-bottom: 2px solid var(--text-muted); border-right: 2px solid var(--text-muted); display: grid; place-items: center; }
-.hbar span { transform: translateX(16px); }
+.hbar span { transform: translateX(9px); background: var(--surface-sunk); padding: 2px 0; }
 .kmwrap { display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: flex-start; }
 @media (max-width: 640px) { .km3 { --k: 52px; --lw: 40px; } }
 
@@ -169,3 +169,13 @@ sub { font-size: max(0.7em, 12px); }
 
 .pair { display: flex; flex-wrap: wrap; gap: var(--space-6); }
 .km.km3 { display: block; }
+
+/* 4-variable map: two bar tracks on each side; sizes step down at 640 and 359 px */
+.km3.km4 { width: calc(var(--lw) + 4 * var(--k) + 60px); height: calc(var(--lh) + 4 * var(--k) + 62px); }
+@media (max-width: 640px) { .km3.km4 { --k: 48px; --lw: 36px; } .stagecard { padding: var(--space-4); } .well { padding: var(--space-3); } }
+@media (max-width: 359px) {
+  .km3 { --k: 44px; --lw: 32px; }
+  .km3 .c { font-size: var(--text-md); }
+  .stagecard { padding: var(--space-4); }
+  .well { padding: var(--space-3); }
+}
