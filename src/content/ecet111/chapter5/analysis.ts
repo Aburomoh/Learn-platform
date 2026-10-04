@@ -145,12 +145,65 @@ export const analysisInputsActivity: Activity = {
   ],
 };
 
+/* ---------- stage 2 (#313): state equations, by substituting into the characteristic equation ---------- */
+
+const CHAR: Record<string, string> = { D: "Q(t+1) = D", JK: "Q(t+1) = JQ′ + K′Q", T: "Q(t+1) = T ⊕ Q" };
+const typeOf = (c: Circuit) => (c.inputs[0][0].startsWith("D") ? "D" : c.inputs[0][0].startsWith("J") ? "JK" : "T");
+
+function stateVariant(c: Circuit, ff: 0 | 1, i: number): VariantInput {
+  const v = c.vars[ff];
+  const type = typeOf(c);
+  const own = c.inputs.filter(([label]) => label.endsWith(v)).map(([label, expr]) => `${label} = ${show(expr)}`).join(", ");
+  const others = Object.keys(CHAR).filter((t) => t !== type);
+  const choices = [CHAR[type], CHAR[others[i % 2]]];
+  const order = i % 2 ? [choices[1], choices[0]] : choices;
+  return {
+    id: c.id,
+    prompt: `${c.name.split(" (")[0]}, with ${own}. Substitute into the characteristic equation and write ${v}(t+1) in A, B and x.`,
+    spec: { kind: "expression", vars: c.vars, target: c.next[ff] },
+    hints: [
+      { rung: 2, text: `Not yet. Start from the ${type} characteristic equation, with ${v} in place of Q.` },
+      { rung: 3, text: `${CHAR[type]}: put ${v} for Q and ${own} for the inputs.` },
+      { rung: 4, text: type === "JK" ? "Take care with K′: it is the complement of the whole K expression." : type === "T" ? "T ⊕ Q is TQ′ + T′Q; expand it if that helps." : "For D the next state is just the D input." },
+      { rung: 9, text: `${v}(t+1) = ${show(c.next[ff])}.` },
+    ],
+    misconceptions: [
+      { id: "ex.complement", title: "The complement of the next state", nudgeKey: "an.next-complement", detect: { type: "expression-complement" } },
+      { id: "ex.unreadable", title: "Unreadable", nudgeKey: "expr.unreadable", detect: { type: "expression-unreadable" } },
+    ],
+    explanation: [
+      { id: "s1", say: "Stage 2: each flip-flop's next state is its characteristic equation with its own inputs put in." },
+      {
+        id: "s2",
+        say: `${v} is a ${type} flip-flop.`,
+        ask: { prompt: "Which equation do we start from?", options: order, correctIndex: order.indexOf(CHAR[type]), afterCorrect: "Yes.", afterWrong: `For ${type}: ${CHAR[type]}.` },
+      },
+      { id: "s3", say: `With ${own}: ${v}(t+1) = ${show(c.next[ff])} (any equal form is fine).` },
+    ],
+  };
+}
+
+export const analysisStateActivity: Activity = {
+  id: "analysis-state",
+  title: "Analysis 2: state equations",
+  summary: "Put each flip-flop's input equations into its characteristic equation.",
+  authority: "DEMO",
+  minutes: 12,
+  questions: [
+    { id: "an.q.next-a", label: "A(t+1)", conceptId: "an.analysis", objectiveId: "an.obj.state", variants: CIRCUITS.map((c, i) => stateVariant(c, 0, i)) },
+    { id: "an.q.next-b", label: "B(t+1)", conceptId: "an.analysis", objectiveId: "an.obj.state", variants: CIRCUITS.map((c, i) => stateVariant(c, 1, i)) },
+  ],
+};
+
 export const analysisTopic: TopicInput = {
   id: "analysis",
   title: "Analysing clocked circuits",
   summary: "From a circuit to its behaviour, one stage at a time: input equations, state equations, the state table.",
   preview: "DA = Ax + Bx → A(t+1) = Ax + Bx",
   concepts: [{ id: "an.analysis", title: "Analysis", summary: "Input equations from the gates; state equations from the characteristic equations; the state table row by row." }],
-  objectives: [{ id: "an.obj.inputs", conceptId: "an.analysis", text: "Read the flip-flop input equations and the output equation from a circuit." }],
-  activities: [analysisInputsActivity],
+  objectives: [
+    { id: "an.obj.inputs", conceptId: "an.analysis", text: "Read the flip-flop input equations and the output equation from a circuit." },
+    { id: "an.obj.state", conceptId: "an.analysis", text: "Write the state equations by substituting into the characteristic equations." },
+  ],
+  activities: [analysisInputsActivity, analysisStateActivity],
 };

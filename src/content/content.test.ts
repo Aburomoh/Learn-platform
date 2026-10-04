@@ -11,7 +11,7 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
-import { equivalent, isPOS, isSOP, parseBool } from "./boolean";
+import { equivalent, isPOS, isSOP, mintermsOf, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
 import { columnTruth } from "@/kinds/truth-table/logic";
@@ -492,6 +492,22 @@ describe("content registry", () => {
     const x = getActivity(COURSE, "analysis", "analysis-inputs")!.activity;
     const targets = x.questions.map((q) => q.variants.map((v) => (v.spec.kind === "expression" ? v.spec.target : "")));
     expect(targets).toEqual([["Ax + Bx", "Bx'", "Bx"], ["(A + B)x'", "AB", "x + B'"]]);
+  });
+
+  it("analysis 2 (#313): each state equation is its characteristic equation with the inputs put in (pack Σ lists)", () => {
+    const x = getActivity(COURSE, "analysis", "analysis-state")!.activity;
+    const sig = x.questions.map((q) => q.variants.map((v) => (v.spec.kind === "expression" ? mintermsOf(parseBool(v.spec.target!, { vars: v.spec.vars }), v.spec.vars) : [])));
+    // A(t+1): D (3,5,7), JK (2,3,4,5,7), T (3,4,5,6); B(t+1): D (1,3), JK (0,2,4,7), T (1,2,5,6)
+    expect(sig).toEqual([[[3, 5, 7], [2, 3, 4, 5, 7], [3, 4, 5, 6]], [[1, 3], [0, 2, 4, 7], [1, 2, 5, 6]]]);
+    // and from the characteristic equations, with the stage 1 input equations put in
+    const vars = ["A", "B", "x"];
+    const sub = { D: (d: string) => d, JK: (j: string, k: string, q: string) => `(${j})${q}' + (${k})'${q}`, T: (t: string, q: string) => `(${t}) ⊕ ${q}` };
+    const viaChar = [
+      [sub.D("Ax + Bx"), sub.D("A'x")],
+      [sub.JK("B", "Bx'", "A"), sub.JK("x'", "A ⊕ x", "B")],
+      [sub.T("Bx", "A"), sub.T("x", "B")],
+    ];
+    expect([0, 1].map((ff) => viaChar.map((c) => mintermsOf(parseBool(c[ff], { vars }), vars)))).toEqual(sig);
   });
 
   it("resolves an activity by path", () => {
