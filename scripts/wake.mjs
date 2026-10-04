@@ -71,6 +71,14 @@ const argv = process.argv.slice(2);
 const mode = argv[0]?.startsWith("--") ? argv.shift() : "--show";
 
 if (mode === "--pending") {
+  // Runs at every session start, resume and context compaction (SessionStart hook). Compaction drops
+  // the standing "re-arm every 30 min" instruction, which silently stopped role sessions' watchers
+  // (Pedagogy and QA on 2026-10-04), so the reminder is printed every time.
+  console.log(
+    "Wake watcher: if this session holds a team role, make sure exactly one watcher runs now (Monitor tool, 30 min) and re-arm it at every expiry:\n" +
+      "  WAKE_POLL_SECONDS=120 node scripts/wake.mjs --watch <your-role-slug>\n" +
+      "Recover from repository truth: your charter agents/<role>.md, state agents/state/<role>.md, rules agents/SESSION_PROMPTS.md.",
+  );
   // Never fails a session start: without gh there is simply nothing to report.
   try {
     const alarms = Object.values(ROLES).map((r) => r.alarm);

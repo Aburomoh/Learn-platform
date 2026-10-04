@@ -11,7 +11,7 @@ const tutorPoses: TutorPoseTable = {
     neutral: "neutral",
     explaining: "explaining",
     thinking: "thinking",
-    curious: "focus",
+    curious: "curious",
     encouraging: "encouraging",
     concern: "try_again",
     pleased: "correct",
