@@ -16,7 +16,9 @@ import styles from "./TruthTable.module.css";
  */
 function layout(spec: TruthTableSpec, step: number | undefined) {
   const rows = rowCount(spec);
-  const inputs: TruthColumn[] = spec.inputs.map((name, i) => ({ id: `in-${i}`, header: name, role: "input", values: inputColumn(spec, i), given: !spec.fillInputs }));
+  // state tables (#440): "Present state" over the flip-flops, "Input" over x
+  const inputGroup = (spec.inputGroups ?? []).flatMap((g) => Array.from({ length: g.span }, () => g.label));
+  const inputs: TruthColumn[] = spec.inputs.map((name, i) => ({ id: `in-${i}`, header: name, role: "input", values: inputColumn(spec, i), given: !spec.fillInputs, group: inputGroup[i] }));
   const minterms: TruthColumn[] = spec.mintermColumn ? [{ id: "m", header: "m", role: "minterm", values: Array.from({ length: rows }, (_, r) => `m${r}`), given: true }] : [];
   const rest: TruthColumn[] = spec.columns.map((c, i) => ({ id: c.id, header: c.label, role: i === spec.columns.length - 1 ? "output" : "derived", values: columnTruth(spec, c), given: c.given, group: c.group }));
   const columns = spec.mintermColumn === "left" ? [...minterms, ...inputs, ...rest] : [...inputs, ...rest, ...minterms];
