@@ -183,6 +183,14 @@ export function StateDiagram({ id, states, positions, transitions, mode, done, l
               <g key={`${a.from}>${a.to}`} className={styles.arrow} data-arrow={`${a.from}>${a.to}`} data-state={kind}>
                 <path d={g.d} className={styles.arrowLine} />
                 <path d={head(g.tip, g.dir)} className={styles.arrowHead} />
+              </g>
+            );
+          })}
+          {/* labels in their own pass, above every arrow: a label's backing covers any line that passes under it */}
+          {[...arrows.values()].map((a) => {
+            const g = geometry.get(`${a.from}>${a.to}`)!;
+            return (
+              <g key={`${a.from}>${a.to}`} className={styles.labels}>
                 {a.items.map((it, k) => {
                   const y = g.label.y + 5 + (k - (a.items.length - 1) / 2) * 18;
                   const isNow = mode === "label" && it.index === done;

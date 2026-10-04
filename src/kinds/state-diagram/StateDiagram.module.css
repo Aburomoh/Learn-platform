@@ -62,13 +62,15 @@
   stroke-dasharray: 6 5;
 }
 
+/* the backing is the text's own outline in the well's colour, wide enough to hide a line under it */
 .arrowLabel {
   font-size: 16px;
   font-weight: 700;
   fill: var(--text);
   paint-order: stroke;
   stroke: var(--surface-sunk);
-  stroke-width: 4;
+  stroke-width: 7;
+  stroke-linejoin: round;
 }
 
 .arrowLabelNow {
