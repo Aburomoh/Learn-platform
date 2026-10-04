@@ -1,0 +1,143 @@
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.well {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunk);
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.body {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 700;
+  fill: var(--text);
+}
+
+.line path {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 2;
+}
+
+.line text {
+  font-size: 16px;
+  fill: var(--text);
+}
+
+.value {
+  font-weight: 700;
+}
+
+/* the answered line: signal colour, thicker, with its value printed (never colour alone) */
+.on path {
+  stroke: var(--signal-high);
+  stroke-width: 3.5;
+}
+
+.on text {
+  fill: var(--signal-high);
+  font-weight: 700;
+}
+
+.path {
+  fill: none;
+  stroke: var(--signal-high);
+  stroke-width: 3.5;
+  stroke-dasharray: 7 5;
+}
+
+/* tapping a line picks it, same as its chip */
+.live {
+  cursor: pointer;
+}
+
+.hit {
+  fill: transparent;
+  stroke: none;
+}
+
+.picked path {
+  stroke: var(--accent);
+  stroke-width: 3.5;
+}
+
+.picked text {
+  font-weight: 700;
+  fill: var(--accent);
+}
+
+/* ---- answer chips ---- */
+.answer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-width: 0;
+}
+
+.chip {
+  display: grid;
+  place-items: center;
+  min-width: 56px;
+  height: 48px;
+  padding: 0 var(--space-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-size: var(--text-md);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* chosen: filled with an inset ring, not colour alone */
+.chipOn {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--surface);
+  box-shadow: inset 0 0 0 3px var(--surface);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.chip:has(input:disabled) {
+  cursor: default;
+  opacity: 0.6;
+}
