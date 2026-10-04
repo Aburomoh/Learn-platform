@@ -52,9 +52,9 @@ describe("#223 derivation: step lines", () => {
     expect(runOn(typed, [line(1, "(A + A')(A + B)")], afterLaw).message).toBe("Good. Now the law for the next line.");
   });
 
-  it("a wrong law without a detector asks which part changed, without naming the law", () => {
+  it("a wrong law without a detector points at the line before, without naming the law", () => {
     const m = runOn(typed, [open, law(0, "absorb")]).message;
-    expect(m).toBe("Not quite. Compare the line before with the next line: which part changed?");
+    expect(m).toBe("Not quite. Look at the line before: which part could one of the laws rewrite?");
     expect(m.toLowerCase()).not.toContain("distributive");
   });
 

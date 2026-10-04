@@ -50,7 +50,7 @@ export const en = {
   "drv.line-not-equivalent": "That line does not equal the line before it. Check the law you applied.",
   "drv.line-skipped": "That is true, but it skips a step. Apply only this one law to the line before.",
   "drv.line-other": "That is valid algebra, but it is not the step this law gives. Apply only the law you named.",
-  "wrong.first.law": "Not quite. Compare the line before with the next line: which part changed?",
+  "wrong.first.law": "Not quite. Look at the line before: which part could one of the laws rewrite?",
   "wrong.first.line": "Not quite. Apply just the law you named to the line before.",
   "step.next-line": "Good. Now the line that law gives.",
   "step.next-law": "Good. Now the law for the next line.",
