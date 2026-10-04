@@ -1,7 +1,7 @@
 # Current State — Security / Privacy Engineer
 
-Current assignment: #72 owner decisions applied and verified; on wake, review student-data / external-service PRs.
-Recent important decision: Issue/PR comments limited to collaborators (renew before 2027-04-03, GitHub 6-month cap); commits use the noreply address only.
+Current assignment: ECET 111 completion without privacy regressions; act on wake:security / security-sensitive.
+Recent important decision: MyPics and ECET111 materials excluded from Vercel uploads and git (#364); tutor poses committed only as processed WebP without metadata (#355).
 Blocker: None
-Relevant issue/PR: #72
-Next expected action: Renew the interaction limit by 2027-04-03; any strict CSP must hash the two head scripts (#137, #163).
+Relevant issue/PR: #364, #256
+Next expected action: Renew the collaborators-only interaction limit before 2027-04-03 (#256); any strict CSP must hash the two head scripts (#137, #163).
