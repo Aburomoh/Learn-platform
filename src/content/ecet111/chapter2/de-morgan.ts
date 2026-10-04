@@ -60,11 +60,11 @@ const lineHints: HintInput[] = [
   { rung: 9, text: "This step uses {lawName}." },
 ];
 
-function stepsVariant(id: string, vars: string[], start: string, lines: Line[]): VariantInput {
+function stepsVariant(id: string, vars: string[], start: string, lines: Line[], k: number): VariantInput {
   return {
     id,
     prompt: `Find the complement F′ = ${show(start)} one step at a time: name the law, then pick the line.`,
-    spec: { kind: "derivation", vars, start, lines, lineMode: "choose" },
+    spec: { kind: "derivation", vars, start, lines, lineMode: "choose", shift: k },
     hints: lineHints,
     misconceptions: [
       { id: "dm.operator-kept", title: "Bar split but operator kept", nudgeKey: "dm.operator-kept", detect: { type: "line-not-equivalent" } },
@@ -140,9 +140,9 @@ export const deMorganTopic: TopicInput = {
           conceptId: "dm.complement",
           objectiveId: "dm.obj.complement",
           variants: [
-            stepsVariant("vdc-1", ["x", "y", "z"], "(x'yz' + x'y'z)'", F1),
-            stepsVariant("vdc-2", ["A", "B", "C"], "(AB' + A'C)'", FA),
-            stepsVariant("vdc-3", ["x", "y", "z"], "(xy + x'z)'", FX),
+            stepsVariant("vdc-1", ["x", "y", "z"], "(x'yz' + x'y'z)'", F1, 0),
+            stepsVariant("vdc-2", ["A", "B", "C"], "(AB' + A'C)'", FA, 1),
+            stepsVariant("vdc-3", ["x", "y", "z"], "(xy + x'z)'", FX, 2),
           ],
         },
       ],

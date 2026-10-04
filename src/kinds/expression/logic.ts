@@ -22,6 +22,17 @@ export function matchesFunction(spec: ExpressionSpec, e: BoolExpr, invert = fals
   return true;
 }
 
+/** A sum of products in which every product has each variable exactly once (canonical SOP). */
+export function isMintermSum(e: BoolExpr, vars: string[]): boolean {
+  if (!isSOP(e) || e.type === "const") return false;
+  const products = e.type === "or" ? e.args : [e];
+  return products.every((p) => {
+    const lits = p.type === "and" ? p.args : [p];
+    const names = lits.map((l) => (l.type === "not" ? (l.arg as { name: string }).name : (l as { name: string }).name));
+    return names.length === vars.length && vars.every((v) => names.includes(v));
+  });
+}
+
 const swapAndOr = (e: BoolExpr): BoolExpr =>
   e.type === "and" ? { type: "or", args: e.args.map(swapAndOr) } : e.type === "or" ? { type: "and", args: e.args.map(swapAndOr) } : e.type === "xor" ? { ...e, args: e.args.map(swapAndOr) } : e.type === "not" ? { ...e, arg: swapAndOr(e.arg) } : e;
 
@@ -39,7 +50,7 @@ export const expression: KindLogic<ExpressionSpec, ExpressionAnswer> = {
     const normalized = formatBool(e);
     if (matchesFunction(spec, e)) {
       // the right function; now the form the question asks for, then the size
-      const formOk = spec.form === "any" || (spec.form === "sop" ? isSOP(e) : isPOS(e));
+      const formOk = spec.form === "any" || (spec.form === "sop" ? isSOP(e) : spec.form === "pos" ? isPOS(e) : isMintermSum(e, spec.vars));
       if (!formOk) return { correct: false, normalized, misconceptionId: find("expression-wrong-form") };
       if (spec.maxLiterals !== undefined && literalCount(e) > spec.maxLiterals) return { correct: false, normalized, misconceptionId: find("expression-not-simplified") };
       return { correct: true, normalized };
