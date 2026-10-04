@@ -1,12 +1,9 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getTopic, listTopicParams } from "@/content";
-import { product } from "../../../../../config/product";
-import { PageFrame, PageHeading, PreviewBoard, TopicNext } from "@/shell/r1";
+import { CourseTutor, PageFrame, PageHeading, PreviewBoard, TopicNext } from "@/shell/r1";
 import styles from "@/shell/r1/r1.module.css";
 import { Notation } from "@/interactions/shared/Notation";
-import { resolveMessage } from "@/tutor";
-import { TutorCard } from "@/tutor/ui";
 
 type Params = { course: string; topic: string };
 
@@ -35,16 +32,15 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
   // The route names the first practice's challenges in order; unlabeled challenges are left out.
   const labels = topic.activities[0].questions.map((q) => q.label).filter(Boolean);
   const route = labels.length > 1 ? `Today: ${labels.join(" → ")}` : topic.summary;
-  const tutorLine = resolveMessage("page.topic.intro");
-  const tutor = { name: product.owner.shortName, message: tutorLine, portraitSrc: product.brand.tutorPortrait };
+  const tutor = { course, messageKey: "page.topic.intro" } as const;
 
   return (
-    <PageFrame back={{ label: course.code, href: `/courses/${course.id}/` }} demo={course.authority === "DEMO"} aside={<TutorCard {...tutor} size="lg" />}>
+    <PageFrame back={{ label: course.code, href: `/courses/${course.id}/` }} demo={course.authority === "DEMO"} aside={<CourseTutor {...tutor} size="lg" />}>
       <PageHeading eyebrow={eyebrow} title={topic.title} route={route} />
       {topic.preview && <PreviewBoard preview={topic.preview} />}
       {/* on wide screens the tutor sits in the right column instead */}
       <div className={styles.onlyNarrow}>
-        <TutorCard {...tutor} size="md" />
+        <CourseTutor {...tutor} size="md" />
       </div>
       <TopicNext course={course} topic={topic} />
       <details className={styles.more}>
