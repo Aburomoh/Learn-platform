@@ -493,6 +493,12 @@ describe("content registry", () => {
     expect(sums).toEqual([["C"], ["A + BC'"], ["x + z"], ["A + B'D"]]);
   });
 
+  it("three-variable exercises (#278): the pack's machine-worked covers, s.47 with both", () => {
+    const x = getActivity(COURSE, "kmap-three-exercises", "kmap-three-exercises")!.activity;
+    const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")).sort() : []));
+    expect(sums).toEqual([["x'y' + xy + z'"], ["x'y' + xy + xz'", "x'y' + xy + y'z'"], ["A + C'"], ["x'y' + z"]]);
+  });
+
   it("full adder table (#301): S = Σ(1,2,4,7), Co = Σ(3,5,6,7) as in the pack; one-row answers are the binary count", () => {
     const x = getActivity(COURSE, "full-adder", "full-adder-table")!.activity;
     const [row, table] = x.questions;
@@ -710,7 +716,7 @@ describe("authored truth is internally consistent", () => {
   });
 
   it("every multi-step kind follows the step contract: partial until the last step (ADR-0007)", () => {
-    expect([...MULTI_STEP_KINDS].sort()).toEqual(["base-to-decimal", "bit-grouping", "circuit-predict", "column-addition", "derivation", "kmap", "repeated-division", "truth-table"]);
+    expect([...MULTI_STEP_KINDS].sort()).toEqual(["base-to-decimal", "bit-grouping", "circuit-predict", "column-addition", "derivation", "device", "kmap", "repeated-division", "truth-table"]);
     for (const { path, variant } of allVariants()) {
       const spec = variant.spec;
       const n = stepCount(spec);
