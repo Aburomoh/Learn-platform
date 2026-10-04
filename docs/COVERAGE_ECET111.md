@@ -25,17 +25,17 @@ Prerequisites for new kinds: registry #196 (ADR-0008), Boolean module #197, UX r
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
 | Course intro, rules, textbook | 1–7, 48, 76 | CONTEXT | N/A | — | — | — |
-| Decimal place value (543.451) | 8–10 | CORE | MISSING | weights concept check | place-value kind | #213 |
-| Binary → decimal, with fraction (101.101) | 11–13 | CORE | MISSING | weights → terms → sum | place-value kind | #208, #209, #213 |
+| Decimal place value (543.451) | 8–10 | CORE | COVERED (Place value: Decimal weights) | weights concept check | place-value kind | #213 |
+| Binary → decimal, with fraction (101.101) | 11–13 | CORE | COVERED (Place value: Binary → decimal) | weights → terms → sum | place-value kind | #208, #209, #213 |
 | Decimal → binary by ÷2 (ladder) | 14–15, 31–44 | CORE | COMPLETE | — | repeated-division | `decimal-to-binary` KEEP |
-| Octal → decimal, with fraction (124.160) | 16–19 | CORE | MISSING | as binary | place-value kind | #213 |
+| Octal → decimal, with fraction (124.160) | 16–19 | CORE | COVERED (Place value: Octal → decimal) | as binary | place-value kind | #213 |
 | Octal → binary by digit replacement (246) | 21 | CORE | MISSING | one digit per goal | bit-grouping reverse | #210, #211, #214 |
 | Binary → octal, groups of 3, binary point | 22 | CORE (whole); WORKED + one practice (point) | PARTIAL (whole numbers only) | group outward from the point, once | bit-grouping + point | #210, #211, #214 |
-| Hex digits and 0–15 table | 23–25 | CORE | PARTIAL (hints only) | small table checks | multiple-choice | #215 |
-| Hex → decimal (1A3) | 26 | CORE | MISSING | weights → terms → sum | place-value kind | #213 |
+| Hex digits and 0–15 table | 23–25 | CORE | COVERED (practice "Hex digits: 0 to 15") | small table checks | multiple-choice | #215 |
+| Hex → decimal (1A3) | 26 | CORE | COVERED (Place value: Hex → decimal) | weights → terms → sum | place-value kind | #213 |
 | Hex → binary by digit replacement | 27–28 | CORE | MISSING | one digit per goal | bit-grouping reverse | #214 |
 | Binary → hex, groups of 4 (16-bit) | 29–30 | CORE | PARTIAL (short inputs) | longer inputs | bit-grouping | #214 |
-| Check octal/hex answer in decimal | 38, 44 | CORE | MISSING (explanation only) | own checked step | numeric base 10 | #215 |
+| Check octal/hex answer in decimal | 38, 44 | CORE | COVERED (Octal check, Hex check steps) | own checked step | numeric base 10 | #215 |
 | Binary addition | 45–47 | CORE | COMPLETE | — | column-addition | `binary-addition` KEEP |
 | Subtraction as A + 2's complement | 49–51 | CORE | COMPLETE | — | — | `subtraction-positive` KEEP |
 | 1's and 2's complement | 52–55 | CORE | COMPLETE | — | numeric bit-row, column-addition | `complements` KEEP |
