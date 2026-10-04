@@ -578,6 +578,12 @@ describe("content registry", () => {
     expect(right).toEqual(["x → S1, y → S0", "w → S2, x → S1, y → S0", "A → S2, B → S1, C → S0"]);
   });
 
+  it("full adder K-map (#303): Co = AB + BCi + ACi; S keeps its four minterms (no two 1s touch)", () => {
+    const x = getActivity(COURSE, "full-adder", "full-adder-kmap")!.activity;
+    const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
+    expect(sums).toEqual([["AB + ACi + BCi"], ["A'B'Ci + A'BCi' + AB'Ci' + ABCi"]]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -598,7 +604,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "fa.q.kmap"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
