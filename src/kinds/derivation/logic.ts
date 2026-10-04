@@ -105,18 +105,26 @@ export const derivation: KindLogic<DerivationSpec, DerivationAnswer> = {
  * The law chips of line `i`, rotated so the right law lands in a different place on each line,
  * never first on line 1 (Reviewer on #324, as for multiple choice on #273).
  */
+/**
+ * A per-set offset from the starting expression, so sets with the same number of lines do not
+ * share one answer pattern (QA on #344). Deterministic: the same set always looks the same.
+ */
+export function setOffset(spec: DerivationSpec): number {
+  return [...spec.start].reduce((acc, c) => (acc * 31 + c.charCodeAt(0)) % 9973, 7);
+}
+
 export function lawChips(spec: DerivationSpec, i: number): LawId[] {
   const opts = spec.lines[i].lawOptions;
   const at = opts.indexOf(spec.lines[i].law);
-  const want = (i + 1) % opts.length; // where the right law should end up
+  const want = (i + 1 + setOffset(spec)) % opts.length; // where the right law should end up
   const r = (((at - want) % opts.length) + opts.length) % opts.length;
   return [...opts.slice(r), ...opts.slice(0, r)];
 }
 
-/** The options of a choose-mode line goal: the right line (id "right") and the wrong ones, in a fixed rotation. */
+/** The options of a choose-mode line goal: the right line (id "right") and the wrong ones, rotated per line and per set. */
 export function lineOptions(spec: DerivationSpec, i: number): { id: string; expr: string }[] {
   const line = spec.lines[i];
   const all = [{ id: "right", expr: line.expr }, ...line.wrongLines.map((w) => ({ id: w.id, expr: w.expr }))];
-  const k = i % all.length;
+  const k = (i + 1 + setOffset(spec)) % all.length;
   return [...all.slice(k), ...all.slice(0, k)];
 }
