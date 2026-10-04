@@ -106,13 +106,29 @@ if (mode === "--alarm") {
   }
 } else if (mode === "--watch") {
   // Each stdout line is one alarm, so a session can stream this (e.g. Claude Code Monitor).
+  // Exit after max ~35 min (2100 s) to prevent accumulation (#350); Monitor re-arms every 30 min.
+  const MAX_LIFETIME_S = 2100;
   const every = Number(process.env.WAKE_POLL_SECONDS) || 60;
   // `ready` is shared by all engineer roles, so it is listed by `npm run wake <role>` but never alarms.
   const watched = all.filter((l) => l !== "ready");
   const seen = new Map();
   // Brief connection blips are normal (#60): only report once 3 polls in a row have failed.
   let failures = 0;
+  const startTime = Date.now();
   for (;;) {
+    // Exit if parent is gone (Monitor died without killing us) or max lifetime passed.
+    const elapsed = (Date.now() - startTime) / 1000;
+    if (elapsed > MAX_LIFETIME_S) {
+      process.exit(0);
+    }
+    // Check if the parent process still exists (works on UNIX; Windows ppid is always 1 in subprocesses).
+    try {
+      }
+    } catch {
+      // Parent is gone; exit cleanly.
+      process.exit(0);
+    }
+
     try {
       for (const it of openItems(watched, { merged: true })) {
         if (seen.get(it.number) === it.updatedAt) continue;
