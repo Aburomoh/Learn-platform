@@ -115,7 +115,9 @@ export const truthTable: KindLogic<TruthTableSpec, TruthTableAnswer> = {
       const goal = all[i];
       const columnLabel = goal.type === "input" ? spec.inputs[goal.index] : goal.column.label;
       const columnExpr = goal.type === "column" && goal.column.expr ? goal.column.expr : "";
-      return { ...base, columnLabel, columnExpr, columnCount: all.length };
+      // the column's values top to bottom, for the last hint rung only (#225)
+      const columnValues = (goal.type === "input" ? inputColumn(spec, goal.index) : columnTruth(spec, goal.column)).join(" ");
+      return { ...base, columnLabel, columnExpr, columnValues, columnCount: all.length };
     },
   },
 };

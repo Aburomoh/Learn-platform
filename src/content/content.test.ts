@@ -91,6 +91,17 @@ describe("content registry", () => {
             }
   });
 
+  it("never shows the same option twice, in a multiple-choice question or an Explain Slowly prediction (Reviewer on #338)", () => {
+    for (const { path, variant } of allVariants()) {
+      if (variant.spec.kind === "multiple-choice") {
+        const texts = variant.spec.options.map((o) => o.text);
+        expect(new Set(texts).size, `${path} options`).toBe(texts.length);
+      }
+      for (const step of variant.explanation)
+        if (step.ask) expect(new Set(step.ask.options).size, `${path} ${step.id} prediction`).toBe(step.ask.options.length);
+    }
+  });
+
   it("has unique ids within each scope", () => {
     const paths = listActivityParams().map((p) => `${p.course}/${p.topic}/${p.activity}`);
     expect(new Set(paths).size).toBe(paths.length);
@@ -296,6 +307,16 @@ describe("content registry", () => {
         n++;
       }
     expect(n).toBeGreaterThan(0);
+  });
+
+  it("derived gates (#225): outputs match the pack (NAND 1110, NOR 1000, XOR 0110, XNOR 1001)", () => {
+    const x = getActivity(COURSE, "derived-gates", "derived-gates")!.activity;
+    const last = (qi: number) =>
+      x.questions[qi].variants.map((v) => {
+        if (v.spec.kind !== "truth-table") throw new Error("expected a truth table");
+        return columnTruth(v.spec, v.spec.columns.at(-1)!).join("");
+      });
+    expect([0, 1, 2, 3].map(last)).toEqual([["1110", "1110", "1110"], ["1000", "1000", "1000"], ["0110", "0110", "0110"], ["1001", "1001", "1001"]]);
   });
 
   it("gate tables (#224): each table's stated answer is the column computed from its gate", () => {

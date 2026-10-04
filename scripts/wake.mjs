@@ -113,6 +113,26 @@ if (mode === "--alarm") {
   const seen = new Map();
   // Brief connection blips are normal (#60): only report once 3 polls in a row have failed.
   let failures = 0;
+  // A watcher must not outlive its session (#350): leaked watchers piled up to 174 processes.
+  // It exits when the parent shell is gone (process.kill(pid, 0) works on Windows and Unix), when
+  // stdout is closed, or after a maximum lifetime (the session re-arms it).
+  const parent = process.ppid;
+  const deadline = Date.now() + (Number(process.env.WAKE_MAX_MINUTES) || 35) * 60_000;
+  const parentAlive = () => {
+    try {
+      process.kill(parent, 0);
+      return true;
+    } catch (e) {
+      return e.code === "EPERM"; // exists but not ours to signal
+    }
+  };
+  process.stdout.on("error", () => process.exit(0));
+  const pause = async (ms) => {
+    for (const end = Date.now() + ms; Date.now() < end; ) {
+      if (!parentAlive() || Date.now() > deadline) process.exit(0);
+      await new Promise((r) => setTimeout(r, Math.min(5000, end - Date.now())));
+    }
+  };
   for (;;) {
     try {
       for (const it of openItems(watched, { merged: true })) {
@@ -127,7 +147,7 @@ if (mode === "--alarm") {
       const cause = String(e.stderr || "").trim().split("\n")[0] || String(e.message).split("\n")[0];
       if (++failures === 3) console.log(`WAKE-WATCH ERROR for ${role}: 3 polls failed, alarms are not being seen (${cause})`);
     }
-    await new Promise((r) => setTimeout(r, every * 1000));
+    await pause(every * 1000);
   }
 } else if (mode === "--show") {
   const show = (heading, path) => {
