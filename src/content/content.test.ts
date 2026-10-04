@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { courses, getActivity, listActivityParams } from "./index";
-import { evaluateCircuit, gateOrder, grade, valueToBits, bitsToValue, divisionSteps, groupBits, additionSteps, additionResult, additionStepVars, complementBits } from "./grade";
-import { MULTI_STEP_KINDS, hintsForStep, stepCount, stepTag, stepVars } from "./steps";
+import { additionResult, additionSteps, additionStepVars, bitsToValue, complementBits, divisionSteps, evaluateCircuit, gateOrder, grade, groupBits, valueToBits } from "./grade";
+import { hintsForStep, MULTI_STEP_KINDS, stepCount, stepTag, stepVars } from "./steps";
 import { contextFromVariant } from "@/tutor";
 import { InteractionSpec, MultipleChoiceSpec, NumericSpec, VariantSchema } from "./schema";
 import { addition1101 } from "./fixtures/columnAddition";
@@ -9,7 +9,7 @@ import { complement100101, complement110010 } from "./fixtures/onesComplement";
 import { hex26, octal88 } from "./fixtures/bitGrouping";
 import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
-import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
+import { placeValue29, placeValue45 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
 import { equivalent, formatCube, isPOS, isSOP, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
@@ -485,6 +485,18 @@ describe("content registry", () => {
     const x = getActivity(COURSE, "kmap-four", "kmap-four")!.activity;
     const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
     expect(sums).toEqual([["A + B'CD + BC'D"], ["w'z' + wxz + wy + x'z'"], ["wz' + x'z + y'z"]]);
+  });
+
+  it("don't-cares (#282): the slides' single minimal covers (C, A + BC′, x + z, A + B′D)", () => {
+    const x = getActivity(COURSE, "kmap-dont-cares", "kmap-dont-cares")!.activity;
+    const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
+    expect(sums).toEqual([["C"], ["A + BC'"], ["x + z"], ["A + B'D"]]);
+  });
+
+  it("three-variable exercises (#278): the pack's machine-worked covers, s.47 with both", () => {
+    const x = getActivity(COURSE, "kmap-three-exercises", "kmap-three-exercises")!.activity;
+    const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")).sort() : []));
+    expect(sums).toEqual([["x'y' + xy + z'"], ["x'y' + xy + xz'", "x'y' + xy + y'z'"], ["A + C'"], ["x'y' + z"]]);
   });
 
   it("resolves an activity by path", () => {
