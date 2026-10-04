@@ -4,6 +4,7 @@
  * content before any production release. Every entity below is stamped authority: "DEMO".
  */
 import type { CourseInput } from "../schema";
+import { placeValueTopic } from "./chapter1/place-value";
 import { numberSystemsTopic } from "./chapter1/number-systems";
 import { binaryArithmeticTopic } from "./chapter1/binary-arithmetic";
 import { basicGatesTopic } from "./chapter2/basic-gates";
@@ -22,6 +23,7 @@ export const ecet111: CourseInput = {
       id: "chapter-1",
       title: "Chapter 1 · Digital Systems and Binary Numbers",
       topics: [
+        placeValueTopic,
         numberSystemsTopic,
         binaryArithmeticTopic,
       ],
