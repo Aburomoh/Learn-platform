@@ -1,12 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { CircuitSpec, ColumnAdditionSpec, NumericContext, Variant } from "@/content/schema";
+import { createElement, type ComponentType } from "react";
+import type { ColumnAdditionSpec, InteractionSpec, NumericContext, Variant } from "@/content/schema";
 import type { Answer, GradeResult } from "@/content/grade";
 import { stepCount, stepTag, stepVars } from "@/content/steps";
 import { Notation } from "@/interactions/shared/Notation";
 import { fill } from "@/content/template";
-import { MultipleChoice, NumericInput, PlaceValueDiagram, CircuitDiagram, DivisionChain, BitGrouping, ColumnAddition, BitRow, type AdditionColumn, PredictionBeforeReveal, type Bit, type PredictionResult } from "@/interactions";
+// direct imports, not the barrel: the barrel would pull every component into the stage chunk
+import { MultipleChoice } from "@/interactions/MultipleChoice/MultipleChoice";
+import { NumericInput } from "@/interactions/NumericInput/NumericInput";
+import { DivisionChain } from "@/interactions/DivisionChain/DivisionChain";
+import { BitGrouping } from "@/interactions/BitGrouping/BitGrouping";
+import { ColumnAddition, type AdditionColumn } from "@/interactions/ColumnAddition/ColumnAddition";
+import { BitRow } from "@/interactions/BitRow/BitRow";
+import { PredictionBeforeReveal, type PredictionResult } from "@/interactions/PredictionBeforeReveal/PredictionBeforeReveal";
+import { isRegisteredKind, type RegisteredKind } from "@/kinds";
+import type { ExplainProps, PracticeProps } from "@/kinds/types";
+import { kindUI } from "@/kinds/ui";
 import { BitGroups } from "./BitGroups";
 import styles from "./Stage.module.css";
 
@@ -64,6 +74,16 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
   );
 }
 
+type RegisteredSpec = Extract<InteractionSpec, { kind: RegisteredKind }>;
+
+/** True for a kind that lives in `src/kinds/` (ADR-0008); its views are loaded on demand. */
+function isRegistered(spec: InteractionSpec): spec is RegisteredSpec {
+  return isRegisteredKind(spec.kind);
+}
+
+// One cast at the dispatch: the registry pairs each kind with its own props.
+const views = kindUI as Record<RegisteredKind, { Practice: ComponentType<PracticeProps<InteractionSpec, Answer>>; Explain: ComponentType<ExplainProps<InteractionSpec>> }>;
+
 /** Every step of a column addition as the component draws it, read from the step contract. */
 function additionColumns(spec: ColumnAdditionSpec): AdditionColumn[] {
   return Array.from({ length: stepCount(spec) }, (_, i) => {
@@ -111,20 +131,12 @@ function PracticeInput({
   onSubmit: (a: Answer) => void;
 }) {
   const spec = variant.spec;
-  const [digits, setDigits] = useState<Bit[]>(() =>
-    spec.kind === "place-value" && last?.answer.kind === "place-value" ? last.answer.digits : Array.from({ length: spec.kind === "place-value" ? spec.slots : 0 }, () => null),
-  );
+  if (isRegistered(spec)) {
+    return createElement(views[spec.kind].Practice, { variant, prompt, state, last, stepIndex, locked, onSubmit });
+  }
 
+  // Kinds not migrated to `src/kinds/` yet.
   switch (spec.kind) {
-    case "place-value":
-      return (
-        <>
-          <p className={styles.prompt}>
-            <Notation text={prompt} />
-          </p>
-          <PlaceValueDiagram id={variant.id} slots={spec.slots} digits={digits} onChange={setDigits} readOnly={locked} state={state} onSubmit={() => onSubmit({ kind: "place-value", digits })} />
-        </>
-      );
     case "repeated-division": {
       const finished = state === "correct";
       return (
@@ -238,8 +250,6 @@ function PracticeInput({
         </>
       );
     }
-    case "circuit-predict":
-      return <CircuitWalk variant={variant} spec={spec} prompt={prompt} state={state} last={last} stepIndex={stepIndex} locked={locked} onSubmit={onSubmit} />;
     default: {
       // A new spec kind must get a renderer here: an unhandled kind is a compile error.
       const unhandled: never = spec;
@@ -248,97 +258,12 @@ function PracticeInput({
   }
 }
 
-/**
- * Circuit question answered one gate at a time, in signal-flow order. The gate being asked is
- * outlined; gates already answered stay lit with their value; the last gate gives Y.
- */
-function CircuitWalk({
-  variant,
-  spec,
-  prompt,
-  state,
-  last,
-  stepIndex,
-  locked,
-  onSubmit,
-}: {
-  variant: Variant;
-  spec: CircuitSpec;
-  prompt: string;
-  state: "idle" | "correct" | "incorrect";
-  last?: { answer: Answer; result: GradeResult };
-  stepIndex: number;
-  locked: boolean;
-  onSubmit: (a: Answer) => void;
-}) {
-  const [inputs, setInputs] = useState<Record<string, 0 | 1>>({});
-  // Gate order comes from the step contract (ADR-0007): step i asks about one gate.
-  const order = useMemo(() => Array.from({ length: stepCount(spec) }, (_, i) => String(stepVars(spec, i).gateId)), [spec]);
-  const step = Math.min(stepIndex, order.length - 1);
-  const gate = spec.gates.find((g) => g.id === order[step])!;
-  const isOutput = step === order.length - 1;
-  const finished = locked && state === "correct";
-  const explore = finished && spec.inputsToggleable;
-
-  // The answer form is replaced on each step; keep keyboard focus with the new question.
-  const answerRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (step > 0 && !finished) answerRef.current?.querySelector<HTMLInputElement>("input[type='radio']")?.focus();
-  }, [step, finished]);
-
-  return (
-    <>
-      <p className={styles.prompt}>
-            <Notation text={prompt} />
-          </p>
-      <CircuitDiagram
-        id={variant.id}
-        spec={spec}
-        inputs={explore ? inputs : undefined}
-        onToggleInput={explore ? (id, v) => setInputs((prev) => ({ ...prev, [id]: v })) : undefined}
-        revealOutput={finished}
-        lit={finished ? order : order.slice(0, step)}
-        activeGateId={finished ? undefined : gate.id}
-      />
-      {explore && <p className={styles.hintText}>Explore: toggle A, B or C and watch Y change.</p>}
-      {!finished && (
-        <p className={styles.walkStep} aria-live="polite">
-          Gate {step + 1} of {order.length}: {gate.type}
-        </p>
-      )}
-      <div ref={answerRef}>
-        <MultipleChoice
-          key={step}
-          id={`${variant.id}-${gate.id}`}
-          prompt={isOutput ? `What comes out of the ${gate.type} gate? That is Y.` : `What comes out of the ${gate.type} gate?`}
-          options={[
-            { id: "0", text: isOutput ? "Y = 0" : "0" },
-            { id: "1", text: isOutput ? "Y = 1" : "1" },
-          ]}
-          disabled={locked}
-          state={state}
-          submittedOptionId={last?.answer.kind === "circuit-predict" ? String(last.answer.output) : undefined}
-          onAnswer={(optionId) => onSubmit({ kind: "circuit-predict", step, output: optionId === "1" ? 1 : 0 })}
-        />
-      </div>
-    </>
-  );
-}
-
 function ExplainVisual({ variant, stage, isLast, answered, hasAsk }: { variant: Variant; stage: Record<string, unknown>; isLast: boolean; answered: boolean; hasAsk: boolean }) {
   const spec = variant.spec;
+  if (isRegistered(spec)) {
+    return createElement(views[spec.kind].Explain, { variant, stage, isLast, answered, hasAsk });
+  }
   switch (spec.kind) {
-    case "place-value":
-      return (
-        <PlaceValueDiagram
-          id={variant.id}
-          slots={spec.slots}
-          digits={Array.from({ length: spec.slots }, () => null)}
-          lit={(stage.lit as number[] | undefined) ?? []}
-          attention={stage.attention as number | undefined}
-          remainder={stage.remainder as number | undefined}
-        />
-      );
     case "repeated-division":
       return <DivisionChain id={variant.id} steps={spec.steps} stepIndex={(stage.revealed as number | undefined) ?? 0} attention={stage.attention as number | undefined} />;
     case "numeric":
@@ -365,11 +290,6 @@ function ExplainVisual({ variant, stage, isLast, answered, hasAsk }: { variant: 
           attention={grouped ? asked : undefined}
         />
       );
-    }
-    case "circuit-predict": {
-      const active = stage.active as string | undefined;
-      const lit = (stage.lit as string[] | undefined) ?? [];
-      return <CircuitDiagram id={variant.id} spec={spec} lit={active && answered ? [...lit, active] : lit} activeGateId={active} revealOutput={isLast} />;
     }
     case "column-addition": {
       // stage.revealed = completed steps shown; stage.attention = step to outline.

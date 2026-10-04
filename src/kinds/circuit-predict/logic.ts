@@ -1,0 +1,86 @@
+import type { TemplateVars } from "@/content/template";
+import type { KindLogic } from "../types";
+import type { CircuitSpec } from "./spec";
+
+/** `step` indexes gateOrder(spec): the gate being answered. Omitted = the output gate. */
+export type CircuitAnswer = { kind: "circuit-predict"; output: 0 | 1; step?: number };
+
+export const circuitPredict: KindLogic<CircuitSpec, CircuitAnswer> = {
+  grade(variant, answer) {
+    const spec = variant.spec;
+    const order = gateOrder(spec);
+    const step = answer.step ?? order.length - 1;
+    const gate = spec.gates.find((g) => g.id === order[step]);
+    if (!gate) throw new Error(`No gate step ${step}`);
+    const correct = answer.output === evaluateCircuit(spec)[gate.id];
+    const normalized = `${gate.id}=${answer.output}`;
+    if (correct) return { correct, normalized, partial: step < order.length - 1 };
+    const hit = variant.misconceptions.find((m) => m.detect.type === "gate-output" && m.detect.gate === gate.type);
+    return { correct, normalized, misconceptionId: hit?.id };
+  },
+  // Gate-by-gate circuit walk, in signal-flow order; the output gate is the last step.
+  steps: {
+    count: (spec) => spec.gates.length,
+    tag: () => "gate",
+    vars: (spec, i) => {
+      const order = gateOrder(spec);
+      const gate = spec.gates.find((g) => g.id === order[i])!;
+      const values = evaluateCircuit(spec);
+      const vars: TemplateVars = { stepNumber: i + 1, gateCount: order.length, gateId: gate.id, gateName: gate.type, gateOut: values[gate.id] };
+      // Per input n: its value, plus the circuit input's label or the type of the gate feeding it.
+      gate.from.forEach((source, k) => {
+        const n = k + 1;
+        vars[`in${n}`] = values[source];
+        const input = spec.inputs.find((x) => x.id === source);
+        if (input) vars[`in${n}Label`] = input.label;
+        else vars[`in${n}Gate`] = spec.gates.find((g) => g.id === source)!.type;
+      });
+      return vars;
+    },
+  },
+};
+
+/** Evaluates a circuit spec; used by content tests to confirm authored answers. */
+export function evaluateCircuit(spec: CircuitSpec, inputOverride?: Record<string, 0 | 1>): Record<string, 0 | 1> {
+  const values: Record<string, 0 | 1> = {};
+  for (const inp of spec.inputs) values[inp.id] = inputOverride?.[inp.id] ?? inp.value;
+  const pending = [...spec.gates];
+  let guard = 0;
+  while (pending.length && guard++ < 50) {
+    const g = pending.shift()!;
+    if (!g.from.every((f) => f in values)) {
+      pending.push(g);
+      continue;
+    }
+    const [x, y] = g.from.map((f) => values[f]);
+    values[g.id] = gateOutput(g.type, x, y);
+  }
+  if (pending.length) throw new Error("Circuit has unresolved gates (cycle or missing input)");
+  return values;
+}
+
+/** Gate ids in signal-flow order (every gate after its sources), the output gate last. */
+export function gateOrder(spec: CircuitSpec): string[] {
+  const ready = new Set(spec.inputs.map((i) => i.id));
+  const order: string[] = [];
+  const pending = spec.gates.filter((g) => g.id !== spec.outputGateId);
+  while (pending.length) {
+    const i = pending.findIndex((g) => g.from.every((f) => ready.has(f)));
+    if (i < 0) throw new Error("Circuit has unresolved gates (cycle or missing input)");
+    const [g] = pending.splice(i, 1);
+    ready.add(g.id);
+    order.push(g.id);
+  }
+  return [...order, spec.outputGateId];
+}
+
+export function gateOutput(type: CircuitSpec["gates"][number]["type"], x: 0 | 1, y: 0 | 1 = 0): 0 | 1 {
+  switch (type) {
+    case "AND": return x && y ? 1 : 0;
+    case "OR": return x || y ? 1 : 0;
+    case "NOT": return x ? 0 : 1;
+    case "XOR": return x !== y ? 1 : 0;
+    case "NAND": return x && y ? 0 : 1;
+    case "NOR": return x || y ? 0 : 1;
+  }
+}

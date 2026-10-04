@@ -4,13 +4,15 @@
  * explanation steps and variants so an author can read one object top to bottom.
  */
 import { z } from "zod";
+import { GateType } from "@/kinds/circuit-predict/spec";
+import { kindDetectors, kindSpecs } from "@/kinds/specs";
+import { id, template } from "./primitives";
+
+export { GateType };
+export { PlaceValueSpec } from "@/kinds/place-value/spec";
+export { CircuitSpec } from "@/kinds/circuit-predict/spec";
 
 export const Authority = z.enum(["DEMO", "APPROVED"]);
-
-const id = z.string().regex(/^[a-z0-9][a-z0-9.-]*$/, "ids are lowercase, dot/dash separated");
-
-/** Template text: `{name}` slots are filled from the variant's `vars`. */
-const template = z.string().min(1);
 
 export const ConceptSchema = z.object({
   id,
@@ -55,14 +57,12 @@ export const ExplanationStepSchema = z.object({
     .optional(),
 });
 
-export const GateType = z.enum(["AND", "OR", "NOT", "XOR", "NAND", "NOR"]);
-
-/** How a wrong answer is recognised as a known misconception. */
+/**
+ * How a wrong answer is recognised as a known misconception. Detectors of kinds that live in
+ * `src/kinds/` come from the registry (`kindDetectors`); the rest are listed here until migrated.
+ */
 export const MisconceptionDetector = z.discriminatedUnion("type", [
   z.object({ type: z.literal("equals"), value: z.union([z.string(), z.number()]) }),
-  z.object({ type: z.literal("reversed-bits") }),
-  z.object({ type: z.literal("missing-place"), place: z.number().int().positive() }),
-  z.object({ type: z.literal("extra-place"), place: z.number().int().positive() }),
   z.object({ type: z.literal("option"), optionId: id }),
   /** Division step: quotient right but remainder wrong. */
   z.object({ type: z.literal("division-remainder") }),
@@ -86,8 +86,7 @@ export const MisconceptionDetector = z.discriminatedUnion("type", [
   z.object({ type: z.literal("group-wrong-size") }),
   /** Bit grouping, digit step: wrote the group's decimal value (13) instead of its digit (D). */
   z.object({ type: z.literal("digit-as-decimal") }),
-  /** Circuit walk: wrong output for a gate of this type. */
-  z.object({ type: z.literal("gate-output"), gate: GateType }),
+  ...kindDetectors,
 ]);
 
 export const MisconceptionSchema = z.object({
@@ -99,17 +98,6 @@ export const MisconceptionSchema = z.object({
 });
 
 /* ---------- Interaction specs (kind-specific, deterministic truth) ---------- */
-
-/** Place value bits: the student fills a row of place-value slots to represent `value` in `base`. */
-export const PlaceValueSpec = z.object({
-  kind: z.literal("place-value"),
-  value: z.number().int().min(0),
-  base: z.literal(2),
-  /** Number of slots shown, most significant first. */
-  slots: z.number().int().min(2).max(8),
-  /** Correct answer: digits most-significant first, length === slots. */
-  answer: z.array(z.union([z.literal(0), z.literal(1)])),
-});
 
 const DivisionStep = z.object({
   dividend: z.number().int().positive(),
@@ -205,21 +193,8 @@ export const MultipleChoiceSpec = z.object({
   context: NumericContext.optional(),
 });
 
-export const CircuitSpec = z.object({
-  kind: z.literal("circuit-predict"),
-  inputs: z.array(z.object({ id, label: z.string(), value: z.union([z.literal(0), z.literal(1)]) })).min(1).max(3),
-  gates: z
-    .array(z.object({ id, type: GateType, from: z.array(z.string()).min(1).max(2), label: z.string().optional() }))
-    .min(1)
-    .max(4),
-  outputGateId: id,
-  /** Authored output; a content test asserts it equals the evaluated circuit. */
-  answer: z.union([z.literal(0), z.literal(1)]),
-  /** Whether the student may toggle inputs on the diagram before answering. */
-  inputsToggleable: z.boolean().default(false),
-});
-
-export const InteractionSpec = z.discriminatedUnion("kind", [PlaceValueSpec, NumericSpec, MultipleChoiceSpec, CircuitSpec, RepeatedDivisionSpec, ColumnAdditionSpec, BitGroupingSpec]);
+/** Kinds from the registry (`src/kinds/specs.ts`) plus the kinds not migrated yet (ADR-0008). */
+export const InteractionSpec = z.discriminatedUnion("kind", [...kindSpecs, NumericSpec, MultipleChoiceSpec, RepeatedDivisionSpec, ColumnAdditionSpec, BitGroupingSpec]);
 
 /** A concrete instance of a question. The first variant is primary; others are retry variations. */
 export const VariantSchema = z.object({
@@ -297,7 +272,6 @@ export type LearningObjective = z.infer<typeof LearningObjectiveSchema>;
 export type Hint = z.infer<typeof HintSchema>;
 export type ExplanationStep = z.infer<typeof ExplanationStepSchema>;
 export type Misconception = z.infer<typeof MisconceptionSchema>;
-export type PlaceValueSpec = z.infer<typeof PlaceValueSpec>;
 export type NumericSpec = z.infer<typeof NumericSpec>;
 export type NumericContext = z.infer<typeof NumericContext>;
 export type RepeatedDivisionSpec = z.infer<typeof RepeatedDivisionSpec>;
@@ -305,7 +279,6 @@ export type DivisionStep = z.infer<typeof DivisionStep>;
 export type ColumnAdditionSpec = z.infer<typeof ColumnAdditionSpec>;
 export type BitGroupingSpec = z.infer<typeof BitGroupingSpec>;
 export type MultipleChoiceSpec = z.infer<typeof MultipleChoiceSpec>;
-export type CircuitSpec = z.infer<typeof CircuitSpec>;
 export type InteractionSpec = z.infer<typeof InteractionSpec>;
 export type Variant = z.infer<typeof VariantSchema>;
 export type Question = z.infer<typeof QuestionSchema>;
