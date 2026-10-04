@@ -51,9 +51,9 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 | Subtopic | Pages | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
 | AND, OR, NOT symbols and truth tables | 4–6 | CORE | COVERED (Basic gates: tables + gate walk) | fill per column; gate walk | truth-table, circuit-predict | #224 |
-| NAND, NOR (intermediate column) | 7–10 | CORE | MISSING | column by column | truth-table | #225 |
-| XOR as AB'+A'B, XNOR | 11–18 | CORE | MISSING | A', B', products, F | truth-table | #225 |
-| 3-input gates, rows = 2ⁿ | 19–20 | CORE | MISSING | row count, fill | truth-table | #225 |
+| NAND, NOR (intermediate column) | 7–10 | CORE | COVERED (Derived gates) | column by column | truth-table | #225 |
+| XOR as AB'+A'B, XNOR | 11–18 | CORE | COVERED (Derived gates, column by column) | A', B', products, F | truth-table | #225 |
+| 3-input gates, rows = 2ⁿ | 19–20 | CORE | COVERED (Rows = 2ⁿ check; 3-input AND/OR tables in #224) | row count, fill | truth-table | #225 |
 | Expression → circuit, circuit → expression | 21–25 | CORE | MISSING | one gate output per goal | expression, MC | #226 |
 | SOP vs POS | 26–30 | CORE (POS recognition only) | COVERED (SOP or POS check) | tag parts; no 0-rows → POS, no maxterms | MC | #227 |
 | Expression ↔ truth table | 31–36 | CORE | COVERED (SOP → table; 1-rows → SOP) | 1-rows; rows → SOP | truth-table row-select, expression | #227 |

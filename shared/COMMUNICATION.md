@@ -23,3 +23,8 @@ Recommended option:
 Decision needed from:
 
 After two genuinely different failed approaches, escalate.
+
+## CI policy
+- Before pushing code, run the cheapest relevant local checks (the pre-push hook runs typecheck and lint; add the unit tests you touched). Never push known-broken work: CI is the verification gate, not the first debugger.
+- Batch coherent edits into one push; open PRs as draft until they're ready for review. Docs/state-only PRs skip the build and browser jobs.
+- After merging main into your branch, run typecheck before pushing (conflict markers and duplicate keys are the usual misses).

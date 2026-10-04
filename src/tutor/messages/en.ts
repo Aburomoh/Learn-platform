@@ -105,6 +105,7 @@ export const en = {
   "lg.follow-through": "The NOT output is not the final answer. Follow the signal through the next gates.",
   "lg.or-vs-and": "OR is satisfied by any 1. Which gate needs every input to be 1?",
   "lg.xor-vs-and": "XOR outputs 1 when the inputs differ. That is not what the question asks.",
+  "dg.highest-row": "That is the number of the last row. Rows are numbered from 0, so there is one more row than that.",
   "lg.nand-not": "NAND takes two inputs. Which gate takes just one and flips it?",
   "lg.nand-inverted": "NAND is the opposite of AND. Think about what it outputs when both inputs are 1.",
   "lg.check-xor": "Look at the XOR gate again. It gives 1 only when its two inputs are different.",
