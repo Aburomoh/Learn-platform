@@ -199,7 +199,7 @@ const decimalToDigit = (n: number, k: number) =>
   tableVariant(`vdec${n}`, `Which hexadecimal digit stands for ${n}?`, hex(n), [String(n), hex(n - 1), hex(Math.min(n + 1, 15))], `${n} is written ${hex(n)} in hexadecimal.`, k);
 /** Hex digit → 4 bits; wrong: the bits reversed, the neighbour's bits. */
 const digitToBits = (n: number, k: number) =>
-  tableVariant(`vhex${n}`, `Which 4 bits stand for the hex digit ${hex(n)}?`, bits4(n), [[...bits4(n)].reverse().join(""), bits4(n - 1), bits4((n + 1) % 16)], `${hex(n)} = ${n} = ${bits4(n)}: ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")}.`, k);
+  tableVariant(`vhex${n}`, `Which 4 bits stand for the hex digit ${hex(n)}?`, bits4(n), [[...bits4(n)].reverse().join(""), bits4(n - 1), bits4((n + 1) % 16)], `${hex(n) === String(n) ? n : `${hex(n)} = ${n}`} = ${bits4(n)}: ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")}.`, k);
 /** 4 bits → hex digit; wrong: the bits read reversed, the decimal value for a letter digit. */
 const bitsToDigit = (n: number, k: number) =>
   tableVariant(`vbits${n}`, `Which hex digit is ${bits4(n)}?`, hex(n), [hex(parseInt([...bits4(n)].reverse().join(""), 2)), n >= 10 ? String(n) : hex(n + 1), hex(n ^ 1)], `${bits4(n)} = ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")} = ${n}, written ${hex(n)}.`, k);
