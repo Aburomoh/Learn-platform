@@ -99,6 +99,7 @@ export const en = {
   "tt.not-missing": "A bar or prime flips a value. Did you flip it before using it?",
   "tt.rows-out-of-order": "The rows count up in binary, starting from all zeros. The last input changes on every row.",
   "tt.rows-inverted": "Those are the rows where it is 0. Pick the rows where it is 1.",
+  "ff.zero-rows": "That expression is 1 where Q(t+1) is 0. Build it from the rows where Q(t+1) = 1.",
   "ff.equation-swapped": "Check the equation: it is JQ′ + K′Q. Which Q goes with J, and which with K?",
   "ff.not-simplified": "That is the right function, but it can be shorter. Group the rows by what Q was before.",
   "ff.jk-11-invalid": "1 1 is not allowed on an SR flip-flop, but JK was built to fix that. What does JK do with 1 1?",
