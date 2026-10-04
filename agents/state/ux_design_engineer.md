@@ -1,7 +1,7 @@
 # Current State — UX / Design Engineer
 
 Current assignment: Complete ECET 111 (#192): design specs ahead of Frontend, one verdict per screen PR at 390 and 1280 px.
-Recent important decision: §13 build notes for K-map, timing and state-diagram views; K-map view #377 approved with a badge fix; half/full adder screens approved; tutor poses: waist-up in columns, head crop in the strip.
+Recent important decision: All new kind views have a UX verdict (K-map, timing, state diagram, device, mux pairs, bit-grouping point, latch figure); every open lesson PR swept live on its first screen; expressive poses limited to five moments (#419).
 Blocker: None
-Relevant issue/PR: #377 K-map view, #384 K-map follow-ups, #238 timing view, #240 state-diagram view, #333, #340. 18 extra expressive tutor poses exist locally (MyPics/tutor-pose-library/expressive); not integrated, needs an owner request.
-Next expected action: Verdicts on the timing and state-diagram view PRs; live check of each new Chapter 3–5 screen at 390 and 1280 px.
+Relevant issue/PR: #440 (state-table input headers: check on #418 once it sets inputGroups), #394 (label paint order), #378 (pose expressions with AI Tutor; Pedagogy to confirm caution/reassuring), #371 (Pedagogy: K-map 'fill the rest with 0'), #333, #340.
+Next expected action: Live check of the first timing and state-diagram lessons when content lands; walk each chapter end to end at 390 and 1280 px before its quality gate.

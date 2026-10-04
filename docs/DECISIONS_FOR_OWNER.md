@@ -13,6 +13,7 @@ Do not escalate deterministic, computable answers (Boolean, conversions, state t
 - Phone check (#153): type bits into a filled row on a real phone and confirm each digit lands in the next cell. Development and merges do not wait for it.
 
 ## Resolved
+- 2026-10-05 — Pipeline fragmentation (owner, Technical Lead session): one PR per coherent learning unit; Pedagogy reviews upstream (new behaviour, scaffolding rules, new kinds, deviations from approved packs), not every faithful implementation; QA by risk (new kinds, major screens, behaviour changes, fixes, chapter integration), with routine content on tested kinds merging on Reviewer (answers verified independently) + CI; Vercel previews only for app-affecting changes, label-triggered if still near the Hobby limit (no plan upgrade); owner preview refreshed after milestones; P0 work first. Recorded in `agents/SESSION_PROMPTS.md` (#444).
 - 2026-10-04 — Answer confirmations and slide notes (owner, quoted on #192):
   - **A1** Ch.4 s.56: confirmed. F(w,x,y,z) = Σ(1,2,5,11,13), selects x,y,z, data w: I0…I7 = 0, w′, w′, w, 0, 1, 0, 0.
   - **A2** Ch.5 computed answers: approved, provided QA verifies each one independently and timing and state exercises state their initial state (000 where needed).

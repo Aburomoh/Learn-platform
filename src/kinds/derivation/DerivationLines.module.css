@@ -35,10 +35,19 @@
   text-align: right;
 }
 
+/* a wrapping row of terms: each " + term" is one item, so a long line breaks between terms (#438) */
 .expr {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.5ch;
   min-width: 0;
   font-size: var(--text-lg);
   font-weight: 600;
+}
+
+.more {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
 }
 
 /* a term never breaks inside; a long line wraps only between terms (before " + ") */
@@ -71,6 +80,10 @@
   .law {
     grid-column: 2;
     text-align: left;
+  }
+  /* more lines fit without wrapping */
+  .expr {
+    font-size: var(--text-md);
   }
 }
 
