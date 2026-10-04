@@ -24,7 +24,7 @@ and expect to be **remounted when the step advances**:
 
 ## Kinds live in `src/kinds/`
 
-A component that belongs to one interaction kind lives in that kind's folder (ADR-0008, see
-`src/kinds/README.md`): `CircuitDiagram` and `PlaceValueDiagram` have moved there. This folder
-keeps the components several kinds share. Import them by file, not through `index.ts`, in code
-that ships to the browser: the barrel would pull every component into one chunk.
+A component that belongs to one interaction kind only lives in that kind's folder (ADR-0008, see
+`src/kinds/README.md`): `CircuitDiagram` and `PlaceValueDiagram` are there. This folder keeps the
+components several kinds or contexts share. Browser code imports them by file, never through
+`index.ts` (a lint rule enforces it): the barrel would pull every component into one chunk.
