@@ -1,6 +1,6 @@
 # ECET 111 coverage matrix (#192, #193)
 
-Execution checklist, updated at every merge. Content packs (verified answers, layouts): `docs/content-packs/ecet111/` (Ch.2 #269, Ch.3 #274).
+Execution checklist, updated at every merge. Content packs (verified answers, layouts): `docs/content-packs/ecet111/` (Ch.2 #269, Ch.3 #274, Ch.5 Part III #288).
 Source: the owner's decks in `ECET111 materials/` (read
 visually, never committed or quoted). Walked procedures: `docs/design/course-map-ecet111.md`.
 Scaffolds, likely mistakes (= detectors) and slide-method constraints per subtopic:
@@ -96,8 +96,10 @@ All K-map rows grade **any** minimal cover: several slide examples have more tha
 | Timing diagrams (all types, both edges) | I 18–37 | CORE / PRACTICE | MISSING | Q per active edge | timing | #237, #238 |
 | Analysis: D, JK, T, 3-flip-flop | II 4–52 | CORE | MISSING | stages as separate activities | expression, truth-table groups, state diagram, timing | #205 |
 | Analysis exercises | II 31–33, 53–54 | PRACTICE | MISSING | exercise mode | as above | #205 |
-| Design: state table → excitation → K-maps → equations (D, T, JK) | III 4–27 | CORE | MISSING | stages as separate activities | truth-table (X), K-map, expression | #205 |
-| Design problems (3 flip-flops) | III 28–34 | PRACTICE | MISSING | exercise mode | as above | #205 |
+| Design: spec → state table | III 4–27 | CORE | MISSING | stage 1 | truth-table | #290 |
+| Design: excitation columns (D, T, JK, with X) | III 4–27 | CORE | MISSING | stage 2 | truth-table (X) | #291 |
+| Design: K-map per input → equations (don't-cares) | III 4–27 | CORE | MISSING | stage 3 | K-map, expression | #292 |
+| Design problems (3 flip-flops) | III 28–34 | PRACTICE | MISSING | exercise mode | as above | #293 |
 
 ## Course-level
 | Item | Status |
