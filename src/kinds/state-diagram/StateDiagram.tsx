@@ -17,6 +17,8 @@ export interface StateDiagramProps {
   id: string;
   /** State codes in table order ("00", "01", …): one circle each. */
   states: string[];
+  /** Grid cell [column, row] of each state, in the order of `states`; default `defaultCells`. */
+  positions?: [number, number][];
   /** One per state-table row, in table order: the order of the goals. */
   transitions: DiagramTransition[];
   /** label: every arrow is drawn and its label is picked; next: the arrow's destination is picked. */
@@ -46,11 +48,15 @@ interface Point {
   y: number;
 }
 
-/** Circles in rows: 2 states side by side, 4 as 2 × 2, 8 as 2 rows of 4 (table order, row by row). */
-export function statePositions(count: number): { cols: number; rows: number; at: Point[] } {
+/** Without authored positions: 2 states side by side, 4 as 2 × 2, 8 as 2 rows of 4 (table order, row by row). */
+export function defaultCells(count: number): [number, number][] {
   const cols = count <= 2 ? count : count / 2;
-  const rows = count <= 2 ? 1 : 2;
-  return { cols, rows, at: Array.from({ length: count }, (_, i) => ({ x: MX + (i % cols) * DX, y: MY + Math.floor(i / cols) * DY })) };
+  return Array.from({ length: count }, (_, i) => [i % cols, Math.floor(i / cols)]);
+}
+
+/** Circle centres from grid cells. */
+export function statePositions(cells: [number, number][]): { cols: number; rows: number; at: Point[] } {
+  return { cols: Math.max(...cells.map(([c]) => c)) + 1, rows: Math.max(...cells.map(([, r]) => r)) + 1, at: cells.map(([c, r]) => ({ x: MX + c * DX, y: MY + r * DY })) };
 }
 
 const unit = (dx: number, dy: number) => {
@@ -100,8 +106,9 @@ const head = (tip: Point, dir: Point) => {
  *   picked on the circles (one radiogroup, arrows move, Space/Enter picks).
  * The component never grades.
  */
-export function StateDiagram({ id, states, transitions, mode, done, labelOptions = [], inputName, state = "idle", disabled = false, onCheck }: StateDiagramProps) {
-  const { cols, rows, at } = statePositions(states.length);
+export function StateDiagram({ id, states, positions, transitions, mode, done, labelOptions = [], inputName, state = "idle", disabled = false, onCheck }: StateDiagramProps) {
+  const cells = positions ?? defaultCells(states.length);
+  const { cols, rows, at } = statePositions(cells);
   const pos = (code: string) => at[states.indexOf(code)];
   const width = MX * 2 + (cols - 1) * DX;
   const height = MY * 2 + (rows - 1) * DY;
@@ -160,7 +167,7 @@ export function StateDiagram({ id, states, transitions, mode, done, labelOptions
             const anyDone = a.items.some((it) => it.index < done);
             const kind = isActive ? "active" : anyDone || mode === "next" ? "done" : "later";
             const p = pos(a.from);
-            const g = arrowGeometry(p, pos(a.to), rows > 1 && states.indexOf(a.from) >= cols);
+            const g = arrowGeometry(p, pos(a.to), rows > 1 && cells[states.indexOf(a.from)][1] === rows - 1);
             return (
               <g key={`${a.from}>${a.to}`} className={styles.arrow} data-arrow={`${a.from}>${a.to}`} data-state={kind}>
                 <path d={g.d} className={styles.arrowLine} />
