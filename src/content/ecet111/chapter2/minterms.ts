@@ -82,11 +82,11 @@ const lineHints: HintInput[] = [
   { rung: 9, text: "This step uses {lawName}." },
 ];
 
-function expandVariant(id: string, vars: string[], start: string, lines: Line[]): VariantInput {
+function expandVariant(id: string, vars: string[], start: string, lines: Line[], k: number): VariantInput {
   return {
     id,
     prompt: `Write F = ${show(start)} in canonical form: name the law, then pick the line.`,
-    spec: { kind: "derivation", vars, start, lines, lineMode: "choose" },
+    spec: { kind: "derivation", vars, start, lines, lineMode: "choose", shift: k },
     hints: lineHints,
     misconceptions: [],
     explanation: [
@@ -224,7 +224,7 @@ export const mintermsTopic: TopicInput = {
             canonicalVariant("vk-3", ["A", "B", "C"], "AB'C + A'BC'", "AB + A'BC'", 1),
           ],
         },
-        { id: "mt.q.expand", label: "Expand", conceptId: "mt.canonical", objectiveId: "mt.obj.expand", variants: SETS.map((s) => expandVariant(s.id, s.vars, s.start, s.lines)) },
+        { id: "mt.q.expand", label: "Expand", conceptId: "mt.canonical", objectiveId: "mt.obj.expand", variants: SETS.map((s, k) => expandVariant(s.id, s.vars, s.start, s.lines, k)) },
         { id: "mt.q.sigma", label: "Σ list", conceptId: "mt.canonical", objectiveId: "mt.obj.expand", variants: SETS.map((s, k) => sigmaVariant(s.id, s.vars, s.start, k + 1)) },
         {
           id: "mt.q.table",

@@ -12,9 +12,11 @@ import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
 import { isCanonical } from "./ecet111/chapter2/minterms";
+import { equivalent, isPOS, isSOP, parseBool } from "./boolean";
 import { columnTruth } from "@/kinds/truth-table/logic";
-import { equivalent, parseBool } from "./boolean";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
+import { lawChips, lineOptions } from "@/kinds/derivation/logic";
+import type { DerivationSpec } from "@/kinds/derivation/spec";
 
 const COURSE = "ecet111";
 
@@ -70,6 +72,21 @@ describe("content registry", () => {
               expect(objectives.has(q.objectiveId), q.id).toBe(true);
             }
         }
+  });
+
+  it("moves derivation choices from set to set: the right line and law are not in one place every time (QA on #344)", () => {
+    for (const c of courses)
+      for (const m of c.modules)
+        for (const t of m.topics)
+          for (const a of t.activities)
+            for (const q of a.questions) {
+              const specs = q.variants.map((v) => v.spec).filter((s): s is DerivationSpec => s.kind === "derivation");
+              if (specs.length < 2) continue;
+              const pattern = (s: DerivationSpec) =>
+                s.lines.map((l, i) => `${lawChips(s, i).indexOf(l.law)}/${lineOptions(s, i).findIndex((o) => o.id === "right")}`).join(" ");
+              expect(new Set(specs.map(pattern)).size, `${q.id} positions repeat in every set`).toBeGreaterThan(1);
+              expect(specs.every((s) => lineOptions(s, 0).findIndex((o) => o.id === "right") === 0), `${q.id} right line first in every set`).toBe(false);
+            }
   });
 
   it("has unique ids within each scope", () => {
@@ -229,6 +246,36 @@ describe("content registry", () => {
       ["0 1 1 1", "0 1 1 1 1 1 1 1", "0 1 1 1"],
       ["1 0"],
     ]);
+  });
+
+  it("SOP and POS (#227): forms, tables and SOPs are computed and consistent", () => {
+    const x = getActivity(COURSE, "sop-and-pos", "sop-and-pos")!.activity;
+    const [form, toTable, pick, toSop] = x.questions;
+    // every set shows one SOP and one POS (neither expression is both), the asked form varies (Pedagogy on #342)
+    for (const v of form.variants) {
+      if (v.spec.kind !== "multiple-choice") throw new Error("expected multiple choice");
+      const kinds = v.spec.options.map((o) => {
+        const e = parseBool(o.text.replace(/′/g, "'"));
+        expect(isSOP(e) && isPOS(e), `${v.id}: ${o.text} is both forms`).toBe(false);
+        return isSOP(e) ? "sop" : isPOS(e) ? "pos" : "none";
+      });
+      expect(kinds.sort(), v.id).toEqual(["pos", "sop"]);
+    }
+    expect(new Set(form.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.correctOptionId : ""))).size).toBe(2);
+    // F's column has its 1s exactly on the product rows
+    for (const v of toTable.variants) {
+      if (v.spec.kind !== "truth-table") throw new Error("expected a truth table");
+      const f = columnTruth(v.spec, v.spec.columns.at(-1)!);
+      expect(f.filter((c) => c === 1).length, v.id).toBe(v.spec.columns.length - 1);
+    }
+    // the SOP question asks for the same rows the pick question showed (same id = same function, #141)
+    pick.variants.forEach((v, i) => {
+      const w = toSop.variants[i];
+      if (v.spec.kind !== "truth-table" || w.spec.kind !== "expression") throw new Error("shape");
+      const ones = columnTruth(v.spec, v.spec.columns[0]).flatMap((c, r) => (c === 1 ? [r] : []));
+      expect(w.id).toBe(v.id);
+      expect(w.spec.minterms).toEqual(ones);
+    });
   });
 
   it("minterms (#231): the slide's Σ lists, wrong expansion lines are not equivalent", () => {
