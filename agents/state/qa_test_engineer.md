@@ -1,7 +1,7 @@
 # Current State — QA / Test Engineer
 
-Current assignment: QA on wake:qa alarms. #260 (kind registry, ADR-0008 part 1) passed; queue from Technical Lead: #257 → #268, then #271, #273, #272.
-Recent important decision: QA every PR merged into origin/main (not the head alone); seed localStorage with addInitScript before load; per-worktree `PW_PORT`, `CI=1`. Per kind: retry-remount test + grading parity against main's `grade`.
-Blocker: Main checkout `node_modules` is a partial install (no react/typescript/.bin); junction worktrees to `Learn_platform-qa-test-engineer/node_modules` (same lockfile) instead.
-Relevant issue/PR: #260 (added `src/stage/circuitRemount.test.tsx`); guest-flow network assert seen failing twice under load, URL never captured.
-Next expected action: #257; pointer-drag e2e once a shipped activity uses DragToTarget; keep the 320 px no-overflow check on every new page.
+Current assignment: QA on wake:qa alarms. TL queue done: #257 passed (merged), #268 passed (conflicts after #257: re-run unit on new head), #271 content pass, label held (needs merge main + #213 first), #273 failed ('Name the law' answer always first), #272 passed.
+Recent important decision: QA every PR merged into origin/main (not the head alone); low memory: no local `next build`/Playwright, CI is authoritative for build/e2e. Content PRs: recompute every number set; Boolean content via `equivalent`.
+Blocker: none. Main checkout `node_modules` is complete again; junction via Node `fs.symlinkSync(target, 'node_modules', 'junction')` (cmd/powershell mklink is refused in isolated worktrees).
+Relevant issue/PR: #268, #271, #273 back with Backend; guest-flow network assert seen failing twice under load, URL never captured.
+Next expected action: re-QA #268/#271/#273 on new heads; pointer-drag e2e once a shipped activity uses DragToTarget; keep the 320 px no-overflow check on every new page.
