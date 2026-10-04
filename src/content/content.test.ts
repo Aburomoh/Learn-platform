@@ -546,6 +546,12 @@ describe("content registry", () => {
     expect(pick(enc.questions[1])).toEqual(["I4 + I5 + I6 + I7", "I2 + I3 + I6 + I7", "I1 + I3 + I5 + I7"]); // pack ch4 §3
   });
 
+  it("functions with a decoder (#306): the OR takes exactly the function's computed minterms (pack ch4 §4)", () => {
+    const x = getActivity(COURSE, "decoders-encoders", "decoder-functions")!.activity;
+    const right = x.questions[0].variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(right).toEqual(["D1, D2, D4, D7", "D3, D5, D6, D7", "D2, D3, D4, D6"]);
+  });
+
   it("three-variable exercises (#278): the pack's machine-worked covers, s.47 with both", () => {
     const x = getActivity(COURSE, "kmap-three-exercises", "kmap-three-exercises")!.activity;
     const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")).sort() : []));

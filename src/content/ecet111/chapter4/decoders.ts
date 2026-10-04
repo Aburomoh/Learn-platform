@@ -1,10 +1,11 @@
 /**
  * DEMO / NOT AUTHORITATIVE COURSE CONTENT — pending instructor approval.
- * ECET 111 Chapter 4, decoders and encoders (#305, content pack ch4 §3): predict one output of a
+ * ECET 111 Chapter 4, decoders and encoders (#305, #306, content pack ch4 §3–4): predict one output of a
  * 3-to-8 decoder, read each output as its minterm, fill decoder columns; then the 8-to-3 encoder's
- * code for one active input and the OR behind each output bit. Truth is computed (Boolean module).
+ * code for one active input and the OR behind each output bit; then functions built from a decoder. Truth is computed (Boolean module).
  */
 import type { CourseInput, VariantInput } from "../../schema";
+import { parseSigma } from "../../boolean";
 
 type TopicInput = CourseInput["modules"][number]["topics"][number];
 type Activity = TopicInput["activities"][number];
@@ -213,6 +214,71 @@ const encoderActivity: Activity = {
   ],
 };
 
+/* ---------- functions with a decoder (#306, pack ch4 §4): one OR per function, fed by its minterms ---------- */
+
+const FN_VARS = ["A", "B", "Ci"];
+
+/** Three functions: the full adder's S and Co (as on s.37), and a fresh one; all as Σ, so the goal is only picking the lines (Pedagogy on #390). */
+const FN_SETS: { id: string; name: string; given: string; vars: string[] }[] = [
+  { id: "fs", name: "S", given: "Σ(1, 2, 4, 7)", vars: FN_VARS },
+  { id: "fco", name: "Co", given: "Σ(3, 5, 6, 7)", vars: FN_VARS },
+  { id: "ff", name: "F", given: "Σ(2, 3, 4, 6)", vars: ["A", "B", "C"] },
+];
+
+/** The minterms of a set, read from its Σ list. */
+function fnMinterms(set: (typeof FN_SETS)[number]): number[] {
+  return parseSigma(set.given).minterms;
+}
+
+const outputsText = (ks: number[]) => ks.map((k) => `D${k}`).join(", ");
+
+function fnVariant(set: (typeof FN_SETS)[number], i: number): VariantInput {
+  const ones = fnMinterms(set);
+  const zeros = [0, 1, 2, 3, 4, 5, 6, 7].filter((k) => !ones.includes(k));
+  const reversedOnes = [...new Set(ones.map(reversed))].sort((a, b) => a - b);
+  const choices = [
+    { id: "right", text: outputsText(ones) },
+    { id: "zeros", text: outputsText(zeros) },
+    { id: "short", text: outputsText(ones.slice(0, -1)) },
+    { id: "reversed", text: outputsText(reversedOnes) },
+  ].filter((c, j, all) => all.findIndex((d) => d.text === c.text) === j);
+  const vars = set.vars.join(", ");
+  return {
+    id: set.id,
+    prompt: `A 3-to-8 decoder takes ${vars} (${set.vars[0]} is the MSB). ${set.name}(${vars}) = ${show(set.given)} is one OR gate fed by decoder outputs. Which outputs?`,
+    spec: { kind: "multiple-choice", options: rotate(choices, i + 1), correctOptionId: "right" },
+    hints: [
+      { rung: 2, text: `Not yet. Each decoder output Dk is minterm k; the OR needs exactly the minterms of ${set.name}.` },
+      { rung: 3, text: "The numbers in the Σ list are the outputs to connect." },
+      { rung: 4, text: `Is D0 one of ${set.name}'s minterms?` },
+      { rung: 9, text: `${set.name} = ${outputsText(ones).replace(/, /g, " + ")}.` },
+    ],
+    misconceptions: [
+      { id: "dec.fn-zero-rows", title: "Connected the 0-rows", nudgeKey: "fa.sigma-zero-rows", detect: { type: "option", optionId: "zeros" } },
+      { id: "dec.fn-missed-one", title: "Missed one minterm", nudgeKey: "dec.fn-missed-one", detect: { type: "option", optionId: "short" } },
+      ...(choices.some((c) => c.id === "reversed") ? [{ id: "dec.read-reversed", title: "Read the minterm numbers backwards", nudgeKey: "dec.read-reversed", detect: { type: "option" as const, optionId: "reversed" } }] : []),
+    ],
+    explanation: [
+      { id: "s1", say: "A decoder makes every minterm of its inputs, one per output. A function is the OR of its own minterms." },
+      {
+        id: "s2",
+        say: `${set.name} = ${set.given}.`,
+        ask: { prompt: `Does ${set.name} use D${ones[0]}?`, options: i % 2 ? ["No", "Yes"] : ["Yes", "No"], correctIndex: i % 2 ? 1 : 0, afterCorrect: `Yes: m${ones[0]} is one of its minterms.`, afterWrong: `m${ones[0]} is one of its minterms, so D${ones[0]} feeds the OR.` },
+      },
+      { id: "s3", say: `So the OR takes ${outputsText(ones)}; the other outputs are left unconnected.` },
+    ],
+  };
+}
+
+const decoderFunctionsActivity: Activity = {
+  id: "decoder-functions",
+  title: "Functions with a decoder",
+  summary: "One OR gate per function, fed by the decoder outputs of its minterms.",
+  authority: "DEMO",
+  minutes: 8,
+  questions: [{ id: "dc.q.function", label: "Which outputs?", conceptId: "dc.decoder", objectiveId: "dc.obj.function", variants: FN_SETS.map((s, i) => fnVariant(s, i)) }],
+};
+
 export const decodersTopic: TopicInput = {
   id: "decoders-encoders",
   title: "Decoders and encoders",
@@ -225,6 +291,7 @@ export const decodersTopic: TopicInput = {
   objectives: [
     { id: "dc.obj.decoder", conceptId: "dc.decoder", text: "Give a 3-to-8 decoder's active output and read each output as a minterm." },
     { id: "dc.obj.encoder", conceptId: "dc.encoder", text: "Give an 8-to-3 encoder's code and the OR behind each output bit." },
+    { id: "dc.obj.function", conceptId: "dc.decoder", text: "Build a function from a decoder: one OR fed by its minterm outputs." },
   ],
-  activities: [decoderActivity, encoderActivity],
+  activities: [decoderActivity, encoderActivity, decoderFunctionsActivity],
 };
