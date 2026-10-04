@@ -16,14 +16,17 @@ describe("kind registry (ADR-0008)", () => {
 
   it("each kind's UI module exports Practice, Explain and Preload, and carries its size-report marker", async () => {
     const modules: Record<string, () => Promise<{ Practice: { displayName?: string }; Explain: unknown; Preload: () => null }>> = {
+      "base-to-decimal": () => import("./base-to-decimal/ui"),
       "bit-grouping": () => import("./bit-grouping/ui"),
       "circuit-predict": () => import("./circuit-predict/ui"),
+      expression: () => import("./expression/ui"),
       expression: () => import("./expression/ui"),
       "column-addition": () => import("./column-addition/ui"),
       "multiple-choice": () => import("./multiple-choice/ui"),
       numeric: () => import("./numeric/ui"),
       "place-value": () => import("./place-value/ui"),
       "repeated-division": () => import("./repeated-division/ui"),
+      "truth-table": () => import("./truth-table/ui"),
     };
     expect(Object.keys(modules).sort()).toEqual(names);
     for (const name of names) {
