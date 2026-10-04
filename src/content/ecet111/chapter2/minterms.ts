@@ -44,6 +44,35 @@ function spotVariant(id: string, fn: string, vars: string[], terms: string[], k:
   };
 }
 
+/* ---------- Q1b: which one is canonical? (p.69–70) ---------- */
+
+/** Canonical: every term is a minterm (has every variable). Two functions per set, one canonical. */
+export const isCanonical = (fn: string, vars: string[]) => fn.split(" + ").every((t) => vars.every((v) => t.includes(v)));
+
+function canonicalVariant(id: string, vars: string[], yes: string, no: string, k: number): VariantInput {
+  const options = rotate([{ id: "yes", text: show(yes) }, { id: "no", text: show(no), misconceptionId: "mt.not-canonical" }], k);
+  return {
+    id,
+    prompt: `F(${vars.join(", ")}). Which of these is in canonical form?`,
+    spec: { kind: "multiple-choice", options, correctOptionId: "yes" },
+    hints: [
+      { rung: 2, text: "Not yet. Check every term of each function, not just the first." },
+      { rung: 3, text: "Does each term contain every variable?" },
+      { rung: 4, text: "Canonical form: every term is a minterm, with all of the variables." },
+      { rung: 9, text: `${show(yes)} is canonical: every term has ${vars.join(", ")}.` },
+    ],
+    misconceptions: [{ id: "mt.not-canonical", title: "A term is missing a letter", nudgeKey: "mt.not-canonical", detect: { type: "option", optionId: "no" } }],
+    explanation: [
+      { id: "s1", say: "A function is in canonical form when every term is a minterm: each has all the variables." },
+      {
+        id: "s2",
+        say: `Look at ${show(no)}.`,
+        ask: { prompt: "Does every term have every variable?", options: ["Yes", "No"], correctIndex: 1, afterCorrect: "Right: one term is missing a letter, so it is not canonical.", afterWrong: "One term is missing a letter, so it is not canonical." },
+      },
+    ],
+  };
+}
+
 /* ---------- Q2–Q3: canonical form by expansion, then the Σ list (p.71, 73–74) ---------- */
 
 const lineHints: HintInput[] = [
@@ -161,6 +190,7 @@ export const mintermsTopic: TopicInput = {
   ],
   objectives: [
     { id: "mt.obj.spot", conceptId: "mt.minterm", text: "Pick out the minterm among a function's terms." },
+    { id: "mt.obj.canonical", conceptId: "mt.canonical", text: "Tell whether a function is in canonical form." },
     { id: "mt.obj.expand", conceptId: "mt.canonical", text: "Expand a function to canonical form by X + X′, one law per line." },
     { id: "mt.obj.table", conceptId: "mt.canonical", text: "Read the canonical form from a truth table's 1-rows." },
   ],
@@ -168,7 +198,7 @@ export const mintermsTopic: TopicInput = {
     {
       id: "minterms",
       title: "Minterms and canonical form",
-      summary: "Spot the minterm, expand to canonical form, give its Σ list, then use the table method.",
+      summary: "Spot the minterm, tell canonical form, expand to it, give its Σ list, then use the table method.",
       authority: "DEMO",
       minutes: 15,
       questions: [
@@ -183,6 +213,17 @@ export const mintermsTopic: TopicInput = {
             spotVariant("vm-3", "AB + A'BC + C", ["A", "B", "C"], ["AB", "A'BC", "C"], 2),
           ],
         },
+        {
+          id: "mt.q.canonical",
+          label: "Canonical?",
+          conceptId: "mt.canonical",
+          objectiveId: "mt.obj.canonical",
+          variants: [
+            canonicalVariant("vk-1", ["A", "B"], "A'B + AB'", "A' + AB'", 1),
+            canonicalVariant("vk-2", ["x", "y", "z"], "xyz + x'yz", "xy + x'yz", 0),
+            canonicalVariant("vk-3", ["A", "B", "C"], "AB'C + A'BC'", "AB + A'BC'", 1),
+          ],
+        },
         { id: "mt.q.expand", label: "Expand", conceptId: "mt.canonical", objectiveId: "mt.obj.expand", variants: SETS.map((s) => expandVariant(s.id, s.vars, s.start, s.lines)) },
         { id: "mt.q.sigma", label: "Σ list", conceptId: "mt.canonical", objectiveId: "mt.obj.expand", variants: SETS.map((s, k) => sigmaVariant(s.id, s.vars, s.start, k + 1)) },
         {
@@ -190,7 +231,7 @@ export const mintermsTopic: TopicInput = {
           label: "By table",
           conceptId: "mt.canonical",
           objectiveId: "mt.obj.table",
-          variants: [tableVariant("vt-1", ["A", "B"], "A'B + B'"), tableVariant("vt-2", ["x", "y", "z"], "x'y + xz"), tableVariant("vt-3", ["A", "B", "C"], "AB' + C")],
+          variants: [tableVariant("vt-1", ["A", "B"], "A' + B"), tableVariant("vt-2", ["x", "y", "z"], "x'y + xz"), tableVariant("vt-3", ["A", "B", "C"], "AB' + C")],
         },
       ],
     },

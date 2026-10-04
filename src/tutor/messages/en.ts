@@ -49,6 +49,7 @@ export const en = {
   "ns.missing-largest": "Check the largest place value. Does {largest} fit in {value}?",
   "ns.extra-place": "One of the lit places is too big for what is left. Check the remainder after each step.",
   "ns.hex-letter": "In hex, 10 to 15 are single letters A to F, not two digits.",
+  "mt.not-canonical": "Check each term of that function: is one of them missing a letter?",
   "mt.only-full": "The expanded term counts too: it became more than one minterm. Which rows does it add?",
   "drv.line-not-equivalent": "That line does not equal the line before it. Check the law you applied.",
   "drv.line-skipped": "That is true, but it skips a step. Apply only this one law to the line before.",
