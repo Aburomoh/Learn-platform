@@ -21,6 +21,11 @@ export const kindUI = {
     Explain: dynamic(() => import("./bit-grouping/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./bit-grouping/ui").then((m) => m.Preload)),
   },
+  expression: {
+    Practice: dynamic(() => import("./expression/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./expression/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./expression/ui").then((m) => m.Preload)),
+  },
   "circuit-predict": {
     Practice: dynamic(() => import("./circuit-predict/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./circuit-predict/ui").then((m) => m.Explain)),
