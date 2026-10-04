@@ -4,6 +4,7 @@ import { getTopic, listTopicParams } from "@/content";
 import { product } from "../../../../../config/product";
 import { PageFrame, PageHeading, PreviewBoard, TopicNext } from "@/shell/r1";
 import styles from "@/shell/r1/r1.module.css";
+import { Notation } from "@/interactions/shared/Notation";
 import { resolveMessage } from "@/tutor";
 import { TutorCard } from "@/tutor/ui";
 
@@ -50,7 +51,9 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
         <summary>What you&apos;ll practise</summary>
         <ul>
           {topic.objectives.map((o) => (
-            <li key={o.id}>{o.text}</li>
+            <li key={o.id}>
+              <Notation text={o.text} />
+            </li>
           ))}
         </ul>
       </details>
