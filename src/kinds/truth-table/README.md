@@ -36,3 +36,10 @@ columns in order, as on the slides (UX: docs/design/ecet111-representations.md Â
   fade edge.
 - Explain Slowly stages: `step` (goal shown; omit for the finished table) and `revealed` (rows
   filled so far); row-select: `rows` (shown as picked).
+
+### Mux-pairs view (#308)
+
+The table is given. A last column "MUX input" has one cell per pair of rows (`pairs` prop of
+`TruthTable`): done pairs show their input, the active pair shows "?" and its rows carry the halo.
+The answer is four chips (0, 1, v, vâ€² named by the data variable) in one `radiogroup`, then
+Check input. Focus targets: `pair-<n>`. Explain Slowly stage: `pairs` = pairs shown done.
