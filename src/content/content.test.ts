@@ -481,6 +481,12 @@ describe("content registry", () => {
     expect(sums).toEqual([["AC' + BC"], ["x'y + z'"], ["y + z'"]]);
   });
 
+  it("four-variable maps (#279): the pack's single minimal covers, and one set needs the four corners", () => {
+    const x = getActivity(COURSE, "kmap-four", "kmap-four")!.activity;
+    const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
+    expect(sums).toEqual([["A + B'CD + BC'D"], ["w'z' + wxz + wy + x'z'"], ["wz' + x'z + y'z"]]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
