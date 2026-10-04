@@ -34,6 +34,14 @@ describe("ExpressionEntry", () => {
     expect(keys.map((k) => k.getAttribute("aria-label") ?? k.textContent)).toEqual(["A", "B", "C", "complement (NOT)", "OR", "XOR", "open parenthesis", "close parenthesis", "delete"]);
   });
 
+  it("reads in the question's own variable case and never asks the phone for capitals", async () => {
+    render(<ExpressionEntry id="e" label="Write F." vars={["x", "y", "z"]} onAnswer={() => {}} />);
+    const field = screen.getByRole("textbox");
+    expect(field).toHaveAttribute("autocapitalize", "none");
+    await userEvent.setup().type(field, "X'Z + XY'");
+    expect(screen.getByText(/Reads as:/)).toHaveTextContent("Reads as: xz + xy");
+  });
+
   it("text that does not parse yet shows an ellipsis instead of a reading", async () => {
     render(<ExpressionEntry id="e" label="Write F." vars={vars} onAnswer={() => {}} />);
     await userEvent.setup().type(screen.getByRole("textbox"), "A + (");

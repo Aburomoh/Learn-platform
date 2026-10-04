@@ -117,7 +117,8 @@ export function ExpressionEntry({ id, label, vars, onAnswer, state = "idle", sub
           readOnly={readOnly}
           disabled={disabled}
           autoComplete="off"
-          autoCapitalize="characters"
+          // no auto-capitals: questions in x y z must not get X Y Z from a phone keyboard
+          autoCapitalize="none"
           spellCheck={false}
           onChange={(e) => setText(e.target.value)}
           {...focusTarget("expression")}
