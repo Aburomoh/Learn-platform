@@ -11,7 +11,7 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
-import { equivalent, parseBool } from "./boolean";
+import { equivalent, isPOS, isSOP, parseBool } from "./boolean";
 import { columnTruth } from "@/kinds/truth-table/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 
@@ -271,6 +271,36 @@ describe("content registry", () => {
       ["0 1 1 1", "0 1 1 1 1 1 1 1", "0 1 1 1"],
       ["1 0"],
     ]);
+  });
+
+  it("SOP and POS (#227): forms, tables and SOPs are computed and consistent", () => {
+    const x = getActivity(COURSE, "sop-and-pos", "sop-and-pos")!.activity;
+    const [form, toTable, pick, toSop] = x.questions;
+    // every set shows one SOP and one POS (neither expression is both), the asked form varies (Pedagogy on #342)
+    for (const v of form.variants) {
+      if (v.spec.kind !== "multiple-choice") throw new Error("expected multiple choice");
+      const kinds = v.spec.options.map((o) => {
+        const e = parseBool(o.text.replace(/′/g, "'"));
+        expect(isSOP(e) && isPOS(e), `${v.id}: ${o.text} is both forms`).toBe(false);
+        return isSOP(e) ? "sop" : isPOS(e) ? "pos" : "none";
+      });
+      expect(kinds.sort(), v.id).toEqual(["pos", "sop"]);
+    }
+    expect(new Set(form.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.correctOptionId : ""))).size).toBe(2);
+    // F's column has its 1s exactly on the product rows
+    for (const v of toTable.variants) {
+      if (v.spec.kind !== "truth-table") throw new Error("expected a truth table");
+      const f = columnTruth(v.spec, v.spec.columns.at(-1)!);
+      expect(f.filter((c) => c === 1).length, v.id).toBe(v.spec.columns.length - 1);
+    }
+    // the SOP question asks for the same rows the pick question showed (same id = same function, #141)
+    pick.variants.forEach((v, i) => {
+      const w = toSop.variants[i];
+      if (v.spec.kind !== "truth-table" || w.spec.kind !== "expression") throw new Error("shape");
+      const ones = columnTruth(v.spec, v.spec.columns[0]).flatMap((c, r) => (c === 1 ? [r] : []));
+      expect(w.id).toBe(v.id);
+      expect(w.spec.minterms).toEqual(ones);
+    });
   });
 
   it("resolves an activity by path", () => {
