@@ -30,5 +30,25 @@ with one Check. Answer `q`: one bit per output, in `outputNames` order.
   `stateBefore`, `stateAfter`, `stepNumber`. Per #255 the goal names the edge only: inputs are for
   hint rung 5, outputs for rung 9.
 
-**Status:** spec, grading and tests. The view, and registration with it (ADR-0008), are next
-(Frontend).
+## View (`ui.tsx`, `TimingDiagram.tsx`; representations §6 and §13.2)
+
+- **Layout:** inputs on top, Clk in the middle, outputs at the bottom. A column is half a period
+  (32 units); rows are 28 with a 20 swing, 16 apart. The names column (italic bold, with each
+  output's initial value) is outside the scrolling SVG, so it stays put.
+- **Active edges:** a dotted guide through all rows, a triangle on the clock (up for rising, down
+  for falling) and the edge number under the diagram. The edge being asked has the halo and a "?"
+  on every output row.
+- **Answering:** one 0/1 segmented control (48 px) per output, each a `radiogroup` named
+  "Q after edge 3", then **Check edge** (Enter confirms). A right answer draws the outputs (3 px,
+  `--signal-high`) up to the next active edge; a wrong one draws nothing and marks only the first
+  wrong output (`wrongCells.first`).
+- **Hint rung 5:** focus target `inputs-at-edge` (a dot and the value on each input row at the
+  active edge) is hidden until the tutor highlights or focuses it.
+- **Scrolling:** the diagram scrolls inside its well with a fade; the active edge is kept at least
+  one period from the right edge.
+- **Screen reader:** the SVG is `role="img"` with a summary (trigger edge, given signals, initial
+  values, edges answered).
+- **Focus targets:** `timing`, `inputs-at-edge`, `q-<output>-<bit>`.
+- **Explain Slowly stage:** `revealed` = edges whose outputs are drawn (the next one has the halo).
+
+**Status:** spec, grading, tests and the view; registered.

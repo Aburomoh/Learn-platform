@@ -61,6 +61,11 @@ export const kindUI = {
     Explain: dynamic(() => import("./repeated-division/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./repeated-division/ui").then((m) => m.Preload)),
   },
+  timing: {
+    Practice: dynamic(() => import("./timing/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./timing/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./timing/ui").then((m) => m.Preload)),
+  },
   "truth-table": {
     Practice: dynamic(() => import("./truth-table/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./truth-table/ui").then((m) => m.Explain)),
