@@ -6,12 +6,13 @@ import { Prompt } from "../shared/Prompt";
 import shared from "../shared/shared.module.css";
 import type { ExplainProps, PracticeProps } from "../types";
 import { CircuitDiagram } from "./CircuitDiagram";
+import { outputGates } from "./layout";
 import { circuitPredict, type CircuitAnswer } from "./logic";
 import type { CircuitSpec } from "./spec";
 
 /**
  * Circuit question answered one gate at a time, in signal-flow order. The gate being asked is
- * outlined; gates already answered stay lit with their value; the last gate gives Y.
+ * outlined; gates already answered stay lit with their value; a gate that drives a circuit output is asked by that output's name (Y, or S and C).
  */
 export function Practice({ variant, prompt, state, last, stepIndex, locked, onSubmit }: PracticeProps<CircuitSpec, CircuitAnswer>) {
   const { spec } = variant;
@@ -23,7 +24,8 @@ export function Practice({ variant, prompt, state, last, stepIndex, locked, onSu
   }, [spec]);
   const step = Math.min(stepIndex, order.length - 1);
   const gate = spec.gates.find((g) => g.id === order[step])!;
-  const isOutput = step === order.length - 1;
+  // the name of the circuit output this gate drives (Y, or S / C of a half adder), if any
+  const outputName = outputGates(spec).find((o) => o.gateId === gate.id)?.label;
   const finished = locked && state === "correct";
   const explore = finished && spec.inputsToggleable;
 
@@ -45,7 +47,7 @@ export function Practice({ variant, prompt, state, last, stepIndex, locked, onSu
         lit={finished ? order : order.slice(0, step)}
         activeGateId={finished ? undefined : gate.id}
       />
-      {explore && <p className={shared.note}>Explore: toggle A, B or C and watch Y change.</p>}
+      {explore && <p className={shared.note}>Explore: toggle the inputs and watch the output change.</p>}
       {!finished && (
         <p className={shared.stepLabel} aria-live="polite">
           Gate {step + 1} of {order.length}: {gate.type}
@@ -55,10 +57,10 @@ export function Practice({ variant, prompt, state, last, stepIndex, locked, onSu
         <MultipleChoice
           key={step}
           id={`${variant.id}-${gate.id}`}
-          prompt={isOutput ? `What comes out of the ${gate.type} gate? That is Y.` : `What comes out of the ${gate.type} gate?`}
+          prompt={outputName ? `What comes out of the ${gate.type} gate? That is ${outputName}.` : `What comes out of the ${gate.type} gate?`}
           options={[
-            { id: "0", text: isOutput ? "Y = 0" : "0" },
-            { id: "1", text: isOutput ? "Y = 1" : "1" },
+            { id: "0", text: outputName ? `${outputName} = 0` : "0" },
+            { id: "1", text: outputName ? `${outputName} = 1` : "1" },
           ]}
           disabled={locked}
           state={state}

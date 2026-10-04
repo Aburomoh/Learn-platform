@@ -11,10 +11,11 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
-import { equivalent, isPOS, isSOP, parseBool } from "./boolean";
+import { equivalent, formatCube, isPOS, isSOP, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
 import { columnTruth } from "@/kinds/truth-table/logic";
+import { kmapCovers } from "@/kinds/kmap/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 import { lawChips, lineOptions } from "@/kinds/derivation/logic";
 import type { DerivationSpec } from "@/kinds/derivation/spec";
@@ -455,6 +456,37 @@ describe("content registry", () => {
     expect(right).toEqual(["Σ(0, 1, 2)", "Σ(3, 6, 7)", "Σ(0, 2, 3)"]);
   });
 
+  it("half adder (#300): table, gates and walks match the pack (S = Σ(1,2), C = Σ(3))", () => {
+    const x = getActivity(COURSE, "half-adder", "half-adder")!.activity;
+    const [add, table, gates, walk] = x.questions;
+    if (table.variants[0].spec.kind !== "truth-table") throw new Error("expected a truth table");
+    const spec = table.variants[0].spec;
+    expect(spec.columns.map((c) => columnTruth(spec, c).join(""))).toEqual(["0110", "0001"]);
+    // each row is A + B in binary: C then S
+    const picked = add.variants.map(({ spec: s }) => (s.kind === "multiple-choice" ? s.options.find((o) => o.id === s.correctOptionId)!.text : ""));
+    expect(picked).toEqual(["S = 0, C = 1", "S = 1, C = 0", "S = 1, C = 0"]);
+    expect(gates.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.correctOptionId : ""))).toEqual(["xor", "and"]);
+    for (const v of walk.variants) {
+      if (v.spec.kind !== "circuit-predict") throw new Error("expected a circuit");
+      const [a, b] = v.spec.inputs.map((i) => i.value);
+      const out = evaluateCircuit(v.spec);
+      expect([out.gs, out.gc], v.id).toEqual([a ^ b, a & b]);
+      expect(v.id).toBe(add.variants[walk.variants.indexOf(v)].id); // same pair, same id (#141)
+    }
+  });
+
+  it("three-variable maps (#277): the minimal sums are the pack's, and every set is solvable step by step", () => {
+    const x = getActivity(COURSE, "kmap-three", "kmap-three")!.activity;
+    const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
+    expect(sums).toEqual([["AC' + BC"], ["x'y + z'"], ["y + z'"]]);
+  });
+
+  it("four-variable maps (#279): the pack's single minimal covers, and one set needs the four corners", () => {
+    const x = getActivity(COURSE, "kmap-four", "kmap-four")!.activity;
+    const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
+    expect(sums).toEqual([["A + B'CD + BC'D"], ["w'z' + wxz + wy + x'z'"], ["wz' + x'z + y'z"]]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -475,7 +507,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
