@@ -42,7 +42,8 @@ function derivedTable(id: string, prompt: string, inputs: [string, string], colu
       id: `s${i + 2}`,
       say: `${c.label}: ${c.meaning}`,
       stage: { step: i, revealed: 0 },
-      ask: { prompt: `On the row ${bits}, ${c.label} = ?`, options: ["0", "1"], correctIndex: truth[row] as 0 | 1, afterCorrect: `Yes: ${truth[row]}. The column reads ${truth.join(" ")}.`, afterWrong: `It is ${truth[row]} there. The column reads ${truth.join(" ")}.` },
+      // one predicted row only: the whole column stays for the last hint rung (Pedagogy on #338)
+      ask: { prompt: `On the row ${bits}, ${c.label} = ?`, options: ["0", "1"], correctIndex: truth[row] as 0 | 1, afterCorrect: `Yes: ${truth[row]}.`, afterWrong: `It is ${truth[row]} there.` },
     };
   });
   return {
@@ -161,11 +162,13 @@ export const derivedGatesTopic: TopicInput = {
       authority: "DEMO",
       minutes: 15,
       questions: [
+        // Relabelled sets (A,B · x,y · P,Q) are acceptable for these fixed-fact tables because Explain
+        // Slowly predicts one row per column and never reads a whole column out (Pedagogy on #338).
         { id: "dg.q.nand", label: "NAND", conceptId: "dg.nand-nor", objectiveId: "dg.obj.nand-nor", variants: [nand("vab", ["A", "B"]), nand("vxy", ["x", "y"]), nand("vpq", ["P", "Q"])] },
         { id: "dg.q.nor", label: "NOR", conceptId: "dg.nand-nor", objectiveId: "dg.obj.nand-nor", variants: [nor("vab", ["A", "B"]), nor("vxy", ["x", "y"]), nor("vpq", ["P", "Q"])] },
         { id: "dg.q.xor", label: "XOR", conceptId: "dg.xor-xnor", objectiveId: "dg.obj.xor-xnor", variants: [xor("vab", ["A", "B"]), xor("vxy", ["x", "y"]), xor("vpq", ["P", "Q"])] },
         { id: "dg.q.xnor", label: "XNOR", conceptId: "dg.xor-xnor", objectiveId: "dg.obj.xor-xnor", variants: [xnor("vab", ["A", "B"]), xnor("vxy", ["x", "y"]), xnor("vpq", ["P", "Q"])] },
-        { id: "dg.q.rows", label: "Rows = 2ⁿ", conceptId: "dg.rows", objectiveId: "dg.obj.rows", variants: [rowCount(3, 0), rowCount(4, 1), rowCount(2, 2)] },
+        { id: "dg.q.rows", label: "Rows = 2ⁿ", conceptId: "dg.rows", objectiveId: "dg.obj.rows", variants: [rowCount(3, 0), rowCount(4, 1), rowCount(5, 2)] }, // n = 2 would make 2n, n² and 2ⁿ all 4
       ],
     },
   ],
