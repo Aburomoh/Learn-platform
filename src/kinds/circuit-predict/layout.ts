@@ -266,7 +266,7 @@ export function layoutCircuit(spec: CircuitSpec): CircuitLayout {
   ];
   const top = Math.min(...ys) - 12;
   const bottom = Math.max(...ys) + 12;
-  const right = Math.max(...outputs.map((o) => o.to.x + 58), ...spec.gates.map((g) => gates[g.id].x + gateWidth(g.type) + 28));
+  const right = Math.max(...outputs.map((o) => o.to.x + 44), ...spec.gates.map((g) => gates[g.id].x + gateWidth(g.type) + 28));
 
   return {
     viewBox: { x: 0, y: top, width: right, height: bottom - top },
