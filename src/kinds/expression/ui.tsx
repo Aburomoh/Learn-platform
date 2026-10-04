@@ -2,7 +2,7 @@
 
 import { Prompt } from "../shared/Prompt";
 import type { ExplainProps, PracticeProps } from "../types";
-import { ExpressionEntry } from "./ExpressionEntry";
+import { ExpressionEntry } from "../shared/ExpressionEntry";
 import type { ExpressionAnswer } from "./logic";
 import type { ExpressionSpec } from "./spec";
 

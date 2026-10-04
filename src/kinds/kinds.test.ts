@@ -21,6 +21,7 @@ describe("kind registry (ADR-0008)", () => {
       "circuit-predict": () => import("./circuit-predict/ui"),
       derivation: () => import("./derivation/ui"),
       expression: () => import("./expression/ui"),
+      kmap: () => import("./kmap/ui"),
       "column-addition": () => import("./column-addition/ui"),
       "multiple-choice": () => import("./multiple-choice/ui"),
       numeric: () => import("./numeric/ui"),
