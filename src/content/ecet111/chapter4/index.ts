@@ -6,6 +6,7 @@ import type { ModuleInput } from "../../schema";
 import { halfAdderTopic } from "./half-adder";
 import { fullAdderTopic } from "./full-adder";
 import { decodersTopic } from "./decoders";
+import { multiplexersTopic } from "./multiplexers";
 
 export const chapter4: ModuleInput = {
   id: "chapter-4",
@@ -14,5 +15,6 @@ export const chapter4: ModuleInput = {
     halfAdderTopic,
     fullAdderTopic,
     decodersTopic,
+    multiplexersTopic,
   ],
 };
