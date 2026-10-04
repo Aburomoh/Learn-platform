@@ -37,6 +37,12 @@ describe("parse and format", () => {
     expect(evaluate(p("1 + 0"), {})).toBe(1);
   });
 
+  it("reads the slides' prime marks: ′ as a complement and ″ as two", () => {
+    expect(evaluate(p("A′B"), { A: 0, B: 1 })).toBe(1);
+    expect(equivalent(p("A″"), p("A"))).toBe(true);
+    expect(equivalent(p("(X + Y)′"), p("X′Y′"))).toBe(true);
+  });
+
   it("matches multi-letter names longest first, then single letters", () => {
     const e = p("AB + ACi + BCi", ["Ci"]);
     expect(variablesOf(e)).toEqual(["A", "B", "Ci"]);

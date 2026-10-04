@@ -57,8 +57,8 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 | Expression → circuit, circuit → expression | 21–25 | CORE | MISSING | one gate output per goal | expression, MC | #226 |
 | SOP vs POS | 26–30 | CORE (POS recognition only) | COVERED (SOP or POS check) | tag parts; no 0-rows → POS, no maxterms | MC | #227 |
 | Expression ↔ truth table | 31–36 | CORE | COVERED (SOP → table; 1-rows → SOP) | 1-rows; rows → SOP | truth-table row-select, expression | #227 |
-| Laws (commutative, associative, distributive) | 37–40 | CORE | MISSING | match law to example | MC | #228 |
-| Rules and postulates | 41–43 | CORE | MISSING | match rule to example | MC | #228 |
+| Laws (commutative, associative, distributive) | 37–40 | CORE | COVERED (Laws and rules: Name the law) | match law to example | MC | #228 |
+| Rules and postulates | 41–43 | CORE | COVERED (Match the rule, Simplify) | match rule to example | MC | #228 |
 | Algebraic simplification (+ gate count) | 44–54 | CORE | MISSING | law, then line | derivation | #229 |
 | De Morgan | 55–63 | CORE | MISSING | one step at a time | derivation | #230 |
 | Minterms; canonical form (two methods) | 64–76 | CORE | MISSING | expansion; table with m column | derivation, truth-table | #231 |

@@ -1,7 +1,7 @@
 /**
  * Boolean expressions in the course notation (ECET 111 Chapters 2–5), parsed into a small tree.
  *
- *   A'        complement (postfix, may repeat; also after a parenthesis: (A + B)')
+ *   A'        complement (postfix, may repeat; also after a parenthesis: (A + B)'); ’ and ′ too, ″ = two
  *   AB, A·B   AND (implicit by juxtaposition, or · or *)
  *   A ⊕ B     XOR
  *   A + B     OR
@@ -65,8 +65,14 @@ function tokenize(text: string, names: string[], vars?: string[]): Token[] {
       i++;
       continue;
     }
-    if (c === "'" || c === "’" || c === "+" || c === "⊕" || c === "(" || c === ")") {
-      out.push({ kind: "op", op: c === "’" ? "'" : c, at: i });
+    if (c === "″") {
+      // a double prime, as the slides write A″
+      out.push({ kind: "op", op: "'", at: i }, { kind: "op", op: "'", at: i });
+      i++;
+      continue;
+    }
+    if (c === "'" || c === "’" || c === "′" || c === "+" || c === "⊕" || c === "(" || c === ")") {
+      out.push({ kind: "op", op: c === "’" || c === "′" ? "'" : c, at: i });
       i++;
       continue;
     }
