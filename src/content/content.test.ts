@@ -229,6 +229,26 @@ describe("content registry", () => {
     ]);
   });
 
+  it("SOP and POS (#227): forms, tables and SOPs are computed and consistent", () => {
+    const x = getActivity(COURSE, "sop-and-pos", "sop-and-pos")!.activity;
+    const [form, toTable, pick, toSop] = x.questions;
+    expect(form.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.correctOptionId : ""))).toEqual(["sop", "pos", "neither"]);
+    // F's column has its 1s exactly on the product rows
+    for (const v of toTable.variants) {
+      if (v.spec.kind !== "truth-table") throw new Error("expected a truth table");
+      const f = columnTruth(v.spec, v.spec.columns.at(-1)!);
+      expect(f.filter((c) => c === 1).length, v.id).toBe(v.spec.columns.length - 1);
+    }
+    // the SOP question asks for the same rows the pick question showed (same id = same function, #141)
+    pick.variants.forEach((v, i) => {
+      const w = toSop.variants[i];
+      if (v.spec.kind !== "truth-table" || w.spec.kind !== "expression") throw new Error("shape");
+      const ones = columnTruth(v.spec, v.spec.columns[0]).flatMap((c, r) => (c === 1 ? [r] : []));
+      expect(w.id).toBe(v.id);
+      expect(w.spec.minterms).toEqual(ones);
+    });
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
     expect(getActivity("nope", "x", "y")).toBeUndefined();

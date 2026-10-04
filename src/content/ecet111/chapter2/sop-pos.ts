@@ -62,7 +62,7 @@ const columnHints: HintInput[] = [
   { rung: 3, text: "{columnLabel}: a plain letter needs a 1 there, a primed letter needs a 0." },
   { rung: 4, text: "Which row of A B C makes {columnLabel} equal 1?" },
   { rung: 6, text: "F is the OR of the product columns: 1 where any product is 1." },
-  { rung: 9, text: "{columnLabel} reads {columnValues}, top to bottom." },
+  { rung: 9, text: "Each product is 1 only on its own row; F is 1 exactly on the rows of its products, 0 elsewhere." },
 ];
 
 function tableVariant(id: string, rows: number[]): VariantInput {
