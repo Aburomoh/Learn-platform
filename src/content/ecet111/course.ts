@@ -9,6 +9,7 @@ import { numberSystemsTopic } from "./chapter1/number-systems";
 import { binaryArithmeticTopic } from "./chapter1/binary-arithmetic";
 import { basicGatesTopic } from "./chapter2/basic-gates";
 import { sopPosTopic } from "./chapter2/sop-pos";
+import { lawsAndRulesTopic } from "./chapter2/laws-and-rules";
 import { deMorganTopic } from "./chapter2/de-morgan";
 
 export const ecet111: CourseInput = {
@@ -31,7 +32,7 @@ export const ecet111: CourseInput = {
     {
       id: "chapter-2",
       title: "Chapter 2 · Boolean Algebra and Logic Gates",
-      topics: [basicGatesTopic, sopPosTopic, deMorganTopic],
+      topics: [basicGatesTopic, sopPosTopic, lawsAndRulesTopic, deMorganTopic],
     },
   ],
 };
