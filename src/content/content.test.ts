@@ -478,6 +478,14 @@ describe("content registry", () => {
     expect(picked).toEqual(["Q(t+1) = 1", "Q(t+1) = 0", "Q(t+1) = 1", "Q(t+1) = 0"]);
   });
 
+  it("flip-flop equations (#297): each question's minterms are its table's 1-rows; next states by the equation", () => {
+    const x = getActivity(COURSE, "flip-flops", "flip-flop-equations")!.activity;
+    const mts = x.questions.slice(0, 3).map((q) => (q.variants[0].spec.kind === "expression" ? q.variants[0].spec.minterms : []));
+    expect(mts).toEqual([[1, 4, 5, 6], [1, 2], [2, 3]]); // JK, T, D (pack ch5-parti §3)
+    const picked = x.questions[3].variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(picked).toEqual(["1", "1", "0"]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -498,7 +506,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)

@@ -2,7 +2,8 @@
  * DEMO / NOT AUTHORITATIVE COURSE CONTENT — pending instructor approval.
  * ECET 111 Chapter 5 Part I, flip-flops (content pack ch5-parti §3): characteristic tables for SR,
  * JK, D and T, one row first (#296). Q(t+1) is computed from the characteristic equations with the
- * Boolean module (JQ′ + K′Q, D, T ⊕ Q; SR as S + R′Q with S = R = 1 not allowed).
+ * Boolean module (JQ′ + K′Q, D, T ⊕ Q; SR as S + R′Q with S = R = 1 not allowed); then the
+ * characteristic equations read from the tables and used on one edge (#297).
  */
 import type { CourseInput, VariantInput } from "../../schema";
 import { envFor, evaluate, parseBool } from "../../boolean";
@@ -113,12 +114,101 @@ export const flipFlopTablesActivity: Activity = {
   ],
 };
 
+/* ---------- characteristic equations (#297): read Q(t+1) from the table, then use it on one edge ---------- */
+
+/** Each equation as an expression question over its inputs and Q; the minterms are the table's 1-rows. */
+function equationVariant(ff: Exclude<FlipFlop, "SR">): VariantInput {
+  const vars = [...INPUTS[ff], "Q"];
+  const ones = Array.from({ length: 2 ** vars.length }, (_, r) => r).filter((r) => {
+    const bits = vars.map((_, i) => ((r >> (vars.length - 1 - i)) & 1) as Bit);
+    return nextQ(ff, bits.slice(0, -1), bits.at(-1)!) === 1;
+  });
+  const shown = EQUATION[ff].replace(/'/g, "′");
+  return {
+    id: `e${ff.toLowerCase()}`,
+    prompt: `From the ${ff} table, write Q(t+1) as an expression in ${vars.join(", ")}, as simple as you can.`,
+    spec: ff === "JK" ? { kind: "expression", vars, minterms: ones, form: "sop", maxLiterals: 4 } : { kind: "expression", vars, minterms: ones },
+    hints: [
+      { rung: 2, text: "Not yet. Look at the rows where Q(t+1) = 1." },
+      { rung: 3, text: ff === "JK" ? "Q(t+1) is 1 when J sets a Q that was 0, or when K does not reset a Q that was 1." : ff === "T" ? "Q(t+1) is 1 when exactly one of T and Q is 1." : "Q(t+1) is 1 exactly when D is 1." },
+      { rung: 4, text: ff === "JK" ? "Write one product for 'Q was 0 and J = 1', one for 'Q was 1 and K = 0'." : ff === "T" ? "Which gate gives 1 when its two inputs differ?" : "Does Q(t) matter at all?" },
+      { rung: 9, text: `Q(t+1) = ${shown}.` },
+    ],
+    misconceptions: [
+      { id: "ex.complement", title: "Wrote the 0-rows", nudgeKey: "sp.zero-rows", detect: { type: "expression-complement" } },
+      { id: "ex.unreadable", title: "Unreadable", nudgeKey: "expr.unreadable", detect: { type: "expression-unreadable" } },
+      ...(ff === "JK" ? [{ id: "ex.not-simplified", title: "Right function, not simplified", nudgeKey: "ff.not-simplified", detect: { type: "expression-not-simplified" as const } }] : []),
+    ],
+    explanation: [
+      { id: "s1", say: `The table's 1-rows are where Q(t+1) = 1. Read them in words first.` },
+      {
+        id: "s2",
+        say: ff === "JK" ? "With Q = 0, J decides; with Q = 1, K decides (K = 1 resets)." : ff === "T" ? "T = 1 flips Q; T = 0 keeps it." : "Q(t+1) copies D on every row.",
+        ask: ff === "JK"
+          ? { prompt: "With Q(t) = 1, which input value keeps Q at 1?", options: ["K = 0", "K = 1"], correctIndex: 0, afterCorrect: "Yes: K′Q.", afterWrong: "K = 0 keeps it: that is K′Q." }
+          : ff === "T"
+            ? { prompt: "With T = 1 and Q = 1, what is Q(t+1)?", options: ["1", "0"], correctIndex: 1, afterCorrect: "Yes, it flips to 0.", afterWrong: "T = 1 flips it: 0." }
+            : { prompt: "With D = 1 and Q = 0, what is Q(t+1)?", options: ["0", "1"], correctIndex: 1, afterCorrect: "Yes: D.", afterWrong: "It copies D: 1." },
+      },
+      { id: "s3", say: `So Q(t+1) = ${shown}.` },
+    ],
+  };
+}
+
+/** Next state from the equation: type, inputs, Q(t). The JK sets keep J ≠ K, so the swapped form (JQ + KQ′) gives a different answer. */
+const NEXT_SETS: [FlipFlop, Bit[], Bit][] = [["JK", [1, 0], 1], ["T", [1], 0], ["JK", [0, 1], 0]];
+const SWAPPED = parseBool("JQ + KQ'", { vars: ["J", "K", "Q"] });
+
+function nextVariant([ff, inputs, q]: [FlipFlop, Bit[], Bit], k: number): VariantInput {
+  const next = nextQ(ff, inputs, q)!;
+  const swapped = ff === "JK" ? evaluate(SWAPPED, envFor(["J", "K", "Q"], [...inputs, q].reduce<number>((a, b) => a * 2 + b, 0))) : undefined;
+  const options = k % 2 ? [{ id: "q1", text: "1" }, { id: "q0", text: "0" }] : [{ id: "q0", text: "0" }, { id: "q1", text: "1" }];
+  return {
+    id: `x${ff.toLowerCase()}${inputs.join("")}${q}`,
+    prompt: `Q(t+1) = ${EQUATION[ff].replace(/'/g, "′")}. With ${inputText(ff, inputs)} and Q(t) = ${q}, what is Q(t+1)?`,
+    spec: { kind: "multiple-choice", options, correctOptionId: `q${next}` },
+    hints: [
+      { rung: 2, text: "Not yet. Put the values into the equation, one term at a time." },
+      { rung: 3, text: `Q(t) = ${q}, so Q′ = ${1 - q}.` },
+      { rung: 9, text: `Q(t+1) = ${next}.` },
+    ],
+    misconceptions: swapped !== undefined && swapped !== next ? [{ id: "ff.equation-swapped", title: "Used JQ + KQ′", nudgeKey: "ff.equation-swapped", detect: { type: "option", optionId: `q${swapped}` } }] : [],
+    explanation: [
+      { id: "s1", say: "Substitute the inputs and Q(t) into the equation; each term is 0 or 1." },
+      {
+        id: "s2",
+        say: ff === "JK" ? `JQ′ = ${inputs[0]}·${1 - q}.` : `T ⊕ Q = ${inputs[0]} ⊕ ${q}.`,
+        ask: ff === "JK"
+          ? { prompt: "What is JQ′?", options: k % 2 ? ["1", "0"] : ["0", "1"], correctIndex: (inputs[0] & (1 - q)) === (k % 2 ? 1 : 0) ? 0 : 1, afterCorrect: "Right.", afterWrong: `${inputs[0]}·${1 - q} = ${inputs[0] & (1 - q)}.` }
+          : { prompt: `What is ${inputs[0]} ⊕ ${q}?`, options: k % 2 ? ["1", "0"] : ["0", "1"], correctIndex: (inputs[0] ^ q) === (k % 2 ? 1 : 0) ? 0 : 1, afterCorrect: "Right.", afterWrong: `They differ, so ${inputs[0] ^ q}.` },
+      },
+      { id: "s3", say: `So Q(t+1) = ${next}.` },
+    ],
+  };
+}
+
+export const flipFlopEquationsActivity: Activity = {
+  id: "flip-flop-equations",
+  title: "Characteristic equations",
+  summary: "Read Q(t+1) from each table as an equation, then use it on one edge.",
+  authority: "DEMO",
+  minutes: 12,
+  questions: [
+    // one fixed equation per flip-flop: exempt from the three-set rule (content.test)
+    ...(["JK", "T", "D"] as const).map((ff) => ({ id: `ff.q.eq-${ff.toLowerCase()}`, label: `${ff} equation`, conceptId: "ff.flip-flop", objectiveId: "ff.obj.equation", variants: [equationVariant(ff)] })),
+    { id: "ff.q.next", label: "Next state", conceptId: "ff.flip-flop", objectiveId: "ff.obj.equation", variants: NEXT_SETS.map((s, k) => nextVariant(s, k)) },
+  ],
+};
+
 export const flipFlopsTopic: TopicInput = {
   id: "flip-flops",
   title: "Flip-flops",
   summary: "Edge-triggered SR, JK, D and T flip-flops: what each does at the active edge, as a table and as an equation.",
   preview: "J K = 1 1 → Q toggles",
   concepts: [{ id: "ff.flip-flop", title: "Flip-flop", summary: "At the active clock edge Q(t+1) follows the inputs: SR set/reset, JK adds toggle, D copies, T complements on 1." }],
-  objectives: [{ id: "ff.obj.table", conceptId: "ff.flip-flop", text: "Give Q(t+1) of SR, JK, D and T flip-flops for every input and present state." }],
-  activities: [flipFlopTablesActivity],
+  objectives: [
+    { id: "ff.obj.table", conceptId: "ff.flip-flop", text: "Give Q(t+1) of SR, JK, D and T flip-flops for every input and present state." },
+    { id: "ff.obj.equation", conceptId: "ff.flip-flop", text: "Write the JK, D and T characteristic equations and use them for one edge." },
+  ],
+  activities: [flipFlopTablesActivity, flipFlopEquationsActivity],
 };
