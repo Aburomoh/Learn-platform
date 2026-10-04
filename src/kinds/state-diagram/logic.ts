@@ -2,8 +2,11 @@ import { envFor, evaluate, parseBool } from "@/content/boolean";
 import type { KindLogic } from "../types";
 import type { StateDiagramSpec } from "./spec";
 
-/** One arrow: its `label` ("x/y", or "x") in label mode, or the state code it goes to in next mode. */
-export type StateDiagramAnswer = { kind: "state-diagram"; step: number; label?: string; next?: string };
+/**
+ * One arrow: its `label` ("x/y", or "x") in label mode, or the state code it goes to in next mode.
+ * `taken`: labels already given on the same arrow (label mode, when two rows share one arrow).
+ */
+export type StateDiagramAnswer = { kind: "state-diagram"; step: number; label?: string; next?: string; taken?: string[] };
 
 export interface Transition {
   /** Present state's code, e.g. "01". */
@@ -35,6 +38,21 @@ export function transitions(spec: StateDiagramSpec): Transition[] {
     const output = out ? evaluate(out, env) : undefined;
     return { from: code(row >> 1, n), input, to, output, label: output === undefined ? `${input}` : `${input}/${output}` };
   });
+}
+
+/**
+ * The steps that share step `i`'s arrow: both rows of a present state when they go to the same next
+ * state (always consecutive steps, input 0 then 1), else just `i`.
+ */
+export function arrowSteps(spec: StateDiagramSpec, i: number): number[] {
+  const ts = transitions(spec);
+  const j = i ^ 1;
+  return ts[j] && ts[j].from === ts[i].from && ts[j].to === ts[i].to ? [Math.min(i, j), Math.max(i, j)] : [i];
+}
+
+/** Each state's grid cell [column, row], in code order: the spec's `positions`, or table order four per row. */
+export function statePositions(spec: StateDiagramSpec): [number, number][] {
+  return spec.positions ?? stateCodes(spec).map((_, s) => [s % 4, Math.floor(s / 4)]);
 }
 
 /** The label chips: every input/output pair (4), or the two inputs without an output. */
@@ -79,7 +97,11 @@ export const stateDiagram: KindLogic<StateDiagramSpec, StateDiagramAnswer> = {
 
     const given = clean(answer.label ?? "");
     const normalized = `${t.from}-${t.input}:${given}`;
-    if (given === t.label) return { correct: true, normalized, partial: !last || undefined };
+    // a shared arrow cannot say which of its rows is asked without giving the input away: accept
+    // any of its labels not given yet (Reviewer on #394)
+    const taken = (answer.taken ?? []).map(clean);
+    const open = arrowSteps(spec, answer.step).map((s) => ts[s].label).filter((l) => !taken.includes(l));
+    if (open.includes(given)) return { correct: true, normalized, partial: !last || undefined };
     const [gi, go] = given.split("/");
     const slip =
       t.output !== undefined && gi === String(t.output) && go === String(t.input) && t.input !== t.output ? "label-reversed"

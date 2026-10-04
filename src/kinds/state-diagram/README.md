@@ -21,6 +21,11 @@ diagram is **pre-drawn, never free-drawn**:
   - `mode`.
 - Truth comes from the equations through the Boolean module (`transitions`), never authored.
   The deck's D, JK and three-JK examples reproduce exactly.
+- **Shared arrows:** when both rows of a state go to the same next state they share one arrow
+  (`arrowSteps`; always consecutive steps). In label mode either of its labels is accepted while
+  it is still open. The answer's `taken` lists the labels already given on that arrow.
+- `positions` (optional): a [column, row] grid cell per state, in code order. `statePositions`
+  falls back to table order, four per row.
 - Detectors:
   - next mode: `next-wrong-row` (the other input's row), `next-is-present`;
   - label mode: `output-wrong-row`, `label-input-wrong`, `label-reversed` (y/x).
