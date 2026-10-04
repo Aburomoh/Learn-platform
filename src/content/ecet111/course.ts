@@ -10,6 +10,7 @@ import { binaryArithmeticTopic } from "./chapter1/binary-arithmetic";
 import { basicGatesTopic } from "./chapter2/basic-gates";
 import { sopPosTopic } from "./chapter2/sop-pos";
 import { lawsAndRulesTopic } from "./chapter2/laws-and-rules";
+import { simplificationTopic } from "./chapter2/simplification";
 import { mintermsTopic } from "./chapter2/minterms";
 
 export const ecet111: CourseInput = {
@@ -32,7 +33,7 @@ export const ecet111: CourseInput = {
     {
       id: "chapter-2",
       title: "Chapter 2 · Boolean Algebra and Logic Gates",
-      topics: [basicGatesTopic, sopPosTopic, lawsAndRulesTopic, mintermsTopic],
+      topics: [basicGatesTopic, sopPosTopic, lawsAndRulesTopic, simplificationTopic, mintermsTopic],
     },
   ],
 };

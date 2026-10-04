@@ -13,6 +13,7 @@ import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
 import { isCanonical } from "./ecet111/chapter2/minterms";
 import { equivalent, isPOS, isSOP, parseBool } from "./boolean";
+import { gateCount } from "./ecet111/chapter2/simplification";
 import { columnTruth } from "@/kinds/truth-table/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 import { lawChips, lineOptions } from "@/kinds/derivation/logic";
@@ -366,6 +367,12 @@ describe("content registry", () => {
     });
   });
 
+  it("simplification (#229): wrong lines are not equivalent; gate counts match the pack (F2: 6 → 5)", () => {
+    const x = getActivity(COURSE, "simplification", "simplification")!.activity;
+    const [derive, gates] = x.questions;
+    for (const v of derive.variants) {
+  });
+
   it("minterms (#231): the slide's Σ lists, wrong expansion lines are not equivalent", () => {
     const x = getActivity(COURSE, "minterms", "minterms")!.activity;
     const [, canonical, expand, sig, table] = x.questions;
@@ -386,6 +393,14 @@ describe("content registry", () => {
       const spec = v.spec;
       spec.lines.forEach((l, i) => {
         const prev = parseBool(i === 0 ? spec.start : spec.lines[i - 1].expr, { vars: spec.vars });
+        for (const w of l.wrongLines) expect(equivalent(prev, parseBool(w.expr, { vars: spec.vars }), spec.vars), `${v.id} line ${i + 1} ${w.expr}`).toBe(false);
+      });
+    }
+    expect(gateCount(parseBool("x'y'z + x'yz + xy'")).total).toBe(6);
+    expect(gateCount(parseBool("x'z + xy'")).total).toBe(5);
+    expect(gates.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.correctOptionId : ""))).toEqual(["g5", "g1", "g1"]);
+  });
+
         for (const w of l.wrongLines) expect(equivalent(prev, parseBool(w.expr, { vars: spec.vars }), spec.vars), `${v.id} line ${i + 1}: ${w.expr}`).toBe(false);
       });
     }
