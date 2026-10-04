@@ -29,6 +29,14 @@ function rotate<T>(xs: T[], k: number): T[] {
   return [...xs.slice(r), ...xs.slice(0, r)];
 }
 
+/** Each flip-flop's rule in words, as its table states it (s.16, s.26, s.30, s.35). */
+const RULE: Record<FlipFlop, string> = {
+  SR: "0 0 keeps Q, 1 0 sets it, 0 1 resets it, and 1 1 is not allowed (X).",
+  JK: "0 0 keeps Q, 1 0 sets it, 0 1 resets it, and 1 1 complements it.",
+  D: "Q(t+1) is whatever D is.",
+  T: "T = 0 keeps Q, T = 1 complements it.",
+};
+
 const inputText = (ff: FlipFlop, inputs: Bit[]) => INPUTS[ff].map((n, i) => `${n} = ${inputs[i]}`).join(", ");
 
 /* ---------- one row first (predict before the table) ---------- */
@@ -89,14 +97,15 @@ function tableVariant(ff: FlipFlop): VariantInput {
       {
         id: "s2",
         say: `Take the row ${INPUTS[ff].map(() => 1).join(" ")} with Q = 0.`,
-        stage: { step: 0, revealed: rows - 2 },
+        // one table, one set: the walk never fills rows, so a retry is never copying (Pedagogy on #406)
+        stage: { step: 0, revealed: 0 },
         ask: (() => {
           const v = values[rows - 2];
           const opts = ["0", "1", "X"].filter((o) => ff === "SR" || o !== "X");
           return { prompt: "What is Q(t+1) on that row?", options: opts, correctIndex: opts.indexOf(String(v)), afterCorrect: "Yes.", afterWrong: `It is ${v}.` };
         })(),
       },
-      { id: "s3", say: `${ff}: Q(t+1) = ${EQUATION[ff].replace(/'/g, "′")}${ff === "SR" ? ", with S = R = 1 not allowed" : ""}.`, stage: { step: 0, revealed: rows } },
+      { id: "s3", say: `Now each row the same way: ${RULE[ff]}`, stage: { step: 0, revealed: 0 } },
     ],
   };
 }
@@ -135,7 +144,7 @@ function equationVariant(ff: Exclude<FlipFlop, "SR">): VariantInput {
       { rung: 9, text: `Q(t+1) = ${shown}.` },
     ],
     misconceptions: [
-      { id: "ex.complement", title: "Wrote the 0-rows", nudgeKey: "sp.zero-rows", detect: { type: "expression-complement" } },
+      { id: "ex.complement", title: "Wrote the 0-rows", nudgeKey: "ff.zero-rows", detect: { type: "expression-complement" } },
       { id: "ex.unreadable", title: "Unreadable", nudgeKey: "expr.unreadable", detect: { type: "expression-unreadable" } },
       ...(ff === "JK" ? [{ id: "ex.not-simplified", title: "Right function, not simplified", nudgeKey: "ff.not-simplified", detect: { type: "expression-not-simplified" as const } }] : []),
     ],
@@ -150,7 +159,14 @@ function equationVariant(ff: Exclude<FlipFlop, "SR">): VariantInput {
             ? { prompt: "With T = 1 and Q = 1, what is Q(t+1)?", options: ["1", "0"], correctIndex: 1, afterCorrect: "Yes, it flips to 0.", afterWrong: "T = 1 flips it: 0." }
             : { prompt: "With D = 1 and Q = 0, what is Q(t+1)?", options: ["0", "1"], correctIndex: 1, afterCorrect: "Yes: D.", afterWrong: "It copies D: 1." },
       },
-      { id: "s3", say: `So Q(t+1) = ${shown}.` },
+      // one set each: the walk ends on the asked piece, the student assembles the rest (Pedagogy on #408)
+      {
+        id: "s3",
+        say:
+          ff === "JK" ? "So K′Q is one product. The other covers Q = 0: which input sets it?"
+          : ff === "T" ? "So Q(t+1) is 1 exactly when T and Q differ. Which gate gives that?"
+          : `So Q(t+1) = ${shown}.`,
+      },
     ],
   };
 }

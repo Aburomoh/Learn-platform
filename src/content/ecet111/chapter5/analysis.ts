@@ -80,7 +80,7 @@ function inputVariant(c: Circuit, i: number): VariantInput {
     spec: { kind: "expression", vars: c.vars, target: expr },
     hints: [
       { rung: 2, text: `Not yet. Follow the wire into ${label} back to its gate.` },
-      { rung: 3, text: `${label} comes from ${words}. Write that gate's output.` },
+      { rung: 3, text: "Name the gate first, then its inputs." },
       { rung: 4, text: "An AND gate gives a product, an OR gate a sum, an inverter a prime." },
       { rung: 9, text: `${label} = ${show(expr)}.` },
     ],
@@ -90,10 +90,11 @@ function inputVariant(c: Circuit, i: number): VariantInput {
     ],
     explanation: [
       { id: "s1", say: "Stage 1 reads each flip-flop input from the gates that drive it: one equation per input." },
+      // ask first, name the gate after (Pedagogy on #413)
       {
         id: "s2",
-        say: `${label} comes from ${words}.`,
-        ask: { prompt: "Which gate is last before the flip-flop input?", options: i % 2 ? ["not a gate", words.split(" ")[1]] : [words.split(" ")[1], "not a gate"], correctIndex: i % 2, afterCorrect: "Right.", afterWrong: `It is ${words}.` },
+        say: `Follow ${label} back from the flip-flop.`,
+        ask: { prompt: "Which gate is last before the flip-flop input?", options: i % 2 ? ["not a gate", words.split(" ")[1]] : [words.split(" ")[1], "not a gate"], correctIndex: i % 2, afterCorrect: `Right: ${words}.`, afterWrong: `It is ${words}.` },
       },
       { id: "s3", say: `So ${label} = ${show(expr)}.` },
     ],
