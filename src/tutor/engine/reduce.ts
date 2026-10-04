@@ -53,7 +53,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         express("thinking");
         const key = event.misconceptionId && misconceptionKey(ctx, event.misconceptionId);
         if (key) say(key, event.vars);
-        else say(genericWrongKey(ctx, event, "wrong.first"));
+        else say(genericWrongKey(ctx, event, "wrong.first"), event.vars);
         out.push({ type: "REQUEST_RETRY" });
         break;
       }
@@ -74,7 +74,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       express("concern");
       const key = event.misconceptionId && misconceptionKey(ctx, event.misconceptionId);
       if (key) say(key, event.vars);
-      else say(genericWrongKey(ctx, event, "wrong.again"));
+      else say(genericWrongKey(ctx, event, "wrong.again"), event.vars);
       const h = nextHint(s, ctx);
       if (h) {
         grant(s, h.rung, out, fill(h.text, ctx.vars));

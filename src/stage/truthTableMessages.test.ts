@@ -60,7 +60,7 @@ describe("#223 truth table: step lines", () => {
     expect(s.last?.result.wrongCells).toMatchObject({ first: 1 });
     expect(s.message).toBe("Cells not right yet: 1. The inputs count up in binary, starting from all zeros.");
     const col = runOn(fillTable, [open, cells(0, "0011"), cells(1, "0101"), cells(2, "1001")]);
-    expect(col.message).toBe("Cells not right yet: 2. Check the marked one first: work out AB for that row on its own.");
+    expect(col.message).toBe("Cells not right yet: 1. Check the marked one first: work out AB for that row on its own.");
   });
 
   it("row-select wrong picks point at the marked row", () => {

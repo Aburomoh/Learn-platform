@@ -50,8 +50,9 @@ attention-left, attention-right` (placeholders until approved assets exist).
    `ANSWER_SUBMITTED.vars` carries structural details of the wrong answer (`wrongBitNumber`,
    `wrongCount` for grids). Truth-table steps (`columnLabel` in the step vars) say
    `step.next-table-column` / `step.last-table-column`. A grid answer with wrong cells and no
-   recognised slip says `wrong.cell` (or `wrong.cell.<stepTag>`): the view marks the first wrong
-   cell, so the line points at it instead of naming a row.
+   recognised slip says `wrong.cell` (or `wrong.cell.<stepTag>`): it states how many cells are not
+   right and points at the one the view marks. Generic wrong lines have step forms too
+   (`wrong.first.<stepTag>`). Keep the plain form free of step-only slots (`columnLabel`).
 8. Gate-by-gate circuit walk (ADR-0007 step tag `"gate"`): `stepVars` supplies structural vars
    only — `gateId`, `gateName` (type), `stepNumber`, `gateCount`, `gateOut`, and per input n = 1, 2
    `in{n}` plus `in{n}Label` (circuit input) or `in{n}Gate` (feeding gate's type).
