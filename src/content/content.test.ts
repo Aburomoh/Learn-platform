@@ -11,6 +11,7 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
+import { columnTruth } from "@/kinds/truth-table/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 
 const COURSE = "ecet111";
@@ -209,6 +210,16 @@ describe("content registry", () => {
         n++;
       }
     expect(n).toBeGreaterThan(0);
+  });
+
+  it("derived gates (#225): outputs match the pack (NAND 1110, NOR 1000, XOR 0110, XNOR 1001)", () => {
+    const x = getActivity(COURSE, "derived-gates", "derived-gates")!.activity;
+    const last = (qi: number) =>
+      x.questions[qi].variants.map((v) => {
+        if (v.spec.kind !== "truth-table") throw new Error("expected a truth table");
+        return columnTruth(v.spec, v.spec.columns.at(-1)!).join("");
+      });
+    expect([0, 1, 2, 3].map(last)).toEqual([["1110", "1110", "1110"], ["1000", "1000", "1000"], ["0110", "0110", "0110"], ["1001", "1001", "1001"]]);
   });
 
   it("resolves an activity by path", () => {

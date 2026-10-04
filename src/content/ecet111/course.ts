@@ -7,6 +7,7 @@ import type { CourseInput } from "../schema";
 import { numberSystemsTopic } from "./chapter1/number-systems";
 import { binaryArithmeticTopic } from "./chapter1/binary-arithmetic";
 import { logicGatesTopic } from "./chapter2/logic-gates";
+import { derivedGatesTopic } from "./chapter2/derived-gates";
 
 export const ecet111: CourseInput = {
   id: "ecet111",
@@ -27,7 +28,7 @@ export const ecet111: CourseInput = {
     {
       id: "chapter-2",
       title: "Chapter 2 · Boolean Algebra and Logic Gates",
-      topics: [logicGatesTopic],
+      topics: [logicGatesTopic, derivedGatesTopic],
     },
   ],
 };
