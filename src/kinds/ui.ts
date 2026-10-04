@@ -16,15 +16,40 @@ export const kindUI = {
     Explain: dynamic(() => import("./base-to-decimal/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./base-to-decimal/ui").then((m) => m.Preload)),
   },
+  "bit-grouping": {
+    Practice: dynamic(() => import("./bit-grouping/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./bit-grouping/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./bit-grouping/ui").then((m) => m.Preload)),
+  },
   "circuit-predict": {
     Practice: dynamic(() => import("./circuit-predict/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./circuit-predict/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./circuit-predict/ui").then((m) => m.Preload)),
   },
+  "column-addition": {
+    Practice: dynamic(() => import("./column-addition/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./column-addition/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./column-addition/ui").then((m) => m.Preload)),
+  },
+  "multiple-choice": {
+    Practice: dynamic(() => import("./multiple-choice/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./multiple-choice/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./multiple-choice/ui").then((m) => m.Preload)),
+  },
+  numeric: {
+    Practice: dynamic(() => import("./numeric/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./numeric/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./numeric/ui").then((m) => m.Preload)),
+  },
   "place-value": {
     Practice: dynamic(() => import("./place-value/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./place-value/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./place-value/ui").then((m) => m.Preload)),
+  },
+  "repeated-division": {
+    Practice: dynamic(() => import("./repeated-division/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./repeated-division/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./repeated-division/ui").then((m) => m.Preload)),
   },
 } as const satisfies Record<RegisteredKind, { Practice: unknown; Explain: unknown; Preload: ComponentType }>;
 
