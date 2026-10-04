@@ -19,6 +19,7 @@ describe("kind registry (ADR-0008)", () => {
       "base-to-decimal": () => import("./base-to-decimal/ui"),
       "bit-grouping": () => import("./bit-grouping/ui"),
       "circuit-predict": () => import("./circuit-predict/ui"),
+      derivation: () => import("./derivation/ui"),
       expression: () => import("./expression/ui"),
       "column-addition": () => import("./column-addition/ui"),
       "multiple-choice": () => import("./multiple-choice/ui"),
