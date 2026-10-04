@@ -33,6 +33,21 @@ test("home lists the course and navigates to an activity", async ({ page }) => {
   await expect(page).toHaveURL(/\/courses\/ecet111\/$/);
   // course page: a chapter map; the topic title is a quiet link, and exactly one button is filled
   await expect(page.locator("[data-primary-action]")).toHaveCount(1);
+  // chapters fold (#232): the chapter with the next step is open; another one opens from the keyboard
+  await expect(page.getByRole("heading", { level: 2, name: /^Chapter 2: / })).toBeVisible();
+  const closed = page.locator("details:not([open]) > summary").first();
+  await closed.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("details:not([open])")).toHaveCount(0);
+  await page.setViewportSize({ width: 320, height: 700 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+  // on phones the row's filled button takes the row's full width (#172)
+  const [button, row] = await page.evaluate(() => {
+    const a = document.querySelector("[data-primary-action]")!;
+    return [a.getBoundingClientRect().width, a.closest("li")!.getBoundingClientRect().width];
+  });
+  expect(button).toBeGreaterThanOrEqual(row - 1);
+  await page.setViewportSize(viewport);
   await page.getByRole("link", { name: "Number-base conversions", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`${TOPIC}$`));
   // topic page: where am I, what am I learning, and one primary button
@@ -109,9 +124,10 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await expect(page.getByRole("status").filter({ hasText: "Correct." })).toBeVisible();
 
   // 7. no server or third-party calls: the site is a static export, so the only requests allowed
-  //    are GETs of its own files (assets, the brand mark, and pages that links pre-load).
+  //    are GETs of its own files (assets, the brand mark, and pages that links pre-load) and the
+  //    HEAD checks Next's link prefetch sometimes sends for those pages.
   const origin = new URL(page.url()).origin;
-  const nonStatic = requests.filter((r) => !r.startsWith("GET data:") && !r.startsWith(`GET ${origin}/`));
+  const nonStatic = requests.filter((r) => !r.startsWith("GET data:") && !r.startsWith(`GET ${origin}/`) && !r.startsWith(`HEAD ${origin}/`));
   expect(nonStatic).toEqual([]);
 
   // 8. progress persisted locally and visible after navigation

@@ -79,6 +79,8 @@ function Harness() {
 describe("stage: grouping question rendered through QuestionView", () => {
   it("walks 26 → (1A) in hex: pad and cut, then one digit per group, then the joined result", async () => {
     render(<Harness />);
+    // the kind's view is loaded on demand (ADR-0008): wait for it once
+    await screen.findByRole("button", { name: "Add a leading zero" });
     const user = userEvent.setup();
     // step 0: nothing about the groups or digits is shown yet
     expect(screen.queryByRole("textbox")).toBeNull();
