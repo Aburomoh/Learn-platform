@@ -11,10 +11,20 @@ import { Suspense, createElement, type ComponentType } from "react";
 import { isRegisteredKind, type RegisteredKind } from "./index";
 
 export const kindUI = {
+  "base-to-decimal": {
+    Practice: dynamic(() => import("./base-to-decimal/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./base-to-decimal/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./base-to-decimal/ui").then((m) => m.Preload)),
+  },
   "bit-grouping": {
     Practice: dynamic(() => import("./bit-grouping/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./bit-grouping/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./bit-grouping/ui").then((m) => m.Preload)),
+  },
+  derivation: {
+    Practice: dynamic(() => import("./derivation/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./derivation/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./derivation/ui").then((m) => m.Preload)),
   },
   derivation: {
     Practice: dynamic(() => import("./derivation/ui").then((m) => m.Practice)),
@@ -50,6 +60,11 @@ export const kindUI = {
     Practice: dynamic(() => import("./repeated-division/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./repeated-division/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./repeated-division/ui").then((m) => m.Preload)),
+  },
+  "truth-table": {
+    Practice: dynamic(() => import("./truth-table/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./truth-table/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./truth-table/ui").then((m) => m.Preload)),
   },
 } as const satisfies Record<RegisteredKind, { Practice: unknown; Explain: unknown; Preload: ComponentType }>;
 

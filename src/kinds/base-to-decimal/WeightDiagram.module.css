@@ -1,0 +1,127 @@
+.root {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* sunken well; a long number scrolls inside it, never the page */
+.well {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunk);
+}
+
+.well[data-fade="end"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+
+.well[data-fade="start"] {
+  mask-image: linear-gradient(to left, #000 calc(100% - 24px), transparent);
+}
+
+.well[data-fade="both"] {
+  mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+}
+
+.grid {
+  display: grid;
+  justify-content: start;
+  justify-items: center;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* the digit boxed, as on the slides */
+.digit {
+  display: grid;
+  place-items: center;
+  min-width: 40px;
+  height: 40px;
+  border: 2px solid var(--text);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.point {
+  align-self: end;
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.cell {
+  display: grid;
+  place-items: center;
+  min-width: 56px;
+  min-height: 44px;
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+}
+
+.cell[data-state="now"],
+.sum[data-state="now"] {
+  background: var(--focus-halo);
+}
+
+.cell[data-state="later"],
+.sum[data-state="later"] {
+  opacity: var(--pending-opacity);
+}
+
+.cell sup,
+.power sup {
+  font-size: max(0.75em, 12px);
+}
+
+.input {
+  width: 44px;
+  height: 40px;
+  padding: 0;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  text-align: center;
+  font-size: var(--text-base);
+}
+
+.wide {
+  width: 88px;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+/* the first wrong cell: border and background plus aria-invalid, never colour alone */
+.wrong {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
+
+.sum {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  min-height: 48px;
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+}
+
+.rowLabel {
+  font-size: var(--text-sm);
+  font-weight: 650;
+  color: var(--text-muted);
+}
+
+.actions {
+  display: flex;
+}
