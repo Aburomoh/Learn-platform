@@ -68,6 +68,13 @@ describe("expression kind (#219)", () => {
     expect(answer(k, "C'")).toMatchObject({ correct: false, misconceptionId: "ex.complement" });
   });
 
+  it("minterms form: one product per 1-row, every variable in each (#227)", () => {
+    const m = variant({ kind: "expression", vars: ["A", "B"], minterms: [1, 3], form: "minterms" });
+    expect(answer(m, "A'B + AB")).toMatchObject({ correct: true });
+    expect(answer(m, "B")).toMatchObject({ correct: false, misconceptionId: "ex.wrong-form" }); // right function, simplified
+    expect(answer(m, "A'B + AB + AB")).toMatchObject({ correct: true }); // a repeated minterm is still canonical
+  });
+
   it("validates the spec", () => {
     const ok = (s: unknown) => ExpressionSpec.safeParse(s).success;
     expect(ok({ kind: "expression", vars: ["A"], target: "A", minterms: [1] })).toBe(false);
