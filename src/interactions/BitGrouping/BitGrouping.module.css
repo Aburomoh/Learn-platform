@@ -34,6 +34,11 @@
   gap: var(--space-1);
 }
 
+/* the pair that pads the end of the fraction sits at the right end of the row */
+.padEnd {
+  margin-inline-start: auto;
+}
+
 .pad {
   min-height: var(--touch-min);
   padding: 0 var(--space-3);

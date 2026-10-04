@@ -45,8 +45,8 @@ describe("bit-grouping view: binary point (#211)", () => {
     expect(screen.getByText(/outward from the point/)).toBeInTheDocument();
 
     // fraction padded on the wrong side is not possible here: zeros go on at the far ends only
-    await user.click(screen.getByRole("button", { name: "Add a leading zero" }));
-    await user.click(screen.getByRole("button", { name: "Add a trailing zero" }));
+    await user.click(screen.getByRole("button", { name: "Add 0 in front" }));
+    await user.click(screen.getByRole("button", { name: "Add 0 at the end" }));
     // 010 | 110 . 110 : one cut in the whole part, before its 4th bit
     await user.click(screen.getByRole("button", { name: /Bit 4 of 9: 1\. Start a new group here/ }));
     await user.click(screen.getByRole("button", { name: "Check groups" }));

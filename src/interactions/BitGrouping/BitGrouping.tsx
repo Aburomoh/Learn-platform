@@ -184,10 +184,10 @@ function MarkGroups({ bits, groupSize, onGroups, wrong }: { bits: string; groupS
       )}
       <div className={styles.row} {...focusTarget("bits")}>
         <div className={styles.padButtons}>
-          <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad >= groupSize} onClick={() => setPad((p) => p + 1)} aria-label="Add a leading zero" {...focusTarget("pad-zero")}>
+          <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad >= groupSize} onClick={() => setPad((p) => p + 1)} aria-label={hasPoint ? undefined : "Add a leading zero"} {...focusTarget("pad-zero")}>
             {hasPoint ? "Add 0 in front" : "Add 0"}
           </button>
-          <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad === 0} onClick={() => setPad((p) => p - 1)} aria-label="Remove a leading zero">
+          <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad === 0} onClick={() => setPad((p) => p - 1)} aria-label={hasPoint ? "Remove 0 in front" : "Remove a leading zero"}>
             Remove 0
           </button>
         </div>
@@ -197,11 +197,11 @@ function MarkGroups({ bits, groupSize, onGroups, wrong }: { bits: string; groupS
           {[...right].map((bit, j) => cell(bit, left.length + j, `f${j}`, j === 0, j >= frac.length))}
         </div>
         {hasPoint && (
-          <div className={styles.padButtons}>
-            <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || padEnd >= groupSize} onClick={() => setPadEnd((p) => p + 1)} aria-label="Add a trailing zero" {...focusTarget("pad-zero-end")}>
+          <div className={`${styles.padButtons} ${styles.padEnd}`}>
+            <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || padEnd >= groupSize} onClick={() => setPadEnd((p) => p + 1)} {...focusTarget("pad-zero-end")}>
               Add 0 at the end
             </button>
-            <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || padEnd === 0} onClick={() => setPadEnd((p) => p - 1)} aria-label="Remove a trailing zero">
+            <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || padEnd === 0} onClick={() => setPadEnd((p) => p - 1)} aria-label="Remove 0 at the end">
               Remove 0
             </button>
           </div>
