@@ -1,7 +1,7 @@
 # Current State — Code / Architecture Reviewer
 
-Current assignment: Review ECET 111 completion PRs (epic #192) as alarmed (wake:reviewer); context refreshed after the model change (#264).
-Recent important decision: New kinds follow ADR-0008 (folder + registry, `next/dynamic`, typed const registry, no cross-imports) and ADR-0007 steps; Boolean truth only from `src/content/boolean` with input limits (#261).
+Current assignment: Review ECET 111 completion PRs (epic #192) as alarmed; one comment per review ending "Ready for QA" or "Changes needed".
+Recent important decision: Kinds via ADR-0008 registry; truth only from `src/content/boolean`; K-map accepts any minimal cover (#361); course-wide guards for option position (#347) and duplicate options (#338).
 Blocker: None
-Relevant issue/PR: #260 (registry part 1, approved, awaiting rebase/QA); #262 (new role: owner's words to be quoted on #192); place-value guard to narrow for base→decimal (#213, Pedagogy).
-Next expected action: Review registry part 2 and the truth-table kind; check keyboard model (asked on #245/#255) is specified before kind UIs land.
+Relevant issue/PR: #357 waits on a multi-output circuit view; #358 asks `node --check scripts/*.mjs` in CI; #322 open: X rows in row-select should accept either choice.
+Next expected action: Review the K-map view (#235) and Chapter 3–5 content; watcher runs as `WAKE_POLL_SECONDS=120 node scripts/wake.mjs --watch` (not via npm, which leaks on Windows).
