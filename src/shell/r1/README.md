@@ -13,7 +13,7 @@ these and carry no styling of their own; everything is drawn from the design tok
 | `ProfileMenu` | Who am I here | Disclosure: person icon (+ "Guest" from 641 px). Panel: what Guest means, Appearance (Light · Dark · Match device), Settings. Escape or a click outside closes it. |
 | `Footer` | — | Facts line: amber dot + "Demo content" (only for demo content), "Optional practice, not graded", "Progress stays in this browser". |
 | `TopicRow` | Which topic next | Plain surface: optional visual (`<PreviewBoard size="sm" bare />`, hidden on phones), title, route, status (with a check when completed), and one action: filled for the next topic, quiet for the rest. The row is never the click target. |
-| `TutorCard` (`src/tutor/ui`) | — | Monogram disc from the tutor's name (sm 40, md 56, lg 88 px) with one line in a soft bubble; with `portrait` (`product.brand.tutorPortrait`) the disc shows `pose` (default neutral; `welcome` on home/course for a first visit via `HomeNext` and `CourseTutor`). The line is passed in from the tutor catalog. |
+| `TutorCard` (`src/tutor/ui`) | — | Monogram disc from the tutor's name (sm 40, md 56, lg 88 px) with one line in a soft bubble; with `portrait` (`product.brand.tutorPortrait`) it shows `pose` (default neutral; `welcome` on home and the course/topic rails for a first visit via `HomeNext` and `CourseTutor`): the waist-up pose in a 168 × 224 box above the bubble from 900 px, the head crop in the disc below. The line is passed in from the tutor catalog. |
 
 Rules that apply to all of them:
 - `--brand` is used as text only at 13 px bold or larger.

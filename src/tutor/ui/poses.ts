@@ -16,21 +16,34 @@ export type Pose =
 /** What the tutor can show: every stage Expression, plus `welcome` for intro cards on a first visit. */
 export type PoseKey = Expression | "welcome";
 
+/**
+ * Where the tutor is drawn (DESIGN_SYSTEM.md, Tutor area): `column` = its own column, the waist-up
+ * figure in a 168 × 224 box; `compact` = phones and the strip above the stage, the 40 px head crop.
+ */
+export type Place = "column" | "compact";
+
+/** When the tutor has its own column: beside the stage from 1200 px, in rails and the home card from 900 px. */
+export const COLUMN_MEDIA = {
+  stage: "(min-width: 1200px)",
+  card: "(min-width: 900px)",
+} as const;
+
 /** `product.brand.tutorPortrait`: where the files live and which pose each expression uses. */
 export interface TutorPoseTable {
   /** Public folder, e.g. "/tutor". */
   dir: string;
+  /** The pose per expression where the tutor has its own column. */
   poses: Record<PoseKey, Pose>;
+  /** Overrides for the compact place, e.g. `pointing`: the strip sits above the stage, not beside it. */
+  compact?: Partial<Record<PoseKey, Pose>>;
 }
 
-/** The 168 px head-and-shoulders crop (`crop`, avatar discs) or the 480 px waist-up figure (`waist`). */
-export function poseSrc(table: TutorPoseTable, key: PoseKey, size: "crop" | "waist" = "crop"): string {
-  const pose = table.poses[key];
-  return `${table.dir}/${pose}${size === "waist" ? "-waist" : ""}.webp`;
+/** The pose shown for `key` at `place`. */
+export function poseFor(table: TutorPoseTable, key: PoseKey, place: Place): Pose {
+  return (place === "compact" && table.compact?.[key]) || table.poses[key];
 }
 
-/** Every distinct stage crop (no `welcome`): what an activity page may show, for idle prefetch. */
-export function stageCrops(table: TutorPoseTable): string[] {
-  const keys = Object.keys(table.poses).filter((k): k is Expression => k !== "welcome");
-  return [...new Set(keys.map((k) => poseSrc(table, k)))];
+/** The file for `key` at `place`: the 480 px waist-up figure (`column`) or the 168 px head crop (`compact`). */
+export function poseSrc(table: TutorPoseTable, key: PoseKey, place: Place): string {
+  return `${table.dir}/${poseFor(table, key, place)}${place === "column" ? "-waist" : ""}.webp`;
 }

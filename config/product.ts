@@ -1,8 +1,9 @@
 import type { TutorPoseTable } from "../src/tutor/ui/poses";
 
 /**
- * The tutor's pose art (#354), one pose per expression. `pointing` uses `point_left`: the stage sits
- * to the viewer's left of the tutor column at `lg` (below `lg` the strip sits above the stage).
+ * The tutor's pose art (#354), one pose per expression (DESIGN_SYSTEM.md, Tutor area). `pointing` uses
+ * `point_left` in the column (the stage is to the viewer's left from 1200 px) and `explaining` in the
+ * compact strip, which sits above the stage.
  */
 const tutorPoses: TutorPoseTable = {
   dir: "/tutor",
@@ -19,6 +20,7 @@ const tutorPoses: TutorPoseTable = {
     "attention-right": "point_right",
     welcome: "welcome",
   },
+  compact: { pointing: "explaining" },
 };
 
 /**

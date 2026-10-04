@@ -86,6 +86,7 @@ export function TutorPanel({ name, expression, message, messageSeq, typingSpeed,
       className={styles.panel}
       aria-label="Tutor"
       data-expanded={open}
+      data-art={product.brand.tutorPortrait ? "" : undefined}
       onClick={(e) => {
         // A tap on the bubble while it is still typing only completes the text.
         if ((e.target as Element).closest("[data-complete='false']")) return;
@@ -98,12 +99,8 @@ export function TutorPanel({ name, expression, message, messageSeq, typingSpeed,
         }
       }}
     >
-      <div className={styles.avatar}>
-        <TutorAvatar expression={expression} name={name} portrait={product.brand.tutorPortrait} />
-      </div>
-      <div className={styles.avatarSm}>
-        <TutorAvatar expression={expression} name={name} size="sm" portrait={product.brand.tutorPortrait} />
-      </div>
+      {/* one avatar for every width: its CSS and <picture> pick the size and the file */}
+      <TutorAvatar expression={expression} name={name} portrait={product.brand.tutorPortrait} />
       {message ? (
         <div id={bubbleId} className={styles.message}>
           <TutorBubble text={message} speed={typingSpeed} onDone={onMessageDone} placement="side" />
