@@ -14,8 +14,8 @@
 | 8 | 8 Nov – 14 Nov | *Midterm Exams* | — | Sat 7-Nov to Sat 14-Nov |
 | 9 | 15 Nov – 21 Nov | Combinational logic: adders, decoders, encoders, multiplexers | Ch.4 | Prep for Lab 6 |
 | 10 | 22 Nov – 28 Nov | Ch.4 combinational circuits; Ch.5 Part I sequential intro | Ch.4 / Ch.5-I | Quiz 2; Lab 6 |
-| 11 | 29 Nov – 5 Dec | Sequential logic: latches, timing diagrams, analysis | Ch.5-II | Project 2 |
-| 12 | 6 Dec – 12 Dec | Sequential analysis (continued); JK/D/T flip-flops | Ch.5-II | Quiz 3; Project 3 & 4 |
+| 11 | 29 Nov – 5 Dec | Sequential analysis: state equations, state diagrams, state tables | Ch.5-II | Project 2 |
+| 12 | 6 Dec – 12 Dec | Sequential analysis (continued); design intro (excitation tables) | Ch.5-II/III | Quiz 3; Project 3 & 4 |
 | 13 | 13 Dec – 19 Dec | Sequential logic: design (excitation, K-maps, equations) | Ch.5-III | Project 4 & 5; Meeting |
 | 14 | 20 Dec – 26 Dec | *Winter Break Begins* | — | Sun 20-Dec |
 | 15 | 27 Dec – 2 Jan | *Winter Break Ends* | — | Thu 31-Dec; Fri 1-Jan New Year's Day |
@@ -37,5 +37,5 @@
 ## Ambiguities and Notes
 
 - **Week 8 (Midterm):** Exam window spans Sat 7-Nov to Sat 14-Nov; students likely review Week 7 material and do not attend normal classes during this week.
-- **Weeks 14–15 (Break):** Defined by calendar boundaries (20 Dec – 2 Jan), overlapping two numeric weeks. Students resume on Friday 3 January (Week 16).
+- **Weeks 14–15 (Break):** Defined by calendar boundaries (20 Dec – 2 Jan), overlapping two numeric weeks. Week 16 resumes 3 January (Sunday).
 - **Topic progression:** Ch.1–2 dominate the first half; Ch.3 sits in the middle (weeks 6–7); Ch.4 appears weeks 9–10; Ch.5 splits across weeks 10–16 (analysis then design).
