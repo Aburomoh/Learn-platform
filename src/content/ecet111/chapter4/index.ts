@@ -4,11 +4,13 @@
  */
 import type { ModuleInput } from "../../schema";
 import { halfAdderTopic } from "./half-adder";
+import { fullAdderTopic } from "./full-adder";
 
 export const chapter4: ModuleInput = {
   id: "chapter-4",
   title: "Chapter 4 · Combinational Logic Circuits",
   topics: [
     halfAdderTopic,
+    fullAdderTopic,
   ],
 };
