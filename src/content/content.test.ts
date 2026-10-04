@@ -106,7 +106,8 @@ describe("content registry", () => {
             }
           // The page renders a preview as tiles split on "→" (PreviewBoard): it must be a chain.
           if (t.preview) expect(t.preview.split("→").length, `${t.id} preview is a chain`).toBeGreaterThanOrEqual(2);
-          const numbers = t.preview?.toUpperCase().match(/[0-9A-F]+/g) ?? [];
+          // Base markers (53_10) are notation, not numbers the practice uses (#55).
+          const numbers = t.preview?.replace(/_\d+/g, "").toUpperCase().match(/[0-9A-F]+/g) ?? [];
           for (const n of numbers) expect(values.has(n), `${t.id} preview uses ${n}`).toBe(false);
         }
     const ns = courses[0].modules.flatMap((m) => m.topics).find((t) => t.id === "number-systems")!;
@@ -204,6 +205,27 @@ describe("content registry", () => {
     expect(additionResult(shown.a, shown.b, shown.endCarry !== "drop")).toBe("0100");
   });
 
+  it("checks octal and hex back in decimal, and drills the 0–15 table (#215)", () => {
+    const main = getActivity(COURSE, "number-systems", "decimal-to-binary")!.activity;
+    expect(main.questions.map((q) => q.label)).toEqual(["Divide by 2", "Read off", "Octal", "Octal check", "Hex", "Hex check"]);
+    for (const id of ["ns.q.octal-check", "ns.q.hex-check"]) {
+      const q = main.questions.find((x) => x.id === id)!;
+      // the check-back answer is always the starting number, on the same number set (#141)
+      expect(q.variants.map((v) => [v.id, v.spec.kind === "numeric" ? v.spec.answer : ""])).toEqual([["v26", "26"], ["v37", "37"], ["v75", "75"]]);
+    }
+    const table = getActivity(COURSE, "number-systems", "hex-digits")!.activity;
+    const correct = table.questions.map((q) =>
+      q.variants.map((v) => {
+        const spec = v.spec;
+        return spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : "";
+      }),
+    );
+    expect(correct).toEqual([["B", "E", "A"], ["1101", "0011", "1011"], ["C", "7", "A"]]);
+    // Pedagogy on #271: no palindromic patterns, so the reversed-bits distractor always exists
+    for (const q of table.questions.slice(1)) for (const v of q.variants) if (v.spec.kind === "multiple-choice") expect(v.spec.options.length, `${q.id}/${v.id}`).toBeGreaterThanOrEqual(3);
+    for (const q of table.questions) for (const v of q.variants) if (v.spec.kind === "multiple-choice") expect(v.spec.options.length, `${q.id}/${v.id}`).toBeGreaterThanOrEqual(2);
+  });
+
   it("every bit-grouping answer equals the digits computed from its bits, point included (#210)", () => {
     let n = 0;
     for (const { path, variant } of allVariants())
@@ -284,7 +306,7 @@ describe("content registry", () => {
   });
 
   it("resolves an activity by path", () => {
-    expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(4);
+    expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
   });
 });
