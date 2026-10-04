@@ -9,11 +9,16 @@ export type Expression =
   | "pleased"
   | "pointing"
   | "attention-left"
-  | "attention-right";
+  | "attention-right"
+  | "insight"
+  | "proud"
+  | "reassuring"
+  | "caution";
 
 export const EXPRESSIONS: Expression[] = [
   "neutral", "explaining", "thinking", "curious", "encouraging",
   "concern", "pleased", "pointing", "attention-left", "attention-right",
+  "insight", "proud", "reassuring", "caution",
 ];
 
 export type TutorAction =

@@ -85,4 +85,8 @@ const LABELS: Record<Expression, string> = {
   pointing: "pointing",
   "attention-left": "looking left",
   "attention-right": "looking right",
+  insight: "having an insight",
+  proud: "proud",
+  reassuring: "reassuring",
+  caution: "cautious",
 };

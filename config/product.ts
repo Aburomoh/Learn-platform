@@ -19,6 +19,10 @@ const tutorPoses: TutorPoseTable = {
     "attention-left": "point_left",
     "attention-right": "point_right",
     welcome: "welcome",
+    insight: "aha",
+    proud: "proud",
+    reassuring: "reassuring",
+    caution: "caution",
   },
   compact: { pointing: "explaining" },
 };

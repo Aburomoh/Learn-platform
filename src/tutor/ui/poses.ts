@@ -11,7 +11,11 @@ export type Pose =
   | "correct"
   | "point_left"
   | "point_right"
-  | "welcome";
+  | "welcome"
+  | "aha"
+  | "proud"
+  | "reassuring"
+  | "caution";
 
 /** What the tutor can show: every stage Expression, plus `welcome` for intro cards on a first visit. */
 export type PoseKey = Expression | "welcome";
