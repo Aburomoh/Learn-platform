@@ -63,6 +63,8 @@ export const en = {
   "wrong.first.line": "Not quite. Apply just the law you named to the line before.",
   "step.next-line": "Good. Now the line that law gives.",
   "step.next-law": "Good. Now the law for the next line.",
+  "km.region-complement": "Those are the cells where the variable has the other value. Is the literal inside its bar or outside it?",
+  "km.expand-one": "A product that misses a variable is true for both of its values. How many minterms does it give?",
   "km.fill-binary-order": "Look at the labels on the map. They go 00, 01, 11, 10, so neighbours differ by one bit.",
   "km.fill-dontcare-as-one": "An X is a don't-care, not a 1. Write X in those cells and 1 only for the minterms.",
   "km.group-shape": "A group is a rectangle of 1, 2, 4 or 8 cells. It may wrap around the edges, but it cannot be an L or a diagonal.",

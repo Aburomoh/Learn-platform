@@ -11,7 +11,7 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue29, placeValue45 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
-import { equivalent, formatCube, isPOS, isSOP, mintermsOf, parseBool } from "./boolean";
+import { equivalent, formatCube, isPOS, isSOP, literalCount, mintermsOf, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
 import { columnTruth } from "@/kinds/truth-table/logic";
@@ -558,6 +558,39 @@ describe("content registry", () => {
     expect(sums).toEqual([["x'y' + xy + z'"], ["x'y' + xy + xz'", "x'y' + xy + y'z'"], ["A + C'"], ["x'y' + z"]]);
   });
 
+  it("map anatomy (#276): cells and regions from the layout and the Boolean module (pack ch3 §2)", () => {
+    const x = getActivity(COURSE, "kmap-anatomy", "kmap-anatomy")!.activity;
+    const pick = (q: (typeof x.questions)[number]) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(pick(x.questions[0])).toEqual(["m6", "m3", "m14"]);
+    // B′ = m0,1,4,5; C = m1,3,5,7 (s.13–18); D′ on the 4-variable map = columns 00 and 10 (s.54–61)
+    expect(pick(x.questions[1])).toEqual(["m0, m1, m4, m5", "m1, m3, m5, m7", "m0, m2, m4, m6, m8, m10, m12, m14"]);
+  });
+
+  it("expression → map (#280): the expansions and covers (Ex.3 s.33–39: Σ(0,2,6,7) → x′z′ + xy)", () => {
+    const x = getActivity(COURSE, "kmap-expression", "expression-to-map")!.activity;
+    const [expand, map] = x.questions;
+    const picked = expand.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(picked).toEqual(["Σ(0, 2, 6, 7)", "Σ(0, 1, 2, 6, 8, 9, 10)", "Σ(0, 1, 2, 3, 4, 5)", "Σ(3, 4, 5, 7)"]);
+    const sums = map.variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
+    expect(sums).toEqual([["x'z' + xy"], ["A'CD' + B'C' + B'D'"], ["A' + B'"], ["xy' + yz"]]); // s.80, s.83–87
+  });
+
+  it("same function by algebra (#281): every wrong line is wrong, and each chain ends on the map's minimal sum", () => {
+    const x = getActivity(COURSE, "kmap-algebra", "kmap-algebra")!.activity;
+    for (const v of x.questions[0].variants) {
+      if (v.spec.kind !== "derivation") throw new Error("expected a derivation");
+      const spec = v.spec;
+      spec.lines.forEach((l, i) => {
+        const prev = parseBool(i === 0 ? spec.start : spec.lines[i - 1].expr, { vars: spec.vars });
+        for (const w of l.wrongLines) expect(equivalent(prev, parseBool(w.expr, { vars: spec.vars }), spec.vars), `${v.id} line ${i + 1} ${w.expr}`).toBe(false);
+      });
+      const last = parseBool(spec.lines.at(-1)!.expr, { vars: spec.vars });
+      const ones = mintermsOf(parseBool(spec.start, { vars: spec.vars }), spec.vars);
+      const cover = kmapCovers({ kind: "kmap", vars: spec.vars, minterms: ones, dontCares: [], fill: true })[0];
+      expect(literalCount(last), v.id).toBe(cover.reduce((s, c) => s + formatCube(c, spec.vars).replace(/'/g, "").length, 0));
+    }
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -684,7 +717,7 @@ describe("authored truth is internally consistent", () => {
   });
 
   it("every multi-step kind follows the step contract: partial until the last step (ADR-0007)", () => {
-    expect([...MULTI_STEP_KINDS].sort()).toEqual(["base-to-decimal", "bit-grouping", "circuit-predict", "column-addition", "derivation", "device", "kmap", "repeated-division", "truth-table"]);
+    expect([...MULTI_STEP_KINDS].sort()).toEqual(["base-to-decimal", "bit-grouping", "circuit-predict", "column-addition", "derivation", "device", "kmap", "repeated-division", "state-diagram", "timing", "truth-table"]);
     for (const { path, variant } of allVariants()) {
       const spec = variant.spec;
       const n = stepCount(spec);

@@ -12,7 +12,9 @@ columns in order, as on the slides (UX: docs/design/ecet111-representations.md Â
   `muxPairs` lists the pairs for the view.
 - Truth is computed from each column's `expr` with the Boolean module; `values` (with X) is for
   columns an expression cannot state, such as excitation tables. `given` columns are shown filled;
-  `group` gives state tables their two-level header; `mintermColumn` places m0â€¦m15.
+  `group` gives state tables their two-level header; `inputGroups` (label and span, left to
+  right) does the same over the input columns, e.g. "Present state" over A B and "Input" over x
+  (#440); `mintermColumn` places m0â€¦m15.
 - After a wrong check, `wrongCells` gives the first wrong row and the count; mark only that one.
 - Detectors: `and-or-swapped`, `not-missing` (column of the expression without its complements),
   `rows-out-of-order` (another input's column written), `rows-inverted` (0-rows picked);
@@ -36,3 +38,10 @@ columns in order, as on the slides (UX: docs/design/ecet111-representations.md Â
   fade edge.
 - Explain Slowly stages: `step` (goal shown; omit for the finished table) and `revealed` (rows
   filled so far); row-select: `rows` (shown as picked).
+
+### Mux-pairs view (#308)
+
+The table is given. A last column "MUX input" has one cell per pair of rows (`pairs` prop of
+`TruthTable`): done pairs show their input, the active pair shows "?" and its rows carry the halo.
+The answer is four chips (0, 1, v, vâ€² named by the data variable) in one `radiogroup`, then
+Check input. Focus targets: `pair-<n>`. Explain Slowly stage: `pairs` = pairs shown done.
