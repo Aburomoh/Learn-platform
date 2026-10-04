@@ -114,7 +114,7 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
 
   // 6. read the remainders of the set just worked on (37, #141): LSB-first is recognised, MSB-first is right
   await page.getByRole("button", { name: "Next challenge" }).click();
-  await expect(page.getByText("Challenge 2 of 4")).toBeVisible();
+  await expect(page.getByText("Challenge 2 of 6")).toBeVisible();
   await expect(page.getByText("The division of 37 is finished", { exact: false })).toBeVisible();
   await page.getByRole("textbox").fill("101001");
   await page.getByRole("button", { name: "Check" }).click();
@@ -190,8 +190,13 @@ test("octal and hex by grouping, one goal at a time, finish the activity", async
       await page.keyboard.press("Enter");
     }
     await expect(correct).toBeVisible();
+    if (size === 4) await expect(page.locator("[data-focus-target='group-result']")).toContainText("(1A)16");
+    // then the answer is checked back in decimal as its own step (#215)
+    await page.getByRole("button", { name: "Next challenge" }).click();
+    await page.getByRole("textbox").fill("26");
+    await page.getByRole("button", { name: "Check", exact: true }).click();
+    await expect(page.getByText(new RegExp(`${base} answer checks out`))).toBeVisible();
   }
-  await expect(page.locator("[data-focus-target='group-result']")).toContainText("(1A)16");
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
   await page.getByRole("button", { name: "Finish" }).click();
@@ -304,10 +309,10 @@ test("Continue resumes at the first unfinished challenge; Review starts at chall
   // the pre-rendered page holds challenge 1, so a new student sees the question at first paint (#158)
   // React separates text and values with empty comments in the HTML; drop them before looking
   const html = (await (await request.get(ACTIVITY)).text()).replace(/<!-- -->/g, "");
-  expect(html.includes("Challenge 1 of 4")).toBe(true);
+  expect(html.includes("Challenge 1 of 6")).toBe(true);
   expect(html.includes("26 divided by 2: result")).toBe(true);
 
-  // finish challenges 1 and 2 of 4
+  // finish challenges 1 and 2 of 6
   await page.goto(ACTIVITY);
   for (const [d, q, r] of [[26, 13, 0], [13, 6, 1], [6, 3, 0], [3, 1, 1], [1, 0, 1]]) await divisionStep(page, d, q, r);
   await page.getByRole("button", { name: "Next challenge" }).click();
@@ -327,17 +332,17 @@ test("Continue resumes at the first unfinished challenge; Review starts at chall
     }).observe(document, { childList: true, subtree: true });
   });
   await page.reload();
-  await expect(page.getByText("Challenge 3 of 4")).toBeVisible();
+  await expect(page.getByText("Challenge 3 of 6")).toBeVisible();
   await expect(page.getByRole("form", { name: "Mark groups of 3 bits" })).toBeVisible();
-  expect(new Set(seen)).toEqual(new Set(["challenge 3 of 4"]));
+  expect(new Set(seen)).toEqual(new Set(["challenge 3 of 6"]));
   await expect(page.locator("html")).not.toHaveAttribute("data-resume", /.*/);
 
   // Review restarts at challenge 1 without losing what was finished
   await page.goto(`${ACTIVITY}?review=1`);
-  await expect(page.getByText("Challenge 1 of 4")).toBeVisible();
+  await expect(page.getByText("Challenge 1 of 6")).toBeVisible();
   await expect(page.getByLabel("26 divided by 2: result")).toBeVisible();
   await page.goto(ACTIVITY);
-  await expect(page.getByText("Challenge 3 of 4")).toBeVisible();
+  await expect(page.getByText("Challenge 3 of 6")).toBeVisible();
 });
 
 // The pre-rendered HTML must match the first client render on every route (#100): a hydration

@@ -112,6 +112,114 @@ const conversionExercise: TopicInput["activities"][number] = {
   ],
 };
 
+/* ---------- Check the octal / hex answer back in decimal (#215, slides 38 and 44) ---------- */
+
+/** "3 × 8 + 2 × 1" for the digits of `text` in `base` (place weights from the right). */
+function placeTerms(text: string, base: 8 | 16): string {
+  return [...text].map((d, i) => `${parseInt(d, 16)} × ${base ** (text.length - 1 - i)}`).join(" + ");
+}
+
+const checkBackHints = (base: 8 | 16): HintInput[] => [
+  { rung: 2, text: "Not yet. Each digit has a weight: 1, then ×" + base + " for each place to the left." },
+  { rung: 3, text: `The place weights in base ${base} are 1, ${base}, ${base * base}, … from the right.` },
+  { rung: 4, text: "Multiply each digit by its weight, then add." },
+  { rung: 6, text: base === 16 ? "Letter digits count as numbers: A = 10, B = 11, … F = 15." : "Octal digits are 0 to 7, each worth its place weight." },
+  { rung: 8, text: "Work out {terms}." },
+  { rung: 9, text: "{terms} = {value}, the number we started with." },
+];
+
+/** One checked step: the octal or hex answer back to decimal, which must give the starting number. */
+function checkBackVariant(value: number, base: 8 | 16, k: number): VariantInput {
+  const text = value.toString(base).toUpperCase();
+  const reversed = [...text].reverse().join("");
+  const reversedValue = parseInt(reversed, base);
+  const name = base === 8 ? "octal" : "hexadecimal";
+  const done = `${value}: the number we started with. The ${name} answer checks out.`;
+  // the right sum moves from set to set (QA on #271)
+  const sums = [placeTerms(text, base), placeTerms(reversed, base)].filter((o, i, all) => all.indexOf(o) === i).concat(reversedValue === value ? [`${[...text].map((d) => parseInt(d, 16)).join(" + ")}`] : []);
+  const sumOptions = [...sums.slice(k % sums.length), ...sums.slice(0, k % sums.length)];
+  const misconceptions: VariantInput["misconceptions"] = [];
+  if (/^\d+$/.test(text) && text !== String(value)) misconceptions.push({ id: "ns.copied-digits", title: "Copied the digits", nudgeKey: "ns.copied-digits", detect: { type: "equals", value: text } });
+  if (reversedValue !== value) misconceptions.push({ id: "ns.weights-reversed", title: "Weights from the wrong end", nudgeKey: "ba.weights-reversed", detect: { type: "equals", value: String(reversedValue) } });
+  return {
+    id: `v${value}`,
+    prompt: `Check your answer: what is (${text})_${base} in decimal?`,
+    spec: { kind: "numeric", base: 10, answer: String(value) },
+    vars: { value, answerText: text, terms: placeTerms(text, base) },
+    hints: checkBackHints(base),
+    misconceptions,
+    reactions: { correct: done, correctAfterHints: done },
+    explanation: [
+      { id: "s1", say: `In base ${base} the place weights are 1, ${base}, ${base * base}, … from the right.` },
+      {
+        id: "s2",
+        say: `Write ${text} as digit × weight.`,
+        ask: { prompt: `Which sum is (${text})_${base}?`, options: sumOptions, correctIndex: sumOptions.indexOf(placeTerms(text, base)), afterCorrect: `Yes: ${placeTerms(text, base)}.`, afterWrong: `Weights go from the right: ${placeTerms(text, base)}.` },
+      },
+      { id: "s3", say: `${placeTerms(text, base)} = ${value}: the number we started with.` },
+    ],
+  };
+}
+
+/* ---------- The 0–15 table: decimal, hex digit, 4 bits (#215, slides 23–25) ---------- */
+
+const tableHints: HintInput[] = [
+  { rung: 2, text: "Not yet. Hex digits go 0–9, then A = 10, B = 11, C = 12, D = 13, E = 14, F = 15." },
+  { rung: 3, text: "Four bits have the weights 8, 4, 2, 1." },
+  { rung: 9, text: "{fact}" },
+];
+
+function digitOptions(correct: string, wrong: string[]): { id: string; text: string }[] {
+  return [correct, ...wrong.filter((w, k, all) => w !== correct && all.indexOf(w) === k)].slice(0, 4).map((t) => ({ id: `o-${t.toLowerCase()}`, text: t }));
+}
+
+/** Rotate options so the correct one is not always first. */
+function rotated<T>(xs: T[], k: number): T[] {
+  const r = k % xs.length;
+  return [...xs.slice(r), ...xs.slice(0, r)];
+}
+
+function tableVariant(id: string, prompt: string, correct: string, wrong: string[], fact: string, k: number): VariantInput {
+  const options = rotated(digitOptions(correct, wrong), k);
+  return {
+    id,
+    prompt,
+    spec: { kind: "multiple-choice", options, correctOptionId: `o-${correct.toLowerCase()}` },
+    vars: { fact },
+    hints: tableHints,
+    explanation: [
+      { id: "s1", say: "Hex digits go 0–9, then A = 10 up to F = 15. Four bits, with weights 8, 4, 2, 1, cover exactly 0 to 15." },
+      { id: "s2", say: fact },
+    ],
+  };
+}
+
+const hex = (n: number) => n.toString(16).toUpperCase();
+const bits4 = (n: number) => n.toString(2).padStart(4, "0");
+
+/** Decimal 10–15 → hex digit; wrong: the decimal written as is, the neighbouring letters. */
+const decimalToDigit = (n: number, k: number) =>
+  tableVariant(`vdec${n}`, `Which hexadecimal digit stands for ${n}?`, hex(n), [String(n), hex(n - 1), hex(Math.min(n + 1, 15))], `${n} is written ${hex(n)} in hexadecimal.`, k);
+/** Hex digit → 4 bits; wrong: the bits reversed, the neighbour's bits. */
+const digitToBits = (n: number, k: number) =>
+  tableVariant(`vhex${n}`, `Which 4 bits stand for the hex digit ${hex(n)}?`, bits4(n), [[...bits4(n)].reverse().join(""), bits4(n - 1), bits4((n + 1) % 16)], `${hex(n) === String(n) ? n : `${hex(n)} = ${n}`} = ${bits4(n)}: ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")}.`, k);
+/** 4 bits → hex digit; wrong: the bits read reversed, the decimal value for a letter digit. */
+const bitsToDigit = (n: number, k: number) =>
+  tableVariant(`vbits${n}`, `Which hex digit is ${bits4(n)}?`, hex(n), [hex(parseInt([...bits4(n)].reverse().join(""), 2)), n >= 10 ? String(n) : hex(n + 1), hex(n ^ 1)], `${bits4(n)} = ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")} = ${n}, written ${hex(n)}.`, k);
+
+const hexDigitsActivity: TopicInput["activities"][number] = {
+  id: "hex-digits",
+  title: "Hex digits: 0 to 15",
+  summary: "Match decimal, hexadecimal digit and four bits for 0 to 15.",
+  authority: "DEMO",
+  minutes: 5,
+  questions: [
+    { id: "ns.t.digit", label: "Decimal → hex", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [11, 14, 10].map((n, k) => decimalToDigit(n, k)) },
+    { id: "ns.t.bits", label: "Hex → 4 bits", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [13, 3, 11].map((n, k) => digitToBits(n, k + 1)) }, // no palindromes: reversed bits stay a real distractor
+    { id: "ns.t.back", label: "4 bits → hex", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [12, 7, 10].map((n, k) => bitsToDigit(n, k + 2)) },
+  ],
+};
+
 export const numberSystemsTopic: TopicInput = {
   id: "number-systems",
   title: "Number-base conversions",
@@ -135,7 +243,7 @@ export const numberSystemsTopic: TopicInput = {
       title: "Decimal → binary → octal → hexadecimal",
       summary: "Divide by 2 one step at a time, read the bits in the right order, then group them.",
       authority: "DEMO",
-      minutes: 10,
+      minutes: 12,
       questions: [
         /* ---- Q1: the division chain, one checked step at a time ---- */
         {
@@ -338,6 +446,7 @@ export const numberSystemsTopic: TopicInput = {
             groupingVariant(75, 3),
           ],
         },
+        { id: "ns.q.octal-check", label: "Octal check", conceptId: "ns.octal-grouping", objectiveId: "ns.obj.octal", variants: [26, 37, 75].map((v, k) => checkBackVariant(v, 8, k)) },
 
         /* ---- Q4: hexadecimal by grouping four bits, one goal at a time (#44) ---- */
         {
@@ -413,8 +522,10 @@ export const numberSystemsTopic: TopicInput = {
             groupingVariant(75, 4),
           ],
         },
+        { id: "ns.q.hex-check", label: "Hex check", conceptId: "ns.hex-grouping", objectiveId: "ns.obj.hex", variants: [26, 37, 75].map((v, k) => checkBackVariant(v, 16, k)) },
       ],
     },
+    hexDigitsActivity,
     conversionExercise,
   ],
 };
