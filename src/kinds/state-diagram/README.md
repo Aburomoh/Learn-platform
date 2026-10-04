@@ -35,8 +35,9 @@ diagram is **pre-drawn, never free-drawn**:
 
 ## View (`ui.tsx`, `StateDiagram.tsx`; representations §7 and §13.3)
 
-- **Layout:** computed by the view (`statePositions`): two states side by side, four as 2 × 2,
-  eight as two rows of four, in table order. Circles are 30 units with 16-unit mono codes; the SVG
+- **Layout:** the grid cells come from the logic (`stateCells`: the spec's `positions`, or two
+  states side by side, four as 2 × 2, eight as two rows of four); the view turns them into circle
+  centres (`statePositions`). Circles are 30 units with 16-unit mono codes; the SVG
   never renders below 0.75× (12 px text, 45 px circles) and scrolls inside its well beyond that.
 - **Arrows** (`arrowGeometry`): a curve bent to its right-hand side, so the two directions between
   a pair never overlap; a loop above the circle (below it for the bottom row); transitions that

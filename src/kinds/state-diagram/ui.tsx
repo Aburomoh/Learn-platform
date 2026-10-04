@@ -4,7 +4,7 @@ import { Prompt } from "../shared/Prompt";
 import shared from "../shared/shared.module.css";
 import type { ExplainProps, PracticeProps } from "../types";
 import { useState } from "react";
-import { arrowSteps, labelOptions, stateCodes, transitions, type StateDiagramAnswer, type Transition } from "./logic";
+import { arrowSteps, labelOptions, stateCells, stateCodes, transitions, type StateDiagramAnswer, type Transition } from "./logic";
 import type { StateDiagramSpec } from "./spec";
 import { StateDiagram } from "./StateDiagram";
 import styles from "./state-diagram.module.css";
@@ -64,7 +64,7 @@ export function Practice({ variant, prompt, state, stepIndex, locked, onSubmit }
           key={stepIndex}
           id={variant.id}
           states={stateCodes(spec)}
-          positions={spec.positions}
+          positions={stateCells(spec)}
           transitions={rows}
           mode={spec.mode}
           done={done}
@@ -90,7 +90,7 @@ export function Explain({ variant, stage }: ExplainProps<StateDiagramSpec>) {
   const rows = transitions(spec);
   return (
     <div className={styles.layout}>
-      <StateDiagram id={variant.id} states={stateCodes(spec)} positions={spec.positions} transitions={rows} mode={spec.mode} done={(stage.revealed as number | undefined) ?? 0} labelOptions={labelOptions(spec)} inputName={spec.input} />
+      <StateDiagram id={variant.id} states={stateCodes(spec)} positions={stateCells(spec)} transitions={rows} mode={spec.mode} done={(stage.revealed as number | undefined) ?? 0} labelOptions={labelOptions(spec)} inputName={spec.input} />
       <StateTable spec={spec} rows={rows} />
     </div>
   );

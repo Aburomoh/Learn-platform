@@ -17,8 +17,8 @@ export interface StateDiagramProps {
   id: string;
   /** State codes in table order ("00", "01", …): one circle each. */
   states: string[];
-  /** Grid cell [column, row] of each state, in the order of `states`; default `defaultCells`. */
-  positions?: [number, number][];
+  /** Grid cell [column, row] of each state, in the order of `states` (`stateCells` of the kind's logic). */
+  positions: [number, number][];
   /** One per state-table row, in table order: the order of the goals. */
   transitions: DiagramTransition[];
   /** label: every arrow is drawn and its label is picked; next: the arrow's destination is picked. */
@@ -46,12 +46,6 @@ export const MIN_SCALE = 0.75;
 interface Point {
   x: number;
   y: number;
-}
-
-/** Without authored positions: 2 states side by side, 4 as 2 × 2, 8 as 2 rows of 4 (table order, row by row). */
-export function defaultCells(count: number): [number, number][] {
-  const cols = count <= 2 ? count : count / 2;
-  return Array.from({ length: count }, (_, i) => [i % cols, Math.floor(i / cols)]);
 }
 
 /** Circle centres from grid cells. */
@@ -107,7 +101,7 @@ const head = (tip: Point, dir: Point) => {
  * The component never grades.
  */
 export function StateDiagram({ id, states, positions, transitions, mode, done, labelOptions = [], inputName, state = "idle", disabled = false, onCheck }: StateDiagramProps) {
-  const cells = positions ?? defaultCells(states.length);
+  const cells = positions;
   const { cols, rows, at } = statePositions(cells);
   const pos = (code: string) => at[states.indexOf(code)];
   const width = MX * 2 + (cols - 1) * DX;

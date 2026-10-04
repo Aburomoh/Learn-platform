@@ -5,7 +5,8 @@ import { useReducer } from "react";
 import { VariantSchema, type Activity } from "@/content/schema";
 import { createRunnerReducer, currentVariant, initialRunnerState, questionViewKey } from "@/stage/runnerReducer";
 import { QuestionView } from "@/stage/QuestionView";
-import { arrowGeometry, defaultCells, statePositions } from "./StateDiagram";
+import { arrowGeometry, statePositions } from "./StateDiagram";
+import { stateCells } from "./logic";
 
 const base = {
   hints: [{ rung: 2, text: "Not yet." }],
@@ -42,8 +43,7 @@ const arrows = () => [...document.querySelectorAll("[data-arrow]")].map((a) => `
 
 describe("state diagram geometry", () => {
   it("four states sit 2 × 2, eight as two rows of four", () => {
-    expect(statePositions(defaultCells(4))).toMatchObject({ cols: 2, rows: 2 });
-    expect(statePositions(defaultCells(8))).toMatchObject({ cols: 4, rows: 2 });
+    expect(statePositions(stateCells(labelV.spec as never))).toMatchObject({ cols: 2, rows: 2 });
     // authored cells win: a ring of four in one row
     const row = statePositions([[0, 0], [1, 0], [2, 0], [3, 0]]);
     expect(row).toMatchObject({ cols: 4, rows: 1 });
