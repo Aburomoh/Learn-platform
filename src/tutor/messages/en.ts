@@ -51,6 +51,7 @@ export const en = {
   "ns.missing-largest": "Check the largest place value. Does {largest} fit in {value}?",
   "ns.extra-place": "One of the lit places is too big for what is left. Check the remainder after each step.",
   "ns.hex-letter": "In hex, 10 to 15 are single letters A to F, not two digits.",
+  "sm.absorb-mixup": "Look at the second term again: A + AB gives A, but here it is A + A′B. Which rule has the complement?",
   "dm.operator-kept": "You broke the bar. Now look at the operator under it: does it stay the same?",
   "dm.bar-dropped": "A double bar cancels, but a single bar stays. Count the bars on each letter.",
   "drv.line-not-equivalent": "That line does not equal the line before it. Check the law you applied.",
