@@ -507,6 +507,15 @@ describe("content registry", () => {
     expect(pick(x.questions[1])).toEqual(["m0, m1, m4, m5", "m1, m3, m5, m7", "m0, m2, m4, m6, m8, m10, m12, m14"]);
   });
 
+  it("expression → map (#280): the expansions and covers (Ex.3 s.33–39: Σ(0,2,6,7) → x′z′ + xy)", () => {
+    const x = getActivity(COURSE, "kmap-expression", "expression-to-map")!.activity;
+    const [expand, map] = x.questions;
+    const picked = expand.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(picked).toEqual(["Σ(0, 2, 6, 7)", "Σ(0, 1, 2, 3, 4, 5)", "Σ(3, 4, 5, 7)"]);
+    const sums = map.variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
+    expect(sums).toEqual([["x'z' + xy"], ["A' + B'"], ["xy' + yz"]]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
