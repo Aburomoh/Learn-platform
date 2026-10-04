@@ -58,7 +58,8 @@ function nandVariant([set, reset, q]: [Bit, Bit, Bit], k: number): VariantInput 
     hints: [
       { rung: 2, text: "Not yet. On the NAND latch, Set and Reset act when they are 0, not 1." },
       { rung: 3, text: "Set = 0 makes Q = 1; Reset = 0 makes Q = 0; both at 1 keeps Q." },
-      { rung: 4, text: "What do both inputs at 0 do to the two NAND outputs?" },
+      // per set, so it never points at the wrong case or gives the 0 0 one away (Pedagogy on #403)
+      { rung: 4, text: set === 1 && reset === 1 ? "Are both inputs at 1? Then does either NAND get forced?" : "Which input is at 0, and what does a 0 into that NAND force its output to?" },
       { rung: 9, text: right === "invalid" ? "Set = Reset = 0 is invalid: both outputs go to 1." : `${TEXT[right]}.` },
     ],
     misconceptions,
