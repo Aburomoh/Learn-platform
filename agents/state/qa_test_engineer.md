@@ -1,7 +1,7 @@
 # Current State — QA / Test Engineer
 
-Current assignment: QA on wake:qa alarms. TL queue done: #257 passed (merged), #268 passed (conflicts after #257: re-run unit on new head), #271 content pass, label held (needs merge main + #213 first), #273 failed ('Name the law' answer always first), #272 passed.
-Recent important decision: QA every PR merged into origin/main (not the head alone); low memory: no local `next build`/Playwright, CI is authoritative for build/e2e. Content PRs: recompute every number set; Boolean content via `equivalent`.
-Blocker: none. Main checkout `node_modules` is complete again; junction via Node `fs.symlinkSync(target, 'node_modules', 'junction')` (cmd/powershell mklink is refused in isolated worktrees).
-Relevant issue/PR: #268, #271, #273 back with Backend; guest-flow network assert seen failing twice under load, URL never captured.
-Next expected action: re-QA #268/#271/#273 on new heads; pointer-drag e2e once a shipped activity uses DragToTarget; keep the 320 px no-overflow check on every new page.
+Current assignment: QA on wake:qa alarms. Kinds queue (2026-10-04): #321 passed (merged), #322 passed on a627f59 (now conflicts; TL resolving), #325 passed; #323, #324 conflict with main after #321 (Frontend alarmed, not QA'd yet).
+Recent important decision: QA every PR merged into origin/main (not the head alone); low memory: no local `next build`/Playwright, CI is authoritative for build/e2e. Kind PRs: random cases checked against my own throwaway evaluator; grading parity checked by recording on main and comparing on the merge.
+Blocker: none. Main `node_modules` was wiped by a worktree removal that followed a junction (TL reinstalling). Prefer a private `npm ci --ignore-scripts` in the worktree; if you use a junction, remove it with `cmd /c rmdir node_modules` before the worktree goes.
+Relevant issue/PR: #322 follow-up: `wrongCells.count` never reaches the student (needs runner -> tutor vars like `wrongBitNumber`) before the first C2 table ships. #268, #271, #273 still with Backend.
+Next expected action: re-run tsc/lint/unit on new heads of #322; full QA of #323 (meaning-based grading, lowercase per #261, not-simplified, 201-char/deep-nesting limits) and #324 (two goals per line, wrong-line vs skipped, structure-graded order-insensitive) once they merge main.
