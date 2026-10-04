@@ -210,6 +210,8 @@ function stepNextKey(ctx: ActivityContext): string {
   const { gateName, stepNumber, gateCount, carryIn, columnLabel, columnCount } = ctx.vars;
   if (columnLabel !== undefined) return stepNumber !== undefined && stepNumber === columnCount ? "step.last-table-column" : "step.next-table-column";
   if (ctx.stepTag === "column") return carryIn === 1 ? "step.next-column-carry" : "step.next-column";
+  if (ctx.stepTag === "digit") return "step.next-digit";
+  if (ctx.stepTag === "bits") return "step.next-bits";
   if (ctx.stepTag === "carry") return "step.last-carry";
   if (ctx.stepTag !== "gate" && gateName === undefined) return "step.next";
   return stepNumber !== undefined && stepNumber === gateCount ? "step.last-gate" : "step.next-gate";
