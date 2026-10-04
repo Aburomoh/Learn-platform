@@ -198,10 +198,12 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
   return { state: s, actions: out };
 }
 
-/** A grid answer with wrong cells and no recognised mistake points at the marked cell instead of a flat "not quite". */
+/**
+ * The generic wrong line: a grid answer with wrong cells says `wrong.cell` (points at the marked
+ * cell), anything else the plain fallback; either may have a step form `<key>.<stepTag>`.
+ */
 function genericWrongKey(ctx: ActivityContext, event: { vars?: Record<string, string | number> }, fallback: string): string {
-  if (event.vars?.wrongCount === undefined) return fallback;
-  const key = "wrong.cell";
+  const key = event.vars?.wrongCount === undefined ? fallback : "wrong.cell";
   return ctx.stepTag && hasMessage(`${key}.${ctx.stepTag}`) ? `${key}.${ctx.stepTag}` : key;
 }
 
@@ -210,6 +212,8 @@ function stepNextKey(ctx: ActivityContext): string {
   const { gateName, stepNumber, gateCount, carryIn, columnLabel, columnCount } = ctx.vars;
   if (columnLabel !== undefined) return stepNumber !== undefined && stepNumber === columnCount ? "step.last-table-column" : "step.next-table-column";
   if (ctx.stepTag === "column") return carryIn === 1 ? "step.next-column-carry" : "step.next-column";
+  if (ctx.stepTag === "law") return "step.next-law";
+  if (ctx.stepTag === "line") return "step.next-line";
   if (ctx.stepTag === "digit") return "step.next-digit";
   if (ctx.stepTag === "bits") return "step.next-bits";
   if (ctx.stepTag === "carry") return "step.last-carry";
