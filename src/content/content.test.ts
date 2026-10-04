@@ -244,6 +244,49 @@ describe("content registry", () => {
     for (const q of table.questions) for (const v of q.variants) if (v.spec.kind === "multiple-choice") expect(v.spec.options.length, `${q.id}/${v.id}`).toBeGreaterThanOrEqual(2);
   });
 
+  it("laws and rules (#228): every example is a true identity, every simplification checks, every wrong option is wrong", () => {
+    const x = getActivity(COURSE, "laws-and-rules", "laws-and-rules")!.activity;
+    const law = x.questions[0];
+    const ruleQs = x.questions.filter((q) => q.id.startsWith("br.q.rule-"));
+    const simplify = x.questions.find((q) => q.id === "br.q.simplify")!;
+    // Pedagogy on #273: every one of the 11 rules is the answer somewhere, by slide column
+    const answered = ruleQs.flatMap((q) => q.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.correctOptionId : "")));
+    expect(new Set(answered).size).toBe(11);
+    const sides = (text: string) => text.split(" = ").map((t) => parseBool(t));
+    for (const v of law.variants) {
+      const [l, r] = [String(v.vars.left), String(v.vars.right)].map((t) => parseBool(t));
+      expect(equivalent(l, r), v.id).toBe(true);
+    }
+    for (const v of ruleQs.flatMap((q) => q.variants)) {
+      const [l, r] = sides(String(v.vars.example));
+      expect(equivalent(l, r), v.id).toBe(true);
+      if (v.spec.kind !== "multiple-choice") throw new Error("expected multiple choice");
+      // every option is a true rule, so only the pattern decides; the right one must match the example's shape
+      for (const o of v.spec.options) {
+        const [ol, or] = sides(o.text);
+        expect(equivalent(ol, or), o.text).toBe(true);
+      }
+    }
+    for (const v of simplify.variants) {
+      const spec = v.spec;
+      if (spec.kind !== "multiple-choice") throw new Error("expected multiple choice");
+      const expr = parseBool(String(v.vars.expr));
+      for (const o of spec.options) expect(equivalent(expr, parseBool(o.text)), `${v.id}: ${o.text}`).toBe(o.id === spec.correctOptionId);
+    }
+  });
+
+  it("no multiple-choice question has its right answer first in every set (QA on #273)", () => {
+    for (const c of courses)
+      for (const m of c.modules)
+        for (const t of m.topics)
+          for (const a of t.activities)
+            for (const q of a.questions) {
+              const firsts = q.variants.map((v) => (v.spec.kind === "multiple-choice" ? v.spec.options[0].id === v.spec.correctOptionId : null));
+              if (firsts.includes(null) || firsts.length < 2) continue;
+              expect(firsts.every(Boolean), `${a.id}/${q.id}: right answer is always first`).toBe(false);
+            }
+  });
+
   it("every bit-grouping answer equals the digits computed from its bits, point included (#210)", () => {
     let n = 0;
     for (const { path, variant } of allVariants())
