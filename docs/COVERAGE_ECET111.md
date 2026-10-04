@@ -60,7 +60,7 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 | Laws (commutative, associative, distributive) | 37–40 | CORE | MISSING | match law to example | MC | #228 |
 | Rules and postulates | 41–43 | CORE | MISSING | match rule to example | MC | #228 |
 | Algebraic simplification (+ gate count) | 44–54 | CORE | MISSING | law, then line | derivation | #229 |
-| De Morgan | 55–63 | CORE | MISSING | one step at a time | derivation | #230 |
+| De Morgan | 55–63 | CORE | COVERED (identities; complement one law per line) | one step at a time | derivation | #230 |
 | Minterms; canonical form (two methods) | 64–76 | CORE | MISSING | expansion; table with m column | derivation, truth-table | #231 |
 
 ## Chapter 3 — K-map simplification (Ch.3 deck, 112 slides)
