@@ -92,6 +92,7 @@
 
 /* Now: the halo behind the active column */
 .head.now,
+.row:nth-child(even) .cell.now,
 .cell.now {
   background: var(--focus-halo);
 }
