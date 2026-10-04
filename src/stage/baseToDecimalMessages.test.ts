@@ -6,9 +6,9 @@ import { createRunnerReducer, initialRunnerState, type RunnerAction, type Runner
 
 /** #212: fixtures, not course content; the Chapter 1 base-to-decimal activity gets its own PR. */
 const detectors = [
-  { id: "b2d.rev", title: "Weights reversed", nudgeKey: "b2d.weights-reversed", detect: { type: "weights-reversed" } },
-  { id: "b2d.neg", title: "Negative powers wrong", nudgeKey: "b2d.negative-powers-wrong", detect: { type: "negative-powers-wrong" } },
-  { id: "b2d.hex", title: "Hex letter as a digit", nudgeKey: "b2d.hex-letter-as-digit", detect: { type: "hex-letter-as-digit" } },
+  { id: "b2d.rev", title: "Weights reversed", nudgeKey: "pv.weights-reversed", detect: { type: "weights-reversed" } },
+  { id: "b2d.neg", title: "Negative powers wrong", nudgeKey: "pv.negative-powers", detect: { type: "negative-powers-wrong" } },
+  { id: "b2d.hex", title: "Hex letter as a digit", nudgeKey: "pv.hex-letter-value", detect: { type: "hex-letter-as-digit" } },
 ];
 const make = (id: string, base: number, number: string): Variant =>
   VariantSchema.parse({
