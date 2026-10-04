@@ -9,7 +9,7 @@ import type { CourseInput, VariantInput } from "../../schema";
 type TopicInput = CourseInput["modules"][number]["topics"][number];
 
 /** Hints for the gate-by-gate circuit walk; `{gate...}` slots are filled for the gate being asked. */
-const gateWalkHints: NonNullable<VariantInput["hints"]> = [
+export const gateWalkHints: NonNullable<VariantInput["hints"]> = [
   { rung: 2, text: "Not quite. Look only at the {gateName} gate and the values on its input wires." },
   { rung: 3, text: "{gateRule}" },
   { rung: 4, text: "Which values arrive at the {gateName} gate? Read them from the wires on its left." },

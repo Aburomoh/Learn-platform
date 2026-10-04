@@ -8,14 +8,16 @@ import { CircuitSpec, circuitDetectors } from "./circuit-predict/spec";
 import { DerivationSpec, derivationDetectors } from "./derivation/spec";
 import { ExpressionSpec, expressionDetectors } from "./expression/spec";
 import { ColumnAdditionSpec, columnAdditionDetectors } from "./column-addition/spec";
+import { KmapSpec, kmapDetectors } from "./kmap/spec";
 import { MultipleChoiceSpec, multipleChoiceDetectors } from "./multiple-choice/spec";
 import { NumericSpec, numericDetectors } from "./numeric/spec";
 import { PlaceValueSpec, placeValueDetectors } from "./place-value/spec";
 import { RepeatedDivisionSpec, repeatedDivisionDetectors } from "./repeated-division/spec";
 import { TimingSpec, timingDetectors } from "./timing/spec";
+import { DeviceSpec, deviceDetectors } from "./device/spec";
 import { TruthTableSpec, truthTableDetectors } from "./truth-table/spec";
 
-export const kindSpecs = [DerivationSpec, ExpressionSpec, BaseToDecimalSpec, BitGroupingSpec, CircuitSpec, ColumnAdditionSpec, MultipleChoiceSpec, NumericSpec, PlaceValueSpec, RepeatedDivisionSpec, TimingSpec, TruthTableSpec] as const;
+export const kindSpecs = [DerivationSpec, ExpressionSpec, BaseToDecimalSpec, BitGroupingSpec, CircuitSpec, ColumnAdditionSpec, KmapSpec, MultipleChoiceSpec, NumericSpec, PlaceValueSpec, RepeatedDivisionSpec, DeviceSpec, TimingSpec, TruthTableSpec] as const;
 
 /** Each kind's own misconception detectors; `equals` is shared by every kind (schema.ts). */
 export const detectorsByKind = {
@@ -25,10 +27,12 @@ export const detectorsByKind = {
   derivation: derivationDetectors,
   expression: expressionDetectors,
   "column-addition": columnAdditionDetectors,
+  kmap: kmapDetectors,
   "multiple-choice": multipleChoiceDetectors,
   numeric: numericDetectors,
   "place-value": placeValueDetectors,
   "repeated-division": repeatedDivisionDetectors,
+  device: deviceDetectors,
   timing: timingDetectors,
   "truth-table": truthTableDetectors,
 } as const;
@@ -40,10 +44,12 @@ export const kindDetectors = [
   ...derivationDetectors,
   ...expressionDetectors,
   ...columnAdditionDetectors,
+  ...kmapDetectors,
   ...multipleChoiceDetectors,
   ...numericDetectors,
   ...placeValueDetectors,
   ...repeatedDivisionDetectors,
+  ...deviceDetectors,
   ...timingDetectors,
   ...truthTableDetectors,
 ] as const;
