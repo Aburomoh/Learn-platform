@@ -530,6 +530,22 @@ describe("content registry", () => {
     expect(ends).toEqual([[1, 2, 4, 7], [1, 2, 4, 7], [0, 3, 5, 6]]);
   });
 
+  it("decoders and encoders (#305): Dk is minterm k; each encoder bit's OR is the inputs whose code has that bit", () => {
+    const dec = getActivity(COURSE, "decoders-encoders", "decoders")!.activity;
+    const [predict, mt, table] = dec.questions;
+    const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(pick(predict)).toEqual(["D6", "D3", "D4"]);
+    for (const v of mt.variants) if (v.spec.kind === "expression") expect(v.spec.minterms).toEqual([Number(v.id.slice(1))]);
+    for (const v of table.variants) {
+      if (v.spec.kind !== "truth-table") throw new Error("expected a truth table");
+      const spec = v.spec;
+      spec.columns.forEach((c, k) => expect(columnTruth(spec, c).flatMap((x, r) => (x === 1 ? [r] : [])), c.label).toEqual([k]));
+    }
+    const enc = getActivity(COURSE, "decoders-encoders", "encoders")!.activity;
+    expect(pick(enc.questions[0])).toEqual(["110", "001", "011"]);
+    expect(pick(enc.questions[1])).toEqual(["I4 + I5 + I6 + I7", "I2 + I3 + I6 + I7", "I1 + I3 + I5 + I7"]); // pack ch4 §3
+  });
+
   it("three-variable exercises (#278): the pack's machine-worked covers, s.47 with both", () => {
     const x = getActivity(COURSE, "kmap-three-exercises", "kmap-three-exercises")!.activity;
     const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")).sort() : []));
