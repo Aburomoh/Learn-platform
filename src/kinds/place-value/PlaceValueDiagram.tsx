@@ -1,7 +1,7 @@
 "use client";
 
-import { DragToTarget } from "../DragToTarget/DragToTarget";
-import { focusTarget } from "../shared/types";
+import { DragToTarget } from "@/interactions/DragToTarget/DragToTarget";
+import { focusTarget } from "@/interactions/shared/types";
 import styles from "./PlaceValueDiagram.module.css";
 
 export type Bit = 0 | 1 | null;

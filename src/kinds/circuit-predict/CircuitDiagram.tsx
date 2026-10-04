@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import type { CircuitSpec } from "@/content/schema";
-import { evaluateCircuit } from "@/content/grade";
-import { focusTarget } from "../shared/types";
-import { useScrollFade } from "../shared/useScrollFade";
+import type { CircuitSpec } from "./spec";
+import { evaluateCircuit } from "./logic";
+import { focusTarget } from "@/interactions/shared/types";
+import { useScrollFade } from "@/interactions/shared/useScrollFade";
 import { GATE_H, INPUT_H, INPUT_W, gateWidth, layoutCircuit } from "./layout";
 import styles from "./CircuitDiagram.module.css";
 

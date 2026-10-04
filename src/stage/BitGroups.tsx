@@ -1,4 +1,4 @@
-import { focusTarget } from "@/interactions";
+import { focusTarget } from "@/interactions/shared/types";
 import styles from "./Stage.module.css";
 
 /** Shows a binary string, optionally split into 4-bit groups with their hex digit. */

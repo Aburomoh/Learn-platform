@@ -60,6 +60,15 @@ export function stepVars(variant: Variant, stepIndex: number): Record<string, st
   return specStepVars(variant.spec, stepIndex);
 }
 
+/**
+ * React key of the question view. A new variant (retry on other numbers) or a reset gives a fresh
+ * view, so a kind's view never shows the previous variant's input (owner rule: retry on a
+ * different number). Kind views own their input state (ADR-0008), so this key is what clears it.
+ */
+export function questionViewKey(variant: { id: string }, state: Pick<RunnerState, "interactionKey">): string {
+  return `${variant.id}-${state.interactionKey}`;
+}
+
 export function currentVariant(activity: Activity, s: Pick<RunnerState, "qIndex" | "vIndex">): Variant {
   const q = activity.questions[s.qIndex];
   return q.variants[s.vIndex[s.qIndex] % q.variants.length];
