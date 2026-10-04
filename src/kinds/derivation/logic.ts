@@ -106,11 +106,11 @@ export const derivation: KindLogic<DerivationSpec, DerivationAnswer> = {
  * never first on line 1 (Reviewer on #324, as for multiple choice on #273).
  */
 /**
- * A per-set offset from the starting expression, so sets with the same number of lines do not
- * share one answer pattern (QA on #344). Deterministic: the same set always looks the same.
+ * A per-set offset, so sets with the same number of lines do not share one answer pattern (QA on
+ * #344): the authored `shift` (the set's index), else a hash of the starting expression.
  */
 export function setOffset(spec: DerivationSpec): number {
-  return [...spec.start].reduce((acc, c) => (acc * 31 + c.charCodeAt(0)) % 9973, 7);
+  return spec.shift ?? [...spec.start].reduce((acc, c) => (acc * 31 + c.charCodeAt(0)) % 9973, 7);
 }
 
 export function lawChips(spec: DerivationSpec, i: number): LawId[] {
