@@ -2,7 +2,8 @@
  * DEMO / NOT AUTHORITATIVE COURSE CONTENT — pending instructor approval.
  * ECET 111 Chapter 4, multiplexers (#307, content pack ch4 §5): a 4-to-1 mux with selects S1 S0
  * (S1 the MSB). Predict Y for given data and select bits, then which input each select value routes,
- * then the term of Y's equation that does it. Y is evaluated from its equation (Boolean module).
+ * then the term of Y's equation that does it (#307); then functions with a MUX, one row pair per goal
+ * (#308, pack §6). Y is evaluated from its equation and the pairs from F (Boolean module).
  */
 import type { CourseInput, VariantInput } from "../../schema";
 import { envFor, evaluate, parseBool } from "../../boolean";
@@ -140,12 +141,121 @@ const muxActivity: Activity = {
   ],
 };
 
+/* ---------- functions with a MUX (#308, pack ch4 §6): first n−1 variables on the selects, the last decides each data input ---------- */
+
+/** The slides' worked functions (s.48–51, s.52–55, s.57–61). s.56 (w as the data variable) waits for the owner (DECISIONS A1). */
+const FN_SETS: { id: string; vars: string[]; minterms: number[] }[] = [
+  { id: "f3", vars: ["x", "y", "z"], minterms: [1, 2, 6, 7] },
+  { id: "f4", vars: ["w", "x", "y", "z"], minterms: [1, 2, 5, 11, 13] },
+  { id: "f4b", vars: ["A", "B", "C", "D"], minterms: [1, 3, 4, 11, 12, 13, 14, 15] },
+];
+
+const sigmaText = (ms: number[]) => `Σ(${ms.join(", ")})`;
+const muxSize = (n: number) => `${2 ** (n - 1)}-to-1`;
+
+const PROBE = [0, 3, 2];
+
+function pairsVariant(set: (typeof FN_SETS)[number], i: number): VariantInput {
+  const { vars, minterms } = set;
+  const p = PROBE[i];
+  const [f0, f1] = [minterms.includes(2 * p) ? 1 : 0, minterms.includes(2 * p + 1) ? 1 : 0];
+  const data = vars.at(-1)!;
+  const rows = 2 ** vars.length;
+  return {
+    id: set.id,
+    prompt: `F(${vars.join(", ")}) = ${sigmaText(minterms)} with a ${muxSize(vars.length)} MUX: ${vars.slice(0, -1).join(", ")} on the selects, ${data} on the data inputs. For each pair of rows, what does its data input get: 0, 1, ${data} or ${data}′?`,
+    spec: {
+      kind: "truth-table",
+      inputs: vars,
+      mode: "mux-pairs",
+      target: "f",
+      columns: [{ id: "f", label: "F", values: Array.from({ length: rows }, (_, m) => (minterms.includes(m) ? 1 : 0)), given: true }],
+    },
+    hints: [
+      { rung: 2, text: "Not yet. Look only at the two rows of this pair: {dataVar} = 0, then {dataVar} = 1." },
+      { rung: 3, text: "F is {pairValues} on this pair. Does F stay the same, or follow {dataVar}?" },
+      { rung: 4, text: "0 0 gives 0, 1 1 gives 1, 0 1 gives {dataVar}, and 1 0 gives {dataVar}′." },
+      { rung: 9, text: "{inputName} gets {pairChoice}." },
+    ],
+    misconceptions: [
+      { id: "mx.pair-swapped", title: "z and z′ exchanged", nudgeKey: "mx.pair-swapped", detect: { type: "pair-complement-swapped" } },
+      { id: "mx.pair-constant", title: "One row's value copied where the pair follows the variable", nudgeKey: "mx.pair-constant", detect: { type: "pair-constant-for-variable" } },
+      { id: "mx.pair-variable", title: "A variable where F does not change", nudgeKey: "mx.pair-variable", detect: { type: "pair-variable-for-constant" } },
+    ],
+    explanation: [
+      { id: "s1", say: `The selects take ${vars.slice(0, -1).join(", ")}; each select value picks a pair of rows that differ only in ${data}.`, stage: { step: 0 } },
+      {
+        id: "s2",
+        say: `Take the pair for I${p}: F = ${f0} for ${data} = 0 and F = ${f1} for ${data} = 1.`,
+        stage: { step: p },
+        ask: { prompt: "Does F change with the data variable there?", options: ["Yes", "No"], correctIndex: f0 !== f1 ? 0 : 1, afterCorrect: "Right.", afterWrong: f0 !== f1 ? `It changes with ${data}, so I${p} gets ${data} or ${data}′.` : `It stays ${f0}, so I${p} gets ${f0}.` },
+      },
+      { id: "s3", say: `Each pair gives its input 0, 1, ${data} or ${data}′; the input's number is the pair's select bits.` },
+    ],
+  };
+}
+
+/** Which variables go on the selects, highest select first. */
+function wiringVariant(set: (typeof FN_SETS)[number], i: number): VariantInput {
+  const { vars } = set;
+  const n = vars.length;
+  const selects = vars.slice(0, -1);
+  const names = selects.map((_, k) => `S${n - 2 - k}`);
+  const asText = (vs: string[]) => vs.map((v, k) => `${v} → ${names[k]}`).join(", ");
+  const choices = [
+    { id: "right", text: asText(selects) },
+    { id: "reversed", text: asText([...selects].reverse()) },
+    { id: "last", text: asText(vars.slice(1)) },
+  ];
+  return {
+    id: set.id,
+    prompt: `F(${vars.join(", ")}) = ${sigmaText(set.minterms)} with a ${muxSize(n)} MUX. Which variables go on the select lines?`,
+    spec: { kind: "multiple-choice", options: rotate(choices, i + 1), correctOptionId: "right" },
+    hints: [
+      { rung: 2, text: `Not yet. A ${muxSize(n)} MUX has ${n - 1} select lines, one fewer than the variables.` },
+      { rung: 3, text: "The first variables go on the selects, the first one on the highest select; the last variable feeds the data inputs." },
+      { rung: 9, text: `${asText(selects)}; ${vars.at(-1)} on the data inputs.` },
+    ],
+    misconceptions: [
+      { id: "mux.select-reversed", title: "Selects in reverse order", nudgeKey: "mux.select-reversed", detect: { type: "option", optionId: "reversed" } },
+      { id: "mx.data-first", title: "The first variable used as the data input", nudgeKey: "mx.data-first", detect: { type: "option", optionId: "last" } },
+    ],
+    explanation: [
+      { id: "s1", say: `${n} variables need a ${muxSize(n)} MUX: ${n - 1} selects and one data variable.` },
+      {
+        id: "s2",
+        say: "The first variable is the MSB of the row number.",
+        ask: { prompt: `Which select takes ${vars[0]}?`, options: i % 2 ? ["S0", names[0]] : [names[0], "S0"], correctIndex: i % 2, afterCorrect: "Yes, the highest.", afterWrong: `The highest one, ${names[0]}: ${vars[0]} is the MSB.` },
+      },
+      { id: "s3", say: `So ${asText(selects)}, and ${vars.at(-1)} goes to the data inputs.` },
+    ],
+  };
+}
+
+const muxFunctionsActivity: Activity = {
+  id: "mux-functions",
+  title: "Functions with a MUX",
+  summary: "The first variables on the selects, the last one decides each data input: 0, 1, z or z′, one row pair at a time.",
+  authority: "DEMO",
+  minutes: 15,
+  questions: [
+    { id: "mx.q.wiring", label: "Which selects?", conceptId: "mx.function", objectiveId: "mx.obj.function", variants: FN_SETS.map((s, i) => wiringVariant(s, i)) },
+    { id: "mx.q.pairs", label: "Each data input", conceptId: "mx.function", objectiveId: "mx.obj.function", variants: FN_SETS.map((s, i) => pairsVariant(s, i)) },
+  ],
+};
+
 export const multiplexersTopic: TopicInput = {
   id: "multiplexers",
   title: "Multiplexers",
   summary: "Many inputs, one output: the select bits, read as a number, choose which input reaches Y.",
   preview: "S1 S0 = 0 0 → Y = I0",
-  concepts: [{ id: "mx.mux", title: "Multiplexer", summary: "A 4-to-1 mux routes input I(S1 S0) to Y: Y = S1′S0′I0 + S1′S0I1 + S1S0′I2 + S1S0I3." }],
-  objectives: [{ id: "mx.obj.mux", conceptId: "mx.mux", text: "Predict a 4-to-1 multiplexer's output and name the input each select value routes." }],
-  activities: [muxActivity],
+  concepts: [
+    { id: "mx.mux", title: "Multiplexer", summary: "A 4-to-1 mux routes input I(S1 S0) to Y: Y = S1′S0′I0 + S1′S0I1 + S1S0′I2 + S1S0I3." },
+    { id: "mx.function", title: "Function with a MUX", summary: "n variables: the first n − 1 on the selects, the last decides each data input (0, 1, v or v′) per pair of rows." },
+  ],
+  objectives: [
+    { id: "mx.obj.mux", conceptId: "mx.mux", text: "Predict a 4-to-1 multiplexer's output and name the input each select value routes." },
+    { id: "mx.obj.function", conceptId: "mx.function", text: "Implement a function with a multiplexer, one row pair at a time." },
+  ],
+  activities: [muxActivity, muxFunctionsActivity],
 };

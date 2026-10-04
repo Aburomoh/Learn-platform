@@ -14,7 +14,7 @@ import { resolveMessage } from "@/tutor/messages";
 import { equivalent, isPOS, isSOP, mintermsOf, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
-import { columnTruth } from "@/kinds/truth-table/logic";
+import { columnTruth, muxPairs } from "@/kinds/truth-table/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 import { lawChips, lineOptions } from "@/kinds/derivation/logic";
 import type { DerivationSpec } from "@/kinds/derivation/spec";
@@ -544,6 +544,19 @@ describe("content registry", () => {
     for (const q of x.questions)
       for (const v of q.variants)
         for (const m of v.misconceptions) if (m.detect.type === "option" && v.spec.kind === "multiple-choice") expect(m.detect.optionId, v.id).not.toBe(v.spec.correctOptionId);
+  });
+
+  it("functions with a MUX (#308): the pairs give the slides' data inputs (s.48–51, s.52–55, s.57–61)", () => {
+    const x = getActivity(COURSE, "multiplexers", "mux-functions")!.activity;
+    const [wiring, pairs] = x.questions;
+    const inputs = pairs.variants.map(({ spec }) => {
+      if (spec.kind !== "truth-table") throw new Error("expected a truth table");
+      const data = spec.inputs.at(-1)!;
+      return muxPairs(spec).map((p) => (p.choice === "v" ? data : p.choice === "v'" ? `${data}'` : p.choice)).join(", ");
+    });
+    expect(inputs).toEqual(["z, z', 0, 1", "z, z', z, 0, 0, z, z, 0", "D, D, D', 0, 0, D, 1, 1"]);
+    const right = wiring.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(right).toEqual(["x → S1, y → S0", "w → S2, x → S1, y → S0", "A → S2, B → S1, C → S0"]);
   });
 
   it("resolves an activity by path", () => {
