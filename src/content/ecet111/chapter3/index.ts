@@ -4,6 +4,7 @@
  */
 import type { ModuleInput } from "../../schema";
 import { threeVariableTopic } from "./three-variable";
+import { threeVariableExercisesTopic } from "./three-variable-exercises";
 import { fourVariableTopic } from "./four-variable";
 import { dontCaresTopic } from "./dont-cares";
 
@@ -12,6 +13,7 @@ export const chapter3: ModuleInput = {
   title: "Chapter 3 · K-Map Simplification",
   topics: [
     threeVariableTopic,
+    threeVariableExercisesTopic,
     fourVariableTopic,
     dontCaresTopic,
   ],

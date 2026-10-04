@@ -493,6 +493,12 @@ describe("content registry", () => {
     expect(sums).toEqual([["C"], ["A + BC'"], ["x + z"], ["A + B'D"]]);
   });
 
+  it("three-variable exercises (#278): the pack's machine-worked covers, s.47 with both", () => {
+    const x = getActivity(COURSE, "kmap-three-exercises", "kmap-three-exercises")!.activity;
+    const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")).sort() : []));
+    expect(sums).toEqual([["x'y' + xy + z'"], ["x'y' + xy + xz'", "x'y' + xy + y'z'"], ["A + C'"], ["x'y' + z"]]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
