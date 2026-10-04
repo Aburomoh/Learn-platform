@@ -5,6 +5,7 @@
 import type { ModuleInput } from "../../schema";
 import { threeVariableTopic } from "./three-variable";
 import { fourVariableTopic } from "./four-variable";
+import { dontCaresTopic } from "./dont-cares";
 
 export const chapter3: ModuleInput = {
   id: "chapter-3",
@@ -12,5 +13,6 @@ export const chapter3: ModuleInput = {
   topics: [
     threeVariableTopic,
     fourVariableTopic,
+    dontCaresTopic,
   ],
 };
