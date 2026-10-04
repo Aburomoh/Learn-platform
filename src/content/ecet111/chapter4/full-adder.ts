@@ -5,6 +5,8 @@
  * a column of Chapter 1 addition with a carry coming in. Truth comes from the Boolean module.
  */
 import type { CourseInput, VariantInput } from "../../schema";
+import type { LawId } from "@/kinds/derivation/spec";
+import { LAW_NAMES } from "@/kinds/derivation/logic";
 
 type TopicInput = CourseInput["modules"][number]["topics"][number];
 type Activity = TopicInput["activities"][number];
@@ -183,6 +185,86 @@ export const fullAdderSigmaActivity: Activity = {
   ],
 };
 
+/* ---------- optional challenge (#304): S → A ⊕ B ⊕ Ci by algebra, one law per line (pack ch4 §2, s.22) ---------- */
+
+type Line = { law: LawId; expr: string; lawOptions: LawId[]; wrongLines: { id: string; expr: string; misconceptionId?: string }[] };
+const show = (t: string) => t.replace(/'/g, "′");
+
+const algebraHints: VariantInput["hints"] = [
+  { rung: 2, text: "Not yet. Look at the line before: {previous}." },
+  { rung: 3, text: "Name the law first, then apply only that law, to one part of the line." },
+  { rung: 4, text: "Look inside each bracket: is it one of the two XOR shapes, A′B + AB′ or AB + A′B′?" },
+  { rung: 6, text: "Change only that part; copy the rest of the line as it is." },
+  { rung: 9, text: "This step uses {lawName}." },
+];
+
+const algebraMisconceptions: VariantInput["misconceptions"] = [
+  { id: "drv.slip", title: "Line not equal to the one before", nudgeKey: "drv.line-not-equivalent", detect: { type: "line-not-equivalent" } },
+  { id: "drv.skip", title: "Skipped a step", nudgeKey: "drv.line-skipped", detect: { type: "line-skipped" } },
+  { id: "drv.other", title: "Valid, but not this law's step", nudgeKey: "drv.line-other", detect: { type: "line-other" } },
+];
+
+/** The full adder's S as in the pack (factor A′ and A, name each bracket, then XOR with A). */
+const S_LINES: Line[] = [
+  { law: "distributive", expr: "A'(B'Ci + BCi') + A(BCi + B'Ci')", lawOptions: ["commutative", "distributive", "absorb"], wrongLines: [{ id: "w1", expr: "A'(B'Ci + BCi') + A(BCi + B'Ci)" }] },
+  { law: "xor", expr: "A'(B ⊕ Ci) + A(BCi + B'Ci')", lawOptions: ["xnor", "de-morgan", "xor"], wrongLines: [{ id: "w1", expr: "A'(B ⊕ Ci)' + A(BCi + B'Ci')" }] },
+  { law: "xnor", expr: "A'(B ⊕ Ci) + A(B ⊕ Ci)'", lawOptions: ["xnor", "xor", "double"], wrongLines: [{ id: "w1", expr: "A'(B ⊕ Ci) + A(B ⊕ Ci)" }] },
+  { law: "xor", expr: "A ⊕ B ⊕ Ci", lawOptions: ["or-not", "xor", "xnor"], wrongLines: [{ id: "w1", expr: "(A ⊕ B ⊕ Ci)'" }] },
+];
+
+/** The same parity function over x, y, z, terms in another order. */
+const X_LINES: Line[] = [
+  { law: "distributive", expr: "x'(y'z + yz') + x(y'z' + yz)", lawOptions: ["distributive", "associative", "absorb"], wrongLines: [{ id: "w1", expr: "x'(y'z + yz') + x(y'z' + y'z)" }] },
+  { law: "xor", expr: "x'(y ⊕ z) + x(y'z' + yz)", lawOptions: ["xor", "xnor", "or-not"], wrongLines: [{ id: "w1", expr: "x'(y ⊕ z)' + x(y'z' + yz)" }] },
+  { law: "xnor", expr: "x'(y ⊕ z) + x(y ⊕ z)'", lawOptions: ["xor", "double", "xnor"], wrongLines: [{ id: "w1", expr: "x'(y ⊕ z) + x(y ⊕ z)" }] },
+  { law: "xor", expr: "x ⊕ y ⊕ z", lawOptions: ["xnor", "xor", "de-morgan"], wrongLines: [{ id: "w1", expr: "(x ⊕ y ⊕ z)'" }] },
+];
+
+/** Its complement, Σ(0, 3, 5, 6): the last step is the XNOR shape, (A ⊕ X)′. */
+const C_LINES: Line[] = [
+  { law: "distributive", expr: "A'(B'C' + BC) + A(B'C + BC')", lawOptions: ["absorb", "distributive", "commutative"], wrongLines: [{ id: "w1", expr: "A'(B'C' + BC) + A(B'C + BC)" }] },
+  { law: "xnor", expr: "A'(B ⊕ C)' + A(B'C + BC')", lawOptions: ["xor", "xnor", "double"], wrongLines: [{ id: "w1", expr: "A'(B ⊕ C) + A(B'C + BC')" }] },
+  { law: "xor", expr: "A'(B ⊕ C)' + A(B ⊕ C)", lawOptions: ["xnor", "de-morgan", "xor"], wrongLines: [{ id: "w1", expr: "A'(B ⊕ C)' + A(B ⊕ C)'" }] },
+  { law: "xnor", expr: "(A ⊕ B ⊕ C)'", lawOptions: ["xnor", "xor", "or-not"], wrongLines: [{ id: "w1", expr: "A ⊕ B ⊕ C" }] },
+];
+
+const ALGEBRA_SETS: { id: string; name: string; vars: string[]; start: string; lines: Line[] }[] = [
+  { id: "vs", name: "S", vars: ["A", "B", "Ci"], start: "AB'Ci' + A'B'Ci + ABCi + A'BCi'", lines: S_LINES },
+  { id: "vx", name: "F", vars: ["x", "y", "z"], start: "x'y'z + x'yz' + xy'z' + xyz", lines: X_LINES },
+  { id: "vc", name: "F", vars: ["A", "B", "C"], start: "A'B'C' + A'BC + AB'C + ABC'", lines: C_LINES },
+];
+
+function algebraVariant(set: (typeof ALGEBRA_SETS)[number], k: number): VariantInput {
+  const [first] = set.lines;
+  const other = first.lawOptions.find((l) => l !== first.law)!;
+  const choices = k % 2 ? [LAW_NAMES[other], LAW_NAMES[first.law]] : [LAW_NAMES[first.law], LAW_NAMES[other]];
+  return {
+    id: set.id,
+    prompt: `${set.name} = ${show(set.start)}: four 1s, no two side by side, so a K-map cannot group them. Show ${set.name} with XOR, one law per line: first name the law, then pick the line.`,
+    spec: { kind: "derivation", vars: set.vars, start: set.start, lines: set.lines, lineMode: "choose", shift: k },
+    hints: algebraHints,
+    misconceptions: algebraMisconceptions,
+    explanation: [
+      { id: "s1", say: "Two shapes do the work here: A′B + AB′ is A ⊕ B, and AB + A′B′ is (A ⊕ B)′." },
+      {
+        id: "s2",
+        say: `Start by taking ${set.vars[0]}′ out of two terms and ${set.vars[0]} out of the other two.`,
+        ask: { prompt: "Which law is that?", options: choices, correctIndex: choices.indexOf(LAW_NAMES[first.law]), afterCorrect: "Yes: distributive, used to factor.", afterWrong: "It is distributive, used to factor." },
+      },
+      { id: "s3", say: "Then name each bracket as XOR or XNOR, and the last line has the same shape again." },
+    ],
+  };
+}
+
+export const fullAdderAlgebraActivity: Activity = {
+  id: "full-adder-algebra",
+  title: "Full adder: S by algebra (optional challenge)",
+  summary: "Why S = A ⊕ B ⊕ Ci: factor, then read each bracket as XOR or XNOR.",
+  authority: "DEMO",
+  minutes: 10,
+  questions: [{ id: "fa.q.algebra", label: "S as XOR", conceptId: "fa.adder", objectiveId: "fa.obj.algebra", variants: ALGEBRA_SETS.map((s, k) => algebraVariant(s, k)) }],
+};
+
 export const fullAdderTopic: TopicInput = {
   id: "full-adder",
   title: "Full adder",
@@ -192,6 +274,7 @@ export const fullAdderTopic: TopicInput = {
   objectives: [
     { id: "fa.obj.table", conceptId: "fa.adder", text: "Fill the full adder's 8-row table, S then Co." },
     { id: "fa.obj.sigma", conceptId: "fa.adder", text: "Write S and Co as minterm lists from the table." },
+    { id: "fa.obj.algebra", conceptId: "fa.adder", text: "Show S = A ⊕ B ⊕ Ci by algebra (optional)." },
   ],
-  activities: [fullAdderTableActivity, fullAdderSigmaActivity],
+  activities: [fullAdderTableActivity, fullAdderSigmaActivity, fullAdderAlgebraActivity],
 };
