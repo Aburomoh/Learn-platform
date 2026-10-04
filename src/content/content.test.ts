@@ -325,11 +325,7 @@ describe("authored truth is internally consistent", () => {
   });
 
   it("every multi-step kind follows the step contract: partial until the last step (ADR-0007)", () => {
-<<<<<<< HEAD
-    expect([...MULTI_STEP_KINDS].sort()).toEqual(["bit-grouping", "circuit-predict", "column-addition", "derivation", "repeated-division"]);
-=======
-    expect([...MULTI_STEP_KINDS].sort()).toEqual(["base-to-decimal", "bit-grouping", "circuit-predict", "column-addition", "repeated-division", "truth-table"]);
->>>>>>> origin/main
+    expect([...MULTI_STEP_KINDS].sort()).toEqual(["base-to-decimal", "bit-grouping", "circuit-predict", "column-addition", "derivation", "repeated-division", "truth-table"]);
     for (const { path, variant } of allVariants()) {
       const spec = variant.spec;
       const n = stepCount(spec);

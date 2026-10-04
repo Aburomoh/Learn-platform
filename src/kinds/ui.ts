@@ -26,11 +26,6 @@ export const kindUI = {
     Explain: dynamic(() => import("./derivation/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./derivation/ui").then((m) => m.Preload)),
   },
-  derivation: {
-    Practice: dynamic(() => import("./derivation/ui").then((m) => m.Practice)),
-    Explain: dynamic(() => import("./derivation/ui").then((m) => m.Explain)),
-    Preload: dynamic(() => import("./derivation/ui").then((m) => m.Preload)),
-  },
   "circuit-predict": {
     Practice: dynamic(() => import("./circuit-predict/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./circuit-predict/ui").then((m) => m.Explain)),
