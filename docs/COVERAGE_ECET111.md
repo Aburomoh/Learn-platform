@@ -98,8 +98,12 @@ All K-map rows grade **any** minimal cover: several slide examples have more tha
 | Clock edges; SR, JK, D, T characteristic tables | I 14–37 | CORE | MISSING | one edge at a time | truth-table | #296 |
 | Characteristic equations and next state on one edge | I 14–37 | CORE | MISSING | equation; next state | expression | #297 |
 | Timing diagrams (all types, both edges) | I 17–37 | WORKED / PRACTICE | MISSING | Q per active edge | timing | #298 |
-| Analysis: D, JK, T, 3-flip-flop | II 4–52 | CORE | MISSING | stages as separate activities | expression, truth-table groups, state diagram, timing | #205 |
-| Analysis exercises | II 31–33, 53–54 | PRACTICE | MISSING | exercise mode | as above | #205 |
+| Analysis stage 1: input equations and output from a circuit | II 4–30 | CORE | MISSING | read equations | expression | #312 |
+| Analysis stage 2: state equations | II 4–30 | CORE | MISSING | substitute into characteristic equation | expression | #313 |
+| Analysis stage 3: state table by column group | II 4–30 | CORE | MISSING | one column group at a time | truth-table | #314 |
+| Analysis stage 4: state diagram | II 4–30 | CORE | MISSING | table → diagram | state-diagram | #315 |
+| Three JK flip-flops: 16-row table, diagram, timing | II 37–52 | WORKED | MISSING | column by column | truth-table, state-diagram, timing | #316 |
+| Analysis exercises | II 31–33, 53–54 | PRACTICE | MISSING | exercise mode; owner confirms machine-worked answers | as above | #317 |
 | Design: spec → state table | III 4–27 | CORE | MISSING | stage 1 | truth-table | #290 |
 | Design: excitation columns (D, T, JK, with X) | III 4–27 | CORE | MISSING | stage 2 | truth-table (X) | #291 |
 | Design: K-map per input → equations (don't-cares) | III 4–27 | CORE | MISSING | stage 3 | K-map, expression | #292 |
