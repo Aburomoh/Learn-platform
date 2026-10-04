@@ -67,6 +67,18 @@ fallback.
 - **Motion and loading:** 120 ms crossfade, none under reduced motion. Only the current pose is fetched,
   with neutral preloaded at the size the layout uses. Phones never fetch the waist-up files.
 - **Welcome:** first visit only, on home and the course/topic intro rails.
+- **Expressive extension (#378):** five of the 18 extra poses are used, each tied to a moment that already has a message. The tutor stays subtle: these are rare, and neutral is the fallback.
+
+  | Moment (message already exists) | Expression | Pose | Limit |
+  |---|---|---|---|
+  | Last goal of a multi-step challenge solved | `insight` (new) | aha | once per challenge |
+  | Practice completed (summary) | `proud` (new) | proud | once per practice |
+  | Second or later wrong try on the same goal; Explain slowly starts | `reassuring` (new) | reassuring | replaces `concern` there |
+  | A named-mistake nudge (a detector fired) | `caution` (new) | caution | never twice in a row; then `thinking` |
+  | Predict-first prompt | `curious` (existing) | curious (replaces `focus`) | |
+
+  - **Not used:** shock, x_arms, frustrated, disappointed, concerned, confused, skeptical, unsure, raised_eyebrows, amused, excited, empathetic, serious. They read as a judgement of the student, or duplicate a pose above. Adding one later needs a Pedagogy tone check.
+  - **Same rules as the base set:** waist-up in the 168 × 224 box where the tutor has a column, head crop in the strip, 120 ms crossfade, nothing preloaded except neutral, phones never fetch waist-up files. A pose never appears without its message.
 
 ## Proposed token changes (UX review 2026-10-03, not yet in `tokens.css`)
 Evidence: `docs/design/review-2026-10-03/`. Each row is adopted by the issue that implements it.
