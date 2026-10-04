@@ -20,6 +20,7 @@ import { computedAnswer } from "@/kinds/bit-grouping/logic";
 import { lawChips, lineOptions } from "@/kinds/derivation/logic";
 import type { DerivationSpec } from "@/kinds/derivation/spec";
 import { exactValue } from "@/kinds/base-to-decimal/logic";
+import { gatedLatch, nandLatch } from "./ecet111/chapter5/latches";
 
 const COURSE = "ecet111";
 
@@ -493,6 +494,44 @@ describe("content registry", () => {
     expect(sums).toEqual([["C"], ["A + BC'"], ["x + z"], ["A + B'D"]]);
   });
 
+  it("latches (#295): outputs from the latch equations match the pack's tables (ch5-parti §2)", () => {
+    const x = getActivity(COURSE, "latches", "latches")!.activity;
+    const pick = (q: (typeof x.questions)[number]) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    // NAND: 0 1 sets, 1 0 resets, 1 1 holds, 0 0 invalid; gated: En = 0 holds, then set and reset
+    expect(pick(x.questions[0])).toEqual(["Q = 1", "Q = 0", "Q = 0", "Invalid"]);
+    expect(pick(x.questions[1])).toEqual(["Q = 0", "Q = 1", "Q = 0"]);
+    expect([nandLatch(1, 1, 1), gatedLatch(1, 0, 0, 1), gatedLatch(1, 1, 1, 0)]).toEqual(["q1", "q1", "invalid"]);
+  });
+
+  it("flip-flop tables (#296): each table is its equation, as verified in the pack (JK = Σ(1,4,5,6), T = Σ(1,2))", () => {
+    const x = getActivity(COURSE, "flip-flops", "flip-flop-tables")!.activity;
+    const [row, ...tables] = x.questions;
+    const column = (q: (typeof tables)[number]) => {
+      const spec = q.variants[0].spec;
+      if (spec.kind !== "truth-table") throw new Error("expected a truth table");
+      return columnTruth(spec, spec.columns[0]).join("");
+    };
+    expect(tables.map(column)).toEqual(["010011XX", "01001110", "0011", "0110"]); // SR, JK, D, T
+    const picked = row.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(picked).toEqual(["Q(t+1) = 1", "Q(t+1) = 0", "Q(t+1) = 1", "Q(t+1) = 0"]);
+  });
+
+  it("flip-flop equations (#297): each question's minterms are its table's 1-rows; next states by the equation", () => {
+    const x = getActivity(COURSE, "flip-flops", "flip-flop-equations")!.activity;
+    const mts = x.questions.slice(0, 3).map((q) => (q.variants[0].spec.kind === "expression" ? q.variants[0].spec.minterms : []));
+    expect(mts).toEqual([[1, 4, 5, 6], [1, 2], [2, 3]]); // JK, T, D (pack ch5-parti §3)
+    const picked = x.questions[3].variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(picked).toEqual(["1", "1", "0"]);
+    // every JK set catches the swapped equation (JQ + KQ′): it gives the other answer
+    for (const v of x.questions[3].variants.filter((v) => v.id.startsWith("xjk"))) expect(v.misconceptions.map((m) => m.id), v.id).toContain("ff.equation-swapped");
+  });
+
+  it("analysis 1 (#312): every equation is the pack's, and each wiring sentence names its gate", () => {
+    const x = getActivity(COURSE, "analysis", "analysis-inputs")!.activity;
+    const targets = x.questions.map((q) => q.variants.map((v) => (v.spec.kind === "expression" ? v.spec.target : "")));
+    expect(targets).toEqual([["Ax + Bx", "Bx'", "Bx"], ["(A + B)x'", "AB", "x + B'"]]);
+  });
+
   it("full adder table (#301): S = Σ(1,2,4,7), Co = Σ(3,5,6,7) as in the pack; one-row answers are the binary count", () => {
     const x = getActivity(COURSE, "full-adder", "full-adder-table")!.activity;
     const [row, table] = x.questions;
@@ -624,7 +663,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
