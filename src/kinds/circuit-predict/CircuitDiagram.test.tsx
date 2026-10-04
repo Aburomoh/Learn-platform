@@ -84,4 +84,32 @@ describe("CircuitDiagram", () => {
     expect(title.childNodes).toHaveLength(1);
     expect(title).toHaveTextContent("Circuit with NOT, AND, OR gates");
   });
+
+  it("draws a stub and label for every output: S and C of a half adder (#357)", () => {
+    const half: CircuitSpec = {
+      kind: "circuit-predict",
+      inputs: [
+        { id: "a", label: "A", value: 1 },
+        { id: "b", label: "B", value: 1 },
+      ],
+      gates: [
+        { id: "gs", type: "XOR", from: ["a", "b"], label: "S" },
+        { id: "gc", type: "AND", from: ["a", "b"], label: "C" },
+      ],
+      outputGateId: "gc",
+      answer: 1,
+      inputsToggleable: false,
+    };
+    const { rerender } = render(<CircuitDiagram id="h" spec={half} lit={[]} activeGateId="gs" />);
+    const s = document.querySelector("[data-wire='output-gs']")!;
+    const c = document.querySelector("[data-wire='output']")!;
+    expect(s).toHaveTextContent(/^S$/);
+    expect(c).toHaveTextContent(/^C$/);
+    // S shows its value once its gate is answered; C only at the end
+    rerender(<CircuitDiagram id="h" spec={half} lit={["gs"]} activeGateId="gc" />);
+    expect(s).toHaveTextContent("S = 0");
+    expect(c).not.toHaveAttribute("data-signal");
+    rerender(<CircuitDiagram id="h" spec={half} lit={["gs", "gc"]} revealOutput />);
+    expect(c).toHaveTextContent("C = 1");
+  });
 });

@@ -28,7 +28,26 @@ export interface CircuitLayout {
   /** Left edge (x) and centre line (y) of each gate body. */
   gates: Record<string, Point>;
   wires: WireLayout[];
+  /** The stub of `outputGateId` (kept for callers that need the main output only). */
   output: { from: Point; to: Point };
+  /** One stub per circuit output: `outputGateId`, then every other labelled gate that feeds no gate (S and C of a half adder). */
+  outputs: OutputLayout[];
+}
+
+export interface OutputLayout {
+  gateId: string;
+  /** The gate's label, "Y" for an unlabelled main output. */
+  label: string;
+  from: Point;
+  to: Point;
+}
+
+/** The circuit's outputs in drawing order: the main output gate, then other labelled gates nothing reads. */
+export function outputGates(spec: CircuitSpec): { gateId: string; label: string }[] {
+  const read = new Set(spec.gates.flatMap((g) => g.from));
+  const main = spec.gates.find((g) => g.id === spec.outputGateId);
+  const others = spec.gates.filter((g) => g.id !== spec.outputGateId && g.label && !read.has(g.id));
+  return [{ gateId: spec.outputGateId, label: main?.label ?? "Y" }, ...others.map((g) => ({ gateId: g.id, label: g.label! }))];
 }
 
 export const GATE_H = 44;
@@ -183,6 +202,10 @@ export function layoutCircuit(spec: CircuitSpec): CircuitLayout {
 
   const outFrom = outOf(spec.outputGateId);
   const output = { from: outFrom, to: { x: outFrom.x + OUTPUT_STUB, y: outFrom.y } };
+  const outputs: OutputLayout[] = outputGates(spec).map((o) => {
+    const from = outOf(o.gateId);
+    return { ...o, from, to: { x: from.x + OUTPUT_STUB, y: from.y } };
+  });
 
   const ys = [
     ...Object.values(inputs).flatMap((p) => [p.y - INPUT_H / 2, p.y + INPUT_H / 2]),
@@ -191,7 +214,7 @@ export function layoutCircuit(spec: CircuitSpec): CircuitLayout {
   ];
   const top = Math.min(...ys) - 12;
   const bottom = Math.max(...ys) + 12;
-  const right = Math.max(output.to.x + 44, ...spec.gates.map((g) => gates[g.id].x + gateWidth(g.type) + 28));
+  const right = Math.max(...outputs.map((o) => o.to.x + 44), ...spec.gates.map((g) => gates[g.id].x + gateWidth(g.type) + 28));
 
   return {
     viewBox: { x: 0, y: top, width: right, height: bottom - top },
@@ -199,6 +222,7 @@ export function layoutCircuit(spec: CircuitSpec): CircuitLayout {
     gates,
     wires: wires.map(({ from, to, points, junction }) => ({ from, to, points, junction })),
     output,
+    outputs,
   };
 }
 
