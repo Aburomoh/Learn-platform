@@ -1,0 +1,195 @@
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* sunken well; an eight-state diagram scrolls inside it on phones, never the page */
+.well {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunk);
+}
+
+.well[data-fade="end"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+
+.well[data-fade="start"] {
+  mask-image: linear-gradient(to left, #000 calc(100% - 24px), transparent);
+}
+
+.well[data-fade="both"] {
+  mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---- arrows ---- */
+.arrowLine {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2;
+}
+
+.arrowHead {
+  fill: var(--text);
+}
+
+/* the arrow being asked: accent and thicker, with a haloed label slot */
+.arrow[data-state="active"] .arrowLine {
+  stroke: var(--accent);
+  stroke-width: 3.5;
+}
+
+.arrow[data-state="active"] .arrowHead {
+  fill: var(--accent);
+}
+
+/* later arrows: dashed and dim */
+.arrow[data-state="later"] {
+  opacity: var(--pending-opacity);
+}
+
+.arrow[data-state="later"] .arrowLine {
+  stroke-dasharray: 6 5;
+}
+
+.arrowLabel {
+  font-size: 16px;
+  font-weight: 700;
+  fill: var(--text);
+  paint-order: stroke;
+  stroke: var(--surface-sunk);
+  stroke-width: 4;
+}
+
+.arrowLabelNow {
+  fill: var(--accent);
+  stroke: none;
+}
+
+.slot {
+  fill: var(--focus-halo);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+/* ---- states ---- */
+.circle {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 2;
+}
+
+.code {
+  font-size: 16px;
+  font-weight: 700;
+  fill: var(--text);
+  pointer-events: none;
+}
+
+.halo {
+  fill: var(--focus-halo);
+}
+
+.state[data-source] .circle {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.stateLive {
+  cursor: pointer;
+}
+
+/* picked as the destination: an accent ring inside the circle, not colour alone */
+.ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.state:focus-visible {
+  outline: none;
+}
+
+.state:focus-visible .circle {
+  stroke: var(--focus);
+  stroke-width: 4;
+}
+
+/* ---- answer ---- */
+.answer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-width: 0;
+}
+
+.chip {
+  display: grid;
+  place-items: center;
+  min-width: 56px;
+  height: 48px;
+  padding: 0 var(--space-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-size: var(--text-md);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* chosen: filled with an inset ring, not colour alone */
+.chipOn {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--surface);
+  box-shadow: inset 0 0 0 3px var(--surface);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.chip:has(input:disabled) {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.chips[aria-invalid="true"] .chipOn {
+  border-color: var(--error);
+  background: var(--error);
+}
+
+.pickedLine {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
