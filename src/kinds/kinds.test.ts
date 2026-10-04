@@ -16,6 +16,7 @@ describe("kind registry (ADR-0008)", () => {
 
   it("each kind's UI module exports Practice, Explain and Preload, and carries its size-report marker", async () => {
     const modules: Record<string, () => Promise<{ Practice: { displayName?: string }; Explain: unknown; Preload: () => null }>> = {
+      "base-to-decimal": () => import("./base-to-decimal/ui"),
       "bit-grouping": () => import("./bit-grouping/ui"),
       "circuit-predict": () => import("./circuit-predict/ui"),
       "column-addition": () => import("./column-addition/ui"),

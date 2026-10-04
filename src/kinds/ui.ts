@@ -11,6 +11,11 @@ import { Suspense, createElement, type ComponentType } from "react";
 import { isRegisteredKind, type RegisteredKind } from "./index";
 
 export const kindUI = {
+  "base-to-decimal": {
+    Practice: dynamic(() => import("./base-to-decimal/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./base-to-decimal/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./base-to-decimal/ui").then((m) => m.Preload)),
+  },
   "bit-grouping": {
     Practice: dynamic(() => import("./bit-grouping/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./bit-grouping/ui").then((m) => m.Explain)),

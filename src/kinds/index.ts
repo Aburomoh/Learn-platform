@@ -3,6 +3,7 @@
  * and one line here, one in `specs.ts` (build time) and one in `ui.ts` (lazy views).
  * No Zod here: this file is part of the client bundle.
  */
+import { baseToDecimal, type BaseToDecimalAnswer } from "./base-to-decimal/logic";
 import { bitGrouping, type BitGroupingAnswer } from "./bit-grouping/logic";
 import { circuitPredict, type CircuitAnswer } from "./circuit-predict/logic";
 import { columnAddition, type ColumnAdditionAnswer } from "./column-addition/logic";
@@ -13,6 +14,7 @@ import { repeatedDivision, type RepeatedDivisionAnswer } from "./repeated-divisi
 import { truthTable, type TruthTableAnswer } from "./truth-table/logic";
 
 export const kinds = {
+  "base-to-decimal": baseToDecimal,
   "bit-grouping": bitGrouping,
   "circuit-predict": circuitPredict,
   "column-addition": columnAddition,
@@ -26,7 +28,7 @@ export const kinds = {
 export type RegisteredKind = keyof typeof kinds;
 
 /** The student's answer, one shape per kind. */
-export type KindAnswer = BitGroupingAnswer | CircuitAnswer | ColumnAdditionAnswer | MultipleChoiceAnswer | NumericAnswer | PlaceValueAnswer | RepeatedDivisionAnswer | TruthTableAnswer;
+export type KindAnswer = BaseToDecimalAnswer | BitGroupingAnswer | CircuitAnswer | ColumnAdditionAnswer | MultipleChoiceAnswer | NumericAnswer | PlaceValueAnswer | RepeatedDivisionAnswer | TruthTableAnswer;
 
 export function isRegisteredKind(kind: string): kind is RegisteredKind {
   return Object.hasOwn(kinds, kind);
