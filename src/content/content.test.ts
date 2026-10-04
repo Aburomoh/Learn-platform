@@ -499,6 +499,14 @@ describe("content registry", () => {
     expect(sums).toEqual([["x'y' + xy + z'"], ["x'y' + xy + xz'", "x'y' + xy + y'z'"], ["A + C'"], ["x'y' + z"]]);
   });
 
+  it("map anatomy (#276): cells and regions from the layout and the Boolean module (pack ch3 §2)", () => {
+    const x = getActivity(COURSE, "kmap-anatomy", "kmap-anatomy")!.activity;
+    const pick = (q: (typeof x.questions)[number]) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(pick(x.questions[0])).toEqual(["m6", "m3", "m14"]);
+    // B′ = m0,1,4,5; C = m1,3,5,7 (s.13–18); D′ on the 4-variable map = columns 00 and 10 (s.54–61)
+    expect(pick(x.questions[1])).toEqual(["m0, m1, m4, m5", "m1, m3, m5, m7", "m0, m2, m4, m6, m8, m10, m12, m14"]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
