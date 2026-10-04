@@ -510,6 +510,20 @@ describe("content registry", () => {
     expect([0, 1].map((ff) => viaChar.map((c) => mintermsOf(parseBool(c[ff], { vars }), vars)))).toEqual(sig);
   });
 
+  it("analysis 3 (#314): the state tables match the pack's simulated tables (ch5-partii §2–4)", () => {
+    const x = getActivity(COURSE, "analysis", "analysis-table")!.activity;
+    const tables = x.questions[0].variants.map(({ spec }) => {
+      if (spec.kind !== "truth-table") throw new Error("expected a truth table");
+      return Object.fromEntries(spec.columns.map((c) => [c.label, columnTruth(spec, c).join("")]));
+    });
+    // D: next A B per row 00 01 00 11 00 10 00 10, y 0 0 1 0 1 0 1 0
+    expect(tables[0]).toEqual({ DA: "00010101", DB: "01010000", A: "00010101", B: "01010000", y: "00101010" });
+    // JK: JA KA 00 00 11 10 00 00 11 10; JB KB 10 01 10 01 11 00 11 00; next 01 00 11 10 11 10 00 11
+    expect(tables[1]).toEqual({ JA: "00110011", KA: "00100010", JB: "10101010", KB: "01011010", A: "00111101", B: "10101001" });
+    // T: TA TB 00 01 00 11 00 01 00 11; next 00 01 01 10 10 11 11 00; Y 0 0 0 0 0 0 1 1
+    expect(tables[2]).toEqual({ TA: "00010001", TB: "01010101", A: "00011110", B: "01100110", y: "00000011" });
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();

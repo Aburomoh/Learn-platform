@@ -6,6 +6,7 @@
  * owner (DECISIONS S1). Answers are graded by equivalence (Boolean module), so any correct form counts.
  */
 import type { CourseInput, VariantInput } from "../../schema";
+import { envFor, evaluate, parseBool } from "../../boolean";
 
 type TopicInput = CourseInput["modules"][number]["topics"][number];
 type Activity = TopicInput["activities"][number];
@@ -195,6 +196,51 @@ export const analysisStateActivity: Activity = {
   ],
 };
 
+/* ---------- stage 3 (#314): the state table, one column at a time, groups in the analysis order ---------- */
+
+function tableVariant(c: Circuit): VariantInput {
+  const columns = [
+    ...c.inputs.map(([label, expr]) => ({ id: label.toLowerCase(), label, expr, group: "Flip-flop inputs" })),
+    ...c.next.map((expr, i) => ({ id: `n${c.vars[i].toLowerCase()}`, label: c.vars[i], expr, group: "Next state" })),
+    ...(c.output ? [{ id: "out", label: c.output[0], expr: c.output[1], group: "Output" }] : []),
+  ];
+  const equations = [...c.inputs.map(([l, e]) => `${l} = ${show(e)}`), ...(c.output ? [`${c.output[0]} = ${show(c.output[1])}`] : [])].join(", ");
+  return {
+    id: c.id,
+    prompt: `${c.name.split(" (")[0]} with ${equations}. Fill the state table one column at a time: the flip-flop inputs first, then the next state${c.output ? ", then the output" : ""}.`,
+    spec: { kind: "truth-table", inputs: c.vars, columns },
+    hints: [
+      { rung: 2, text: "Not yet. Work out {columnLabel} on each row from that row's A, B and x." },
+      { rung: 3, text: "Use the column's equation, {columnExpr}, one row at a time." },
+      { rung: 4, text: "For the next state, use the flip-flop inputs you already have on the same row and the flip-flop's table." },
+      { rung: 9, text: "{columnLabel} reads {columnValues}, top to bottom." },
+    ],
+    misconceptions: [
+      { id: "tt.and-or-swapped", title: "AND and OR swapped", nudgeKey: "tt.and-or-swapped", detect: { type: "and-or-swapped" } },
+      { id: "tt.not-missing", title: "NOT not applied", nudgeKey: "tt.not-missing", detect: { type: "not-missing" } },
+    ],
+    explanation: [
+      { id: "s1", say: "Each row is one present state with one input. Its flip-flop inputs decide the next state.", stage: { step: 0, revealed: 0 } },
+      {
+        id: "s2",
+        say: `Take the row A B x = 0 1 1.`,
+        stage: { step: 0, revealed: 3 },
+        ask: { prompt: `What is ${c.inputs[0][0]} on that row?`, options: ["0", "1"], correctIndex: evaluate(parseBool(c.inputs[0][1], { vars: c.vars }), envFor(c.vars, 3)), afterCorrect: "Right.", afterWrong: `Put A = 0, B = 1, x = 1 into ${c.inputs[0][0]} = ${show(c.inputs[0][1])}.` },
+      },
+      { id: "s3", say: "Fill the inputs column by column, then the next state, row by row in binary order." },
+    ],
+  };
+}
+
+export const analysisTableActivity: Activity = {
+  id: "analysis-table",
+  title: "Analysis 3: the state table",
+  summary: "Present state and input, then the flip-flop inputs, the next state and the output, one column at a time.",
+  authority: "DEMO",
+  minutes: 15,
+  questions: [{ id: "an.q.table", label: "State table", conceptId: "an.analysis", objectiveId: "an.obj.table", variants: CIRCUITS.map(tableVariant) }],
+};
+
 export const analysisTopic: TopicInput = {
   id: "analysis",
   title: "Analysing clocked circuits",
@@ -204,6 +250,7 @@ export const analysisTopic: TopicInput = {
   objectives: [
     { id: "an.obj.inputs", conceptId: "an.analysis", text: "Read the flip-flop input equations and the output equation from a circuit." },
     { id: "an.obj.state", conceptId: "an.analysis", text: "Write the state equations by substituting into the characteristic equations." },
+    { id: "an.obj.table", conceptId: "an.analysis", text: "Fill a state table one column at a time: flip-flop inputs, next state, output." },
   ],
-  activities: [analysisInputsActivity, analysisStateActivity],
+  activities: [analysisInputsActivity, analysisStateActivity, analysisTableActivity],
 };
