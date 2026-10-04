@@ -19,6 +19,8 @@ export const AdditionOperands = z
   })
   .refine((o) => o.a.length === o.b.length, "operands must have equal width");
 
+const bit = z.union([z.literal(0), z.literal(1)]);
+
 /** What is shown above a numeric or multiple-choice question so the student works from something visible. */
 export const NumericContext = z.discriminatedUnion("type", [
   /** A completed division chain to read the remainders from. */
@@ -29,6 +31,16 @@ export const NumericContext = z.discriminatedUnion("type", [
   z.object({ type: z.literal("addition"), operands: AdditionOperands }),
   /** A source bit string shown in aligned cells, with one answer cell under each bit (e.g. 1's complement). */
   z.object({ type: z.literal("bit-row"), bits: z.string().regex(/^[01]+$/).min(2).max(8) }),
+  /**
+   * A read-only latch figure (#440): the given inputs and held Q are printed on the wires; `after`
+   * (the outputs once the inputs act; both 1 when invalid) is drawn only once the student has answered.
+   */
+  z.object({
+    type: z.literal("latch"),
+    latch: z.enum(["nand-sr", "gated-sr"]),
+    values: z.object({ s: bit, r: bit, q: bit, en: bit.optional() }),
+    after: z.object({ q: bit, qn: bit }),
+  }),
 ]);
 
 export type DivisionStep = z.infer<typeof DivisionStep>;
