@@ -1,7 +1,7 @@
 # Current State — AI Tutor Engineer
 
-Current assignment: #223 truth-table messages (PR #331, in review); #212 place-value messages (stacked draft, on #331).
-Recent important decision: Generic wrong lines have step forms (`wrong.cell.<tag>`, `wrong.first.<tag>`); plain `wrong.cell` carries no step-only slots.
+Current assignment: None. Merged: #331 #334 #339 (C2 truth-table, expression, derivation), #332 #336 (C1 base-to-decimal, bit-grouping).
+Recent important decision: Messages by kind and step tag: `<key>.<stepTag>` nudge forms, `wrong.first.<tag>`, `wrong.cell[.<tag>]`, `step.next-*` lines; keys `tt.*` `expr.*` `drv.*` `pv.*` `ns.*`.
 Blocker: None
-Relevant issue/PR: #331, #212 draft; expression/derivation messages follow #219/#221; bit-grouping messages follow #210; #236, #241 later.
-Next expected action: Rebase the #212 draft on main once #331 merges and mark it ready.
+Relevant issue/PR: #236 (K-maps), #241 (timing/state diagrams) when released; grader gaps noted on #102 (backend).
+Next expected action: Next READY tutor ticket; optional: `wrong.again.<stepTag>` forms (attempt 3 falls back to the generic line for law/line/sum steps, QA note on #332).
