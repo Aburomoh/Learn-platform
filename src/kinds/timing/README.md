@@ -23,8 +23,9 @@ with one Check. Answer `q`: one bit per output, in `outputNames` order.
   - `statesAfterEdges`;
   - `outputLevels`, each output per column for drawing.
 - After a wrong check, `wrongCells` gives the first wrong output and how many are wrong.
-- Detectors: `wrong-edge` (inputs read at the other kind of edge just before), `jk-toggle-missed`,
-  `t-as-d`, `inputs-swapped`, `held-not-applied`, `changed-on-hold`. The most specific one that
+- Detectors: `wrong-edge` (inputs read at the other kind of edge just before), `input-after-edge`
+  (inputs read in the column after the edge), `jk-toggle-missed`, `t-as-d` (Q equals T),
+  `inputs-swapped`, `held-not-applied`, `changed-on-hold`. The most specific one that
   explains the answer wins.
 - Step vars: `edgeNumber`, `edgeCount`, `edgeName`, `flipFlop`, `outputList`, `inputsAtEdge`,
   `stateBefore`, `stateAfter`, `stepNumber`. Per #255 the goal names the edge only: inputs are for

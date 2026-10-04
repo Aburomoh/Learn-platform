@@ -6,7 +6,7 @@ import { activeEdges, clockLevels, nextQ, outputLevels, outputNames, statesAfter
 type Misconception = VariantOf<TimingSpec>["misconceptions"][number];
 // The kind's detectors join the schema when it is registered with its view (Frontend, ADR-0008).
 const detector = (type: string) => ({ type }) as unknown as Misconception["detect"];
-const TYPES = ["wrong-edge", "jk-toggle-missed", "t-as-d", "inputs-swapped", "held-not-applied", "changed-on-hold"];
+const TYPES = ["wrong-edge", "input-after-edge", "jk-toggle-missed", "t-as-d", "inputs-swapped", "held-not-applied", "changed-on-hold"];
 
 function variant(spec: unknown): VariantOf<TimingSpec> {
   return {
@@ -91,20 +91,26 @@ describe("timing: grading one edge at a time", () => {
   it("names the slip", () => {
     expect(grade(jk, { step: 1, q: [1] }).misconceptionId).toBe("jk-toggle-missed"); // 11 held
     expect(grade(jk, { step: 0, q: [0] }).misconceptionId).toBe("inputs-swapped"); // 10 read as reset
-    const held = variant({ kind: "timing", flipFlop: "D", edge: "rising", initialQ: 0, inputs: [{ name: "D", levels: perEdge([1, 0]) }] });
+    const held = variant({ kind: "timing", flipFlop: "D", edge: "rising", initialQ: 0, inputs: [{ name: "D", levels: perEdge([1, 1]) }] });
     expect(grade(held, { step: 0, q: [0] }).misconceptionId).toBe("held-not-applied");
     const t = variant({ kind: "timing", flipFlop: "T", edge: "rising", initialQ: 1, inputs: [{ name: "T", levels: perEdge([1, 0]) }] });
     expect(grade(t, { step: 0, q: [1] }).misconceptionId).toBe("t-as-d"); // T = 1 copied, not toggled
+    // T = 0 with Q = 1: copying T gives 0, the slip too (Pedagogy on #367)
+    const t0 = variant({ kind: "timing", flipFlop: "T", edge: "rising", initialQ: 1, inputs: [{ name: "T", levels: perEdge([0, 0]) }] });
+    expect(grade(t0, { step: 0, q: [0] }).misconceptionId).toBe("t-as-d");
+    // D changes at the falling edge right after the rising one: reading it there is "after the edge"
+    const after = variant({ kind: "timing", flipFlop: "D", edge: "rising", initialQ: 0, inputs: [{ name: "D", levels: [0, 0, 1, 1] }] });
+    expect(grade(after, { step: 0, q: [1] }).misconceptionId).toBe("input-after-edge");
     // D rises at the falling edge between the two rising ones: reading at that edge keeps the old value
     const d = variant({ kind: "timing", flipFlop: "D", edge: "rising", initialQ: 0, inputs: [{ name: "D", levels: perEdge([0, 1]) }] });
     expect(grade(d, { step: 1, q: [0] }).misconceptionId).toBe("wrong-edge");
-    const sr = variant({ kind: "timing", flipFlop: "SR", edge: "rising", initialQ: 1, inputs: [{ name: "S", levels: perEdge([0, 0]) }, { name: "R", levels: perEdge([0, 1]) }] });
+    const sr = variant({ kind: "timing", flipFlop: "SR", edge: "rising", initialQ: 1, inputs: [{ name: "S", levels: perEdge([0, 0]) }, { name: "R", levels: perEdge([0, 0]) }] });
     expect(grade(sr, { step: 0, q: [0] }).misconceptionId).toBe("changed-on-hold"); // 00 holds
     expect(grade(jk, { step: 0 })).toMatchObject({ correct: false, normalized: "edge1:" });
   });
 
   it("several outputs: one check, the count and the first wrong one", () => {
-    const three = variant({ kind: "timing", edge: "rising", inputs: [{ name: "x", levels: perEdge([0, 1]) }], machine: { stateVars: ["A", "B", "C"], next: ["x'A' + AB'", "xAB' + BC'", "AC' + x'C"], initial: [0, 0, 0] } });
+    const three = variant({ kind: "timing", edge: "rising", inputs: [{ name: "x", levels: perEdge([0, 0]) }], machine: { stateVars: ["A", "B", "C"], next: ["x'A' + AB'", "xAB' + BC'", "AC' + x'C"], initial: [0, 0, 0] } });
     expect(grade(three, { step: 0, q: [1, 0, 0] })).toMatchObject({ correct: true, partial: true });
     expect(grade(three, { step: 0, q: [1, 1, 1] })).toMatchObject({ correct: false, wrongCells: { first: 1, count: 2 }, misconceptionId: "changed-on-hold" });
     expect(grade(three, { step: 0, q: [0, 0, 0] })).toMatchObject({ wrongCells: { first: 0, count: 1 }, misconceptionId: "held-not-applied" });
