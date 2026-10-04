@@ -32,6 +32,8 @@ export interface ActivityContext {
   locale?: string;
   /** ADR-0007 step tag of the current step ("divide", "column", "carry", "gate", …). */
   stepTag?: string;
+  /** The interaction kind of the variant ("kmap", "truth-table", …): step tags are only unique within a kind. */
+  kind?: string;
   /** The question has another variant to retry on (new numbers). */
   hasOtherVariant?: boolean;
 }
