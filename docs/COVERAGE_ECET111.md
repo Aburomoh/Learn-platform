@@ -50,7 +50,7 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 ## Chapter 2 — Boolean algebra and logic gates (Ch.2 deck, 77 pages)
 | Subtopic | Pages | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
-| AND, OR, NOT symbols and truth tables | 4–6 | CORE | PARTIAL (demo topic) | fill per column; gate walk | truth-table, circuit-predict | #224 |
+| AND, OR, NOT symbols and truth tables | 4–6 | CORE | COVERED (Basic gates: tables + gate walk) | fill per column; gate walk | truth-table, circuit-predict | #224 |
 | NAND, NOR (intermediate column) | 7–10 | CORE | COVERED (Derived gates) | column by column | truth-table | #225 |
 | XOR as AB'+A'B, XNOR | 11–18 | CORE | COVERED (Derived gates, column by column) | A', B', products, F | truth-table | #225 |
 | 3-input gates, rows = 2ⁿ | 19–20 | CORE | COVERED (Rows = 2ⁿ check; 3-input AND/OR tables in #224) | row count, fill | truth-table | #225 |
