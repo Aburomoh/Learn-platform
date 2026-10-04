@@ -98,8 +98,9 @@ export const timing: KindLogic<TimingSpec, TimingAnswer> = {
     const wrong = right.flatMap((b, i) => (q[i] !== b ? [i] : []));
     const wrongCells = { first: wrong[0], count: wrong.length };
     const edge = edges[k];
-    // the other kind of edge just before this one: its inputs, if they differ
+    // the other kind of edge just before this one, and the column just after the edge: their inputs, if they differ
     const earlier = edge.column >= 2 ? spec.inputs.map((i) => i.levels[edge.column - 2]) : undefined;
+    const later = edge.column + 1 < spec.inputs[0].levels.length ? spec.inputs.map((i) => i.levels[edge.column + 1]) : undefined;
     const first = wrong[0];
     let slip: string | undefined;
     if (spec.flipFlop) {
@@ -108,11 +109,14 @@ export const timing: KindLogic<TimingSpec, TimingAnswer> = {
       const qb = q[0];
       slip =
         ff === "JK" && x === 1 && y === 1 && qb === before[0] ? "jk-toggle-missed"
-        : ff === "T" && x === 1 && qb === x ? "t-as-d"
+        // T copied into Q (as D would), for T = 1 and for T = 0 with Q = 1 (Pedagogy on #367)
+        : ff === "T" && qb === x ? "t-as-d"
         : earlier && !same(earlier, edge.inputs) && nextQ(ff, earlier, before[0]) === qb ? "wrong-edge"
+        : later && !same(later, edge.inputs) && nextQ(ff, later, before[0]) === qb ? "input-after-edge"
         : (ff === "SR" || ff === "JK") && x !== y && nextQ(ff, [y, x], before[0]) === qb ? "inputs-swapped"
         : undefined;
     } else if (earlier && !same(earlier, edge.inputs) && same(nextState(spec, earlier, before), q)) slip = "wrong-edge";
+    else if (later && !same(later, edge.inputs) && same(nextState(spec, later, before), q)) slip = "input-after-edge";
     slip ??= q[first] === before[first] ? "held-not-applied" : right[first] === before[first] ? "changed-on-hold" : undefined;
     return { correct: false, normalized, misconceptionId: slip ? find(slip) : undefined, wrongCells };
   },

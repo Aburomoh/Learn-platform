@@ -75,6 +75,8 @@ export type TimingSpec = z.infer<typeof TimingSpec>;
 export const timingDetectors = [
   /** The inputs read at the other kind of edge (the one just before), not the active one. */
   z.object({ type: z.literal("wrong-edge") }),
+  /** The inputs read just after the edge (the column after it, where they may already have changed). */
+  z.object({ type: z.literal("input-after-edge") }),
   /** JK with J = K = 1: held instead of toggling. */
   z.object({ type: z.literal("jk-toggle-missed") }),
   /** T: copied T into Q (as a D flip-flop would) instead of toggling on T = 1. */
