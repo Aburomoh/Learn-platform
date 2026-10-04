@@ -12,6 +12,7 @@ replacing the `<…>` values with one row from the table and the role's first ta
 | Release / DevOps Engineer | `release_devops_engineer` | `release-devops-engineer` | `wake:devops` | live session |
 | Product / Engineering Director | `product_engineering_director` | `product-engineering-director` | `wake:director` | open |
 | Product Manager | `product_manager` | `product-manager` | `wake:product-manager` | open |
+| Course Material Analyst | `course_material_analyst` | `course-material-analyst` | `wake:material` | open |
 | Educational / Pedagogy Engineer | `pedagogy_engineer` | `pedagogy-engineer` | `wake:pedagogy` | open |
 | UX / Design Engineer | `ux_design_engineer` | `ux-design-engineer` | `wake:ux` | open |
 | Backend / Data Engineer | `backend_data_engineer` | `backend-data-engineer` | `wake:backend` | open |

@@ -12,6 +12,7 @@ import { execFileSync } from "node:child_process";
 const ROLES = {
   "product-engineering-director": { title: "Product / Engineering Director", file: "product_engineering_director", alarm: "wake:director", labels: ["blocked", "owner-decision"] },
   "product-manager": { title: "Product Manager", file: "product_manager", alarm: "wake:product-manager", labels: ["blocked:product"] },
+  "course-material-analyst": { title: "Course Material Analyst", file: "course_material_analyst", alarm: "wake:material", labels: [] },
   "pedagogy-engineer": { title: "Educational / Pedagogy Engineer", file: "pedagogy_engineer", alarm: "wake:pedagogy", labels: ["pedagogy-review"] },
   "ux-design-engineer": { title: "UX / Design Engineer", file: "ux_design_engineer", alarm: "wake:ux", labels: [] },
   "technical-lead": { title: "Technical Lead", file: "technical_lead", alarm: "wake:tech-lead", labels: ["blocked:architecture"] },

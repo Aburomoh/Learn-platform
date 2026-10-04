@@ -12,6 +12,11 @@ computed from an expression, never typed in by hand. Pure functions, no dependen
 | Form and size | `isSOP`, `isPOS`, `literalCount`, `formatBool` |
 | Simplest SOP | `minimalCovers(n, minterms, dc)` (all minimal covers), `minimalSOP(vars, minterms, dc)` |
 
+**Student text:** parse with `parseBool(text, { vars })`, passing the question's variables. Letters
+then match them regardless of case (`a + b` = `A + B`), any other variable is a `BooleanParseError`,
+and input is capped at `MAX_LENGTH` (200) characters and `MAX_DEPTH` (50) nested parentheses. The
+minimiser refuses more than `MAX_VARIABLES` (5).
+
 Notation: `'` complement, implicit AND or `·`, `⊕`, `+`, `0`/`1`, parentheses. Precedence, tightest
 first: `'` → AND → `⊕` → `+`.
 
