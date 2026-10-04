@@ -1,10 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { courses, getCourse } from "@/content";
-import { product } from "../../../../config/product";
-import { ChapterIndex, CourseTopics, PageFrame, PageHeading } from "@/shell/r1";
-import { resolveMessage } from "@/tutor";
-import { TutorCard } from "@/tutor/ui";
+import { ChapterIndex, CourseTopics, CourseTutor, PageFrame, PageHeading } from "@/shell/r1";
 
 type Params = { course: string };
 
@@ -32,7 +29,7 @@ export default async function CoursePage({ params }: { params: Promise<Params> }
       demo={course.authority === "DEMO"}
       aside={
         <ChapterIndex course={course}>
-          <TutorCard name={product.owner.shortName} message={resolveMessage("page.course.intro")} portraitSrc={product.brand.tutorPortrait} />
+          <CourseTutor course={course} />
         </ChapterIndex>
       }
     >

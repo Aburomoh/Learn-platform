@@ -9,10 +9,12 @@ import { circuitPredict, type CircuitAnswer } from "./circuit-predict/logic";
 import { derivation, type DerivationAnswer } from "./derivation/logic";
 import { expression, type ExpressionAnswer } from "./expression/logic";
 import { columnAddition, type ColumnAdditionAnswer } from "./column-addition/logic";
+import { kmap, type KmapAnswer } from "./kmap/logic";
 import { multipleChoice, type MultipleChoiceAnswer } from "./multiple-choice/logic";
 import { numeric, type NumericAnswer } from "./numeric/logic";
 import { placeValue, type PlaceValueAnswer } from "./place-value/logic";
 import { repeatedDivision, type RepeatedDivisionAnswer } from "./repeated-division/logic";
+import { device, type DeviceAnswer } from "./device/logic";
 import { stateDiagram, type StateDiagramAnswer } from "./state-diagram/logic";
 import { truthTable, type TruthTableAnswer } from "./truth-table/logic";
 
@@ -23,10 +25,12 @@ export const kinds = {
   derivation: derivation,
   expression: expression,
   "column-addition": columnAddition,
+  kmap,
   "multiple-choice": multipleChoice,
   numeric,
   "place-value": placeValue,
   "repeated-division": repeatedDivision,
+  device,
   "state-diagram": stateDiagram,
   "truth-table": truthTable,
 } as const;
@@ -34,7 +38,7 @@ export const kinds = {
 export type RegisteredKind = keyof typeof kinds;
 
 /** The student's answer, one shape per kind. */
-export type KindAnswer = DerivationAnswer | ExpressionAnswer | BaseToDecimalAnswer | BitGroupingAnswer | CircuitAnswer | ColumnAdditionAnswer | MultipleChoiceAnswer | NumericAnswer | PlaceValueAnswer | RepeatedDivisionAnswer | StateDiagramAnswer | TruthTableAnswer;
+export type KindAnswer = DerivationAnswer | ExpressionAnswer | BaseToDecimalAnswer | BitGroupingAnswer | CircuitAnswer | ColumnAdditionAnswer | KmapAnswer | MultipleChoiceAnswer | NumericAnswer | PlaceValueAnswer | RepeatedDivisionAnswer | DeviceAnswer | StateDiagramAnswer | TruthTableAnswer;
 
 export function isRegisteredKind(kind: string): kind is RegisteredKind {
   return Object.hasOwn(kinds, kind);

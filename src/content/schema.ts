@@ -170,4 +170,5 @@ export type Course = z.infer<typeof CourseSchema>;
 
 /** Input type (before defaults) for authoring modules. */
 export type CourseInput = z.input<typeof CourseSchema>;
+export type ModuleInput = z.input<typeof ModuleSchema>;
 export type VariantInput = z.input<typeof VariantSchema>;
