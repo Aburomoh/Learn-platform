@@ -18,7 +18,7 @@ function variant(spec: unknown): VariantOf<DeviceSpec> {
       { id: "s1", say: "One." },
       { id: "s2", say: "Two." },
     ],
-    misconceptions: ["bits-reversed", "counted-from-one"].map((t) => ({ id: t, title: t, nudgeKey: t, detect: detector(t) })),
+    misconceptions: ["code-reversed", "counted-from-one"].map((t) => ({ id: t, title: t, nudgeKey: t, detect: detector(t) })),
   };
 }
 
@@ -57,15 +57,15 @@ describe("device: grading one ask at a time", () => {
   });
 
   it("names the slip", () => {
-    expect(grade(mux, { step: 0, pick: 1 }).misconceptionId).toBe("bits-reversed"); // 10 read as 01
-    expect(grade(mux, { step: 1, pick: 2 }).misconceptionId).toBe("bits-reversed");
+    expect(grade(mux, { step: 0, pick: 1 }).misconceptionId).toBe("code-reversed"); // 10 read as 01
+    expect(grade(mux, { step: 1, pick: 2 }).misconceptionId).toBe("code-reversed");
     const dec = variant({ kind: "device", device: "decoder", bits: 3, asks: [6, 3] });
-    expect(grade(dec, { step: 0, pick: 3 }).misconceptionId).toBe("bits-reversed"); // 110 read as 011
+    expect(grade(dec, { step: 0, pick: 3 }).misconceptionId).toBe("code-reversed"); // 110 read as 011
     expect(grade(dec, { step: 1, pick: 4 }).misconceptionId).toBe("counted-from-one");
     expect(grade(dec, { step: 1, pick: 0 }).misconceptionId).toBeUndefined();
     expect(device.steps!.vars(dec.spec, 0)).toMatchObject({ given: "x = 1, y = 1, z = 0", answerName: "D6", deviceSize: "3-to-8" });
     const enc = variant({ kind: "device", device: "encoder", bits: 3, asks: [1] });
-    expect(grade(enc, { step: 0, pick: 4 }).misconceptionId).toBe("bits-reversed"); // 001 written as 100
+    expect(grade(enc, { step: 0, pick: 4 }).misconceptionId).toBe("code-reversed"); // 001 written as 100
     expect(device.steps!.vars(enc.spec, 0)).toMatchObject({ given: "I1", answerName: "001", deviceSize: "8-to-3" });
     expect(grade(enc, { step: 0 })).toMatchObject({ correct: false });
   });
