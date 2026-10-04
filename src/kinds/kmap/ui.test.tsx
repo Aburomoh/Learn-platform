@@ -75,6 +75,15 @@ describe("KarnaughMap", () => {
     await user.click(cell(4));
     await user.keyboard("{Escape}");
     expect(cell(4)).toHaveAttribute("aria-selected", "false");
+    // touch: the quiet Clear selection action does the same, and the count follows the picks (#384)
+    const clear = screen.getByRole("button", { name: "Clear selection" });
+    expect(clear).toBeDisabled();
+    await user.click(cell(4));
+    await user.click(cell(6));
+    expect(screen.getByText(/2 cells selected/)).toHaveTextContent("Group 1: 2 cells selected");
+    await user.click(clear);
+    expect(screen.getByText(/0 cells selected/)).toBeInTheDocument();
+    expect(cell(6)).toHaveAttribute("aria-selected", "false");
     await user.click(cell(7));
     cell(3).focus();
     await user.keyboard(" ");
