@@ -144,11 +144,15 @@ describe("runner reducer: walked division", () => {
     s = run([grouping(0, { groups: ["011", "010"] })], s);
     expect(s.stepIndex).toBe(1);
     s = run([grouping(1, { digit: "3" }), grouping(2, { digit: "2" }), { type: "NEXT_QUESTION" }], s);
-    s = run([grouping(0, { groups: ["0001", "1010"] }), grouping(1, { digit: "1" }), grouping(2, { digit: "a" })], s);
+    // each answer is checked back in decimal as its own step (#215)
+    const decimal = (text: string): RunnerAction => ({ type: "SUBMIT", answer: { kind: "numeric", text } });
+    s = run([decimal("26"), { type: "NEXT_QUESTION" }], s);
+    s = run([grouping(0, { groups: ["0001", "1010"] }), grouping(1, { digit: "1" }), grouping(2, { digit: "a" }), { type: "NEXT_QUESTION" }], s);
+    s = run([decimal("26")], s);
     expect(s.done).toBe(false); // feedback and the Finish button are shown first
     s = reducer(s, { type: "NEXT_QUESTION" });
     expect(s.done).toBe(true);
-    expect(s.completed).toEqual([true, true, true, true]);
+    expect(s.completed).toEqual([true, true, true, true, true, true]);
   });
 
   it("retry variation switches to the 37 chain and resets step state", () => {
@@ -199,7 +203,7 @@ describe("resume at the first unfinished challenge (#119)", () => {
     // challenge 1 unfinished, 2 and 3 finished: resume at 1, and after it go straight to 4
     let s = resumeRunnerState(activity, [ids[1], ids[2]]);
     expect(s.qIndex).toBe(0);
-    expect(s.completed).toEqual([false, true, true, false]);
+    expect(s.completed).toEqual([false, true, true, false, false, false]);
     s = run([{ type: "OPEN" }, ...chain26, { type: "NEXT_QUESTION" }], s);
     expect(s.qIndex).toBe(3);
     expect(s.done).toBe(false);
