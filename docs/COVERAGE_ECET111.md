@@ -80,12 +80,15 @@ All K-map rows grade **any** minimal cover: several slide examples have more tha
 ## Chapter 4 — Combinational logic circuits (Ch.4 deck, 62 slides)
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
-| Half adder | 3–8 | CORE | MISSING | table; S, C; walk | truth-table, expression, circuit-predict | #204 |
-| Full adder (four activities) | 9–22, 33–36 | CORE | MISSING | table; Σ; K-map; S by algebra (optional) | truth-table, K-map, derivation | #204 |
-| Decoder, encoder | 23–32 | CORE | MISSING | predict one output; table | truth-table | #204 |
-| Functions with a decoder | 37 | CORE | MISSING | pick outputs for each OR | truth-table row-select | #204 |
-| Multiplexer | 38–46 | CORE | MISSING | predict one output; select table | MC / truth-table | #204 |
-| Functions with a MUX | 47–61 | CORE / PRACTICE | MISSING | choose 0/1/z/z' per pair | row-select (value per row) | #204 |
+| Half adder | 3–8 | CORE | MISSING | table; S, C; walk | truth-table, expression, circuit-predict | #300 |
+| Full adder, activity 1: 8-row table | 9–22, 33–36 | CORE | MISSING | table | truth-table | #301 |
+| Full adder, activity 2: Σ for S and Co | 9–22, 33–36 | CORE | MISSING | minterm lists | truth-table | #302 |
+| Full adder, activity 3: K-map for Co | 9–22, 33–36 | CORE | MISSING | map, groups, expression | K-map | #303 |
+| Full adder, optional: S → A⊕B⊕Ci by algebra | 9–22, 33–36 | WORKED | MISSING | derivation | derivation | #304 |
+| Decoder, encoder | 23–32 | CORE | MISSING | predict one output; table | truth-table | #305 |
+| Functions with a decoder | 37 | CORE | MISSING | pick outputs for each OR | truth-table row-select | #306 |
+| Multiplexer | 38–46 | CORE | MISSING | predict one output; select table | MC / truth-table | #307 |
+| Functions with a MUX | 47–61 | CORE / PRACTICE | MISSING | choose 0/1/z/z' per pair | row-select (value per row) | #308 |
 
 ## Chapter 5 — Sequential circuits (Parts I–III, 38 + 55 + 35 slides)
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
