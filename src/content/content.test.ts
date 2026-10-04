@@ -212,6 +212,32 @@ describe("pedagogy guard", () => {
       if (variant.spec.kind === "numeric" && (variant.spec.base === 8 || variant.spec.base === 16)) expect(variant.spec.context?.type, path).toBe("bits");
     }
   });
+
+  it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
+    // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule"]);
+    // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
+    const PENDING = new Set([
+      "ns.q.divide", "ns.q.read", "ns.q.octal", "ns.q.hex",
+      "ns.x.divide", "ns.x.read", "ns.x.octal", "ns.x.hex",
+      "ba.q.add", "ba.q.check-a", "ba.q.check-b", "ba.q.check-sum",
+      "ba.q.ones", "ba.q.plus-one",
+      "sub.q.divide", "sub.q.read", "sub.q.ones", "sub.q.plus-one", "sub.q.add", "sub.q.end-carry", "sub.q.result",
+      "subx.q.ones", "subx.q.plus-one", "subx.q.add", "subx.q.end-carry", "subx.q.result",
+      "subn.q.ones", "subn.q.plus-one", "subn.q.add", "subn.q.end-carry", "subn.q.re-ones", "subn.q.re-plus-one", "subn.q.size",
+      "lg.q.predict", "lg.q.identify",
+    ]);
+    for (const c of courses)
+      for (const m of c.modules)
+        for (const t of m.topics)
+          for (const a of t.activities)
+            for (const q of a.questions) {
+              const path = `${c.id}/${t.id}/${a.id}/${q.id}`;
+              if (EXEMPT.has(q.id)) continue;
+              if (PENDING.has(q.id)) expect(q.variants.length, `${path} has three sets now: remove it from PENDING`).toBeLessThan(3);
+              else expect(q.variants.length, `${path} needs at least three number sets`).toBeGreaterThanOrEqual(3);
+            }
+  });
 });
 
 describe("authored truth is internally consistent", () => {
