@@ -55,8 +55,18 @@ keyboard path. Touch targets at least 44 px. A live region announces feedback. C
 the only carrier of state.
 
 ## Tutor area
-Avatar (placeholder expression set until photographs arrive), speech bubble with skippable
-typewriter, small and quiet by default.
+Speech bubble with skippable typewriter, small and quiet by default. The photographic pose set
+(#354, `config/product.ts` → `brand.tutorPortrait`) replaces the monogram; the monogram stays as the
+fallback.
+- **Where the tutor has its own column** (stage ≥ 1200 px, course/topic rails and home card ≥ 900 px):
+  the waist-up pose in a fixed 168 × 224 px box above the bubble. Poses differ mainly in the hands, so
+  only the waist-up carries the expression. The fixed box means a pose change never shifts layout.
+- **Phones and the strip above the stage:** the 40 px head crop. The bubble text carries the meaning.
+- **Pointing toward the stage:** `point_left` at ≥ 1200 px (stage is to the viewer's left). Below that
+  the strip sits above the stage, so use `explaining`. `attention-left/right` keep their own poses.
+- **Motion and loading:** 120 ms crossfade, none under reduced motion. Only the current pose is fetched,
+  with neutral preloaded at the size the layout uses. Phones never fetch the waist-up files.
+- **Welcome:** first visit only, on home and the course/topic intro rails.
 
 ## Proposed token changes (UX review 2026-10-03, not yet in `tokens.css`)
 Evidence: `docs/design/review-2026-10-03/`. Each row is adopted by the issue that implements it.
