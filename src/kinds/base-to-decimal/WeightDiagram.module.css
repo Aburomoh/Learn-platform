@@ -79,7 +79,7 @@
 
 .input {
   width: 44px;
-  height: 40px;
+  height: 44px;
   padding: 0;
   border: 2px solid var(--accent);
   border-radius: var(--radius-sm);
@@ -98,10 +98,24 @@
   outline-offset: 1px;
 }
 
-/* the first wrong cell: border and background plus aria-invalid, never colour alone */
+/* the first wrong cell: border, background and a cross, never colour alone */
 .wrong {
   border-color: var(--error);
   background: var(--error-bg);
+}
+
+.fieldWrap {
+  position: relative;
+  display: inline-block;
+}
+
+.cross {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--error);
 }
 
 .sum {

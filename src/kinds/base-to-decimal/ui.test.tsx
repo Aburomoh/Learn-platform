@@ -63,6 +63,8 @@ describe("base-to-decimal kind in the stage (#208)", () => {
     const marked = screen.getAllByRole("textbox").filter((c) => c.getAttribute("aria-invalid") === "true");
     expect(marked).toHaveLength(1);
     expect(marked[0]).toHaveAccessibleName("Power under digit 1 (1)");
+    expect(marked[0].parentElement).toHaveTextContent("✕"); // shape as well as colour
+    expect(document.querySelectorAll("[aria-hidden='true']").length).toBeGreaterThan(0);
     await fill(["2", "1", "0", "−1", "-2", "-3"], "Check weights");
 
     await screen.findByRole("button", { name: "Check terms" });
