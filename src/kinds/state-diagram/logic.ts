@@ -50,9 +50,15 @@ export function arrowSteps(spec: StateDiagramSpec, i: number): number[] {
   return ts[j] && ts[j].from === ts[i].from && ts[j].to === ts[i].to ? [Math.min(i, j), Math.max(i, j)] : [i];
 }
 
-/** Each state's grid cell [column, row], in code order: the spec's `positions`, or table order four per row. */
-export function statePositions(spec: StateDiagramSpec): [number, number][] {
-  return spec.positions ?? stateCodes(spec).map((_, s) => [s % 4, Math.floor(s / 4)]);
+/**
+ * Each state's grid cell [column, row], in code order: the spec's `positions`, or table order row by
+ * row: 2 states side by side, 4 as 2 × 2, 8 as 2 rows of 4 (the one fallback; the view uses it, #394).
+ */
+export function stateCells(spec: StateDiagramSpec): [number, number][] {
+  if (spec.positions) return spec.positions;
+  const count = 2 ** spec.stateVars.length;
+  const cols = count <= 2 ? count : count / 2;
+  return Array.from({ length: count }, (_, i) => [i % cols, Math.floor(i / cols)]);
 }
 
 /** The label chips: every input/output pair (4), or the two inputs without an output. */
