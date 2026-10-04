@@ -486,6 +486,12 @@ describe("content registry", () => {
     expect(picked).toEqual(["1", "1", "0"]);
   });
 
+  it("analysis 1 (#312): every equation is the pack's, and each wiring sentence names its gate", () => {
+    const x = getActivity(COURSE, "analysis", "analysis-inputs")!.activity;
+    const targets = x.questions.map((q) => q.variants.map((v) => (v.spec.kind === "expression" ? v.spec.target : "")));
+    expect(targets).toEqual([["Ax + Bx", "Bx'", "Bx"], ["(A + B)x'", "AB", "x + B'"]]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();

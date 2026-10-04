@@ -5,6 +5,7 @@
 import type { ModuleInput } from "../../schema";
 import { latchesTopic } from "./latches";
 import { flipFlopsTopic } from "./flip-flops";
+import { analysisTopic } from "./analysis";
 
 export const chapter5: ModuleInput = {
   id: "chapter-5",
@@ -12,5 +13,6 @@ export const chapter5: ModuleInput = {
   topics: [
     latchesTopic,
     flipFlopsTopic,
+    analysisTopic,
   ],
 };
