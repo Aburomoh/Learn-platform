@@ -11,6 +11,7 @@ import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue45, placeValue29 } from "./fixtures/placeValue45";
 import { resolveMessage } from "@/tutor/messages";
+import { computedAnswer } from "@/kinds/bit-grouping/logic";
 
 const COURSE = "ecet111";
 
@@ -198,6 +199,16 @@ describe("content registry", () => {
     const shown = { kind: "column-addition" as const, ...size.context.operands };
     expect(stepCount(shown)).toBe(4);
     expect(additionResult(shown.a, shown.b, shown.endCarry !== "drop")).toBe("0100");
+  });
+
+  it("every bit-grouping answer equals the digits computed from its bits, point included (#210)", () => {
+    let n = 0;
+    for (const { path, variant } of allVariants())
+      if (variant.spec.kind === "bit-grouping") {
+        expect(variant.spec.answer, path).toBe(computedAnswer(variant.spec));
+        n++;
+      }
+    expect(n).toBeGreaterThan(0);
   });
 
   it("resolves an activity by path", () => {
