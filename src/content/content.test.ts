@@ -453,6 +453,16 @@ describe("content registry", () => {
     }
   });
 
+  it("full adder table (#301): S = Σ(1,2,4,7), Co = Σ(3,5,6,7) as in the pack; one-row answers are the binary count", () => {
+    const x = getActivity(COURSE, "full-adder", "full-adder-table")!.activity;
+    const [row, table] = x.questions;
+    if (table.variants[0].spec.kind !== "truth-table") throw new Error("expected a truth table");
+    const spec = table.variants[0].spec;
+    expect(spec.columns.map((c) => columnTruth(spec, c).join(""))).toEqual(["01101001", "00010111"]);
+    const picked = row.variants.map(({ spec: s }) => (s.kind === "multiple-choice" ? s.options.find((o) => o.id === s.correctOptionId)!.text : ""));
+    expect(picked).toEqual(["S = 1, Co = 1", "S = 0, Co = 1", "S = 1, Co = 0"]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -473,7 +483,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
