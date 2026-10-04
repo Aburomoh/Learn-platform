@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { id } from "@/content/primitives";
-import { BooleanParseError, MAX_VARIABLES, parseBool } from "@/content/boolean";
+import { BooleanParseError, MAX_VARIABLES, equivalent, parseBool, type BoolExpr } from "@/content/boolean";
 
 /**
  * The laws and rules a derivation line can name, as the deck names them (Chapter 2: laws p.37–40,
@@ -51,16 +51,20 @@ export const DerivationSpec = z
     lineMode: z.enum(["choose", "type"]).default("choose"),
   })
   .superRefine((d, ctx) => {
-    const check = (label: string, text: string) => {
+    const check = (label: string, text: string): BoolExpr | undefined => {
       try {
-        parseBool(text, { vars: d.vars });
+        return parseBool(text, { vars: d.vars });
       } catch (e) {
         ctx.addIssue({ code: "custom", message: `${label}: ${e instanceof BooleanParseError ? e.message : String(e)}` });
+        return undefined;
       }
     };
-    check("start", d.start);
+    let previous = check("start", d.start);
     d.lines.forEach((l, i) => {
-      check(`line ${i + 1}`, l.expr);
+      const line = check(`line ${i + 1}`, l.expr);
+      // every authored line is the same function as the one before it (QA on #324)
+      if (previous && line && !equivalent(previous, line, d.vars)) ctx.addIssue({ code: "custom", message: `line ${i + 1} is not equivalent to the line before` });
+      previous = line;
       l.wrongLines.forEach((w) => check(`line ${i + 1} option ${w.id}`, w.expr));
       if (!l.lawOptions.includes(l.law)) ctx.addIssue({ code: "custom", message: `line ${i + 1}: lawOptions must include ${l.law}` });
       if (d.lineMode === "choose" && !l.wrongLines.length) ctx.addIssue({ code: "custom", message: `line ${i + 1}: choose mode needs wrong lines` });

@@ -90,6 +90,7 @@ describe("derivation kind (#221)", () => {
     const ok = (s: unknown) => DerivationSpec.safeParse(s).success;
     expect(ok({ ...f2, lines: [{ ...f2.lines[0], lawOptions: ["commutative", "absorb"] }] })).toBe(false); // law not offered
     expect(ok({ ...f2, start: "x + w" })).toBe(false);
+    expect(ok({ ...f2, lines: [{ ...f2.lines[0], expr: "x'z(y' + y)" }] })).toBe(false); // not equivalent to the start (QA on #324)
     expect(ok({ ...f2, lines: [{ ...f2.lines[0], wrongLines: [] }] })).toBe(false); // choose mode needs options
     expect(ok({ ...f2, lineMode: "type", lines: [{ ...f2.lines[0], wrongLines: [] }] })).toBe(true);
   });

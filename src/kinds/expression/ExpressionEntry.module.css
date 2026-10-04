@@ -1,0 +1,107 @@
+.root {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.well {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunk);
+}
+
+.field {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 var(--space-3);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-lg);
+  letter-spacing: 0.04em;
+}
+
+.field:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.field[readonly] {
+  border-color: var(--border);
+}
+
+.incorrect {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
+
+.correct {
+  border-color: var(--success);
+  background: var(--success-bg);
+}
+
+.reads {
+  margin: 0;
+  min-height: 1.5em;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.math {
+  font-size: var(--text-md);
+  font-weight: 650;
+  color: var(--text);
+}
+
+/* the complement as on the slides: a bar over the operand */
+.bar {
+  text-decoration: overline;
+  text-decoration-thickness: 2px;
+}
+
+.bar .bar {
+  /* a double complement keeps both bars visible */
+  padding-top: 3px;
+}
+
+.keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.key {
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0 var(--space-2);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.op {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.key:disabled {
+  opacity: var(--pending-opacity);
+  cursor: default;
+}
+
+.key:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.actions {
+  display: flex;
+}
