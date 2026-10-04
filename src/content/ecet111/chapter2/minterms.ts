@@ -64,11 +64,19 @@ function canonicalVariant(id: string, vars: string[], yes: string, no: string, k
     misconceptions: [{ id: "mt.not-canonical", title: "A term is missing a letter", nudgeKey: "mt.not-canonical", detect: { type: "option", optionId: "no" } }],
     explanation: [
       { id: "s1", say: "A function is in canonical form when every term is a minterm: each has all the variables." },
-      {
-        id: "s2",
-        say: `Look at ${show(no)}.`,
-        ask: { prompt: "Does every term have every variable?", options: ["Yes", "No"], correctIndex: 1, afterCorrect: "Right: one term is missing a letter, so it is not canonical.", afterWrong: "One term is missing a letter, so it is not canonical." },
-      },
+      // the prediction looks at one function or the other, so its answer is not always "No" (QA on #346)
+      k % 2
+        ? {
+            id: "s2",
+            say: `Look at ${show(no)}.`,
+            ask: { prompt: "Does every term have every variable?", options: ["Yes", "No"], correctIndex: 1, afterCorrect: "Right: one term is missing a letter, so it is not canonical.", afterWrong: "One term is missing a letter, so it is not canonical." },
+          }
+        : {
+            id: "s2",
+            say: `Look at ${show(yes)}.`,
+            ask: { prompt: "Does every term have every variable?", options: ["Yes", "No"], correctIndex: 0, afterCorrect: `Right: every term has ${vars.join(", ")}, so it is canonical.`, afterWrong: `Every term has ${vars.join(", ")}, so it is canonical.` },
+          },
+      { id: "s3", say: `${show(yes)} is canonical; ${show(no)} is not: a term is missing a letter.` },
     ],
   };
 }
