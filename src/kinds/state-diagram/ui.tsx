@@ -48,15 +48,16 @@ export function Practice({ variant, prompt, state, stepIndex, locked, onSubmit }
   const finished = state === "correct" && locked;
   const done = finished ? rows.length : stepIndex;
   const t = rows[Math.min(done, rows.length - 1)];
-  const taken = arrowSteps(spec, Math.min(stepIndex, rows.length - 1))
-    .filter((i) => i < stepIndex)
-    .map((i) => rows[i].label);
+  const current = Math.min(stepIndex, rows.length - 1);
+  // the steps that share this arrow (two when both inputs take the state to the same next state)
+  const onArrow = arrowSteps(spec, current);
+  const taken = onArrow.filter((i) => i < stepIndex).map((i) => rows[i].label);
   return (
     <>
       <Prompt text={prompt} />
       {!finished && (
         <p className={shared.stepLabel} aria-live="polite">
-          {spec.mode === "next" ? `Arrow ${done + 1} of ${rows.length}: from ${t.from} with ${spec.input} = ${t.input}` : `Arrow ${done + 1} of ${rows.length}: ${t.from} → ${t.to}`}
+          {spec.mode === "next" ? `Arrow ${done + 1} of ${rows.length}: from ${t.from} with ${spec.input} = ${t.input}` : `Arrow ${done + 1} of ${rows.length}: ${t.from} → ${t.to}${onArrow.length > 1 ? ` (label ${onArrow.indexOf(current) + 1} of 2 on this arrow)` : ""}`}
         </p>
       )}
       <div className={styles.layout}>

@@ -59,7 +59,7 @@ const unit = (dx: number, dy: number) => {
 };
 
 /** The arrow from `p` to `q`: its path, where its head points, and where its label sits. */
-export function arrowGeometry(p: Point, q: Point, loopBelow = false): { d: string; tip: Point; dir: Point; label: Point } {
+export function arrowGeometry(p: Point, q: Point, loopBelow = false): { d: string; tip: Point; dir: Point; label: Point; apex: Point } {
   if (p.x === q.x && p.y === q.y) {
     // a loop above the circle (below it for bottom-row states)
     const s = loopBelow ? 1 : -1;
@@ -67,20 +67,24 @@ export function arrowGeometry(p: Point, q: Point, loopBelow = false): { d: strin
     const b = { x: p.x + 16, y: p.y + s * 25.4 };
     const c1 = { x: p.x - 34, y: p.y + s * 78 };
     const c2 = { x: p.x + 34, y: p.y + s * 78 };
-    return { d: `M ${a.x} ${a.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${b.x} ${b.y}`, tip: b, dir: unit(b.x - c2.x, b.y - c2.y), label: { x: p.x, y: p.y + s * 82 } };
+    return { d: `M ${a.x} ${a.y} C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${b.x} ${b.y}`, tip: b, dir: unit(b.x - c2.x, b.y - c2.y), label: { x: p.x, y: p.y + s * 84 }, apex: { x: p.x, y: p.y + s * 66 } };
   }
   const dir = unit(q.x - p.x, q.y - p.y);
   const n = { x: -dir.y, y: dir.x }; // right-hand side of the direction of travel
   const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
   // an arrow that skips over a neighbour bends more, so it arcs clear of the circle in between
   const distance = Math.hypot(q.x - p.x, q.y - p.y);
-  const bend = distance > 1.25 * DX ? 0.42 * distance : BEND;
+  const bend = distance > 1.5 * DX ? 0.42 * distance : BEND;
   const c = { x: mid.x + n.x * bend, y: mid.y + n.y * bend };
+  // The label sits outside the bend, clear of its line. A diagonal's label goes on the inner side
+  // instead: outside it would land on the labels of the arrows along the square's edges.
+  const diagonal = p.x !== q.x && p.y !== q.y;
+  const labelOffset = diagonal ? -22 : bend / 2 + 28;
   const out = unit(c.x - p.x, c.y - p.y);
   const back = unit(c.x - q.x, c.y - q.y);
   const start = { x: p.x + out.x * R, y: p.y + out.y * R };
   const tip = { x: q.x + back.x * R, y: q.y + back.y * R };
-  return { d: `M ${start.x} ${start.y} Q ${c.x} ${c.y} ${tip.x} ${tip.y}`, tip, dir: { x: -back.x, y: -back.y }, label: { x: mid.x + n.x * (bend / 2 + 16), y: mid.y + n.y * (bend / 2 + 16) } };
+  return { d: `M ${start.x} ${start.y} Q ${c.x} ${c.y} ${tip.x} ${tip.y}`, tip, dir: { x: -back.x, y: -back.y }, label: { x: mid.x + n.x * labelOffset, y: mid.y + n.y * labelOffset }, apex: { x: mid.x + n.x * (bend / 2), y: mid.y + n.y * (bend / 2) } };
 }
 
 const head = (tip: Point, dir: Point) => {
@@ -102,10 +106,8 @@ const head = (tip: Point, dir: Point) => {
  */
 export function StateDiagram({ id, states, positions, transitions, mode, done, labelOptions = [], inputName, state = "idle", disabled = false, onCheck }: StateDiagramProps) {
   const cells = positions;
-  const { cols, rows, at } = statePositions(cells);
+  const { rows, at } = statePositions(cells);
   const pos = (code: string) => at[states.indexOf(code)];
-  const width = MX * 2 + (cols - 1) * DX;
-  const height = MY * 2 + (rows - 1) * DY;
   const finished = done >= transitions.length;
   const current = finished ? undefined : transitions[done];
   const editing = !!onCheck && !disabled && !finished && state !== "correct";
@@ -121,13 +123,29 @@ export function StateDiagram({ id, states, positions, transitions, mode, done, l
     arrows.get(key)!.items.push({ index, label: t.label });
   });
 
+  // The drawing's bounds: every circle, every arrow's apex and every label slot, plus padding, so
+  // nothing is clipped however far an arrow bends (#394).
+  const geometry = new Map([...arrows.entries()].map(([key, a]) => [key, arrowGeometry(pos(a.from), pos(a.to), rows > 1 && cells[states.indexOf(a.from)][1] === rows - 1)]));
+  const extent = [
+    ...at.flatMap((p) => [{ x: p.x - R - 10, y: p.y - R - 10 }, { x: p.x + R + 10, y: p.y + R + 10 }]),
+    ...[...geometry.entries()].flatMap(([key, g]) => {
+      const lines = arrows.get(key)!.items.length;
+      return [g.apex, { x: g.label.x - 26, y: g.label.y - 10 - lines * 9 }, { x: g.label.x + 26, y: g.label.y + 10 + lines * 9 }];
+    }),
+  ];
+  const PADDING = 10;
+  const minX = Math.min(...extent.map((p) => p.x)) - PADDING;
+  const minY = Math.min(...extent.map((p) => p.y)) - PADDING;
+  const width = Math.max(...extent.map((p) => p.x)) + PADDING - minX;
+  const height = Math.max(...extent.map((p) => p.y)) + PADDING - minY;
+
   // Keep the active arrow's source in view inside a scrolling well (eight states on a phone).
   const scroller = useRef<HTMLDivElement>(null);
   const fade = useScrollFade(scroller);
   useEffect(() => {
     const box = scroller.current;
     if (!box || !current || box.scrollWidth <= box.clientWidth) return;
-    const x = (pos(current.from).x / width) * box.scrollWidth;
+    const x = ((pos(current.from).x - minX) / width) * box.scrollWidth;
     box.scrollLeft = Math.max(0, x - box.clientWidth / 2);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- when the goal changes
   }, [done]);
@@ -151,7 +169,7 @@ export function StateDiagram({ id, states, positions, transitions, mode, done, l
   return (
     <div className={styles.root} data-diagram={id}>
       <div className={styles.well} ref={scroller} data-fade={fade} {...(fade === "none" ? {} : { tabIndex: 0, role: "group", "aria-label": "State diagram, scrolls sideways" })}>
-        <svg viewBox={`0 0 ${width} ${height}`} className={styles.svg} style={{ maxWidth: width, minWidth: Math.round(width * MIN_SCALE) }} {...(choosing ? {} : { role: "img", "aria-label": summary })} {...focusTarget("state-diagram")}>
+        <svg viewBox={`${minX} ${minY} ${width} ${height}`} className={styles.svg} style={{ maxWidth: width, minWidth: Math.round(width * MIN_SCALE) }} {...(choosing ? {} : { role: "img", "aria-label": summary })} {...focusTarget("state-diagram")}>
           {choosing && <title>{summary}</title>}
           {/* arrows under the circles */}
           {[...arrows.values()].map((a) => {
@@ -160,8 +178,7 @@ export function StateDiagram({ id, states, positions, transitions, mode, done, l
             const isActive = mode === "label" && a.items.some((it) => it.index === done);
             const anyDone = a.items.some((it) => it.index < done);
             const kind = isActive ? "active" : anyDone || mode === "next" ? "done" : "later";
-            const p = pos(a.from);
-            const g = arrowGeometry(p, pos(a.to), rows > 1 && cells[states.indexOf(a.from)][1] === rows - 1);
+            const g = geometry.get(`${a.from}>${a.to}`)!;
             return (
               <g key={`${a.from}>${a.to}`} className={styles.arrow} data-arrow={`${a.from}>${a.to}`} data-state={kind}>
                 <path d={g.d} className={styles.arrowLine} />

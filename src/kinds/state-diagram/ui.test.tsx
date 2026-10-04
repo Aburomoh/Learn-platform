@@ -112,18 +112,18 @@ describe("state-diagram kind in the stage (#240)", () => {
     const shared = VariantSchema.parse({ id: "v-s", prompt: "Label each arrow.", spec: { kind: "state-diagram", stateVars: ["A", "B"], input: "x", next: ["B", "A'"], output: { name: "y", expr: "x" } }, ...base });
     render(<Harness variant={shared} />);
     const user = userEvent.setup();
-    await screen.findByText("Arrow 1 of 8: 00 → 01");
+    await screen.findByText("Arrow 1 of 8: 00 → 01 (label 1 of 2 on this arrow)");
     const answer = async (label: string) => {
       await user.click(screen.getByRole("radio", { name: label }));
       await user.click(screen.getByRole("button", { name: "Check arrow" }));
     };
     await answer("1/1"); // the second row's label first: accepted
-    await screen.findByText("Arrow 2 of 8: 00 → 01");
+    await screen.findByText("Arrow 2 of 8: 00 → 01 (label 2 of 2 on this arrow)");
     expect(document.querySelector("[data-label='0']")).toHaveTextContent("1/1");
     await answer("1/1"); // already taken on this arrow
     expect(screen.getByText("Not correct yet.")).toBeInTheDocument();
     await answer("0/0");
-    await screen.findByText("Arrow 3 of 8: 01 → 11");
+    await screen.findByText("Arrow 3 of 8: 01 → 11 (label 1 of 2 on this arrow)");
     expect(document.querySelector("[data-label='1']")).toHaveTextContent("0/0");
   });
 });
