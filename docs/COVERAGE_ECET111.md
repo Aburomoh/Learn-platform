@@ -80,8 +80,8 @@ All K-map rows grade **any** minimal cover: several slide examples have more tha
 ## Chapter 4 — Combinational logic circuits (Ch.4 deck, 62 slides)
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
-| Half adder | 3–8 | CORE | COVERED (Half adder: row, table, gates, walk) | table; S, C; walk | truth-table, expression, circuit-predict | #300 |
-| Full adder, activity 1: 8-row table | 9–22, 33–36 | CORE | COVERED (Full adder: the table) | table | truth-table | #301 |
+| Half adder | 3–8 | CORE | MISSING | table; S, C; walk | truth-table, expression, circuit-predict | #300 |
+| Full adder, activity 1: 8-row table | 9–22, 33–36 | CORE | MISSING | table | truth-table | #301 |
 | Full adder, activity 2: Σ for S and Co | 9–22, 33–36 | CORE | MISSING | minterm lists | truth-table | #302 |
 | Full adder, activity 3: K-map for Co | 9–22, 33–36 | CORE | MISSING | map, groups, expression | K-map | #303 |
 | Full adder, optional: S → A⊕B⊕Ci by algebra | 9–22, 33–36 | WORKED | MISSING | derivation | derivation | #304 |
