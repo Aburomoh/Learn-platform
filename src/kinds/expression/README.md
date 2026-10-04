@@ -22,5 +22,4 @@ A Boolean expression typed by the student (#219), graded by meaning with the Boo
 - Check sends the text; grading is by meaning (`logic.ts`). The last text stays in the field.
 - Explain Slowly stage: `expression` = the line shown so far, read-only with its reading.
 
-**Status:** spec, grading and tests. The view (field + key row, "Reads as" preview, UX §3) and the
-three registry lines come from Frontend.
+**Status:** spec, grading, tests and the view (UX §3); registered.
