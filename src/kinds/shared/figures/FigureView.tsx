@@ -59,7 +59,7 @@ function draw(id: string, figure: FigureSpec, revealed: boolean, focus: string |
     case "flip-flop":
       return <FlipFlopFigure ff={figure.ff} edge={figure.edge} given={figure.given} revealed={revealed} focus={focus ?? figure.focus} marks={marks} />;
     case "sequential":
-      return <SequentialFigure flipFlops={figure.flipFlops} input={figure.input} output={figure.output} focus={focus ?? figure.focus} />;
+      return <SequentialFigure flipFlops={figure.flipFlops} input={figure.input} output={figure.output} focus={focus ?? figure.focus} marks={marks} />;
     case "gates":
       return <GatesFigure id={`${id}-gates`} output={figure.output} expr={figure.expr} vars={figure.vars} revealed={revealed} />;
     default: {

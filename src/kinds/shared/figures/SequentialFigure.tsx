@@ -1,5 +1,6 @@
 import { focusTarget } from "@/interactions/shared/types";
 import { flipFlopInputs, type FlipFlopType } from "./blocks";
+import { Marks } from "./Marks";
 import styles from "./figures.module.css";
 
 export interface SequentialFlipFlop {
@@ -18,6 +19,8 @@ export interface SequentialFigureProps {
   output?: string;
   /** The flip-flop with the halo (by state name), or "gates". */
   focus?: string;
+  /** Topic card: 1 over the gate block, 2 over the flip-flops, 3 over the feedback. */
+  marks?: boolean;
 }
 
 // Geometry in SVG units (visual system §10): a composite figure, up to 360 wide, 15-unit text.
@@ -37,7 +40,7 @@ export const MIN_SCALE = 0.8;
  * around the outside to the gate block, and one clock along the bottom. It shows structure, not
  * values: there is no result state. Dots mark real branches only.
  */
-export function SequentialFigure({ flipFlops, input, output, focus }: SequentialFigureProps) {
+export function SequentialFigure({ flipFlops, input, output, focus, marks = false }: SequentialFigureProps) {
   const n = flipFlops.length;
   const top = Math.ceil(n / 2); // the first `top` flip-flops feed back over the top, the rest under the bottom
   const rank = (i: number) => (i < top ? i : n - 1 - i); // 0 = the inner rail
@@ -69,7 +72,8 @@ export function SequentialFigure({ flipFlops, input, output, focus }: Sequential
 
   return (
     <div className={styles.well}>
-      <svg viewBox={`0 0 ${width} ${height}`} className={`${styles.svg} ${styles.center}`} style={{ maxWidth: Math.round(width * 1.25), minWidth: Math.round(width * MIN_SCALE) }} role="img" aria-label={summary} {...focusTarget("circuit")}>
+      <svg viewBox={marks ? `0 -26 ${width} ${height + 26}` : `0 0 ${width} ${height}`} className={`${styles.svg} ${styles.center}`} style={{ maxWidth: Math.round(width * 1.25), minWidth: Math.round(width * MIN_SCALE) }} role="img" aria-label={summary} {...focusTarget("circuit")}>
+        {marks && <Marks xs={[BLOCK_X + BLOCK_W / 2, FF_X + FF_W / 2, 322]} y={-12} />}
         {/* feedback: each Q around the outside, back into the gate block */}
         {flipFlops.map((f, i) => {
           const r = rank(i);
