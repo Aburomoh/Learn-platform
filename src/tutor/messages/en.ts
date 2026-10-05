@@ -195,6 +195,29 @@ export const en = {
   "gate.output-of": "the {gateType} output",
   "gate.input": "{name} = {value}",
   "gate.inputs-two": "{first} and {second}",
+
+  // timing diagram nudges
+  "tm.jk-toggle-missed": "When J = 1 and K = 1, the flip-flop toggles: it flips from 0 to 1 or from 1 to 0.",
+  "tm.t-as-d": "T is not D. With T, the flip-flop toggles (flips) when T = 1, and holds when T = 0. It does not just copy T.",
+  "tm.wrong-edge": "Read the inputs just before the active edge. Check that you have a {edgeName} edge here, not the opposite edge.",
+  "tm.input-after-edge": "Read the inputs at the active edge, not after it. Look one column to the left.",
+  "tm.inputs-swapped": "The order matters. Check the input labels: which is first?",
+  "tm.held-not-applied": "Q stayed the same, but it should have changed at this edge. Check the inputs and the flip-flop rule.",
+  "tm.changed-on-hold": "Q changed, but it should have stayed the same at this edge. Check the inputs and the flip-flop rule.",
+
+  // state diagram nudges
+  "sd.next-wrong-row": "That is the next state for the other input. Check which input—{input}—this row is for.",
+  "sd.next-is-present": "That is the present state, not the next state. With input {input}, it moves to a different state.",
+  "sd.label-reversed": "The label format is input/output, not output/input. Check which is which.",
+  "sd.output-wrong-row": "That is the output for the other input. Check which input—{input}—this row is for.",
+
+  // timing and state-diagram step lines
+  "step.next-tm-edge": "Good. Now {edgeName} edge {edgeNumber}.",
+  "step.next-sd-next": "Good. Now the next state for this arrow.",
+  "step.next-sd-label": "Good. Now the label for this arrow.",
+  "wrong.first.tm.edge": "Not quite. Look at the {flipFlop} characteristic equation: {flipFlop} → {outputList}.",
+  "wrong.first.sd.next": "Not quite. Use the state table or equations to find the next state for this input.",
+  "wrong.first.sd.label": "Not quite. The label is {inputName} over {outputName} (or just {inputName} if there is no output).",
 } satisfies Record<string, string>;
 
 export type MessageKey = keyof typeof en;
