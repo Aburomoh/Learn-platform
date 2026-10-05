@@ -199,6 +199,7 @@ export const en = {
   // state diagram nudges
   "sd.next-wrong-row": "That is the next state for the other input. Check which input—{input}—this row is for.",
   "sd.next-is-present": "That is the present state, not the next state. With input {input}, it moves to a different state.",
+  "sd.label-input-wrong": "Which input value is on this arrow's row? It decides where the arrow goes.",
   "sd.label-reversed": "The label format is input/output, not output/input. Check which is which.",
   "sd.output-wrong-row": "That is the output for the other input. Check which input—{input}—this row is for.",
 
