@@ -37,8 +37,8 @@ UX plan: `docs/design/ecet111-visual-system.md`.
 ## Consequences
 One schema field, one renderer and one style sheet give every kind a figure. The first PR moves
 the decoder, encoder, mux and latch drawings; the existing `device` questions look the same.
-Adder blocks, flip-flop blocks, the demultiplexer and the read-only circuit follow as new union
-members. The two-column layout at 900 px applies only to questions that have a figure.
+Adder and flip-flop blocks came next (`BlockFigure`: one rectangular block for both). The
+demultiplexer, the "inside" faces and the read-only circuit follow as new union members. The two-column layout at 900 px applies only to questions that have a figure.
 
 ## Alternatives considered
 Widening `context` to every kind (touches every kind's spec and view, and mixes worked results

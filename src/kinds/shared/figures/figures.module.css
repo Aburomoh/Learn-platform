@@ -30,6 +30,11 @@
   fill: var(--text);
 }
 
+.sub {
+  font-size: 15px;
+  fill: var(--text-muted);
+}
+
 /* ---- block symbols: a line is a pin with its name and value ---- */
 .line path {
   fill: none;
@@ -44,6 +49,22 @@
 
 .value {
   font-weight: 700;
+}
+
+/* rectangular blocks (adders, flip-flops): 15-unit mono pin names (visual system §4) */
+.line .pin {
+  font-size: 15px;
+}
+
+/* an asked pin reads "?" in the accent colour, bold (never colour alone: the "?" is the cue) */
+.asked {
+  fill: var(--accent);
+}
+
+/* the clock triangle and the mini clock edge */
+.line .edge {
+  stroke: var(--text);
+  stroke-linejoin: round;
 }
 
 /* result: signal colour, thicker, with its value printed (never colour alone) */
@@ -93,6 +114,11 @@
 
 .focus text {
   font-weight: 700;
+}
+
+/* the edge caption under a focused clock stays regular */
+.focus .sub {
+  font-weight: 400;
 }
 
 /* ---- gate-level figures: wires, branch dots, mono labels ---- */

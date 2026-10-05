@@ -11,6 +11,8 @@ import type { FigureSpec } from "./figureSpec";
 import styles from "./figures.module.css";
 
 const DeviceFigure = dynamic(() => import("./DeviceFigure").then((m) => m.DeviceFigure));
+const AdderFigure = dynamic(() => import("./BlockFigure").then((m) => m.AdderFigure));
+const FlipFlopFigure = dynamic(() => import("./BlockFigure").then((m) => m.FlipFlopFigure));
 const LatchFigure = dynamic(() => import("./LatchFigure").then((m) => m.LatchFigure));
 
 export interface FigureViewProps {
@@ -47,6 +49,10 @@ function draw(id: string, figure: FigureSpec, revealed: boolean, focus: string |
       );
     case "latch":
       return <LatchFigure id={`${id}-latch`} latch={figure.latch} values={figure.values} revealed={revealed} />;
+    case "adder":
+      return <AdderFigure adder={figure.adder} given={figure.given} revealed={revealed} focus={focus ?? figure.focus} />;
+    case "flip-flop":
+      return <FlipFlopFigure ff={figure.ff} edge={figure.edge} given={figure.given} revealed={revealed} focus={focus ?? figure.focus} />;
     default: {
       const unhandled: never = figure;
       throw new Error(`No renderer for figure ${JSON.stringify(unhandled)}`);
