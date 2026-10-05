@@ -115,7 +115,8 @@ function toHexVariant(n: number): VariantInput {
   const groups = groupsOf(n, 16);
   return {
     id: `b${digitsOf(n, 16).toLowerCase()}`,
-    prompt: `Convert (${groups.join(" ")})_2 to hexadecimal: mark the groups of four, then one digit per group.`,
+    // ungrouped: marking the groups is the first goal, and a spaced token would not render (Reviewer on #463)
+    prompt: `Convert (${bits})_2 to hexadecimal: mark the groups of four, then one digit per group.`,
     spec: { kind: "bit-grouping", bits, groupSize: 4, answer: digitsOf(n, 16) },
     hints: groupHints,
     hintsByStep: { group: groupHints, digit: digitHints },
