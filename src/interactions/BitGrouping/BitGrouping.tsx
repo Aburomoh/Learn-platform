@@ -122,6 +122,13 @@ function MarkGroups({ bits, groupSize, onGroups, wrong }: { bits: string; groupS
   // A long row scrolls inside its own box; the faded edge shows there is more.
   const cellsRef = useRef<HTMLDivElement>(null);
   const fade = useScrollFade(cellsRef);
+  const fractionRef = useRef<HTMLDivElement>(null);
+  const fractionFade = useScrollFade(fractionRef);
+  // With a point, the whole part's row ends at the point: if it has to scroll, it starts at that end.
+  useEffect(() => {
+    const box = cellsRef.current;
+    if (hasPoint && box && box.scrollWidth > box.clientWidth) box.scrollLeft = box.scrollWidth;
+  }, [hasPoint, pad]);
 
   const toggle = (cut: string) => setCuts((c) => (c.includes(cut) ? c.filter((x) => x !== cut) : [...c, cut]));
   const split = (text: string, cutBefore: (i: number) => boolean): string[] => {
@@ -163,6 +170,17 @@ function MarkGroups({ bits, groupSize, onGroups, wrong }: { bits: string; groupS
     );
   };
 
+  const frontButtons = (
+    <div className={styles.padButtons}>
+      <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad >= groupSize} onClick={() => setPad((p) => p + 1)} aria-label={hasPoint ? undefined : "Add a leading zero"} {...focusTarget("pad-zero")}>
+        {hasPoint ? "Add 0 in front" : "Add 0"}
+      </button>
+      <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad === 0} onClick={() => setPad((p) => p - 1)} aria-label={hasPoint ? "Remove 0 in front" : "Remove a leading zero"}>
+        Remove 0
+      </button>
+    </div>
+  );
+
   return (
     <form
       className={styles.step}
@@ -182,31 +200,46 @@ function MarkGroups({ bits, groupSize, onGroups, wrong }: { bits: string; groupS
           Tap a bit to start a new group there. Count {groupSize} bits at a time <strong>from the right</strong>. If the group on the left is short, add zeros in front.
         </p>
       )}
-      <div className={styles.row} {...focusTarget("bits")}>
-        <div className={styles.padButtons}>
-          <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad >= groupSize} onClick={() => setPad((p) => p + 1)} aria-label={hasPoint ? undefined : "Add a leading zero"} {...focusTarget("pad-zero")}>
-            {hasPoint ? "Add 0 in front" : "Add 0"}
-          </button>
-          <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || pad === 0} onClick={() => setPad((p) => p - 1)} aria-label={hasPoint ? "Remove 0 in front" : "Remove a leading zero"}>
-            Remove 0
-          </button>
-        </div>
-        <div className={styles.cells} ref={cellsRef} data-fade={fade}>
-          {[...left].map((bit, i) => cell(bit, i, `w${left.length - i}`, i === 0, i < pad))}
-          {hasPoint && <Point />}
-          {[...right].map((bit, j) => cell(bit, left.length + j, `f${j}`, j === 0, j >= frac.length))}
-        </div>
-        {hasPoint && (
-          <div className={`${styles.padButtons} ${styles.padEnd}`}>
-            <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || padEnd >= groupSize} onClick={() => setPadEnd((p) => p + 1)} {...focusTarget("pad-zero-end")}>
-              Add 0 at the end
-            </button>
-            <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || padEnd === 0} onClick={() => setPadEnd((p) => p - 1)} aria-label="Remove 0 at the end">
-              Remove 0
-            </button>
+      {hasPoint ? (
+        // Two halves that meet at the point. From 640 px they read as one row; on a phone each is
+        // its own row (whole part right-aligned, ending at the point; fraction starting at it), so
+        // the point is always on screen and each row is grouped outward from its point end (#498).
+        <div className={styles.row} data-point="" {...focusTarget("bits")}>
+          <div className={styles.half} data-half="whole">
+            <span className={styles.halfLabel}>Whole part</span>
+            {frontButtons}
+            <div className={styles.cells} ref={cellsRef} data-fade={fade}>
+              {[...left].map((bit, i) => cell(bit, i, `w${left.length - i}`, i === 0, i < pad))}
+              {/* phones only: the point again, at the end of the whole part's row */}
+              <span className={`${styles.point} ${styles.pointEnd} mono`} aria-hidden="true">
+                •
+              </span>
+            </div>
           </div>
-        )}
-      </div>
+          <div className={styles.half} data-half="fraction">
+            <span className={styles.halfLabel}>Fraction</span>
+            <div className={styles.cells} ref={fractionRef} data-fade={fractionFade}>
+              <Point />
+              {[...right].map((bit, j) => cell(bit, left.length + j, `f${j}`, j === 0, j >= frac.length))}
+            </div>
+            <div className={`${styles.padButtons} ${styles.padEnd}`}>
+              <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || padEnd >= groupSize} onClick={() => setPadEnd((p) => p + 1)} {...focusTarget("pad-zero-end")}>
+                Add 0 at the end
+              </button>
+              <button type="button" className={`btn ${styles.pad}`} disabled={!interactive || padEnd === 0} onClick={() => setPadEnd((p) => p - 1)} aria-label="Remove 0 at the end">
+                Remove 0
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className={styles.row} {...focusTarget("bits")}>
+          {frontButtons}
+          <div className={styles.cells} ref={cellsRef} data-fade={fade}>
+            {[...left].map((bit, i) => cell(bit, i, `w${left.length - i}`, i === 0, i < pad))}
+          </div>
+        </div>
+      )}
       {interactive && (
         <div className={styles.actions}>
           <button type="submit" className="btn btn-primary">
