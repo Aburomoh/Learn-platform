@@ -36,6 +36,8 @@ function rowVariant([a, b, ci]: [Bit, Bit, Bit], k: number): VariantInput {
     id: `v${a}${b}${ci}`,
     prompt: `A full adder adds A, B and a carry in Ci. With A = ${a}, B = ${b} and Ci = ${ci}, what are S and the carry out Co?`,
     spec: { kind: "multiple-choice", options, correctOptionId: `s${s}c${co}` },
+    // the Σ block with the prompt's bits; S and Co read "?" until a correct answer (#454)
+    figure: { type: "adder", adder: "full", given: { a, b, ci } },
     hints: [
       { rung: 2, text: "Not yet. Add all three bits, as in one column of a Chapter 1 addition." },
       { rung: 3, text: "Count the 1s among A, B and Ci." },
@@ -66,6 +68,7 @@ const tableVariant: VariantInput = {
   id: "vtable",
   prompt: "Fill the full adder's table: first S, then the carry out Co, for each row A + B + Ci.",
   spec: { kind: "truth-table", inputs: INPUTS, columns: [{ id: "s", label: "S", expr: "A ⊕ B ⊕ Ci" }, { id: "co", label: "Co", expr: "AB + BCi + ACi" }] },
+  figure: { type: "adder", adder: "full" }, // the symbol alone (#454)
   hints: [
     { rung: 2, text: "Not yet. Each row adds A + B + Ci; the {columnLabel} column holds one bit of that sum." },
     { rung: 3, text: "Count the 1s in the row: 0, 1, 2 or 3. Write that count in binary as two bits." },
@@ -282,8 +285,9 @@ export const fullAdderKmapActivity: Activity = {
       conceptId: "fa.adder",
       objectiveId: "fa.obj.kmap",
       variants: [
-        kmapVariant({ id: "vco", vars: ["A", "B", "Ci"], minterms: ROWS_OF.Co, given: `Co(A, B, Ci) = Σ(${ROWS_OF.Co.join(", ")})` }, 0),
-        kmapVariant({ id: "vs", vars: ["A", "B", "Ci"], minterms: ROWS_OF.S, given: `S(A, B, Ci) = Σ(${ROWS_OF.S.join(", ")}): no two of its 1s are neighbours` }, 1),
+        // the Σ block with the mapped output in focus (#454)
+        { ...kmapVariant({ id: "vco", vars: ["A", "B", "Ci"], minterms: ROWS_OF.Co, given: `Co(A, B, Ci) = Σ(${ROWS_OF.Co.join(", ")})` }, 0), figure: { type: "adder", adder: "full", focus: "Co" } },
+        { ...kmapVariant({ id: "vs", vars: ["A", "B", "Ci"], minterms: ROWS_OF.S, given: `S(A, B, Ci) = Σ(${ROWS_OF.S.join(", ")}): no two of its 1s are neighbours` }, 1), figure: { type: "adder", adder: "full", focus: "S" } },
       ],
     },
   ],
