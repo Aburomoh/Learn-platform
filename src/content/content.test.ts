@@ -741,6 +741,20 @@ describe("content registry", () => {
     for (const v of [...rising.variants, ...falling.variants]) expect(q(v).length, v.id).toBeGreaterThan(0);
   });
 
+  it("digit replacement (#214): bits and checks from the pack (s.21, s.20 owner S4, s.27–28, s.29–30, s.22)", () => {
+    const x = getActivity(COURSE, "digit-replacement", "digit-replacement")!.activity;
+    const [octBits, octCheck, hexBits, hexCheck, hex16] = x.questions;
+    const bits = (q: typeof octBits) => q.variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.bits : ""));
+    expect(bits(octBits)).toEqual(["11101001", "1111010", "110000101", "1110110"]); // (166)₈ = 1110110₂ (S4)
+    expect(bits(hexBits)).toEqual(["1011010110", "111101001", "1110110100"]);
+    const checks = (q: typeof octCheck) => q.variants.map(({ spec }) => (spec.kind === "numeric" ? spec.answer : ""));
+    expect(checks(octCheck)).toEqual(["233", "122", "389", "118"]);
+    expect(checks(hexCheck)).toEqual(["726", "489", "948"]);
+    expect(hex16.variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["B6E3", "E95C", "9F2B"]);
+    const point = getActivity(COURSE, "digit-replacement", "binary-point")!.activity;
+    expect(point.questions[0].variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["326.4", "161.6"]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -761,7 +775,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap", "dr.q.point"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
