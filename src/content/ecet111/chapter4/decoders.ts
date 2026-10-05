@@ -23,39 +23,39 @@ function rotate<T>(xs: T[], k: number): T[] {
   return [...xs.slice(r), ...xs.slice(0, r)];
 }
 
-/** Four distinct numbers 0–7 starting with `right`, then the given slips, then neighbours. */
-function fourOf(right: number, ...slips: number[]): number[] {
-  const out = [right];
-  for (const n of [...slips, (right + 1) % 8, (right + 7) % 8, (right + 2) % 8]) if (!out.includes(n) && out.length < 4) out.push(n);
-  return out;
-}
+/** The device kind's slips: the code read backwards (the given nudge) and lines counted from 1. */
+const deviceMisconceptions = (reversedKey: string): VariantInput["misconceptions"] => [
+  { id: reversedKey, title: "Read the code backwards", nudgeKey: reversedKey, detect: { type: "code-reversed" } },
+  { id: "dev.counted-from-one", title: "Counted the lines from 1", nudgeKey: "dev.counted-from-one", detect: { type: "counted-from-one" } },
+];
 
 /* ---------- decoder ---------- */
 
 /** Non-palindromic codes, so reading the bits backwards is always a different output. */
 const DEC_SETS = [6, 3, 4];
 
+/** On the device view (#381): the decoder drawn with its input code; the student picks the active output line. */
 function predictVariant(k: number, set: number): VariantInput {
-  const options = rotate(fourOf(k, reversed(k)).map((n) => ({ id: `d${n}`, text: `D${n}` })), set + 1);
   return {
     id: `v${k}`,
     prompt: `A 3-to-8 decoder has inputs x y z = ${spaced(k)} (x is the MSB). Which output is 1?`,
-    spec: { kind: "multiple-choice", options, correctOptionId: `d${k}` },
+    spec: { kind: "device", device: "decoder", bits: 3, asks: [k] },
     hints: [
       { rung: 2, text: "Not yet. A decoder makes exactly one output 1: the one numbered by the input." },
       { rung: 3, text: "Read x y z as a binary number, x first." },
       { rung: 4, text: `What is ${bits(k)} in decimal?` },
       { rung: 9, text: `${bits(k)} is ${k}, so D${k} = 1 and every other output is 0.` },
     ],
-    misconceptions: [{ id: "dec.read-reversed", title: "Read the input bits backwards", nudgeKey: "dec.read-reversed", detect: { type: "option", optionId: `d${reversed(k)}` } }],
+    misconceptions: deviceMisconceptions("dec.read-reversed"),
     explanation: [
-      { id: "s1", say: "A decoder turns an input code into one active output: input number k makes Dk = 1, all others 0." },
+      { id: "s1", say: "A decoder turns an input code into one active output: input number k makes Dk = 1, all others 0.", stage: { ask: 0 } },
       {
         id: "s2",
         say: `The inputs read ${bits(k)}, with x as the MSB.`,
+        stage: { ask: 0 },
         ask: { prompt: `${bits(k)} in decimal is…`, options: set % 2 ? [String(reversed(k)), String(k)] : [String(k), String(reversed(k))], correctIndex: set % 2, afterCorrect: `Yes, ${k}.`, afterWrong: `x is the MSB: ${bits(k)} is ${k}.` },
       },
-      { id: "s3", say: `So D${k} is the only output at 1.` },
+      { id: "s3", say: `So D${k} is the only output at 1.`, stage: { ask: 0, answer: true } },
     ],
   };
 }
@@ -128,26 +128,27 @@ function tableVariant(id: string, asked: number[], set: number): VariantInput {
 
 const ENC_SETS = [6, 1, 3];
 
+/** On the device view (#381): the encoder drawn with one active input; the student picks the output code. */
 function codeVariant(k: number, set: number): VariantInput {
-  const options = rotate(fourOf(k, reversed(k)).map((n) => ({ id: `c${n}`, text: bits(n) })), set + 2);
   return {
     id: `e${k}`,
     prompt: `An 8-to-3 encoder: only I${k} is 1. What code x y z comes out (x is the MSB)?`,
-    spec: { kind: "multiple-choice", options, correctOptionId: `c${k}` },
+    spec: { kind: "device", device: "encoder", bits: 3, asks: [k] },
     hints: [
       { rung: 2, text: "Not yet. An encoder does the reverse of a decoder: it writes the number of the active input." },
       { rung: 3, text: `Write ${k} as three bits, x first.` },
       { rung: 9, text: `I${k} gives ${bits(k)}.` },
     ],
-    misconceptions: [{ id: "enc.code-reversed", title: "Code written backwards", nudgeKey: "enc.code-reversed", detect: { type: "option", optionId: `c${reversed(k)}` } }],
+    misconceptions: deviceMisconceptions("enc.code-reversed"),
     explanation: [
-      { id: "s1", say: "An encoder has one active input; its output is that input's number in binary." },
+      { id: "s1", say: "An encoder has one active input; its output is that input's number in binary.", stage: { ask: 0 } },
       {
         id: "s2",
         say: `I${k} is the active input.`,
+        stage: { ask: 0 },
         ask: { prompt: `${k} in three bits is…`, options: set % 2 ? [bits(reversed(k)), bits(k)] : [bits(k), bits(reversed(k))], correctIndex: set % 2, afterCorrect: "Yes.", afterWrong: `${k} = ${bits(k)}, x first.` },
       },
-      { id: "s3", say: `So x y z = ${spaced(k)}.` },
+      { id: "s3", say: `So x y z = ${spaced(k)}.`, stage: { ask: 0, answer: true } },
     ],
   };
 }
