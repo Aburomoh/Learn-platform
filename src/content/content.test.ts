@@ -15,6 +15,7 @@ import { equivalent, formatCube, isPOS, isSOP, literalCount, mintermsOf, parseBo
 import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
 import { columnTruth, muxPairs } from "@/kinds/truth-table/logic";
+import { statesAfterEdges } from "@/kinds/timing/logic";
 import { pickName, rightPick } from "@/kinds/device/logic";
 import { kmapCovers } from "@/kinds/kmap/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
@@ -661,6 +662,15 @@ describe("content registry", () => {
     const x = getActivity(COURSE, "full-adder", "full-adder-kmap")!.activity;
     const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
     expect(sums).toEqual([["AB + ACi + BCi"], ["A'B'Ci + A'BCi' + AB'Ci' + ABCi"]]);
+  });
+
+  it("timing diagrams (#298): the slides' worked diagrams reproduce, and every set is valid", () => {
+    const x = getActivity(COURSE, "timing", "timing-diagrams")!.activity;
+    const q = (v: (typeof x.questions)[number]["variants"][number]) => (v.spec.kind === "timing" ? statesAfterEdges(v.spec).map((s) => s.join("")).join(" ") : "");
+    const [rising, falling] = x.questions;
+    expect(q(rising.variants[0])).toBe("0 1 0 1 1"); // s.17–20
+    expect(q(rising.variants[1])).toBe("0 1 0 1 1 0 0"); // s.32–33
+    for (const v of [...rising.variants, ...falling.variants]) expect(q(v).length, v.id).toBeGreaterThan(0);
   });
 
   it("resolves an activity by path", () => {
