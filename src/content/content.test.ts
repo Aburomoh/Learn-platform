@@ -15,6 +15,7 @@ import { equivalent, formatCube, isPOS, isSOP, literalCount, mintermsOf, parseBo
 import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
 import { columnTruth, muxPairs } from "@/kinds/truth-table/logic";
+import { transitions } from "@/kinds/state-diagram/logic";
 import { pickName, rightPick } from "@/kinds/device/logic";
 import { kmapCovers } from "@/kinds/kmap/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
@@ -691,6 +692,16 @@ describe("content registry", () => {
     const x = getActivity(COURSE, "full-adder", "full-adder-kmap")!.activity;
     const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
     expect(sums).toEqual([["AB + ACi + BCi"], ["A'B'Ci + A'BCi' + AB'Ci' + ABCi"]]);
+  });
+
+  it("analysis 4 (#315): the diagrams' arrows are the pack's edges (ch5-partii §2–4)", () => {
+    const x = getActivity(COURSE, "analysis", "analysis-diagram")!.activity;
+    const edges = x.questions[0].variants.map(({ spec }) => (spec.kind === "state-diagram" ? transitions(spec).map((t) => `${t.from}-${t.label}-${t.to}`).join(" ") : ""));
+    expect(edges).toEqual([
+      "00-0/0-00 00-1/0-01 01-0/1-00 01-1/0-11 10-0/1-00 10-1/0-10 11-0/1-00 11-1/0-10", // D, s.13
+      "00-0-01 00-1-00 01-0-11 01-1-10 10-0-11 10-1-10 11-0-00 11-1-11", // JK, s.22
+      "00-0/0-00 00-1/0-01 01-0/0-01 01-1/0-10 10-0/0-10 10-1/0-11 11-0/1-11 11-1/1-00", // T (machine-worked)
+    ]);
   });
 
   it("resolves an activity by path", () => {
