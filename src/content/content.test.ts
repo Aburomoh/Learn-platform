@@ -26,6 +26,7 @@ import { lawChips, lineOptions } from "@/kinds/derivation/logic";
 import type { DerivationSpec } from "@/kinds/derivation/spec";
 import { exactValue } from "@/kinds/base-to-decimal/logic";
 import { gatedLatch, nandLatch } from "./ecet111/chapter5/latches";
+import { splitNotation } from "./notation";
 
 const COURSE = "ecet111";
 
@@ -1021,6 +1022,22 @@ describe("authored truth is internally consistent", () => {
         for (const t of [...texts, ...hintsForStep(variant, i).map((h) => h.text)]) expect(fill(t, vars), `${path} step ${i}: ${t}`).not.toMatch(/\{[a-zA-Z0-9_]+\}/);
       });
     }
+  });
+
+  it("no student text shows a raw base subscript once split into notation (#465)", () => {
+    const raw = /_(2|8|10|16)(?![0-9A-Za-z])/;
+    let checked = 0;
+    for (const { path, variant } of allVariants()) {
+      const texts = [variant.prompt, variant.reactions?.stepNext ?? "", ...variant.explanation.flatMap((s) => [s.say, s.ask?.prompt ?? "", ...(s.ask?.options ?? []), s.ask?.afterCorrect ?? "", s.ask?.afterWrong ?? ""])];
+      varSets(variant).forEach((vars, i) => {
+        for (const t of [...texts, ...hintsForStep(variant, i).map((h) => h.text)]) {
+          const plain = splitNotation(fill(t, vars)).flatMap((p) => ("text" in p ? [p.text] : []));
+          for (const run of plain) expect(run, `${path} step ${i}: ${t}`).not.toMatch(raw);
+          checked++;
+        }
+      });
+    }
+    expect(checked).toBeGreaterThan(1000);
   });
 
   it("every misconception nudge resolves all its slots in the variant it fires in", () => {

@@ -66,6 +66,19 @@ export const CIRCUITS: Circuit[] = [
 /** The three-JK circuit's output (s.37–39), the third set of the output question. */
 const THREE_JK_OUTPUT: { vars: string[]; output: [string, string, string] } = { vars: ["A", "B", "C", "x"], output: ["y", "x + B'", "an OR gate fed by x and B′"] };
 
+const typeOf = (c: Circuit) => (c.inputs[0][0].startsWith("D") ? "D" : c.inputs[0][0].startsWith("J") ? "JK" : "T");
+
+/**
+ * The circuit at block level (#454, plan §5): one flip-flop per state variable with its input
+ * equations, the asked one in focus. `known` shows the equations (stage 2); stage 1 asks for them, so "?".
+ */
+function circuitFigure(c: Circuit, focus: string, known: boolean): VariantInput["figure"] {
+  const ff = typeOf(c).toLowerCase() as "d" | "jk" | "t";
+  const states = c.vars.slice(0, -1);
+  const flipFlops = states.map((name) => ({ name, ff, equations: c.inputs.filter(([label]) => label.endsWith(name)).map(([label, expr]) => `${label} = ${known ? show(expr) : "?"}`) }));
+  return { type: "sequential", input: c.vars.at(-1), flipFlops, focus };
+}
+
 const wiring = (c: Circuit) => c.inputs.map(([label, , words]) => `${label} comes from ${words}`).join("; ");
 
 /* ---------- stage 1 (#312): input and output equations, read from the circuit ---------- */
@@ -79,6 +92,7 @@ function inputVariant(c: Circuit, i: number): VariantInput {
     id: c.id,
     prompt: `A clocked circuit with ${c.name.split(" (")[0]} A and B and input x. ${wiring(c)}. Write the input equation ${label} = …`,
     spec: { kind: "expression", vars: c.vars, target: expr },
+    figure: circuitFigure(c, label.slice(-1), false),
     hints: [
       { rung: 2, text: `Not yet. Follow the wire into ${label} back to its gate.` },
       { rung: 3, text: "Name the gate first, then its inputs." },
@@ -150,7 +164,6 @@ export const analysisInputsActivity: Activity = {
 /* ---------- stage 2 (#313): state equations, by substituting into the characteristic equation ---------- */
 
 const CHAR: Record<string, string> = { D: "Q(t+1) = D", JK: "Q(t+1) = JQ′ + K′Q", T: "Q(t+1) = T ⊕ Q" };
-const typeOf = (c: Circuit) => (c.inputs[0][0].startsWith("D") ? "D" : c.inputs[0][0].startsWith("J") ? "JK" : "T");
 
 function stateVariant(c: Circuit, ff: 0 | 1, i: number): VariantInput {
   const v = c.vars[ff];
@@ -163,6 +176,7 @@ function stateVariant(c: Circuit, ff: 0 | 1, i: number): VariantInput {
     id: c.id,
     prompt: `${c.name.split(" (")[0]}, with ${own}. Substitute into the characteristic equation and write ${v}(t+1) in A, B and x.`,
     spec: { kind: "expression", vars: c.vars, target: c.next[ff] },
+    figure: circuitFigure(c, v, true),
     hints: [
       { rung: 2, text: `Not yet. Start from the ${type} characteristic equation, with ${v} in place of Q.` },
       { rung: 3, text: `${CHAR[type]}: put ${v} for Q and ${own} for the inputs.` },
@@ -413,7 +427,8 @@ export const analysisTopic: TopicInput = {
   id: "analysis",
   title: "Analysing clocked circuits",
   summary: "From a circuit to its behaviour, one stage at a time: input equations, state equations, the state table.",
-  preview: "DA = Ax + Bx → A(t+1) = Ax + Bx",
+  // a structure, not an equation: DA = Ax + Bx is the first practice's answer
+  preview: "gates → flip-flops → feedback",
   // the card shows the circuit's structure; its equations read "?" because finding them is the first practice
   meet: {
     figure: { type: "sequential", input: "x", flipFlops: [{ name: "A", ff: "d", equations: ["DA = ?"] }, { name: "B", ff: "d", equations: ["DB = ?"] }] },
