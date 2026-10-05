@@ -24,6 +24,12 @@ describe("SequentialFigure (#454, step 6)", () => {
     expect(img.querySelector("[data-line='y']")).toBeNull();
   });
 
+  it("an asked equation reads ? and is 'to find' in the text alternative", () => {
+    render(<SequentialFigure flipFlops={[{ name: "A", ff: "d", equations: ["DA = ?"] }, two[1]]} input="x" />);
+    expect(screen.getByRole("img").querySelector("[data-equation='0']")).toHaveTextContent("DA = ?");
+    expect(screen.getByRole("img")).toHaveAccessibleName(/input equations DA to find, DB = A′x drives/);
+  });
+
   it("a JK flip-flop has two input wires, named JA and KA", () => {
     render(<SequentialFigure flipFlops={[{ name: "A", ff: "jk", equations: ["JA = B", "KA = Bx′"] }]} output="y" />);
     const ff = screen.getByRole("img").querySelector("[data-ff='A']")!;
@@ -37,6 +43,12 @@ describe("SequentialFigure (#454, step 6)", () => {
     expect(ok({ flipFlops: two, input: "x", focus: "gates" })).toBe(true);
     expect(ok({ flipFlops: [{ name: "A", ff: "jk", equations: ["JA = B"] }] })).toBe(false);
     expect(ok({ flipFlops: [two[0], two[0]] })).toBe(false);
+    // equations are checked at build: the left side names the input, the right side parses over A, B and x
+    expect(ok({ flipFlops: [{ name: "A", ff: "d", equations: ["DA = Ax + Bz"] }, two[1]], input: "x" })).toBe(false);
+    expect(ok({ flipFlops: [{ name: "A", ff: "d", equations: ["DB = Ax"] }, two[1]], input: "x" })).toBe(false);
+    expect(ok({ flipFlops: [{ name: "A", ff: "jk", equations: ["JA = B", "KA = B ⊕ x"] }, two[1]], input: "x" })).toBe(true);
+    // the equation a question asks for is written "?"
+    expect(ok({ flipFlops: [{ name: "A", ff: "d", equations: ["DA = ?"] }, two[1]], input: "x" })).toBe(true);
     expect(ok({ flipFlops: two, focus: "C" })).toBe(false);
     const figure = FigureSpec.parse({ type: "sequential", flipFlops: two, input: "x" });
     expect(figurePins(figure)).toEqual(["A", "B", "gates"]);

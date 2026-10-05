@@ -6,7 +6,7 @@ export interface SequentialFlipFlop {
   /** The state variable this flip-flop holds: A, B, C. */
   name: string;
   ff: FlipFlopType;
-  /** The input equations as the lesson writes them, one per input: "DA = Ax + Bx"; "JA = B", "KA = Bx′". */
+  /** The input equations as the lesson writes them, one per input: "DA = Ax + Bx"; "JA = B", "KA = Bx′". "DA = ?" is the one being asked. */
   equations: string[];
 }
 
@@ -65,7 +65,7 @@ export function SequentialFigure({ flipFlops, input, output, focus }: Sequential
 
   const names = flipFlops.map((f) => f.name);
   const kinds = [...new Set(flipFlops.map((f) => f.ff.toUpperCase()))].join(" and ");
-  const summary = `Sequential circuit. A gate block with the input equations ${equations.join(", ")} drives ${n === 1 ? `${kinds} flip-flop ${names[0]}` : `${kinds} flip-flops ${names.join(", ")}`}. ${n === 1 ? "Its output feeds" : "Their outputs feed"} back to the gate block${input ? `, with the input ${input}` : ""}. One clock drives ${n === 1 ? "the flip-flop" : "every flip-flop"}.${output ? ` The output ${output} comes from the gate block.` : ""}`;
+  const summary = `Sequential circuit. A gate block with the input equations ${equations.map((eq) => eq.replace(/= \?$/, "to find")).join(", ")} drives ${n === 1 ? `${kinds} flip-flop ${names[0]}` : `${kinds} flip-flops ${names.join(", ")}`}. ${n === 1 ? "Its output feeds" : "Their outputs feed"} back to the gate block${input ? `, with the input ${input}` : ""}. One clock drives ${n === 1 ? "the flip-flop" : "every flip-flop"}.${output ? ` The output ${output} comes from the gate block.` : ""}`;
 
   return (
     <div className={styles.well}>
@@ -110,7 +110,14 @@ export function SequentialFigure({ flipFlops, input, output, focus }: Sequential
           </text>
           {equations.map((eq, k) => (
             <text key={k} x={BLOCK_X + BLOCK_W / 2} y={blockTop + blockH / 2 - (equations.length * 19) / 2 + 18 + k * 19} textAnchor="middle" className={styles.sub} data-equation={k}>
-              {eq}
+              {eq.endsWith("= ?") ? (
+                <>
+                  {eq.slice(0, -1)}
+                  <tspan className={`${styles.value} ${styles.asked}`}>?</tspan>
+                </>
+              ) : (
+                eq
+              )}
             </text>
           ))}
         </g>

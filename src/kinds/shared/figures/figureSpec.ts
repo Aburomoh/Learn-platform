@@ -1,5 +1,6 @@
 /** The figure of a question (ADR-0009): build time, Zod. Content names the figure and what is given; results are computed. */
 import { z } from "zod";
+import { BooleanParseError, parseBool } from "@/content/boolean";
 import { adderPins, flipFlopInputs } from "./blocks";
 import { codeNames } from "./device";
 
@@ -91,7 +92,9 @@ const FlipFlopFigure = z
 /**
  * A sequential circuit at block level (analysis): a gate block carrying the input equations, the
  * flip-flops as symbols, each Q fed back to the gates, one clock. Structure only: no values, no
- * result state. `equations` are the circuit as the lesson writes it, one per flip-flop input.
+ * result state. `equations` are the circuit as the lesson writes it, one per flip-flop input:
+ * "DA = Ax + Bx", checked at build (the left side names the input, the right side parses over the
+ * state names and the input). A question that asks for an equation writes it as "DA = ?".
  */
 const SequentialFigure = z
   .object({
@@ -110,7 +113,23 @@ const SequentialFigure = z
   .superRefine((f, ctx) => {
     const names = f.flipFlops.map((x) => x.name);
     if (new Set(names).size !== names.length) ctx.addIssue({ code: "custom", message: "flip-flop names must be distinct" });
-    for (const x of f.flipFlops) if (x.equations.length !== flipFlopInputs(x.ff).length) ctx.addIssue({ code: "custom", message: `${x.name}: one equation per input (${flipFlopInputs(x.ff).join(", ")})` });
+    const vars = [...names, ...(f.input ? [f.input] : [])];
+    for (const x of f.flipFlops) {
+      const pins = flipFlopInputs(x.ff);
+      if (x.equations.length !== pins.length) ctx.addIssue({ code: "custom", message: `${x.name}: one equation per input (${pins.join(", ")})` });
+      x.equations.forEach((eq, k) => {
+        const [left, right, ...rest] = eq.split("=").map((part) => part.trim());
+        const expected = `${pins[k] ?? ""}${x.name}`;
+        if (rest.length || right === undefined || left !== expected) return void ctx.addIssue({ code: "custom", message: `"${eq}": write it as "${expected} = …"` });
+        if (right === "?") return;
+        try {
+          parseBool(right, { vars });
+        } catch (err) {
+          if (!(err instanceof BooleanParseError)) throw err;
+          ctx.addIssue({ code: "custom", message: `"${eq}" does not parse over ${vars.join(", ")}` });
+        }
+      });
+    }
     if (f.focus && ![...names, "gates"].includes(f.focus)) ctx.addIssue({ code: "custom", message: `focus "${f.focus}" is not a flip-flop of this circuit (${names.join(", ")}) or "gates"` });
   });
 
