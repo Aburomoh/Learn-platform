@@ -15,7 +15,7 @@ export function parsePreview(preview: string): PreviewTile[] {
     .filter(Boolean)
     .map((part) => {
       const [token] = splitNotation(part);
-      return token && !("text" in token) && token.raw === part ? { value: token.value, base: token.base } : { value: part };
+      return token && "value" in token && token.raw === part ? { value: token.value, base: token.base } : { value: part };
     });
 }
 

@@ -121,6 +121,7 @@ export const en = {
   "tt.rows-out-of-order": "The rows count up in binary, starting from all zeros. The last input changes on every row.",
   "tt.rows-inverted": "Those are the rows where it is 0. Pick the rows where it is 1.",
   "ff.zero-rows": "That expression is 1 where Q(t+1) is 0. Build it from the rows where Q(t+1) = 1.",
+  "an.next-complement": "That is 1 exactly where the next state is 0. Check the complements you put in, especially K′.",
   "ff.equation-swapped": "Check the equation: it is JQ′ + K′Q. Which Q goes with J, and which with K?",
   "ff.not-simplified": "That is the right function, but it can be shorter. Group the rows by what Q was before.",
   "tm.wrong-edge": "Check which edge this flip-flop acts on. Read the inputs just before that edge, not the other one.",

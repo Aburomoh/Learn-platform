@@ -1,7 +1,5 @@
-# Current State — Code / Architecture Reviewer
-
-Current assignment: Review ECET 111 completion PRs (epic #192) as alarmed; one comment per review ending "Ready for QA" or "Changes needed".
-Recent important decision: Kinds via ADR-0008 registry; truth only from `src/content/boolean`; K-map accepts any minimal cover (#361); course-wide guards for option position (#347) and duplicate options (#338).
+Current assignment: Review ECET 111 completion PRs (epic #192) as alarmed; one comment per review ending "Ready for QA", "Ready to merge" (routine content on tested kinds, every answer verified independently; wake the TL) or "Changes needed".
+Recent important decision: Risk-based QA and upstream Pedagogy (owner 2026-10-05, #444/#445); authors fix their own conflicts (#435); truth is computed, never typed (e.g. `latchAfter`, #443); detector names unique across kinds.
 Blocker: None
-Relevant issue/PR: #357 waits on a multi-output circuit view; #358 asks `node --check scripts/*.mjs` in CI; #322 open: X rows in row-select should accept either choice.
-Next expected action: Review the K-map view (#235) and Chapter 3–5 content; watcher runs as `WAKE_POLL_SECONDS=120 node scripts/wake.mjs --watch` (not via npm, which leaks on Windows).
+Relevant issue/PR: #436 changes needed (build Explain assumes brackets), Backend woken; the preview guard misses multiple-choice answers (noted on #429); Vercel preview builds hit the Hobby rate limit (DevOps, #432).
+Next expected action: Re-review #436 on its next wake; watcher runs as `WAKE_POLL_SECONDS=120 node scripts/wake.mjs --watch` (not via npm, which leaks on Windows).

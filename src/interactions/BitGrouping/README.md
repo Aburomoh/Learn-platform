@@ -24,3 +24,15 @@ per group, left to right.
 - Without `onGroups` / `onDigit` it is read-only (explanations); `attention` outlines a group.
 - Focus targets: `bits`, `pad-zero`, `group-<i>`, `group-digit`, `group-result`.
 - At 390 px, 8 cells fit without scrolling; longer rows scroll inside the box.
+
+## Binary point and the reverse direction (#211)
+
+- **Binary point** (`bits` such as `10110.11`, `pointAfter` = number of whole-part groups): step 0
+  groups outward from the point. Zeros are added in front of the whole part and at the end of the
+  fraction (two pairs of buttons); the point is always a group boundary. `onGroups` reports the
+  groups with `"."` between the two parts. The digit steps and the result show the point.
+- **`direction="to-bits"`** (octal/hex → binary): the digit row sits above one 3- or 4-bit slot
+  per digit. `stepIndex` is the number of digits done; the active digit has a field that takes
+  only 0 and 1, `groupSize` at most; `onBits` reports it. Later digits show an empty slot.
+- Focus targets added: `pad-zero-end`, `group-bits`.
+
