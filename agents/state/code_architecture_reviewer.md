@@ -1,5 +1,5 @@
-Current assignment: Review ECET 111 completion PRs (epic #192) as alarmed; one comment per review ending "Ready for QA", "Ready to merge" (routine content on tested kinds, every answer verified independently; wake the TL) or "Changes needed".
-Recent important decision: Risk-based QA and upstream Pedagogy (owner 2026-10-05, #444/#445); authors fix their own conflicts (#435); truth is computed, never typed (e.g. `latchAfter`, #443); detector names unique across kinds.
+Current assignment: Review ECET 111 completion PRs (epic #192, visual system #454) as alarmed; one comment per review in the #484 format (`Verdict: Code / Architecture Reviewer · <SHA> · Approved | Changes needed` + `Checks:`), ending "Ready for QA", "Ready to merge" (routine content, every answer verified) or "Changes needed".
+Recent important decision: Figures per ADR-0009 compute what they show and never print a question's answer (asked equations as "?", gates built from the target); verdicts are tied to a SHA, and a new push needs a re-check; confirm a claimed fix is actually on origin before re-reviewing (#424, #474).
 Blocker: None
-Relevant issue/PR: #436 changes needed (build Explain assumes brackets), Backend woken; the preview guard misses multiple-choice answers (noted on #429); Vercel preview builds hit the Hobby rate limit (DevOps, #432).
-Next expected action: Re-review #436 on its next wake; watcher runs as `WAKE_POLL_SECONDS=120 node scripts/wake.mjs --watch` (not via npm, which leaks on Windows).
+Relevant issue/PR: #512 waits on Pedagogy's yes (#508 point 3) and on #510/#511; #513 C2–C4 coverage rows vs the open gates (TL's call); the preview guard still misses multiple-choice and expression answers (#429, #488).
+Next expected action: Wake-driven reviews; watcher `WAKE_POLL_SECONDS=120 node scripts/wake.mjs --watch code-architecture-reviewer` from ../Learn_platform-reviewer-watch, re-armed only on Monitor expiry.
