@@ -24,3 +24,4 @@
   .vs-two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
 }
 @media (max-width: 640px) { .vs-topic { padding: var(--space-4); } }
+.vs-gallery.vs-wide { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }

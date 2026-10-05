@@ -133,3 +133,21 @@ Steps 1–3 and the wiring of their P0 screens are the must-haves before the Cha
 - **Technical Lead:** `figure` on the variant (preferred: one place, every kind) versus widening `context`.
 - **Pedagogy:** the guards in §7; whether the topic-page callouts may show one fully worked case.
 - **Product:** is the demultiplexer in ECET 111's assessed scope (it isn't in the Chapter 4 pack)?
+
+## 10. Symbols, sheet 2 (for build steps 2, 3 and 6)
+Mock-up `visual-symbols-2.html`, renders `visual-symbols-2-{1280,390}.png`. Same drawing rules as §4.
+- **Flip-flops (D, T, SR, JK):** one body for all four, 90 × 116 units. Inputs on the left (one input centred
+  high; two inputs above and below the clock), the clock triangle on the left edge, Q top right and Q′ bottom
+  right. The type letter and "flip-flop" sit inside the body.
+- **Negative-edge trigger:** a bubble in front of the clock triangle. Wherever a flip-flop is shown with a
+  timing diagram or an edge question, the mini clock edge beside "Clk" points the same way as the trigger.
+- **Demultiplexer:** the mux mirrored (one data line in on the narrow side, outputs on the wide side,
+  selects from the bottom). Build it only if Product confirms it is in scope.
+- **Full adder, inside:** two HA blocks and one OR gate, block level. The half adders carry small S and C
+  pin names inside their right edge; a dashed `--brand` frame marks "inside the Σ block".
+- **Sequential circuit (analysis):** one gate block that carries the input equations, the flip-flops as
+  symbols to its right, feedback from each Q around the outside back to the gate block, the clock along the
+  bottom. The flip-flop the current question asks about takes the focus halo. The circuit's output (y) leaves
+  the gate block; draw it only on questions about the output.
+- Composite figures (the last two) may be up to 360 units wide with 15-unit text, so they stay at 12 px or
+  more on a 390 px phone.
