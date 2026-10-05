@@ -755,22 +755,21 @@ describe("content registry", () => {
     expect(point.questions[0].variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["326.4", "161.6"]);
   });
 
-  it("analysis exercises (#317): equations, tables and diagrams as machine-worked in the pack (ch5-partii §6)", () => {
-    const x = getActivity(COURSE, "analysis", "analysis-exercises")!.activity;
-    const [na, nb, table, diagram] = x.questions;
-    const sig = (q: typeof na) => q.variants.map(({ spec }) => (spec.kind === "expression" ? mintermsOf(parseBool(spec.target!, { vars: spec.vars }), spec.vars) : []));
-    expect(sig(na)).toEqual([[1, 3, 4, 5], [3, 4, 5, 6, 7], [1]]); // JK, T, s.54 (A′B)
-    expect(sig(nb)).toEqual([[1, 5, 6, 7], [1, 2, 4, 5], [0]]); // s.54: A′B′
-    const next = table.variants.map(({ spec }) => {
+  it("counter design (#290–#292): next state, excitation columns and covers as in the pack (ch5-partiii §1)", () => {
+    const col = (act: string, q: number, v: number) => {
+      const spec = getActivity(COURSE, "design", act)!.activity.questions[q].variants[v].spec;
       if (spec.kind !== "truth-table") throw new Error("expected a truth table");
-      const [a, b] = spec.columns.map((c) => columnTruth(spec, c));
-      return a.map((v, r) => `${v}${b[r]}`).join(" ");
-    });
-    expect(next[0]).toBe("00 11 00 10 10 11 01 01"); // s.32 rows
-    expect(next[1]).toBe("00 01 01 10 11 11 10 10"); // s.53 rows
-    expect(next[2]).toBe("00 00 11 01 00 00 10 10 00 00 11 01 00 00 11 11"); // s.31 (A B x y)
-    const edges = diagram.variants.map(({ spec }) => (spec.kind === "state-diagram" ? transitions(spec).map((t) => `${t.from}-${t.label}-${t.to}`).join(" ") : ""));
-    expect(edges[0]).toBe("00-0-00 00-1-11 01-0-00 01-1-10 10-0-10 10-1-11 11-0-01 11-1-01");
+      return Object.fromEntries(spec.columns.map((c) => [c.label, columnTruth(spec, c).join("")]));
+    };
+    expect(col("design-state-table", 0, 0)).toEqual({ A: "00011011", B: "01110010" }); // s.6–8
+    expect(col("design-excitation", 0, 0)).toMatchObject({ T_A: "00010100", T_B: "01000001" });
+    expect(col("design-excitation", 1, 0)).toMatchObject({ J_A: "0001XXXX", K_A: "XXXX0100", J_B: "01XX00XX", K_B: "XX00XX01" });
+    const maps = getActivity(COURSE, "design", "design-maps")!.activity;
+    const covers = maps.questions.map((q) => q.variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((x) => formatCube(x, spec.vars)).sort().join(" + ")) : [])));
+    expect(covers).toEqual([
+      [["AX' + BX"], ["A'X + BX'"], ["A'BX + AB'X"]], // D_A, D_B (s.9–10), T_A
+      [["BX"], ["B'X"], ["A'X"]], // J_A, K_A, J_B
+    ]);
   });
 
   it("resolves an activity by path", () => {

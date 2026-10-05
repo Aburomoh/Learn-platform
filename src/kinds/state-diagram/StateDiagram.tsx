@@ -42,15 +42,20 @@ const MX = 80;
 const MY = 100;
 const BEND = 36; // control-point offset: the curve's apex sits 18 units to its right-hand side
 export const MIN_SCALE = 0.75;
+/** More than four states (an 8-state ring): circles 130 units apart, so the ring fits a 390 px phone (#468). */
+const TIGHT = 130;
+/** Label mode draws the arrows still to come dashed, as a preview, only up to this many arrows; beyond it they would be a hairball. */
+export const PREVIEW_ARROWS = 8;
 
 interface Point {
   x: number;
   y: number;
 }
 
-/** Circle centres from grid cells. */
-export function statePositions(cells: [number, number][]): { cols: number; rows: number; at: Point[] } {
-  return { cols: Math.max(...cells.map(([c]) => c)) + 1, rows: Math.max(...cells.map(([, r]) => r)) + 1, at: cells.map(([c, r]) => ({ x: MX + c * DX, y: MY + r * DY })) };
+/** Circle centres from grid cells, and the distance between neighbours in a row. */
+export function statePositions(cells: [number, number][]): { cols: number; rows: number; at: Point[]; spacing: number } {
+  const [dx, dy] = cells.length > 4 ? [TIGHT, TIGHT] : [DX, DY];
+  return { cols: Math.max(...cells.map(([c]) => c)) + 1, rows: Math.max(...cells.map(([, r]) => r)) + 1, at: cells.map(([c, r]) => ({ x: MX + c * dx, y: MY + r * dy })), spacing: dx };
 }
 
 const unit = (dx: number, dy: number) => {
@@ -59,7 +64,7 @@ const unit = (dx: number, dy: number) => {
 };
 
 /** The arrow from `p` to `q`: its path, where its head points, and where its label sits. */
-export function arrowGeometry(p: Point, q: Point, loopBelow = false): { d: string; tip: Point; dir: Point; label: Point; apex: Point } {
+export function arrowGeometry(p: Point, q: Point, loopBelow = false, spacing = DX): { d: string; tip: Point; dir: Point; label: Point; apex: Point } {
   if (p.x === q.x && p.y === q.y) {
     // a loop above the circle (below it for bottom-row states)
     const s = loopBelow ? 1 : -1;
@@ -74,12 +79,14 @@ export function arrowGeometry(p: Point, q: Point, loopBelow = false): { d: strin
   const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
   // an arrow that skips over a neighbour bends more, so it arcs clear of the circle in between
   const distance = Math.hypot(q.x - p.x, q.y - p.y);
-  const bend = distance > 1.5 * DX ? 0.42 * distance : BEND;
+  const bend = distance > 1.5 * spacing ? 0.42 * distance : BEND;
   const c = { x: mid.x + n.x * bend, y: mid.y + n.y * bend };
   // The label sits outside the bend, clear of its line. A diagonal's label goes on the inner side
   // instead: outside it would land on the labels of the arrows along the square's edges.
   const diagonal = p.x !== q.x && p.y !== q.y;
-  const labelOffset = diagonal ? -22 : bend / 2 + 28;
+  // On a tight ring a long arc's label sits just inside its apex: outside, it would land on the next circle.
+  const long = distance > 1.5 * spacing;
+  const labelOffset = long && spacing < DX ? bend / 2 - 18 : diagonal ? -22 : bend / 2 + 28;
   const out = unit(c.x - p.x, c.y - p.y);
   const back = unit(c.x - q.x, c.y - q.y);
   const start = { x: p.x + out.x * R, y: p.y + out.y * R };
@@ -99,14 +106,15 @@ const head = (tip: Point, dir: Point) => {
  * circle (below for the bottom row); transitions that share an arrow stack their labels.
  * One goal per arrow, in state-table order.
  * - label mode: every arrow is drawn; the active one is accent with a "?" slot, done ones are
- *   solid with their label, later ones dashed and dim. The label is picked from chips.
+ *   solid with their label, later ones dashed and dim. The label is picked from chips. With more
+ *   than `PREVIEW_ARROWS` arrows the later ones are not drawn: the diagram fills in as the student works.
  * - next mode: only answered arrows are drawn; the source circle has the halo; the destination is
  *   picked on the circles (one radiogroup, arrows move, Space/Enter picks).
  * The component never grades.
  */
 export function StateDiagram({ id, states, positions, transitions, mode, done, labelOptions = [], inputName, state = "idle", disabled = false, onCheck }: StateDiagramProps) {
   const cells = positions;
-  const { rows, at } = statePositions(cells);
+  const { rows, at, spacing } = statePositions(cells);
   const pos = (code: string) => at[states.indexOf(code)];
   const finished = done >= transitions.length;
   const current = finished ? undefined : transitions[done];
@@ -125,7 +133,19 @@ export function StateDiagram({ id, states, positions, transitions, mode, done, l
 
   // The drawing's bounds: every circle, every arrow's apex and every label slot, plus padding, so
   // nothing is clipped however far an arrow bends (#394).
-  const geometry = new Map([...arrows.entries()].map(([key, a]) => [key, arrowGeometry(pos(a.from), pos(a.to), rows > 1 && cells[states.indexOf(a.from)][1] === rows - 1)]));
+  const geometry = new Map([...arrows.entries()].map(([key, a]) => [key, arrowGeometry(pos(a.from), pos(a.to), rows > 1 && cells[states.indexOf(a.from)][1] === rows - 1, spacing)]));
+  const preview = arrows.size <= PREVIEW_ARROWS;
+  // A dense diagram: a label that would sit on another arrow's label or on a circle moves down a line at a time until it is clear.
+  if (!preview) {
+    // the circles count too: a label never hides under one
+    const placed: { x: number; y: number; h: number }[] = at.map((p) => ({ x: p.x, y: p.y, h: 2 * R }));
+    for (const [key, g] of geometry) {
+      const h = arrows.get(key)!.items.length * 18;
+      const clash = () => placed.some((b) => Math.abs(b.x - g.label.x) < 44 && Math.abs(b.y - g.label.y) < (b.h + h) / 2);
+      for (let tries = 0; tries < 4 && clash(); tries++) g.label = { x: g.label.x, y: g.label.y + 18 };
+      placed.push({ x: g.label.x, y: g.label.y, h });
+    }
+  }
   const extent = [
     ...at.flatMap((p) => [{ x: p.x - R - 10, y: p.y - R - 10 }, { x: p.x + R + 10, y: p.y + R + 10 }]),
     ...[...geometry.entries()].flatMap(([key, g]) => {
@@ -173,7 +193,7 @@ export function StateDiagram({ id, states, positions, transitions, mode, done, l
           {choosing && <title>{summary}</title>}
           {/* arrows under the circles */}
           {[...arrows.values()].map((a) => {
-            const shown = a.items.filter((it) => (mode === "label" ? true : it.index < done));
+            const shown = a.items.filter((it) => (mode === "label" ? preview || it.index <= done : it.index < done));
             if (!shown.length) return null;
             const isActive = mode === "label" && a.items.some((it) => it.index === done);
             const anyDone = a.items.some((it) => it.index < done);
