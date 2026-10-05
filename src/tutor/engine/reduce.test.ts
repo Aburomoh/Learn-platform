@@ -211,4 +211,58 @@ describe("message catalog integrity", () => {
       expect(s.text, s.messageKey).not.toMatch(/missing message/);
     }
   });
+
+  it("kind-specific wrong.first message for timing.edge is reached and renders", () => {
+    const timingCtx: ActivityContext = {
+      ...ctx,
+      kind: "timing",
+      stepTag: "edge",
+      vars: { ...ctx.vars },
+    };
+    const { actions } = run([{ type: "ANSWER_SUBMITTED", correct: false }], initialTutorState, timingCtx);
+    const msg = says(actions).at(-1)!;
+    expect(msg.messageKey).toBe("wrong.first.timing.edge");
+    expect(msg.text).not.toMatch(/\{/);
+  });
+
+  it("kind-specific wrong.first message for state-diagram.next is reached and renders", () => {
+    const sdCtx: ActivityContext = {
+      ...ctx,
+      kind: "state-diagram",
+      stepTag: "next",
+      vars: { ...ctx.vars },
+    };
+    const { actions } = run([{ type: "ANSWER_SUBMITTED", correct: false }], initialTutorState, sdCtx);
+    const msg = says(actions).at(-1)!;
+    expect(msg.messageKey).toBe("wrong.first.state-diagram.next");
+    expect(msg.text).not.toMatch(/\{/);
+  });
+
+  it("kind-specific wrong.first message for state-diagram.label with output is reached and renders", () => {
+    const sdCtx: ActivityContext = {
+      ...ctx,
+      kind: "state-diagram",
+      stepTag: "label",
+      vars: { ...ctx.vars, inputName: "x", outputName: "z" },
+    };
+    const { actions } = run([{ type: "ANSWER_SUBMITTED", correct: false }], initialTutorState, sdCtx);
+    const msg = says(actions).at(-1)!;
+    expect(msg.messageKey).toBe("wrong.first.state-diagram.label");
+    expect(msg.text).toContain("/");
+    expect(msg.text).not.toMatch(/\{/);
+  });
+
+  it("kind-specific wrong.first message for state-diagram.label without output is reached and renders", () => {
+    const sdCtx: ActivityContext = {
+      ...ctx,
+      kind: "state-diagram",
+      stepTag: "label",
+      vars: { ...ctx.vars, inputName: "x" },
+    };
+    const { actions } = run([{ type: "ANSWER_SUBMITTED", correct: false }], initialTutorState, sdCtx);
+    const msg = says(actions).at(-1)!;
+    expect(msg.messageKey).toBe("wrong.first.state-diagram.label.no-output");
+    expect(msg.text).not.toContain("/");
+    expect(msg.text).not.toMatch(/\{/);
+  });
 });

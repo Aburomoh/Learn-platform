@@ -204,14 +204,13 @@ export const en = {
   "sd.output-wrong-row": "That is the output for the other input. Check which input—{input}—this row is for.",
 
   // timing and state-diagram step lines
-  "step.next-tm-edge": "Good. Now {edgeName} edge {edgeNumber}.",
-  "step.next-sd-next": "Good. Now the next state for this arrow.",
-  "step.next-sd-label": "Good. Now the label for this arrow.",
-  "wrong.first.tm.edge": "Not quite. Look at the {flipFlop} characteristic equation: {flipFlop} → {outputList}.",
-  "wrong.first.tm.machine.edge": "Not quite. Use the state before this edge and its next-state equations.",
-  "wrong.first.sd.next": "Not quite. Use the state table or equations to find the next state for this input.",
-  "wrong.first.sd.label": "Not quite. The label is {inputName}/{outputName}.",
-  "wrong.first.sd.label.no-output": "Not quite. The label is just {inputName}.",
+  "step.next-timing.edge": "Good. Now the next clock edge.",
+  "step.next-state-diagram.next": "Good. Now the next state for this arrow.",
+  "step.next-state-diagram.label": "Good. Now the label for this arrow.",
+  "wrong.first.timing.edge": "Not quite. Use the state just before this edge and the next-state equation(s).",
+  "wrong.first.state-diagram.next": "Not quite. Use the state table or equations to find the next state for this input.",
+  "wrong.first.state-diagram.label": "Not quite. The label is {inputName}/{outputName}.",
+  "wrong.first.state-diagram.label.no-output": "Not quite. The label is just {inputName}.",
 } satisfies Record<string, string>;
 
 export type MessageKey = keyof typeof en;
