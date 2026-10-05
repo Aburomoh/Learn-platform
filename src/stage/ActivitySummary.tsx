@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Activity } from "@/content/schema";
+import { Notation } from "@/interactions/shared/Notation";
 import { PrimaryAction } from "@/shell/r1";
 import type { PrimaryAction as NextAction } from "@/shell/primaryAction";
 import styles from "./Stage.module.css";
@@ -35,7 +36,9 @@ export function ActivitySummary({ activity, objectives, attempts, hintsUsed, nex
           <p className={styles.summaryLead}>You can now:</p>
           <ul className={styles.summaryList}>
             {objectives.map((text) => (
-              <li key={text}>{text}</li>
+              <li key={text}>
+                <Notation text={text} />
+              </li>
             ))}
           </ul>
         </div>
