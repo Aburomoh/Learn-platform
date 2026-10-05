@@ -191,8 +191,6 @@ function pairsVariant(set: (typeof FN_SETS)[number], i: number): VariantInput {
       target: "f",
       columns: [{ id: "f", label: "F", values: Array.from({ length: rows }, (_, r) => fAt(r)), given: true }],
     },
-    // the mux with this set's selects, the Explain pair's input marked (#454, plan §5)
-    figure: { type: "device", device: "mux", bits: cols.length - 1, names: cols.slice(0, -1), given: p, focus: `I${p}` },
     hints: [
       { rung: 2, text: "Not yet. Look only at the two rows of this pair: {dataVar} = 0, then {dataVar} = 1." },
       { rung: 3, text: "F is {pairValues} on this pair. Does F stay the same, or follow {dataVar}?" },
