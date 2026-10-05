@@ -39,8 +39,9 @@ h1 { font-size: var(--text-xl); }
 h2 { font-size: var(--text-lg); }
 h3 { font-size: var(--text-md); }
 p { margin: 0 0 var(--space-3); }
-/* base subscripts in number notation: never below 12 px */
-sub {
+/* base subscripts and power superscripts in number notation: never below 12 px */
+sub,
+sup {
   font-size: var(--sub-size);
   line-height: 0;
 }
