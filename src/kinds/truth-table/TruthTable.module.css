@@ -146,6 +146,21 @@
   mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
 }
 
+/* compact table: group labels may wrap, so a label never makes its columns wider than their cells */
+.table[data-compact] .group {
+  height: auto;
+  min-height: 28px;
+  padding: 2px var(--space-1);
+  line-height: 1.15;
+  white-space: normal;
+}
+
+/* phones: the toggle that unfolds the columns a compact table leaves out */
+.fold {
+  justify-self: start;
+  min-height: 44px;
+}
+
 /* a long table repeats its column labels after every 8 rows */
 .repeat {
   height: 28px;

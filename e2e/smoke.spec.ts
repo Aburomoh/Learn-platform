@@ -551,3 +551,34 @@ test("state tables on a phone: the given input columns stay put while later colu
   expect(seen.repeats).toBe(2);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 });
+
+test("three-JK table on a phone: next-state A is filled with A B C x, JA and KA in sight (#508)", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/courses/ecet111/three-jk/three-jk-table/");
+  // the six flip-flop input columns first (JA = x′, KA = B, JB = Ax, KB = C, JC = A, KC = x), rows in A B C x order
+  const inputs: Record<string, (a: number, b: number, c: number, x: number) => number> = { JA: (a, b, c, x) => 1 - x, KA: (a, b) => b, JB: (a, b, c, x) => a & x, KB: (a, b, c) => c, JC: (a) => a, KC: (a, b, c, x) => x };
+  for (const [name, f] of Object.entries(inputs)) {
+    await expect(page.getByRole("grid", { name: `Truth table, filling column ${name}` })).toBeVisible();
+    await page.getByRole("gridcell", { name: `Row 0 0 0 0, column ${name}, empty` }).focus();
+    const bits = Array.from({ length: 16 }, (_, r) => f((r >> 3) & 1, (r >> 2) & 1, (r >> 1) & 1, r & 1)).join("");
+    await page.keyboard.type(bits);
+    await page.getByRole("button", { name: "Check column" }).click();
+  }
+  const grid = page.getByRole("grid", { name: "Truth table, filling column A" });
+  await expect(grid).toBeVisible();
+  // compact: inputs, what A(t+1) is worked from, and the column itself; all inside the box, nothing to scroll
+  const seen = () =>
+    grid.evaluate((table) => {
+      const box = table.parentElement!;
+      const b = box.getBoundingClientRect();
+      const heads = [...table.querySelectorAll("thead tr:last-child th")];
+      return { names: heads.map((h) => h.textContent), allIn: heads.every((h) => h.getBoundingClientRect().left >= b.left - 1 && h.getBoundingClientRect().right <= b.right + 1), scroll: box.scrollWidth - box.clientWidth };
+    });
+  expect(await seen()).toEqual({ names: ["A", "B", "C", "x", "JA", "KA", "A"], allIn: true, scroll: 0 });
+  // the rest is one tap away, and comes back
+  await page.getByRole("button", { name: "Show all columns" }).click();
+  expect((await seen()).names).toHaveLength(14);
+  await page.getByRole("button", { name: "Show only the columns for A" }).click();
+  expect((await seen()).names).toHaveLength(7);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+});

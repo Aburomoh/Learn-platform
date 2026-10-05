@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type ReactNode } from "react";
 import { focusTarget, type AnswerState } from "@/interactions/shared/types";
 import { useScrollFade } from "@/interactions/shared/useScrollFade";
 import styles from "./TruthTable.module.css";
@@ -20,6 +20,8 @@ export interface TruthColumn {
   given?: boolean;
   /** Two-level header for state tables: "Present state", "Next state"… */
   group?: string;
+  /** Ids of the earlier columns this one is worked out from, besides the inputs (#508). */
+  needs?: string[];
 }
 
 export interface TruthTableProps {
@@ -61,17 +63,36 @@ const CYCLE: (TruthCell | null)[] = [null, 0, 1];
 const CYCLE_X: (TruthCell | null)[] = [null, 0, 1, "X"];
 const show = (v: TruthCell | string | null | undefined) => (v === null || v === undefined ? "" : String(v));
 
-/** Header bands for state tables: runs of the same `group`, with a soft colour per band (a grouping cue only). */
-function groupRuns(columns: TruthColumn[]): { label: string; span: number; band: number }[] {
+/**
+ * Header bands for state tables: runs of the same `group`, with a soft colour per band (a grouping
+ * cue only). `all` is the whole table: a group keeps its colour when some columns are folded away.
+ */
+function groupRuns(columns: TruthColumn[], all: TruthColumn[] = columns): { label: string; span: number; band: number }[] {
+  const bands = new Map<string, number>();
+  for (const c of all) if (c.group && !bands.has(c.group)) bands.set(c.group, bands.size % 4);
   const runs: { label: string; span: number; band: number }[] = [];
-  let band = 0;
   for (const c of columns) {
     const label = c.group ?? "";
     const last = runs[runs.length - 1];
     if (last && last.label === label) last.span++;
-    else runs.push({ label, span: 1, band: label ? band++ % 4 : -1 });
+    else runs.push({ label, span: 1, band: label ? bands.get(label)! : -1 });
   }
   return runs;
+}
+
+const NARROW = "(max-width: 639px)";
+/** True on a phone-width screen (false on the server and where `matchMedia` is missing). */
+function useNarrow(): boolean {
+  return useSyncExternalStore(
+    (notify) => {
+      if (typeof window.matchMedia !== "function") return () => {};
+      const query = window.matchMedia(NARROW);
+      query.addEventListener("change", notify);
+      return () => query.removeEventListener("change", notify);
+    },
+    () => typeof window.matchMedia === "function" && window.matchMedia(NARROW).matches,
+    () => false,
+  );
 }
 
 /**
@@ -81,8 +102,19 @@ function groupRuns(columns: TruthColumn[]): { label: string; span: number; band:
  * cells toggle. After a wrong Check only the first wrong cell is marked and the student's entries
  * stay. The component never grades.
  */
-export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs, revealed, allowX = false, state = "idle", wrongRow, disabled = false, onCheck, checkLabel }: TruthTableProps) {
+export function TruthTable({ id, columns: allColumns, rowNames, activeColumn: allActive, select, pairs, revealed, allowX = false, state = "idle", wrongRow, disabled = false, onCheck, checkLabel }: TruthTableProps) {
   const rows = rowNames.length;
+  // Phone, compact columns (#508): while a column that declares `needs` is being filled, only the
+  // inputs, the columns it needs and the column itself are drawn; the rest fold behind a toggle.
+  // Nothing is asked differently: the same column is filled, with what it is worked from beside it.
+  const narrow = useNarrow();
+  const [showAll, setShowAll] = useState(false);
+  const needs = allActive === undefined ? undefined : allColumns[allActive].needs;
+  const canFold = narrow && !!needs?.length && !select && !pairs && revealed === undefined;
+  const kept = (c: TruthColumn, i: number) => c.role === "input" || i === allActive || needs!.includes(c.id);
+  const folded = canFold && !showAll ? allColumns.filter((c, i) => !kept(c, i)).length : 0;
+  const columns = folded ? allColumns.filter(kept) : allColumns;
+  const activeColumn = allActive === undefined ? undefined : columns.indexOf(allColumns[allActive]);
   const [cells, setCells] = useState<(TruthCell | null)[]>(() => Array.from({ length: rows }, () => null));
   const [picked, setPicked] = useState<number[]>(() => select?.picked ?? []);
   const [focusRow, setFocusRow] = useState(0);
@@ -95,7 +127,7 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs,
   const selectEditing = editing && !!select;
   const pointAt = state === "incorrect" ? wrongRow : undefined;
   const active = activeColumn === undefined ? undefined : columns[activeColumn];
-  const groups = columns.some((c) => c.group) ? groupRuns(columns) : null;
+  const groups = columns.some((c) => c.group) ? groupRuns(columns, allColumns) : null;
   const bandOf = (col: number) => {
     if (!groups) return -1;
     let i = 0;
@@ -235,7 +267,7 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs,
   return (
     <div className={styles.root} data-diagram={id}>
       <div ref={well} className={styles.well} data-fade={fade} data-sticky={lastStuck >= 0 ? "" : undefined}>
-        <table ref={table} role="grid" className={styles.table} aria-label={label} aria-readonly={!editing || undefined} {...focusTarget("truth-table")}>
+        <table ref={table} role="grid" data-compact={folded ? "" : undefined} className={styles.table} aria-label={label} aria-readonly={!editing || undefined} {...focusTarget("truth-table")}>
           <thead>
             {groups && (
               <tr>
@@ -327,6 +359,11 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs,
           </tbody>
         </table>
       </div>
+      {canFold && (
+        <button type="button" className={`btn btn-quiet ${styles.fold}`} aria-pressed={showAll} onClick={() => setShowAll((v) => !v)}>
+          {showAll ? `Show only the columns for ${active?.header}` : "Show all columns"}
+        </button>
+      )}
       {onCheck && revealed === undefined && (select || activeColumn !== undefined) && (
         <div className={styles.actions}>
           <button type="button" className="btn btn-primary" disabled={!editing || !complete} onClick={() => onCheck(select ? { rows: picked } : { values: cells })}>
