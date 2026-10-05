@@ -164,13 +164,13 @@ short sentence, numbered, 15 px. No case repeats a practice's numbers (preview g
 | Multiplexers | 4→1 mux, S1 S0 = 0 0, path I0 → Y | 1. Four data inputs wait at the left. · 2. The selects say 00, which is 0. · 3. So Y copies I0, whatever I0 is. |
 | Half adder | HA block, A = 1, B = 1 → S = 0, C = 1 | 1. Two bits come in: 1 and 1. · 2. 1 + 1 is 2, written 10 in binary. · 3. S is the 0, C is the carry 1. |
 | Full adder | Σ block, A = 1, B = 0, Ci = 1 → S = 0, Co = 1 | 1. Two bits and a carry in. · 2. 1 + 0 + 1 is 2, written 10. · 3. S is the 0, Co carries the 1 to the next column. |
-| Flip-flops | D flip-flop, D = 1, Q(t) = 0, rising edge → Q(t+1) = 1 | 1. Q holds one bit: now 0. · 2. Nothing changes until the clock edge. · 3. At the edge Q takes D, so Q becomes 1. |
+| Flip-flops | D flip-flop, D = 1, Q(t) = 0, rising edge → Q(t+1) = 1 | 1. D = 1 is waiting at the input. · 2. At the rising clock edge the flip-flop stores D. · 3. So Q becomes 1, and Q′ becomes 0. |
 | Analysis | the block-level circuit (§10), no values | 1. The gates work out each flip-flop's input. · 2. At the clock edge the flip-flops store them. · 3. Their outputs feed back, so the present state shapes the next. |
 
-- **Layout:** as in M2. From 900 px the card sits to the right of the title and the Start button; on a phone
-  it sits between the "Today" line and the Start button, figure first, callouts under it. The card never
-  pushes the Start button below the first screen on a 390 × 844 phone: if it would, the callouts collapse
-  behind "How it works" (closed by default) and the figure stays.
+- **Layout (as built, #477):** the card sits in the main column where the preview tiles were, between the
+  "Today" line and the Start button; the tutor keeps the right column. From 640 px the figure and its
+  callouts sit side by side. On phones the callouts are always behind "How it works" (closed at first), so
+  the Start button stays on the first screen.
 - **Numbering:** the three callouts carry `--brand` numbered discs; the matching pins on the figure carry
   the same small numbers (1 at the inputs, 2 inside the body, 3 at the outputs), so text and picture point
   at each other without arrows.
