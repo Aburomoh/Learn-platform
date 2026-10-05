@@ -29,12 +29,12 @@ Prerequisites for new kinds: registry #196 (ADR-0008), Boolean module #197, UX r
 | Binary → decimal, with fraction (101.101) | 11–13 | CORE | COVERED (Place value: Binary → decimal) | weights → terms → sum | place-value kind | #208, #209, #213 |
 | Decimal → binary by ÷2 (ladder) | 14–15, 31–44 | CORE | COMPLETE | — | repeated-division | `decimal-to-binary` KEEP |
 | Octal → decimal, with fraction (124.160) | 16–19 | CORE | COVERED (Place value: Octal → decimal) | as binary | place-value kind | #213 |
-| Octal → binary by digit replacement (246) | 21 | CORE | MISSING | one digit per goal | bit-grouping reverse | #210, #211, #214 |
-| Binary → octal, groups of 3, binary point | 22 | CORE (whole); WORKED + one practice (point) | PARTIAL (whole numbers only) | group outward from the point, once | bit-grouping + point | #210, #211, #214 |
+| Octal → binary by digit replacement (246) | 21 | CORE | COMPLETE (digit replacement) | one digit per goal | bit-grouping reverse | #210, #211, #214 |
+| Binary → octal, groups of 3, binary point | 22 | CORE (whole); WORKED + one practice (point) | COMPLETE (whole and fractions) | group outward from the point, once | bit-grouping + point | #210, #211, #214 |
 | Hex digits and 0–15 table | 23–25 | CORE | COVERED (practice "Hex digits: 0 to 15") | small table checks | multiple-choice | #215 |
 | Hex → decimal (1A3) | 26 | CORE | COVERED (Place value: Hex → decimal) | weights → terms → sum | place-value kind | #213 |
-| Hex → binary by digit replacement | 27–28 | CORE | MISSING | one digit per goal | bit-grouping reverse | #214 |
-| Binary → hex, groups of 4 (16-bit) | 29–30 | CORE | PARTIAL (short inputs) | longer inputs | bit-grouping | #214 |
+| Hex → binary by digit replacement | 27–28 | CORE | COMPLETE (digit replacement) | one digit per goal | bit-grouping reverse | #214 |
+| Binary → hex, groups of 4 (16-bit) | 29–30 | CORE | COMPLETE (16-bit conversion) | longer inputs | bit-grouping | #214 |
 | Check octal/hex answer in decimal | 38, 44 | CORE | COVERED (Octal check, Hex check steps) | own checked step | numeric base 10 | #215 |
 | Binary addition | 45–47 | CORE | COMPLETE | — | column-addition | `binary-addition` KEEP |
 | Subtraction as A + 2's complement | 49–51 | CORE | COMPLETE | — | — | `subtraction-positive` KEEP |
@@ -54,7 +54,7 @@ Audit: number-systems topic **EXTEND**; all other Chapter 1 activities **KEEP**;
 | NAND, NOR (intermediate column) | 7–10 | CORE | COVERED (Derived gates) | column by column | truth-table | #225 |
 | XOR as AB'+A'B, XNOR | 11–18 | CORE | COVERED (Derived gates, column by column) | A', B', products, F | truth-table | #225 |
 | 3-input gates, rows = 2ⁿ | 19–20 | CORE | COVERED (Rows = 2ⁿ check; 3-input AND/OR tables in #224) | row count, fill | truth-table | #225 |
-| Expression → circuit, circuit → expression | 21–25 | CORE | MISSING | one gate output per goal | expression, MC | #226 |
+| Expression → circuit, circuit → expression | 21–25 | CORE | COMPLETE (circuit wiring and read-back) | one gate output per goal | expression, MC | #226 |
 | SOP vs POS | 26–30 | CORE (POS recognition only) | COVERED (SOP or POS check) | tag parts; no 0-rows → POS, no maxterms | MC | #227 |
 | Expression ↔ truth table | 31–36 | CORE | COVERED (SOP → table; 1-rows → SOP) | 1-rows; rows → SOP | truth-table row-select, expression | #227 |
 | Laws (commutative, associative, distributive) | 37–40 | CORE | COVERED (Laws and rules: Name the law) | match law to example | MC | #228 |
@@ -69,26 +69,26 @@ All K-map rows grade **any** minimal cover: several slide examples have more tha
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
 | Canonical recap | 3–10 | WORKED | via Ch.2 | — | — | #231 |
-| Map anatomy, minterm ↔ bits ↔ index | 11–19, 49–66 | CORE | MISSING | select cells; index | K-map select, numeric | #276 |
-| 3-variable maps and the procedure | 20–41 | CORE | MISSING | fill; group + term per goal; F | K-map | #277 |
-| Exercises 3-variable | 44–48, 92–95 | PRACTICE | MISSING | exercise mode | K-map | #278 |
-| 4-variable maps | 67–75 | CORE | MISSING | as 3-var | K-map | #279 |
-| Expression → map | 76–87 | CORE | MISSING | expand, then map | derivation, K-map | #280 |
-| Same function by algebra | 88–91 | WORKED | MISSING | compare | derivation | #281 |
-| Don't-cares and exercises | 96–111 | CORE / PRACTICE | MISSING | choose which X | K-map | #282 |
+| Map anatomy, minterm ↔ bits ↔ index | 11–19, 49–66 | CORE | COMPLETE (minterm indexing) | select cells; index | K-map select, numeric | #276 |
+| 3-variable maps and the procedure | 20–41 | CORE | COMPLETE (fill, group, term) | fill; group + term per goal; F | K-map | #277 |
+| Exercises 3-variable | 44–48, 92–95 | PRACTICE | COMPLETE (exercise mode) | exercise mode | K-map | #278 |
+| 4-variable maps | 67–75 | CORE | COMPLETE (4-variable procedure) | as 3-var | K-map | #279 |
+| Expression → map | 76–87 | CORE | COMPLETE (expansion to map) | expand, then map | derivation, K-map | #280 |
+| Same function by algebra | 88–91 | WORKED | COMPLETE (algebraic equivalence) | compare | derivation | #281 |
+| Don't-cares and exercises | 96–111 | CORE / PRACTICE | COMPLETE (don't-care selection) | choose which X | K-map | #282 |
 
 ## Chapter 4 — Combinational logic circuits (Ch.4 deck, 62 slides)
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
-| Half adder | 3–8 | CORE | MISSING | table; S, C; walk | truth-table, expression, circuit-predict | #300 |
-| Full adder, activity 1: 8-row table | 9–22, 33–36 | CORE | MISSING | table | truth-table | #301 |
-| Full adder, activity 2: Σ for S and Co | 9–22, 33–36 | CORE | MISSING | minterm lists | truth-table | #302 |
-| Full adder, activity 3: K-map for Co | 9–22, 33–36 | CORE | MISSING | map, groups, expression | K-map | #303 |
-| Full adder, optional: S → A⊕B⊕Ci by algebra | 9–22, 33–36 | WORKED | MISSING | derivation | derivation | #304 |
-| Decoder, encoder | 23–32 | CORE | MISSING | predict one output; table | truth-table | #305 |
-| Functions with a decoder | 37 | CORE | MISSING | pick outputs for each OR | truth-table row-select | #306 |
-| Multiplexer | 38–46 | CORE | MISSING | predict one output; select table | MC / truth-table | #307 |
-| Functions with a MUX | 47–61 | CORE / PRACTICE | MISSING | choose 0/1/z/z' per pair | row-select (value per row) | #308 |
+| Half adder | 3–8 | CORE | COMPLETE (table, S/C expressions, circuit) | table; S, C; walk | truth-table, expression, circuit-predict | #300 |
+| Full adder, activity 1: 8-row table | 9–22, 33–36 | CORE | COMPLETE (8-row table) | table | truth-table | #301 |
+| Full adder, activity 2: Σ for S and Co | 9–22, 33–36 | CORE | COMPLETE (minterm lists) | minterm lists | truth-table | #302 |
+| Full adder, activity 3: K-map for Co | 9–22, 33–36 | CORE | COMPLETE (K-map simplification) | map, groups, expression | K-map | #303 |
+| Full adder, optional: S → A⊕B⊕Ci by algebra | 9–22, 33–36 | WORKED | COMPLETE (algebraic proof) | derivation | derivation | #304 |
+| Decoder, encoder | 23–32 | CORE | COMPLETE (3→8 and 8→3 tables) | predict one output; table | truth-table | #305 |
+| Functions with a decoder | 37 | CORE | COMPLETE (OR function selection) | pick outputs for each OR | truth-table row-select | #306 |
+| Multiplexer | 38–46 | CORE | COMPLETE (selection prediction) | predict one output; select table | MC / truth-table | #307 |
+| Functions with a MUX | 47–61 | CORE / PRACTICE | COMPLETE (data selection with don't-cares) | choose 0/1/z/z' per pair | row-select (value per row) | #308 |
 
 ## Chapter 5 — Sequential circuits (Parts I–III, 38 + 55 + 35 slides)
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
