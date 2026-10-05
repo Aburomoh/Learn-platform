@@ -45,3 +45,44 @@ describe("wide state tables (#508)", () => {
     expect(document.querySelectorAll("[data-repeat]")).toHaveLength(0);
   });
 });
+
+describe("compact columns on a phone (#508, point 3)", () => {
+  const phone = (matches: boolean) => {
+    window.matchMedia = ((query: string) => ({ matches, media: query, addEventListener: () => {}, removeEventListener: () => {} })) as unknown as typeof window.matchMedia;
+  };
+  const heads = () => [...document.querySelectorAll("thead tr:last-child th")].map((th) => th.textContent);
+  // A B x | JA KA JB | A⁺ (needs JA, KA)
+  const columns: TruthColumn[] = [
+    ...table(2).columns.slice(0, 2),
+    { id: "ja", header: "JA", role: "derived", values: [0, 1, 0, 1], given: true, group: "Flip-flop inputs" },
+    { id: "ka", header: "KA", role: "derived", values: [1, 1, 0, 0], given: true, group: "Flip-flop inputs" },
+    { id: "jb", header: "JB", role: "derived", values: [1, 0, 0, 1], given: true, group: "Flip-flop inputs" },
+    { id: "na", header: "A⁺", role: "output", values: [1, 0, 0, 1], group: "Next state", needs: ["ja", "ka"] },
+  ];
+  const rowNames = table(2).rowNames;
+
+  it("keeps the inputs, the needed columns and the active one; the rest unfold from a toggle", async () => {
+    phone(true);
+    const { default: userEvent } = await import("@testing-library/user-event");
+    const user = userEvent.setup();
+    render(<TruthTable id="t" columns={columns} rowNames={rowNames} activeColumn={5} onCheck={() => {}} />);
+    expect(heads()).toEqual(["C", "x", "JA", "KA", "A⁺"]);
+    expect(screen.getByRole("grid", { name: "Truth table, filling column A⁺" })).toBeInTheDocument();
+    // the group header spans what is left of its group
+    expect([...document.querySelectorAll("thead tr:first-child th")].map((th) => `${th.textContent}:${(th as HTMLTableCellElement).colSpan}`)).toEqual([":2", "Flip-flop inputs:2", "Next state:1"]);
+    await user.click(screen.getByRole("button", { name: "Show all columns" }));
+    expect(heads()).toEqual(["C", "x", "JA", "KA", "JB", "A⁺"]);
+    expect(screen.getByRole("button", { name: "Show only the columns for A⁺" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("wide screens and columns without needs are never folded", () => {
+    phone(false);
+    const { unmount } = render(<TruthTable id="t" columns={columns} rowNames={rowNames} activeColumn={5} onCheck={() => {}} />);
+    expect(heads()).toHaveLength(6);
+    expect(screen.queryByRole("button", { name: "Show all columns" })).toBeNull();
+    unmount();
+    phone(true);
+    render(<TruthTable id="t" columns={columns.map((c) => ({ ...c, needs: undefined }))} rowNames={rowNames} activeColumn={5} onCheck={() => {}} />);
+    expect(heads()).toHaveLength(6);
+  });
+});
