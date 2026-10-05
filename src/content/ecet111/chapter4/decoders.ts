@@ -68,6 +68,8 @@ function mintermVariant(k: number, set: number): VariantInput {
     id: `v${k}`,
     prompt: `D${k} is 1 only for x y z = ${spaced(k)}. Write D${k} as one product of x, y and z.`,
     spec: { kind: "expression", vars: VARS, minterms: [k], form: "minterms" },
+    // the prompt already gives the code; the figure puts it on the inputs and points at Dk (#454)
+    figure: { type: "device", device: "decoder", bits: 3, given: k, focus: `D${k}` },
     hints: [
       { rung: 2, text: `Not yet. D${k} is the minterm that is 1 only on the row ${bits(k)}.` },
       { rung: 3, text: "Use every letter once: a 1 gives the plain letter, a 0 the primed one." },
@@ -104,6 +106,8 @@ function tableVariant(id: string, asked: number[], set: number): VariantInput {
       inputs: VARS,
       columns: Array.from({ length: 8 }, (_, k) => ({ id: `d${k}`, label: `D${k}`, expr: minterm(k), given: !asked.includes(k) })),
     },
+    // the decoder on a shown column's code, never an asked one (#454)
+    figure: { type: "device", device: "decoder", bits: 3, given: [0, 1, 2, 3, 4, 5, 6, 7].find((k) => !asked.includes(k) && k !== reversed(asked[0]))! },
     hints: [
       { rung: 2, text: "Not yet. Each output column has exactly one 1." },
       { rung: 3, text: "{columnLabel} is 1 on the row whose number is its index, and 0 everywhere else." },
@@ -170,6 +174,8 @@ function orVariant(bit: number, set: number): VariantInput {
     id: `o${name}`,
     prompt: `Inside the 8-to-3 encoder each output bit is one OR gate. Which inputs does the OR for ${name} collect?`,
     spec: { kind: "multiple-choice", options: rotate(choices, set + 1), correctOptionId: name },
+    // the encoder with the pack's I6 active, the asked output bit in focus (#454)
+    figure: { type: "device", device: "encoder", bits: 3, given: 6, focus: name },
     hints: [
       { rung: 2, text: `Not yet. ${name} must be 1 for every input whose code has ${name} = 1.` },
       { rung: 3, text: "Write the codes 0 to 7 in binary and look at one bit position." },
