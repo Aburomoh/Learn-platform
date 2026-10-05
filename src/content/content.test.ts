@@ -19,6 +19,7 @@ import { transitions } from "@/kinds/state-diagram/logic";
 import { statesAfterEdges } from "@/kinds/timing/logic";
 import { pickName, rightPick } from "@/kinds/device/logic";
 import { gateExpressions } from "@/kinds/circuit-predict/logic";
+import { latchAfter } from "@/kinds/shared/latch";
 import { kmapCovers } from "@/kinds/kmap/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 import { lawChips, lineOptions } from "@/kinds/derivation/logic";
@@ -658,6 +659,18 @@ describe("content registry", () => {
       const cover = kmapCovers({ kind: "kmap", vars: spec.vars, minterms: ones, dontCares: [], fill: true })[0];
       expect(literalCount(last), v.id).toBe(cover.reduce((s, c) => s + formatCube(c, spec.vars).replace(/'/g, "").length, 0));
     }
+  });
+
+  it("latch figures (#440): the figure's outputs agree with each latch question's answer", () => {
+    const x = getActivity(COURSE, "latches", "latches")!.activity;
+    for (const q of x.questions)
+      for (const v of q.variants) {
+        const spec = v.spec;
+        if (spec.kind !== "multiple-choice" || spec.context?.type !== "latch") throw new Error(`${v.id}: expected a latch figure`);
+        const after = latchAfter(spec.context.latch, spec.context.values);
+        const shown = after.q === 1 && after.qn === 1 ? "invalid" : `q${after.q}`;
+        expect(shown, v.id).toBe(spec.correctOptionId);
+      }
   });
 
   it("analysis 2 (#313): each state equation is its characteristic equation with the inputs put in (pack Σ lists)", () => {
