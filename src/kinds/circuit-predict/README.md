@@ -1,5 +1,9 @@
 # CircuitDiagram
 
+The drawing, its layout and the circuit's own logic (`evaluateCircuit`, `gateOrder`, `gateExpressions`)
+live in `src/kinds/shared/figures/circuit/` (ADR-0009), because the read-only gates figure uses them
+too. This kind keeps the question: its spec, grading, steps and `ui.tsx`.
+
 SVG rendering of a `circuit-predict` spec (up to 3 inputs, 4 gates, layered left to right),
 drawn like a textbook schematic: standard gate symbols, one pin per gate input, right-angle wires.
 

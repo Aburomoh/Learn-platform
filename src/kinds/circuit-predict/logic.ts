@@ -1,7 +1,11 @@
 import type { TemplateVars } from "@/content/template";
 import { BooleanParseError, equivalent, formatBool, parseBool, type BoolExpr } from "@/content/boolean";
 import type { KindLogic } from "../types";
+import { evaluateCircuit, gateExpressions, gateOrder, gateOutput } from "../shared/figures/circuit/circuit";
 import type { CircuitSpec } from "./spec";
+
+// the circuit itself (values, order, expressions) is shared with the figures (ADR-0009)
+export { evaluateCircuit, gateExpressions, gateOrder, gateOutput };
 
 /**
  * `step` indexes gateOrder(spec): the gate being answered (omitted = the output gate).
@@ -47,67 +51,8 @@ export const circuitPredict: KindLogic<CircuitSpec, CircuitAnswer> = {
   },
 };
 
-/** Evaluates a circuit spec; used by content tests to confirm authored answers. */
-export function evaluateCircuit(spec: CircuitSpec, inputOverride?: Record<string, 0 | 1>): Record<string, 0 | 1> {
-  const values: Record<string, 0 | 1> = {};
-  for (const inp of spec.inputs) values[inp.id] = inputOverride?.[inp.id] ?? inp.value;
-  const pending = [...spec.gates];
-  let guard = 0;
-  while (pending.length && guard++ < 50) {
-    const g = pending.shift()!;
-    if (!g.from.every((f) => f in values)) {
-      pending.push(g);
-      continue;
-    }
-    const [x, y] = g.from.map((f) => values[f]);
-    values[g.id] = gateOutput(g.type, x, y);
-  }
-  if (pending.length) throw new Error("Circuit has unresolved gates (cycle or missing input)");
-  return values;
-}
-
-/** Gate ids in signal-flow order (every gate after its sources), the output gate last. */
-export function gateOrder(spec: CircuitSpec): string[] {
-  const ready = new Set(spec.inputs.map((i) => i.id));
-  const order: string[] = [];
-  const pending = spec.gates.filter((g) => g.id !== spec.outputGateId);
-  while (pending.length) {
-    const i = pending.findIndex((g) => g.from.every((f) => ready.has(f)));
-    if (i < 0) throw new Error("Circuit has unresolved gates (cycle or missing input)");
-    const [g] = pending.splice(i, 1);
-    ready.add(g.id);
-    order.push(g.id);
-  }
-  return [...order, spec.outputGateId];
-}
-
-export function gateOutput(type: CircuitSpec["gates"][number]["type"], x: 0 | 1, y: 0 | 1 = 0): 0 | 1 {
-  switch (type) {
-    case "AND": return x && y ? 1 : 0;
-    case "OR": return x || y ? 1 : 0;
-    case "NOT": return x ? 0 : 1;
-    case "XOR": return x !== y ? 1 : 0;
-    case "NAND": return x && y ? 0 : 1;
-    case "NOR": return x || y ? 0 : 1;
-  }
-}
-
 type Gate = CircuitSpec["gates"][number];
 const labels = (spec: CircuitSpec) => spec.inputs.map((i) => i.label);
-
-/** The expression at every input and gate output, in terms of the input labels. */
-export function gateExpressions(spec: CircuitSpec): Record<string, BoolExpr> {
-  const out: Record<string, BoolExpr> = {};
-  for (const inp of spec.inputs) out[inp.id] = { type: "var", name: inp.label };
-  for (const id of gateOrder(spec)) {
-    const g = spec.gates.find((x) => x.id === id)!;
-    const args = g.from.map((f) => out[f]);
-    const base: BoolExpr =
-      g.type === "NOT" ? { type: "not", arg: args[0] } : g.type === "AND" || g.type === "NAND" ? { type: "and", args } : g.type === "XOR" ? { type: "xor", args } : { type: "or", args };
-    out[id] = g.type === "NAND" || g.type === "NOR" ? { type: "not", arg: base } : base;
-  }
-  return out;
-}
 
 const SWAP: Partial<Record<Gate["type"], Gate["type"]>> = { AND: "OR", OR: "AND", NAND: "NOR", NOR: "NAND" };
 

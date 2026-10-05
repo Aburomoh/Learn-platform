@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { BooleanParseError, parseBool } from "@/content/boolean";
 import { adderPins, flipFlopInputs } from "./blocks";
+import { circuitFromExpression } from "./circuit/circuit";
 import { codeNames } from "./device";
 
 const bit = z.union([z.literal(0), z.literal(1)]);
@@ -133,8 +134,30 @@ const SequentialFigure = z
     if (f.focus && ![...names, "gates"].includes(f.focus)) ctx.addIssue({ code: "custom", message: `focus "${f.focus}" is not a flip-flop of this circuit (${names.join(", ")}) or "gates"` });
   });
 
+/**
+ * The gates that drive one pin (#489): the student reads an equation off drawn gates, as on the
+ * analysis slides. Content gives the equation's right side over `vars`; the gates are built from
+ * it (`circuitFromExpression`), so the drawing always matches the equation. `output` names the pin:
+ * DA, JA, y. The expressions at the gate outputs are printed only in the result state.
+ */
+const GatesFigure = z
+  .object({
+    type: z.literal("gates"),
+    output: z.string().min(1).max(3),
+    expr: z.string().min(1).max(40),
+    vars: z.array(z.string().min(1).max(2)).min(1).max(4),
+  })
+  .superRefine((f, ctx) => {
+    try {
+      circuitFromExpression(parseBool(f.expr, { vars: f.vars }), f.output);
+    } catch (err) {
+      if (!(err instanceof Error)) throw err;
+      ctx.addIssue({ code: "custom", message: `gates for "${f.output} = ${f.expr}": ${err.message}` });
+    }
+  });
+
 /** One figure per question, drawn by the stage above (or beside) any kind's answer area. */
-export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure]);
+export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure]);
 export type FigureSpec = z.infer<typeof FigureSpec>;
 
 /** The pins a focus may name (`figure.focus`, `stage.figureFocus`). A latch figure has no focus state yet. */

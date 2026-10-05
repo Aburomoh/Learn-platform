@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import type { CircuitSpec } from "./spec";
-import { evaluateCircuit } from "./logic";
+import { evaluateCircuit, type CircuitShape, type GateType } from "./circuit";
 import { focusTarget } from "@/interactions/shared/types";
 import { useScrollFade } from "@/interactions/shared/useScrollFade";
 import { GATE_H, INPUT_H, INPUT_W, gateWidth, layoutCircuit } from "./layout";
@@ -10,7 +9,7 @@ import styles from "./CircuitDiagram.module.css";
 
 export interface CircuitDiagramProps {
   id: string;
-  spec: CircuitSpec;
+  spec: CircuitShape;
   /** Current input values (defaults to the spec's). */
   inputs?: Record<string, 0 | 1>;
   /** When given and spec.inputsToggleable, inputs become toggle switches. */
@@ -195,7 +194,7 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
   );
 }
 
-function GateShape({ type }: { type: CircuitSpec["gates"][number]["type"] }) {
+function GateShape({ type }: { type: GateType }) {
   switch (type) {
     case "NOT":
       return (
