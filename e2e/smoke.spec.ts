@@ -500,3 +500,29 @@ test("binary addition: rules, column by column with the end carry, then the deci
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test("binary point: the point stays on screen on a phone, with a zero added at each end (#498)", async ({ page }) => {
+  for (const width of [390, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto("/courses/ecet111/digit-replacement/binary-point/");
+    await page.getByRole("button", { name: "Add 0 in front", exact: true }).click();
+    await page.getByRole("button", { name: "Add 0 at the end", exact: true }).click();
+    const rows = await page.evaluate(() =>
+      [...document.querySelectorAll("[data-half]")].map((half) => {
+        const box = half.querySelector("[data-fade]")!;
+        const b = box.getBoundingClientRect();
+        // the point drawn in this row (the whole part's copy, or the fraction's own)
+        const points = [...box.querySelectorAll("span")].filter((s) => s.textContent === "•" && s.getBoundingClientRect().width > 0).map((s) => s.getBoundingClientRect());
+        return { half: half.getAttribute("data-half"), scroll: box.scrollWidth - box.clientWidth, pointIn: points.length === 1 && points[0].left >= b.left - 1 && points[0].right <= b.right + 1, cell: box.querySelector("button")!.getBoundingClientRect().width };
+      }),
+    );
+    expect(rows.map((r) => r.half)).toEqual(["whole", "fraction"]);
+    for (const row of rows) {
+      expect(row.pointIn, `${width} px: the point is visible in the ${row.half} row`).toBe(true);
+      expect(row.cell, `${width} px: cells are 28 px or wider`).toBeGreaterThanOrEqual(28);
+    }
+    // 390 px: nothing scrolls. 320 px: the whole part may scroll inside its own box, never the page.
+    if (width === 390) expect(rows.map((r) => r.scroll)).toEqual([0, 0]);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+  }
+});
