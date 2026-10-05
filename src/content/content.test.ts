@@ -711,7 +711,7 @@ describe("content registry", () => {
       const data = spec.inputs.at(-1)!;
       return muxPairs(spec).map((p) => (p.choice === "v" ? data : p.choice === "v'" ? `${data}'` : p.choice)).join(", ");
     });
-    expect(inputs).toEqual(["z, z', 0, 1", "z, z', z, 0, 0, z, z, 0", "D, D, D', 0, 0, D, 1, 1"]);
+    expect(inputs).toEqual(["z, z', 0, 1", "z, z', z, 0, 0, z, z, 0", "D, D, D', 0, 0, D, 1, 1", "0, w', w', w, 0, 1, 0, 0"]); // s.56: owner-confirmed (A1)
     const right = wiring.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
     expect(right).toEqual(["x → S1, y → S0", "w → S2, x → S1, y → S0", "A → S2, B → S1, C → S0"]);
   });
