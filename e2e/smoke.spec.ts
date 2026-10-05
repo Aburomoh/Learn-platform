@@ -526,3 +526,28 @@ test("binary point: the point stays on screen on a phone, with a zero added at e
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
   }
 });
+
+test("state tables on a phone: the given input columns stay put while later columns scroll (#508)", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/courses/ecet111/three-jk/three-jk-table/");
+  const well = page.locator("[data-sticky]").first();
+  await expect(well).toBeVisible();
+  // as when a far column is active: the table is scrolled to its right end
+  const seen = await well.evaluate((box) => {
+    box.scrollLeft = box.scrollWidth;
+    const b = box.getBoundingClientRect();
+    const heads = [...box.querySelectorAll<HTMLElement>("thead tr:last-child th")];
+    const inside = (el: Element) => el.getBoundingClientRect().left >= b.left - 1 && el.getBoundingClientRect().right <= b.right + 1;
+    return {
+      overflows: box.scrollWidth > box.clientWidth,
+      stuck: heads.filter((h) => h.dataset.stick !== undefined).map((h) => ({ name: h.textContent, inside: inside(h) })),
+      // 16 rows: the column labels are repeated after every 8
+      repeats: box.querySelectorAll("[data-repeat]").length,
+    };
+  });
+  expect(seen.overflows).toBe(true);
+  expect(seen.stuck.map((s) => s.name)).toEqual(["A", "B", "C", "x"]);
+  expect(seen.stuck.every((s) => s.inside)).toBe(true);
+  expect(seen.repeats).toBe(2);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+});

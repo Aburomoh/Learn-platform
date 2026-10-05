@@ -54,6 +54,9 @@ export interface TruthTableProps {
   checkLabel?: string;
 }
 
+/** Tables longer than this repeat their column labels after every this many rows. */
+const HEADER_EVERY = 8;
+
 const CYCLE: (TruthCell | null)[] = [null, 0, 1];
 const CYCLE_X: (TruthCell | null)[] = [null, 0, 1, "X"];
 const show = (v: TruthCell | string | null | undefined) => (v === null || v === undefined ? "" : String(v));
@@ -85,6 +88,7 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs,
   const [focusRow, setFocusRow] = useState(0);
   const refs = useRef<(HTMLTableCellElement | null)[]>([]);
   const well = useRef<HTMLDivElement>(null);
+  const table = useRef<HTMLTableElement>(null);
   const fade = useScrollFade(well);
   const editing = !!onCheck && !disabled && state !== "correct" && revealed === undefined;
   const fillEditing = editing && !select && activeColumn !== undefined;
@@ -101,6 +105,50 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs,
     }
     return -1;
   };
+
+  // A wide table scrolls sideways on a phone. The given input columns (a state table's present
+  // state and input) stay put on the left, so the student still reads them while filling a column
+  // far to the right (#508). Not when the student fills the inputs themselves.
+  const sticks = columns.every((c) => c.role !== "input" || c.given);
+  const stuck = columns.map((c) => sticks && c.role === "input");
+  const lastStuck = stuck.lastIndexOf(true);
+  const firstStuck = stuck.indexOf(true);
+  const stuckKey = stuck.join();
+  useEffect(() => {
+    const el = table.current;
+    if (!el || lastStuck < 0) return;
+    // each stuck column sits after the stuck columns before it: offsets come from the drawn widths
+    const place = () => {
+      const lefts: number[] = [];
+      let left = 0;
+      el.querySelectorAll<HTMLElement>("thead tr:last-child th").forEach((th, col) => {
+        lefts[col] = left;
+        if (th.dataset.stick !== undefined) left += th.getBoundingClientRect().width;
+      });
+      el.querySelectorAll<HTMLElement>("[data-stick]").forEach((cell) => {
+        cell.style.left = `${lefts[Number(cell.dataset.stick)] ?? 0}px`;
+      });
+    };
+    place();
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(place);
+    observer?.observe(el);
+    return () => observer?.disconnect();
+  }, [stuckKey, lastStuck, rows]);
+  const stick = (col: number) => (stuck[col] ? `${styles.stick} ${col === firstStuck ? styles.firstStick : ""} ${col === lastStuck ? styles.lastStick : ""}` : "");
+  // A long table's headers scroll off the top of the screen: the column labels are repeated after
+  // every 8 rows (labels only, hidden from assistive technology, which has the real headers).
+  const repeatHeads = rows > HEADER_EVERY;
+  const labelRow = (key: string) => (
+    <tr key={key} aria-hidden="true" data-repeat="">
+      {columns.map((c, col) => (
+        <td key={c.id} className={`${styles.head} ${styles.repeat} ${stick(col)} ${ruled(col) ? styles.rule : ""} ${col === activeColumn && revealed === undefined && state !== "correct" ? styles.now : ""} ${isLater(col) ? styles.later : ""} mono`} data-stick={stuck[col] ? col : undefined}>
+          {c.header}
+        </td>
+      ))}
+      {select && <td className={`${styles.head} ${styles.repeat} ${styles.rule}`}>{select.label}</td>}
+      {pairs && <td className={`${styles.head} ${styles.repeat} ${styles.rule}`}>{pairs.header}</td>}
+    </tr>
+  );
 
   // Keep the active column in view inside a scrolling well (16-row tables on phones).
   useEffect(() => {
@@ -145,8 +193,8 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs,
   };
   const isLater = (col: number) => activeColumn !== undefined && col > activeColumn && !columns[col].given;
 
-  // a rule after the inputs and before the output
-  const ruled = (col: number) => col > 0 && columns[col].role !== columns[col - 1].role && (columns[col - 1].role === "input" || columns[col].role === "output");
+  // a rule after the inputs and before the output (stuck inputs carry that rule as their own right edge)
+  const ruled = (col: number) => col > 0 && col - 1 !== lastStuck && columns[col].role !== columns[col - 1].role && (columns[col - 1].role === "input" || columns[col].role === "output");
   const complete = select ? true : cells.every((c) => c !== null);
   const label = active ? `Truth table, filling column ${active.header}` : select ? `Truth table, ${select.label}` : pairs ? `Truth table, ${pairs.header} per pair of rows` : "Truth table";
 
@@ -186,16 +234,20 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs,
 
   return (
     <div className={styles.root} data-diagram={id}>
-      <div ref={well} className={styles.well} data-fade={fade}>
-        <table role="grid" className={styles.table} aria-label={label} aria-readonly={!editing || undefined} {...focusTarget("truth-table")}>
+      <div ref={well} className={styles.well} data-fade={fade} data-sticky={lastStuck >= 0 ? "" : undefined}>
+        <table ref={table} role="grid" className={styles.table} aria-label={label} aria-readonly={!editing || undefined} {...focusTarget("truth-table")}>
           <thead>
             {groups && (
               <tr>
-                {groups.map((g, i) => (
-                  <th key={i} scope="colgroup" colSpan={g.span} className={styles.group} data-band={g.band >= 0 ? g.band : undefined}>
-                    {g.label}
-                  </th>
-                ))}
+                {groups.map((g, i) => {
+                  const start = groups.slice(0, i).reduce((n, x) => n + x.span, 0);
+                  const all = stuck.slice(start, start + g.span).every(Boolean);
+                  return (
+                    <th key={i} scope="colgroup" colSpan={g.span} className={`${styles.group} ${all ? `${styles.stick} ${start === firstStuck ? styles.firstStick : ""} ${start + g.span - 1 === lastStuck ? styles.lastStick : ""}` : ""}`} data-band={g.band >= 0 ? g.band : undefined} data-stick={all ? start : undefined}>
+                      {g.label}
+                    </th>
+                  );
+                })}
                 {select && <th className={styles.group} />}
               </tr>
             )}
@@ -204,8 +256,9 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs,
                 <th
                   key={c.id}
                   scope="col"
-                  className={`${styles.head} ${ruled(col) ? styles.rule : ""} ${col === activeColumn && revealed === undefined && state !== "correct" ? styles.now : ""} ${isLater(col) ? styles.later : ""} mono`}
+                  className={`${styles.head} ${stick(col)} ${ruled(col) ? styles.rule : ""} ${col === activeColumn && revealed === undefined && state !== "correct" ? styles.now : ""} ${isLater(col) ? styles.later : ""} mono`}
                   data-band={bandOf(col) >= 0 ? bandOf(col) : undefined}
+                  data-stick={stuck[col] ? col : undefined}
                   {...focusTarget(`column-${c.id}`)}
                 >
                   {c.header}
@@ -224,7 +277,7 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs,
             </tr>
           </thead>
           <tbody>
-            {rowNames.map((name, row) => (
+            {rowNames.flatMap((name, row) => [
               <tr key={row} className={`${styles.row} ${pairs && Math.floor(row / 2) % 2 === 1 ? styles.pairBand : ""}`} data-pair-now={pairs && pairs.active === Math.floor(row / 2) ? "" : undefined}>
                 {columns.map((c, col) => {
                   const cls = `${ruled(col) ? styles.rule : ""} ${col === activeColumn || (pairs && pairs.active === Math.floor(row / 2)) ? styles.now : ""} ${isLater(col) ? styles.later : ""}`;
@@ -232,7 +285,7 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs,
                     return editCell(c.id, row, show(cells[row]), `Row ${name}, column ${c.header}, ${show(cells[row]) || "empty"}`, cls);
                   const value = shown(col, row);
                   return (
-                    <td key={c.id} role="gridcell" className={`${styles.cell} ${cls} mono`} data-band={bandOf(col) >= 0 ? bandOf(col) : undefined} aria-readonly="true" aria-label={isLater(col) ? `Row ${name}, column ${c.header}, later` : undefined}>
+                    <td key={c.id} role="gridcell" className={`${styles.cell} ${stick(col)} ${cls} mono`} data-band={bandOf(col) >= 0 ? bandOf(col) : undefined} data-stick={stuck[col] ? col : undefined} aria-readonly="true" aria-label={isLater(col) ? `Row ${name}, column ${c.header}, later` : undefined}>
                       {value === "?" ? <span className={styles.unknown}>?</span> : value}
                     </td>
                   );
@@ -268,8 +321,9 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs,
                     )}
                   </td>
                 )}
-              </tr>
-            ))}
+              </tr>,
+              repeatHeads && (row + 1) % HEADER_EVERY === 0 ? labelRow(`labels-${row}`) : null,
+            ])}
           </tbody>
         </table>
       </div>
