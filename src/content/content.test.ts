@@ -17,6 +17,7 @@ import { isCanonical } from "./ecet111/chapter2/minterms";
 import { columnTruth, muxPairs } from "@/kinds/truth-table/logic";
 import { statesAfterEdges } from "@/kinds/timing/logic";
 import { pickName, rightPick } from "@/kinds/device/logic";
+import { gateExpressions } from "@/kinds/circuit-predict/logic";
 import { kmapCovers } from "@/kinds/kmap/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 import { lawChips, lineOptions } from "@/kinds/derivation/logic";
@@ -612,6 +613,19 @@ describe("content registry", () => {
     expect(sums).toEqual([["x'y' + xy + z'"], ["x'y' + xy + xz'", "x'y' + xy + y'z'"], ["A + C'"], ["x'y' + z"]]);
   });
 
+  it("circuits and expressions (#226): F of each circuit as on p.21–25, and each build's right choices make F", () => {
+    const read = getActivity(COURSE, "circuits-expressions", "circuit-to-expression")!.activity;
+    const fs = read.questions[0].variants.map(({ spec }) => (spec.kind === "circuit-predict" ? mintermsOf(gateExpressions(spec)[spec.outputGateId], ["A", "B", "C"]) : []));
+    expect(fs).toEqual([[1, 3, 7], [4, 5, 6], [1, 3, 4, 5, 7]]); // (A′ + B)C, (A′ + BC)′, AB′ + C
+    // the expression → circuit sets build the same functions as the circuits with the same id
+    const build = getActivity(COURSE, "circuits-expressions", "expression-to-circuit")!.activity;
+    for (const v of build.questions[0].variants) {
+      const f = read.questions[0].variants.find((r) => r.id === v.id)!;
+      const fText = v.prompt.match(/F = (.*) as a circuit/)![1].replace(/′/g, "'");
+      if (f.spec.kind === "circuit-predict") expect(equivalent(parseBool(fText, { vars: ["A", "B", "C"] }), gateExpressions(f.spec)[f.spec.outputGateId], ["A", "B", "C"]), v.id).toBe(true);
+    }
+  });
+
   it("map anatomy (#276): cells and regions from the layout and the Boolean module (pack ch3 §2)", () => {
     const x = getActivity(COURSE, "kmap-anatomy", "kmap-anatomy")!.activity;
     const pick = (q: (typeof x.questions)[number]) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
@@ -837,7 +851,9 @@ describe("authored truth is internally consistent", () => {
         const v = stepVars(spec, i);
         const answer =
           spec.kind === "circuit-predict"
-            ? ({ kind: spec.kind, step: i, output: v.gateOut as 0 | 1 } as const)
+            ? spec.mode === "expression"
+              ? ({ kind: spec.kind, step: i, expression: String(v.gateExpression) } as const)
+              : ({ kind: spec.kind, step: i, output: v.gateOut as 0 | 1 } as const)
             : spec.kind === "repeated-division"
               ? ({ kind: spec.kind, step: i, quotient: v.quotient as number, remainder: v.remainder as number } as const)
               : undefined;
@@ -864,7 +880,12 @@ describe("authored truth is internally consistent", () => {
         if (stage.active) {
           expect(step.ask, `${path}/${step.id}: active gate without a prediction`).toBeDefined();
           const options = step.ask!.options;
-          expect(options[step.ask!.correctIndex], `${path}/${step.id}`).toBe(String(evaluateCircuit(variant.spec)[stage.active]));
+          if (variant.spec.mode === "expression") {
+            // expression mode (#226): the right option is the gate's output expression
+            const vars = variant.spec.inputs.map((i) => i.label);
+            const right = parseBool(options[step.ask!.correctIndex].replace(/′/g, "'"), { vars });
+            expect(equivalent(right, gateExpressions(variant.spec)[stage.active], vars), `${path}/${step.id}`).toBe(true);
+          } else expect(options[step.ask!.correctIndex], `${path}/${step.id}`).toBe(String(evaluateCircuit(variant.spec)[stage.active]));
           asked.add(stage.active);
         }
       }
@@ -874,7 +895,8 @@ describe("authored truth is internally consistent", () => {
 
   it("every circuit walk has a nudge for each gate type it contains", () => {
     for (const { path, variant } of allVariants()) {
-      if (variant.spec.kind !== "circuit-predict") continue;
+      // predict mode only: expression mode has its own detectors (#226)
+      if (variant.spec.kind !== "circuit-predict" || variant.spec.mode === "expression") continue;
       for (const g of variant.spec.gates)
         expect(variant.misconceptions.some((m) => m.detect.type === "gate-output" && m.detect.gate === g.type), `${path}:${g.type}`).toBe(true);
     }
