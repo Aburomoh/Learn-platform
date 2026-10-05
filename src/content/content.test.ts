@@ -753,7 +753,7 @@ describe("content registry", () => {
     expect(checks(hexCheck)).toEqual(["726", "489", "948"]);
     expect(hex16.variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["B6E3", "E95C", "9F2B"]);
     const point = getActivity(COURSE, "digit-replacement", "binary-point")!.activity;
-    expect(point.questions[0].variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["326.4", "161.6"]);
+    expect(point.questions[0].variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["326.4", "161.6", "135.54"]);
   });
 
   it("three JK flip-flops (#316): table, diagram and the s.52 trace as in the pack (ch5-partii §5)", () => {
@@ -829,8 +829,7 @@ describe("pedagogy guard", () => {
       "ff.q.eq-t",
       "ff.q.eq-d",
       "fa.q.kmap",
-      "dr.q.point",
-      "j3.q.table",
+        "j3.q.table",
       "j3.q.diagram",
       "dz.q.problem-table",
       "dz.q.problem-trace",
