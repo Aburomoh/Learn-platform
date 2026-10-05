@@ -8,6 +8,9 @@
  */
 import type { CourseInput, VariantInput } from "../../schema";
 
+/** The eight states on a ring in count order, 000 at the top left, clockwise (UX, #394/#468): most arrows join neighbours. */
+const RING: [number, number][] = [[0, 0], [1, 0], [2, 0], [2, 1], [2, 2], [1, 2], [0, 2], [0, 1]];
+
 type TopicInput = CourseInput["modules"][number]["topics"][number];
 type Activity = TopicInput["activities"][number];
 type Bit = 0 | 1;
@@ -63,7 +66,7 @@ const tableVariant: VariantInput = {
 const diagramVariant: VariantInput = {
   id: "d3jk",
   prompt: "The same circuit's state diagram is drawn from its table, one arrow per row. Label each arrow x/y, in table order.",
-  spec: { kind: "state-diagram", stateVars: ["A", "B", "C"], input: "x", next: NEXT, output: { name: OUTPUT[0], expr: OUTPUT[1] }, mode: "label" },
+  spec: { kind: "state-diagram", stateVars: ["A", "B", "C"], input: "x", next: NEXT, output: { name: OUTPUT[0], expr: OUTPUT[1] }, mode: "label", positions: RING },
   hints: [
     { rung: 2, text: "Not yet. Find the table row for this arrow: present state {from}, going to {to}." },
     { rung: 3, text: "The label is the row's input, a slash, then the row's output." },
