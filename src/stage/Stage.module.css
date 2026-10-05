@@ -141,6 +141,25 @@
   gap: var(--space-4);
 }
 
+/* a question with a figure (ADR-0009): the figure above on phones, to the right of the answer from 900 px */
+@media (min-width: 900px) {
+  .withFigure {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+    align-items: start;
+    column-gap: var(--space-6);
+  }
+
+  .withFigure > :first-child {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .withFigure > :last-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
 .prompt {
   font-size: var(--text-md);
   margin: 0;

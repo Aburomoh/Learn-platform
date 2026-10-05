@@ -7,6 +7,7 @@ import { fill } from "@/content/template";
 import { Notation } from "@/interactions/shared/Notation";
 import { PredictionBeforeReveal, type PredictionResult } from "@/interactions/PredictionBeforeReveal/PredictionBeforeReveal";
 import type { RegisteredKind } from "@/kinds";
+import { FigureView } from "@/kinds/shared/figures/FigureView";
 import type { ExplainProps, PracticeProps } from "@/kinds/types";
 import { kindUI } from "@/kinds/ui";
 import styles from "./Stage.module.css";
@@ -37,6 +38,7 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
         <p className={styles.prompt}>
           <Notation text={prompt} />
         </p>
+        {variant.figure && <FigureView id={variant.id} figure={variant.figure} revealed={isLast || !!step.stage?.figureResult} focus={step.stage?.figureFocus} />}
         {createElement(views[variant.spec.kind].Explain, { variant, stage: step.stage ?? {}, isLast, answered: !step.ask || !!explanation.prediction, hasAsk: !!step.ask })}
         {step.ask && (
           <PredictionBeforeReveal id={step.id} prompt={fill(step.ask.prompt, variant.vars)} options={step.ask.options} onPredict={onPredict} result={explanation.prediction} />
@@ -53,14 +55,28 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
     );
   }
 
-  return (
-    <section className={styles.question} aria-label="Question">
+  const answer = (
+    <>
       {createElement(views[variant.spec.kind].Practice, { variant, prompt, state, last, stepIndex, locked, onSubmit })}
       {last && (
         <p className={`${styles.feedback} ${last.result.correct ? styles.ok : styles.no}`} role="status">
           {last.result.correct ? "Correct." : "Not correct yet."}
         </p>
       )}
+    </>
+  );
+  if (!variant.figure)
+    return (
+      <section className={styles.question} aria-label="Question">
+        {answer}
+      </section>
+    );
+  // With a figure (ADR-0009): the figure first on phones, beside the answer area from 900 px.
+  return (
+    <section className={`${styles.question} ${styles.withFigure}`} aria-label="Question">
+      {/* never lit before a correct answer: `result` is the only state that shows the answer */}
+      <FigureView id={variant.id} figure={variant.figure} revealed={locked && state === "correct"} />
+      <div className={styles.question}>{answer}</div>
     </section>
   );
 }

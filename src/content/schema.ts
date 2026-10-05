@@ -5,6 +5,7 @@
  */
 import { z } from "zod";
 import { GateType } from "@/kinds/circuit-predict/spec";
+import { FigureSpec, figurePins } from "@/kinds/shared/figures/figureSpec";
 import { kindDetectors, kindSpecs } from "@/kinds/specs";
 import { id, template } from "./primitives";
 
@@ -51,8 +52,14 @@ export const HintSchema = z.object({
 export const ExplanationStepSchema = z.object({
   id,
   say: template,
-  /** Kind-specific stage state applied when the step is shown (e.g. lit place values). */
-  stage: z.record(z.string(), z.unknown()).optional(),
+  /**
+   * Kind-specific stage state applied when the step is shown (e.g. lit place values), plus the two
+   * keys of the question's figure (ADR-0009): the pin with the halo, and whether the result is drawn.
+   */
+  stage: z
+    .object({ figureFocus: z.string().min(1).optional(), figureResult: z.boolean().optional() })
+    .catchall(z.unknown())
+    .optional(),
   ask: z
     .object({
       prompt: template,
@@ -89,6 +96,8 @@ export const VariantSchema = z.object({
   id,
   prompt: template,
   spec: InteractionSpec,
+  /** The device or circuit the question is about, drawn by the stage for any kind (ADR-0009). */
+  figure: FigureSpec.optional(),
   /** Values for `{name}` slots in templates (hints, steps, messages). */
   vars: z.record(z.string(), z.union([z.string(), z.number()])).default({}),
   hints: z.array(HintSchema).min(1),
@@ -105,7 +114,17 @@ export const VariantSchema = z.object({
       stepNext: template.optional(),
     })
     .optional(),
-});
+})
+  .superRefine((v, ctx) => {
+    // the figure (ADR-0009): a kind that draws the device itself takes none, and a step's focus must be one of its pins
+    if (v.figure && v.spec.kind === "device") ctx.addIssue({ code: "custom", path: ["figure"], message: "a device question draws its own block: no figure" });
+    const pins = v.figure ? figurePins(v.figure) : [];
+    v.explanation.forEach((step, i) => {
+      const { figureFocus, figureResult } = step.stage ?? {};
+      if (!v.figure && (figureFocus !== undefined || figureResult !== undefined)) ctx.addIssue({ code: "custom", path: ["explanation", i, "stage"], message: "figureFocus / figureResult need a figure on the variant" });
+      else if (figureFocus !== undefined && !pins.includes(figureFocus)) ctx.addIssue({ code: "custom", path: ["explanation", i, "stage", "figureFocus"], message: `"${figureFocus}" is not a pin of the figure (${pins.join(", ")})` });
+    });
+  });
 
 export const QuestionSchema = z.object({
   id,

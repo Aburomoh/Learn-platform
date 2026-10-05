@@ -1,0 +1,107 @@
+/** The figure of a question (ADR-0009): build time, Zod. Content names the figure and what is given; results are computed. */
+import { z } from "zod";
+import { adderPins, flipFlopInputs } from "./blocks";
+import { codeNames } from "./device";
+
+const bit = z.union([z.literal(0), z.literal(1)]);
+
+/**
+ * A decoder, encoder or multiplexer block. `given` is the input code (decoder), the active input
+ * (encoder) or the select value (mux). The active output, the code or the routed input is computed
+ * (`rightPick`) and drawn only in the result state.
+ */
+const DeviceFigure = z
+  .object({
+    type: z.literal("device"),
+    device: z.enum(["decoder", "encoder", "mux"]),
+    bits: z.number().int().min(1).max(3),
+    given: z.number().int().min(0),
+    /** Code-bit names, MSB first: S1 S0 (mux, default), x y z (decoder / encoder, default). */
+    names: z.array(z.string().min(1)).optional(),
+    /** mux: a level on each data input, printed beside it. */
+    data: z.array(bit).optional(),
+    /** The pin with the halo, by name: D5, I2, S1, x, Y (checked against `figurePins`). An Explain step may move it (`stage.figureFocus`). */
+    focus: z.string().min(1).optional(),
+  })
+  .superRefine((f, ctx) => {
+    const size = 2 ** f.bits;
+    if (f.given >= size) ctx.addIssue({ code: "custom", message: `given ${f.given} is out of range for ${f.bits} bits` });
+    if (f.names && f.names.length !== f.bits) ctx.addIssue({ code: "custom", message: `one name per code bit (${f.bits})` });
+    if (f.data && (f.device !== "mux" || f.data.length !== size)) ctx.addIssue({ code: "custom", message: `data: a mux needs ${size} levels` });
+    if (f.device === "decoder" && f.bits === 1) ctx.addIssue({ code: "custom", message: "a decoder needs 2 or 3 input bits" });
+    if (f.focus && (!f.names || f.names.length === f.bits) && !devicePins(f).includes(f.focus)) ctx.addIssue({ code: "custom", message: `focus "${f.focus}" is not a pin of this ${f.device} (${devicePins(f).join(", ")})` });
+  });
+
+function devicePins(f: { device: "decoder" | "encoder" | "mux"; bits: number; names?: string[] }): string[] {
+  const size = 2 ** f.bits;
+  const lines = (letter: string) => Array.from({ length: size }, (_, k) => `${letter}${k}`);
+  const code = codeNames(f);
+  return f.device === "decoder" ? [...code, ...lines("D")] : f.device === "encoder" ? [...lines("I"), ...code] : [...lines("I"), ...code, "Y"];
+}
+
+/** The NAND SR latch or the gated SR latch; the new Q and Q′ are computed (`latchAfter`). */
+const LatchFigure = z
+  .object({
+    type: z.literal("latch"),
+    latch: z.enum(["nand-sr", "gated-sr"]),
+    values: z.object({ s: bit, r: bit, q: bit, en: bit.optional() }),
+  })
+  .refine((c) => (c.latch === "gated-sr") === (c.values.en !== undefined), "en is given for gated-sr only");
+
+/**
+ * The half adder (HA) or full adder (Σ) block. `given` puts bits on the inputs; S and the carry
+ * read "?" until the result state, where they are computed (`adderOutputs`). No `given`: the symbol alone.
+ */
+const AdderFigure = z
+  .object({
+    type: z.literal("adder"),
+    adder: z.enum(["half", "full"]),
+    given: z.object({ a: bit, b: bit, ci: bit.optional() }).optional(),
+    /** The pin with the halo: A, B, Ci, S, C (half) or Co (full). */
+    focus: z.string().min(1).optional(),
+  })
+  .superRefine((f, ctx) => {
+    if (f.given && (f.adder === "full") !== (f.given.ci !== undefined)) ctx.addIssue({ code: "custom", message: "ci is given for the full adder only" });
+    const pins = [...adderPins(f.adder).inputs, ...adderPins(f.adder).outputs];
+    if (f.focus && !pins.includes(f.focus)) ctx.addIssue({ code: "custom", message: `focus "${f.focus}" is not a pin of the ${f.adder} adder (${pins.join(", ")})` });
+  });
+
+/**
+ * A D, T, SR or JK flip-flop symbol. `given` is the present Q and one bit per input in pin order
+ * (D; T; S R; J K); Q after the clock edge is computed (`flipFlopNext`) and drawn in the result state.
+ */
+const FlipFlopFigure = z
+  .object({
+    type: z.literal("flip-flop"),
+    ff: z.enum(["d", "t", "sr", "jk"]),
+    /** The trigger: `falling` draws the bubble in front of the clock triangle. */
+    edge: z.enum(["rising", "falling"]).default("rising"),
+    given: z.object({ q: bit, inputs: z.array(bit).min(1).max(2) }).optional(),
+    /** The pin with the halo: an input (D, T, S, R, J, K), Clk, Q or Q′. */
+    focus: z.string().min(1).optional(),
+  })
+  .superRefine((f, ctx) => {
+    const inputs = flipFlopInputs(f.ff);
+    if (f.given && f.given.inputs.length !== inputs.length) ctx.addIssue({ code: "custom", message: `one bit per input (${inputs.join(", ")})` });
+    if (f.ff === "sr" && f.given && f.given.inputs[0] === 1 && f.given.inputs[1] === 1) ctx.addIssue({ code: "custom", message: "S = R = 1 is not allowed on an SR flip-flop: the figure has no result to draw" });
+    const pins = [...inputs, "Clk", "Q", "Q′"];
+    if (f.focus && !pins.includes(f.focus)) ctx.addIssue({ code: "custom", message: `focus "${f.focus}" is not a pin of this flip-flop (${pins.join(", ")})` });
+  });
+
+/** One figure per question, drawn by the stage above (or beside) any kind's answer area. */
+export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure]);
+export type FigureSpec = z.infer<typeof FigureSpec>;
+
+/** The pins a focus may name (`figure.focus`, `stage.figureFocus`). A latch figure has no focus state yet. */
+export function figurePins(figure: FigureSpec): string[] {
+  switch (figure.type) {
+    case "device":
+      return devicePins(figure);
+    case "adder":
+      return [...adderPins(figure.adder).inputs, ...adderPins(figure.adder).outputs];
+    case "flip-flop":
+      return [...flipFlopInputs(figure.ff), "Clk", "Q", "Q′"];
+    default:
+      return [];
+  }
+}

@@ -40,6 +40,9 @@ contexts, including the bit row), `place-value`, `repeated-division`.
 
 `shared/` holds what several kinds use: `Prompt`, the worked contexts above a numeric or
 multiple-choice question (`ContextView`, `BitGroups`, `contextSpec.ts`), and their text styles.
+`shared/figures/` is the figure layer (ADR-0009): the drawings several kinds and the stage use
+(`DeviceFigure`, `LatchFigure`), their one style sheet, `figureSpec.ts` (the `figure` field of a
+variant) and `FigureView`, which the stage draws above or beside any kind's question.
 Arithmetic helpers (`divisionSteps`, `groupBits`, `additionSteps`…) live in `src/content/binary.ts`
 because content tests use them too.
 
