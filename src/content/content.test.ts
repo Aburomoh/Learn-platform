@@ -644,6 +644,36 @@ describe("content registry", () => {
     }
   });
 
+  it("analysis 2 (#313): each state equation is its characteristic equation with the inputs put in (pack Σ lists)", () => {
+    const x = getActivity(COURSE, "analysis", "analysis-state")!.activity;
+    const sig = x.questions.map((q) => q.variants.map((v) => (v.spec.kind === "expression" ? mintermsOf(parseBool(v.spec.target!, { vars: v.spec.vars }), v.spec.vars) : [])));
+    // A(t+1): D (3,5,7), JK (2,3,4,5,7), T (3,4,5,6); B(t+1): D (1,3), JK (0,2,4,7), T (1,2,5,6)
+    expect(sig).toEqual([[[3, 5, 7], [2, 3, 4, 5, 7], [3, 4, 5, 6]], [[1, 3], [0, 2, 4, 7], [1, 2, 5, 6]]]);
+    // and from the characteristic equations, with the stage 1 input equations put in
+    const vars = ["A", "B", "x"];
+    const sub = { D: (d: string) => d, JK: (j: string, k: string, q: string) => `(${j})${q}' + (${k})'${q}`, T: (t: string, q: string) => `(${t}) ⊕ ${q}` };
+    const viaChar = [
+      [sub.D("Ax + Bx"), sub.D("A'x")],
+      [sub.JK("B", "Bx'", "A"), sub.JK("x'", "A ⊕ x", "B")],
+      [sub.T("Bx", "A"), sub.T("x", "B")],
+    ];
+    expect([0, 1].map((ff) => viaChar.map((c) => mintermsOf(parseBool(c[ff], { vars }), vars)))).toEqual(sig);
+  });
+
+  it("analysis 3 (#314): the state tables match the pack's simulated tables (ch5-partii §2–4)", () => {
+    const x = getActivity(COURSE, "analysis", "analysis-table")!.activity;
+    const tables = x.questions[0].variants.map(({ spec }) => {
+      if (spec.kind !== "truth-table") throw new Error("expected a truth table");
+      return Object.fromEntries(spec.columns.map((c) => [c.label, columnTruth(spec, c).join("")]));
+    });
+    // D: next A B per row 00 01 00 11 00 10 00 10, y 0 0 1 0 1 0 1 0
+    expect(tables[0]).toEqual({ DA: "00010101", DB: "01010000", A: "00010101", B: "01010000", y: "00101010" });
+    // JK: JA KA 00 00 11 10 00 00 11 10; JB KB 10 01 10 01 11 00 11 00; next 01 00 11 10 11 10 00 11
+    expect(tables[1]).toEqual({ JA: "00110011", KA: "00100010", JB: "10101010", KB: "01011010", A: "00111101", B: "10101001" });
+    // T: TA TB 00 01 00 11 00 01 00 11; next 00 01 01 10 10 11 11 00; Y 0 0 0 0 0 0 1 1
+    expect(tables[2]).toEqual({ TA: "00010001", TB: "01010101", A: "00011110", B: "01100110", y: "00000011" });
+  });
+
   it("functions with a MUX (#308): the pairs give the slides' data inputs (s.48–51, s.52–55, s.57–61)", () => {
     const x = getActivity(COURSE, "multiplexers", "mux-functions")!.activity;
     const [wiring, pairs] = x.questions;
