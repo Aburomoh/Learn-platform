@@ -127,3 +127,34 @@ describe("state-diagram kind in the stage (#240)", () => {
     expect(document.querySelector("[data-label='1']")).toHaveTextContent("0/0");
   });
 });
+
+describe("a long state table on a phone (#468)", () => {
+  // the three-JK circuit (ch5 Part II §5): 8 states, 16 rows
+  const jk = VariantSchema.parse({ id: "v-jk", prompt: "Label each arrow.", spec: { kind: "state-diagram", stateVars: ["A", "B", "C"], input: "x", next: ["x'A' + AB'", "xAB' + BC'", "AC' + x'C"], output: { name: "y", expr: "A + x" } }, ...base });
+  const marked = () => within(screen.getByRole("table", { name: "State table" })).getAllByRole("row").filter((r) => r.hasAttribute("data-other")).length;
+
+  it("marks the rows of other states for hiding, with a toggle for the whole table", async () => {
+    render(<Harness variant={jk} />);
+    const user = userEvent.setup();
+    await screen.findByText(/^Arrow 1 of 16: 000 →/);
+    const table = screen.getByRole("table", { name: "State table" });
+    // all 16 rows stay in the table (focus targets keep their numbers); 14 are not of state 000
+    expect(within(table).getAllByRole("row")).toHaveLength(17);
+    expect(table).toHaveAttribute("data-short");
+    expect(marked()).toBe(14);
+    expect(within(table).getAllByRole("row").filter((r) => !r.hasAttribute("data-other")).slice(1).map((r) => r.firstElementChild!.textContent)).toEqual(["000", "000"]);
+
+    const toggle = screen.getByRole("button", { name: "Show whole table" });
+    expect(toggle).toHaveAttribute("aria-pressed", "false");
+    await user.click(toggle);
+    expect(table).not.toHaveAttribute("data-short");
+    expect(screen.getByRole("button", { name: "Show only the rows of 000" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("a four-state table is always whole: no toggle", async () => {
+    render(<Harness variant={labelV} />);
+    await screen.findByText("Arrow 1 of 8: 00 → 00");
+    expect(marked()).toBe(0);
+    expect(screen.queryByRole("button", { name: "Show whole table" })).toBeNull();
+  });
+});
