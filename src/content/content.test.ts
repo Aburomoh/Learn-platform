@@ -779,13 +779,13 @@ describe("content registry", () => {
       return Object.fromEntries(spec.columns.map((c) => [c.label, columnTruth(spec, c).join("")]));
     };
     expect(col("design-state-table", 0, 0)).toEqual({ A: "00011011", B: "01110010" }); // s.6–8
-    expect(col("design-excitation", 0, 0)).toMatchObject({ T_A: "00010100", T_B: "01000001" });
-    expect(col("design-excitation", 1, 0)).toMatchObject({ J_A: "0001XXXX", K_A: "XXXX0100", J_B: "01XX00XX", K_B: "XX00XX01" });
+    expect(col("design-excitation", 0, 0)).toMatchObject({ TA: "00010100", TB: "01000001" });
+    expect(col("design-excitation", 1, 0)).toMatchObject({ JA: "0001XXXX", KA: "XXXX0100", JB: "01XX00XX", KB: "XX00XX01" });
     const maps = getActivity(COURSE, "design", "design-maps")!.activity;
     const covers = maps.questions.map((q) => q.variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((x) => formatCube(x, spec.vars)).sort().join(" + ")) : [])));
     expect(covers).toEqual([
-      [["AX' + BX"], ["A'X + BX'"], ["A'BX + AB'X"]], // D_A, D_B (s.9–10), T_A
-      [["BX"], ["B'X"], ["A'X"]], // J_A, K_A, J_B
+      [["AX' + BX"], ["A'X + BX'"], ["A'BX + AB'X"]], // DA, DB (s.9–10), TA
+      [["BX"], ["B'X"], ["A'X"]], // JA, KA, JB
     ]);
   });
 
