@@ -144,6 +144,17 @@
   font-weight: 700;
 }
 
+/* topic card: the numbered discs that match the callouts */
+.mark {
+  fill: var(--brand);
+}
+
+.markText {
+  fill: var(--surface);
+  font-size: 15px;
+  font-weight: 700;
+}
+
 /* ---- the figure of a question (FigureView): above the answer, and no taller than 220 px on phones ---- */
 .figure {
   min-width: 0;
