@@ -7,6 +7,7 @@
 import type { CourseInput, VariantInput } from "../../schema";
 import type { LawId } from "@/kinds/derivation/spec";
 import { LAW_NAMES } from "@/kinds/derivation/logic";
+import { kmapVariant } from "../chapter3/kmap-variant";
 
 type TopicInput = CourseInput["modules"][number]["topics"][number];
 type Activity = TopicInput["activities"][number];
@@ -265,6 +266,29 @@ export const fullAdderAlgebraActivity: Activity = {
   questions: [{ id: "fa.q.algebra", label: "S as XOR", conceptId: "fa.adder", objectiveId: "fa.obj.algebra", variants: ALGEBRA_SETS.map((s, k) => algebraVariant(s, k)) }],
 };
 
+/* ---------- activity 4 (#303): the K-map for Co, and why S does not simplify ---------- */
+
+export const fullAdderKmapActivity: Activity = {
+  id: "full-adder-kmap",
+  title: "Full adder: K-map for Co",
+  summary: "Map Co and group its three pairs; then map S and see that no two 1s touch.",
+  authority: "DEMO",
+  minutes: 12,
+  questions: [
+    // two outputs of one device: exempt from the three-set rule (as #357, Pedagogy)
+    {
+      id: "fa.q.kmap",
+      label: "Map Co, then S",
+      conceptId: "fa.adder",
+      objectiveId: "fa.obj.kmap",
+      variants: [
+        kmapVariant({ id: "vco", vars: ["A", "B", "Ci"], minterms: ROWS_OF.Co, given: `Co(A, B, Ci) = Σ(${ROWS_OF.Co.join(", ")})` }, 0),
+        kmapVariant({ id: "vs", vars: ["A", "B", "Ci"], minterms: ROWS_OF.S, given: `S(A, B, Ci) = Σ(${ROWS_OF.S.join(", ")}): no two of its 1s are neighbours` }, 1),
+      ],
+    },
+  ],
+};
+
 export const fullAdderTopic: TopicInput = {
   id: "full-adder",
   title: "Full adder",
@@ -275,6 +299,7 @@ export const fullAdderTopic: TopicInput = {
     { id: "fa.obj.table", conceptId: "fa.adder", text: "Fill the full adder's 8-row table, S then Co." },
     { id: "fa.obj.sigma", conceptId: "fa.adder", text: "Write S and Co as minterm lists from the table." },
     { id: "fa.obj.algebra", conceptId: "fa.adder", text: "Show S = A ⊕ B ⊕ Ci by algebra (optional)." },
+    { id: "fa.obj.kmap", conceptId: "fa.adder", text: "Simplify Co with a K-map, and see why S does not simplify." },
   ],
-  activities: [fullAdderTableActivity, fullAdderSigmaActivity, fullAdderAlgebraActivity],
+  activities: [fullAdderTableActivity, fullAdderSigmaActivity, fullAdderKmapActivity, fullAdderAlgebraActivity],
 };
