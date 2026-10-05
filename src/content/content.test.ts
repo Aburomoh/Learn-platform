@@ -772,6 +772,17 @@ describe("content registry", () => {
     ]);
   });
 
+  it("design problem (#293): covers and the trace from 000 as in the pack (ch5-partiii §2, owner S2 and A2)", () => {
+    const x = getActivity(COURSE, "design", "design-problem")!.activity;
+    const [, maps, trace] = x.questions;
+    const covers = maps.variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")).sort() : []));
+    expect(covers.slice(0, 3)).toEqual([["A'BX + ABX' + CX"], ["B'C'X + BC'X' + BCX"], ["A'BX' + AX + CX'"]]); // D_A, D_B, D_C
+    expect(covers[3]).toHaveLength(4); // Y has four minimal covers, all accepted
+    const t = trace.variants[0].spec;
+    if (t.kind !== "timing") throw new Error("expected timing");
+    expect(statesAfterEdges(t).map((s) => s.join("")).join(" ")).toBe("000 010 100 011 110 110 110 110 001 100");
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -792,7 +803,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap", "dr.q.point"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap", "dr.q.point", "dz.q.problem-table", "dz.q.problem-trace"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
