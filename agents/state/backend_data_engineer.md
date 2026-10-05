@@ -1,7 +1,7 @@
 # Current State — Backend / Data Engineer
 
-Current assignment: ECET 111 (epic #192). Chapter 4 content stack #357 → #359 → #372 → #380 → #386 → #390 → #392 → #398 (topics register in chapter4/index.ts, #368); kind logic halves #367 timing, #370 state diagram, #395 truth-table mux-pairs, #400 device (decoder/encoder/mux).
-Recent important decision: separate `device` kind for the §8 decoder/mux views (Technical Lead on #381); timing asks every output per edge and refuses inputs changing on an asked edge (#371).
-Blocker: #357 waits on the circuit view's second labelled output; #398 waits on the mux-pairs view; Ch.4 s.56 and Ch.5 computed answers wait on the owner (DECISIONS A1, A2).
-Relevant issue/PR: Frontend views #394 (state diagram), #235 (K-map), #381/#382 (device); #226 content waits on #348.
-Next expected action: #297 and Ch.5 analysis content on worked examples once the PM marks them ready; Ch.3 content after the K-map view; move #305/#307 predicts onto `device` when its view lands.
+Current assignment: ECET 111 (epic #192). Chapters 1–4 content and Chapter 5 Part I/II (latches, flip-flops, timing, analysis stages 1–4) merged; kind logic for kmap, timing, state-diagram, device, truth-table mux-pairs/inputGroups on main.
+Recent important decision: authors resolve their own conflicts by hand, no resolver scripts (owner/TL #435); separate `device` kind (#381); #367 detectors restored by #449 after #393 merged the pre-fix logic.
+Blocker: None. Design stages #290–#292, #316 and exercises #293/#317 wait only on the PM ready label; owner resolved A1 (s.56), A2 (computed answers, QA verifies each, initial state stated), S1 (posed s.14–15 circuit not used), S4, S5 (#192).
+Relevant issue/PR: Vercel previews rate-limited (told DevOps on #450); T-circuit state diagram in #452 is derived from the slide's table (owner may ask to drop it).
+Next expected action: s.56 mux set (A1), S4 octal → binary set, S5 Σ(0,3,5,7) example; then Chapter 5 Part III design as one learning-unit PR once ready.
