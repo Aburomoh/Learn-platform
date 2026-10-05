@@ -121,6 +121,13 @@
   fill: var(--accent);
 }
 
+/* expression mode: a finished gate's expression (16 units: 12 px at the smallest scale) */
+.expression {
+  fill: var(--text);
+  font-size: 16px;
+  font-weight: 700;
+}
+
 .pinValue {
   font-size: 16px;
   font-weight: 700;

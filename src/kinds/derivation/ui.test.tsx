@@ -5,7 +5,7 @@ import { useReducer } from "react";
 import { VariantSchema, type Activity } from "@/content/schema";
 import { createRunnerReducer, currentVariant, initialRunnerState, questionViewKey } from "@/stage/runnerReducer";
 import { QuestionView } from "@/stage/QuestionView";
-import { terms } from "./DerivationLines";
+import { DerivationLines, terms } from "./DerivationLines";
 
 // The pack's F2 (ch2 §10), one law per line, through the stage: registry, steps, grader, lazy view.
 const variant = (lineMode: "choose" | "type") =>
@@ -57,12 +57,28 @@ describe("DerivationLines", () => {
   });
 });
 
+describe("DerivationLines on a phone (#438)", () => {
+  it("a long line is separate term items that can wrap, and pending lines are one row", () => {
+    const rows = [
+      { expr: "A'B'C' + B'CD' + A'BCD' + AB'C'", law: "Given", state: "done" as const },
+      { expr: null, law: "Law: ?", state: "now" as const },
+      ...Array.from({ length: 7 }, () => ({ expr: null, law: null, state: "later" as const })),
+    ];
+    render(<DerivationLines id="d" rows={rows} />);
+    const items = within(screen.getByRole("list", { name: "Derivation" })).getAllByRole("listitem");
+    expect(items).toHaveLength(3);
+    expect(items[2]).toHaveTextContent("… 7 more lines");
+    // four terms, each its own item of the wrapping row
+    expect([...items[0].querySelectorAll("[class*='term']")].map((t) => t.textContent)).toEqual(["A'B'C'", " + B'CD'", " + A'BCD'", " + AB'C'"]);
+  });
+});
+
 describe("derivation kind in the stage (#221)", () => {
   it("each line is two goals: the law, then the line; later lines stay hidden", async () => {
     render(<Harness lineMode="choose" />);
     const user = userEvent.setup();
     await screen.findByRole("list", { name: "Derivation" });
-    expect(lines().map((l) => l.textContent)).toEqual(["1x'y'z + x'yz + xy'Given", "2next line (to find)Law: ?", "3…"]);
+    expect(lines().map((l) => l.textContent)).toEqual(["1x'y'z + x'yz + xy'Given", "2next line (to find)Law: ?", "… 1 more line"]);
     expect(lines()[1]).toHaveAttribute("aria-current", "step");
 
     // goal 1: the law (a wrong law is retried in place)
