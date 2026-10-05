@@ -218,7 +218,7 @@ function genericWrongKey(ctx: ActivityContext, event: { vars?: Record<string, st
 
 /** The line after a correct step names the next goal (ctx is for the new step). */
 function stepNextKey(ctx: ActivityContext): string {
-  const { gateName, stepNumber, gateCount, carryIn, columnLabel, columnCount, edgeCount, arrowCount } = ctx.vars;
+  const { gateName, stepNumber, gateCount, carryIn, columnLabel, columnCount } = ctx.vars;
   if (columnLabel !== undefined) return stepNumber !== undefined && stepNumber === columnCount ? "step.last-table-column" : "step.next-table-column";
   if (ctx.stepTag === "column") return carryIn === 1 ? "step.next-column-carry" : "step.next-column";
   if (ctx.vars.groupNumber !== undefined && ctx.stepTag === "group") return ctx.vars.groupNumber === 1 ? "step.next-kmap-group" : "step.next-kmap-group-more";
