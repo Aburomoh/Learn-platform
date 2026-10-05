@@ -267,6 +267,10 @@ export const multiplexersTopic: TopicInput = {
   title: "Multiplexers",
   summary: "Many inputs, one output: the select bits, read as a number, choose which input reaches Y.",
   preview: "S1 S0 = 0 0 → Y = I0",
+  meet: {
+    figure: { type: "device", device: "mux", bits: 2, given: 0 },
+    callouts: ["Four data inputs wait at the left.", "The selects say 00, which is 0.", "So Y copies I0, whatever I0 is."],
+  },
   concepts: [
     { id: "mx.mux", title: "Multiplexer", summary: "A 4-to-1 mux routes input I(S1 S0) to Y: Y = S1′S0′I0 + S1′S0I1 + S1S0′I2 + S1S0I3." },
     { id: "mx.function", title: "Function with a MUX", summary: "n variables: the first n − 1 on the selects, the last decides each data input (0, 1, v or v′) per pair of rows." },

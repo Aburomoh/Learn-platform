@@ -151,6 +151,12 @@ export const TopicSchema = z.object({
   summary: z.string(),
   /** Visual preview on the topic page, e.g. a worked conversion chain. Never uses the activity's own numbers. */
   preview: z.string().min(1).optional(),
+  /**
+   * The topic's "meet it" card (visual system §11): the device's symbol with one worked case, drawn in
+   * its result state, and exactly three callouts (what comes in, what the device does, what comes out).
+   * Shown on the topic page in place of the preview tiles.
+   */
+  meet: z.object({ figure: FigureSpec, callouts: z.array(template).length(3) }).optional(),
   concepts: z.array(ConceptSchema).min(1),
   objectives: z.array(LearningObjectiveSchema).min(1),
   prerequisites: z.array(id).default([]),

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getTopic, listTopicParams } from "@/content";
-import { CourseTutor, PageFrame, PageHeading, PreviewBoard, TopicNext } from "@/shell/r1";
+import { CourseTutor, MeetCard, PageFrame, PageHeading, PreviewBoard, TopicNext } from "@/shell/r1";
 import styles from "@/shell/r1/r1.module.css";
 import { Notation } from "@/interactions/shared/Notation";
 
@@ -37,7 +37,8 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
   return (
     <PageFrame back={{ label: course.code, href: `/courses/${course.id}/` }} demo={course.authority === "DEMO"} aside={<CourseTutor {...tutor} size="lg" />}>
       <PageHeading eyebrow={eyebrow} title={topic.title} route={route} />
-      {topic.preview && <PreviewBoard preview={topic.preview} />}
+      {/* a device topic shows its symbol card in place of the preview tiles (visual system §11) */}
+      {topic.meet ? <MeetCard id={topic.id} meet={topic.meet} /> : topic.preview && <PreviewBoard preview={topic.preview} />}
       {/* on wide screens the tutor sits in the right column instead */}
       <div className={styles.onlyNarrow}>
         <CourseTutor {...tutor} size="md" />

@@ -1,4 +1,5 @@
 import { focusTarget } from "@/interactions/shared/types";
+import { Marks } from "./Marks";
 import styles from "./figures.module.css";
 
 export interface DeviceFigureProps {
@@ -21,6 +22,8 @@ export interface DeviceFigureProps {
   picked?: number | null;
   /** Tapping a line picks it (decoder output, mux input). Omitted: the figure is read-only. */
   onPick?: (pick: number) => void;
+  /** Topic card: 1, 2, 3 over the inputs, the body and the outputs. */
+  marks?: boolean;
 }
 
 // Geometry in SVG units; text is 16 units, so 12 px at the smallest scale.
@@ -39,7 +42,7 @@ const bitsOf = (value: number, width: number) => value.toString(2).padStart(widt
  * line may carry the focus halo; in the result state the answered line or path is drawn in the
  * signal colour with its value. Drawing only: it never grades and holds no state.
  */
-export function DeviceFigure({ device, bits, names, ask, data, revealed, pickName, focus, picked = null, onPick }: DeviceFigureProps) {
+export function DeviceFigure({ device, bits, names, ask, data, revealed, pickName, focus, picked = null, onPick, marks = false }: DeviceFigureProps) {
   const size = 2 ** bits;
   const code = bitsOf(ask, bits);
 
@@ -63,7 +66,8 @@ export function DeviceFigure({ device, bits, names, ask, data, revealed, pickNam
 
   return (
     <div className={styles.well}>
-      <svg viewBox={`0 0 ${width} ${height}`} className={styles.svg} style={{ maxWidth: width, minWidth: Math.round(width * MIN_SCALE) }} role="img" aria-label={summary} {...focusTarget("device")}>
+      <svg viewBox={marks ? `0 -26 ${width} ${height + 26}` : `0 0 ${width} ${height}`} className={styles.svg} style={{ maxWidth: width, minWidth: Math.round(width * MIN_SCALE) }} role="img" aria-label={summary} {...focusTarget("device")}>
+        {marks && <Marks xs={[lx, BODY_X + BODY_W / 2, rx]} y={-12} />}
         {/* body */}
         <path d={`M ${BODY_X} ${TOP} L ${BODY_X + BODY_W} ${TOP + inset} L ${BODY_X + BODY_W} ${TOP + bodyH - inset} L ${BODY_X} ${TOP + bodyH} Z`} className={styles.body} />
         <text x={BODY_X + BODY_W / 2} y={device === "mux" ? TOP + inset + 20 : TOP + bodyH / 2 + 6} textAnchor="middle" className={styles.name}>
