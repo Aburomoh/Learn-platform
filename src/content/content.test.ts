@@ -755,6 +755,24 @@ describe("content registry", () => {
     expect(point.questions[0].variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["326.4", "161.6"]);
   });
 
+  it("analysis exercises (#317): equations, tables and diagrams as machine-worked in the pack (ch5-partii §6)", () => {
+    const x = getActivity(COURSE, "analysis", "analysis-exercises")!.activity;
+    const [na, nb, table, diagram] = x.questions;
+    const sig = (q: typeof na) => q.variants.map(({ spec }) => (spec.kind === "expression" ? mintermsOf(parseBool(spec.target!, { vars: spec.vars }), spec.vars) : []));
+    expect(sig(na)).toEqual([[1, 3, 4, 5], [3, 4, 5, 6, 7], [1]]); // JK, T, s.54 (A′B)
+    expect(sig(nb)).toEqual([[1, 5, 6, 7], [1, 2, 4, 5], [0]]); // s.54: A′B′
+    const next = table.variants.map(({ spec }) => {
+      if (spec.kind !== "truth-table") throw new Error("expected a truth table");
+      const [a, b] = spec.columns.map((c) => columnTruth(spec, c));
+      return a.map((v, r) => `${v}${b[r]}`).join(" ");
+    });
+    expect(next[0]).toBe("00 11 00 10 10 11 01 01"); // s.32 rows
+    expect(next[1]).toBe("00 01 01 10 11 11 10 10"); // s.53 rows
+    expect(next[2]).toBe("00 00 11 01 00 00 10 10 00 00 11 01 00 00 11 11"); // s.31 (A B x y)
+    const edges = diagram.variants.map(({ spec }) => (spec.kind === "state-diagram" ? transitions(spec).map((t) => `${t.from}-${t.label}-${t.to}`).join(" ") : ""));
+    expect(edges[0]).toBe("00-0-00 00-1-11 01-0-00 01-1-10 10-0-10 10-1-11 11-0-01 11-1-01");
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -775,7 +793,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap", "dr.q.point"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap", "dr.q.point", "an.q.ex-diagram"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
