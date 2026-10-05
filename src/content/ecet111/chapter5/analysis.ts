@@ -427,7 +427,8 @@ export const analysisTopic: TopicInput = {
   id: "analysis",
   title: "Analysing clocked circuits",
   summary: "From a circuit to its behaviour, one stage at a time: input equations, state equations, the state table.",
-  preview: "DA = Ax + Bx → A(t+1) = Ax + Bx",
+  // a structure, not an equation: DA = Ax + Bx is the first practice's answer
+  preview: "gates → flip-flops → feedback",
   // the card shows the circuit's structure; its equations read "?" because finding them is the first practice
   meet: {
     figure: { type: "sequential", input: "x", flipFlops: [{ name: "A", ff: "d", equations: ["DA = ?"] }, { name: "B", ff: "d", equations: ["DB = ?"] }] },
