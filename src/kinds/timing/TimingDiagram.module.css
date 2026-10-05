@@ -1,0 +1,209 @@
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* names column + the scrolling diagram, in one sunken well */
+.well {
+  display: flex;
+  max-width: 100%;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunk);
+}
+
+.names {
+  flex: none;
+  display: grid;
+  grid-auto-rows: var(--row);
+  row-gap: var(--gap);
+  align-items: center;
+  padding-top: var(--top);
+  padding-right: var(--space-2);
+}
+
+.name {
+  display: grid;
+  line-height: 1.1;
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.initial {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.scroll {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.scroll[data-fade="end"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+
+.scroll[data-fade="start"] {
+  mask-image: linear-gradient(to left, #000 calc(100% - 24px), transparent);
+}
+
+.scroll[data-fade="both"] {
+  mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+}
+
+.svg {
+  display: block;
+}
+
+.halo {
+  fill: var(--focus-halo);
+}
+
+.levelMark text,
+.edgeNumber {
+  font-size: 12px;
+  fill: var(--text-muted);
+}
+
+.edgeNow {
+  fill: var(--text);
+  font-weight: 700;
+}
+
+.guide {
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+
+.triangle {
+  fill: var(--text);
+}
+
+.wave {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+/* the student's output: thicker, in the signal colour */
+.output {
+  fill: none;
+  stroke: var(--signal-high);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.unknown {
+  font-size: 16px;
+  font-weight: 700;
+  fill: var(--accent);
+}
+
+/* hint rung 5: hidden until the tutor points at it */
+.edgeDots {
+  visibility: hidden;
+}
+
+.edgeDots:global(.tutor-highlight),
+.edgeDots:global(.tutor-focus) {
+  visibility: visible;
+  outline: none;
+  box-shadow: none;
+}
+
+.edgeDots circle {
+  fill: var(--accent);
+}
+
+.edgeDots text {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--accent);
+}
+
+/* ---- answer: one 0/1 segmented control per output, then Check ---- */
+.answer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+}
+
+.choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-width: 0;
+}
+
+.choiceName {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.segments {
+  display: inline-flex;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.segment {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  background: var(--surface);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.segment + .segment {
+  border-left: 2px solid var(--accent);
+}
+
+.segment input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* chosen: filled, with an inset ring, not colour alone */
+.segmentOn {
+  background: var(--accent);
+  color: var(--surface);
+  box-shadow: inset 0 0 0 3px var(--surface);
+}
+
+.segment:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: -3px;
+}
+
+.segment:has(input:disabled) {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.wrong .segments {
+  border-color: var(--error);
+}
+
+.cross {
+  font-size: 14px;
+  line-height: 1;
+  color: var(--error);
+}

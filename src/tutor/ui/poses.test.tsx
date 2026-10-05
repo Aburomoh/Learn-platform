@@ -26,7 +26,7 @@ describe("tutor pose table (#354, DESIGN_SYSTEM.md Tutor area)", () => {
   it("maps every expression, and welcome, to a pose", () => {
     expect(table).not.toBeNull();
     for (const key of KEYS) expect(table.poses[key], key).toBeTruthy();
-    expect(table.poses.curious).toBe("focus");
+    expect(table.poses.curious).toBe("curious"); // predict-first prompts (#378)
     expect(table.poses.concern).toBe("try_again");
     expect(table.poses.pleased).toBe("correct");
   });

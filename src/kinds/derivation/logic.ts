@@ -22,6 +22,8 @@ export const LAW_NAMES: Record<LawId, string> = {
   absorb: "A + AB = A",
   "absorb-not": "A + A′B = A + B",
   "de-morgan": "De Morgan",
+  xor: "A′B + AB′ = A ⊕ B",
+  xnor: "AB + A′B′ = (A ⊕ B)′",
 };
 
 /**

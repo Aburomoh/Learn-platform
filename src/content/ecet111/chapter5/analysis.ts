@@ -1,0 +1,157 @@
+/**
+ * DEMO / NOT AUTHORITATIVE COURSE CONTENT — pending instructor approval.
+ * ECET 111 Chapter 5 Part II, analysis of clocked circuits (content pack ch5-partii §2–5), one stage
+ * per activity, as the course map asks. Every set is a worked circuit with its answer on the slides
+ * (D s.8–13, JK s.16–23, T s.24–30, three JK s.37–39); the posed JK circuit of s.14–15 waits for the
+ * owner (DECISIONS S1). Answers are graded by equivalence (Boolean module), so any correct form counts.
+ */
+import type { CourseInput, VariantInput } from "../../schema";
+
+type TopicInput = CourseInput["modules"][number]["topics"][number];
+type Activity = TopicInput["activities"][number];
+
+const show = (t: string) => t.replace(/'/g, "′");
+
+/** A worked circuit: its wiring in words, its input and output equations, and its state equations. */
+interface Circuit {
+  id: string;
+  name: string;
+  /** State variables then the input, as the table orders them. */
+  vars: string[];
+  /** The flip-flop inputs, in table order: [label, equation, the wiring in words]. */
+  inputs: [string, string, string][];
+  output?: [string, string, string];
+  /** Next-state equations A(t+1), B(t+1) as on the slides. */
+  next: string[];
+}
+
+export const CIRCUITS: Circuit[] = [
+  {
+    id: "cd",
+    name: "D flip-flops (s.8–13)",
+    vars: ["A", "B", "x"],
+    inputs: [
+      ["DA", "Ax + Bx", "an OR gate fed by AND(A, x) and AND(B, x)"],
+      ["DB", "A'x", "an AND gate fed by A′ and x"],
+    ],
+    output: ["y", "(A + B)x'", "an AND gate fed by OR(A, B) and x′"],
+    next: ["Ax + Bx", "A'x"],
+  },
+  {
+    id: "cjk",
+    name: "JK flip-flops (s.16–23)",
+    vars: ["A", "B", "x"],
+    inputs: [
+      ["JA", "B", "the wire from B"],
+      ["KA", "Bx'", "an AND gate fed by B and x′"],
+      ["JB", "x'", "the input through an inverter, x′"],
+      ["KB", "A ⊕ x", "an XOR gate fed by A and x"],
+    ],
+    next: ["A'B + AB' + Ax", "B'x' + ABx + A'Bx'"],
+  },
+  {
+    id: "ct",
+    name: "T flip-flops (s.24–30)",
+    vars: ["A", "B", "x"],
+    inputs: [
+      ["TA", "Bx", "an AND gate fed by B and x"],
+      ["TB", "x", "the input x directly"],
+    ],
+    output: ["y", "AB", "an AND gate fed by A and B"],
+    next: ["AB' + Ax' + A'Bx", "x ⊕ B"],
+  },
+];
+
+/** The three-JK circuit's output (s.37–39), the third set of the output question. */
+const THREE_JK_OUTPUT: { vars: string[]; output: [string, string, string] } = { vars: ["A", "B", "C", "x"], output: ["y", "x + B'", "an OR gate fed by x and B′"] };
+
+const wiring = (c: Circuit) => c.inputs.map(([label, , words]) => `${label} comes from ${words}`).join("; ");
+
+/* ---------- stage 1 (#312): input and output equations, read from the circuit ---------- */
+
+/** Which flip-flop input each set asks: not the first, so the student reads past the obvious wire. */
+const ASKED_INPUT = [0, 1, 0];
+
+function inputVariant(c: Circuit, i: number): VariantInput {
+  const [label, expr, words] = c.inputs[ASKED_INPUT[i]];
+  return {
+    id: c.id,
+    prompt: `A clocked circuit with ${c.name.split(" (")[0]} A and B and input x. ${wiring(c)}. Write the input equation ${label} = …`,
+    spec: { kind: "expression", vars: c.vars, target: expr },
+    hints: [
+      { rung: 2, text: `Not yet. Follow the wire into ${label} back to its gate.` },
+      { rung: 3, text: "Name the gate first, then its inputs." },
+      { rung: 4, text: "An AND gate gives a product, an OR gate a sum, an inverter a prime." },
+      { rung: 9, text: `${label} = ${show(expr)}.` },
+    ],
+    misconceptions: [
+      { id: "ex.and-or", title: "AND and OR exchanged", nudgeKey: "expr.and-or-swapped", detect: { type: "expression-and-or-swapped" } },
+      { id: "ex.unreadable", title: "Unreadable", nudgeKey: "expr.unreadable", detect: { type: "expression-unreadable" } },
+    ],
+    explanation: [
+      { id: "s1", say: "Stage 1 reads each flip-flop input from the gates that drive it: one equation per input." },
+      // ask first, name the gate after (Pedagogy on #413)
+      {
+        id: "s2",
+        say: `Follow ${label} back from the flip-flop.`,
+        ask: { prompt: "Which gate is last before the flip-flop input?", options: i % 2 ? ["not a gate", words.split(" ")[1]] : [words.split(" ")[1], "not a gate"], correctIndex: i % 2, afterCorrect: `Right: ${words}.`, afterWrong: `It is ${words}.` },
+      },
+      { id: "s3", say: `So ${label} = ${show(expr)}.` },
+    ],
+  };
+}
+
+function outputVariant(set: { id: string; vars: string[]; output: [string, string, string] }, i: number): VariantInput {
+  const [label, expr, words] = set.output;
+  return {
+    id: set.id,
+    prompt: `The circuit's output ${label} comes from ${words}. Write ${label} = …`,
+    spec: { kind: "expression", vars: set.vars, target: expr },
+    hints: [
+      { rung: 2, text: `Not yet. Follow ${label} back to its gate, then to that gate's inputs.` },
+      { rung: 3, text: "Write the inner gate first, then the outer one around it." },
+      { rung: 9, text: `${label} = ${show(expr)}.` },
+    ],
+    misconceptions: [
+      { id: "ex.and-or", title: "AND and OR exchanged", nudgeKey: "expr.and-or-swapped", detect: { type: "expression-and-or-swapped" } },
+      { id: "ex.unreadable", title: "Unreadable", nudgeKey: "expr.unreadable", detect: { type: "expression-unreadable" } },
+    ],
+    explanation: [
+      { id: "s1", say: "The output is read the same way: from the gates that drive it." },
+      {
+        id: "s2",
+        say: `${label} comes from ${words}.`,
+        ask: { prompt: "Does the output depend on x here?", options: i % 2 ? ["No", "Yes"] : ["Yes", "No"], correctIndex: expr.includes("x") === (i % 2 === 0) ? 0 : 1, afterCorrect: "Right.", afterWrong: expr.includes("x") ? "Yes: x feeds its gate." : "No: only the flip-flops feed it." },
+      },
+      { id: "s3", say: `So ${label} = ${show(expr)}.` },
+    ],
+  };
+}
+
+const OUTPUT_SETS = [
+  { id: "od", vars: CIRCUITS[0].vars, output: CIRCUITS[0].output! },
+  { id: "ot", vars: CIRCUITS[2].vars, output: CIRCUITS[2].output! },
+  { id: "o3jk", ...THREE_JK_OUTPUT },
+];
+
+export const analysisInputsActivity: Activity = {
+  id: "analysis-inputs",
+  title: "Analysis 1: input and output equations",
+  summary: "Read each flip-flop input, and the output, from the gates that drive it.",
+  authority: "DEMO",
+  minutes: 10,
+  questions: [
+    { id: "an.q.input", label: "Input equation", conceptId: "an.analysis", objectiveId: "an.obj.inputs", variants: CIRCUITS.map((c, i) => inputVariant(c, i)) },
+    { id: "an.q.output", label: "Output equation", conceptId: "an.analysis", objectiveId: "an.obj.inputs", variants: OUTPUT_SETS.map((s, i) => outputVariant(s, i)) },
+  ],
+};
+
+export const analysisTopic: TopicInput = {
+  id: "analysis",
+  title: "Analysing clocked circuits",
+  summary: "From a circuit to its behaviour, one stage at a time: input equations, state equations, the state table.",
+  preview: "DA = Ax + Bx → A(t+1) = Ax + Bx",
+  concepts: [{ id: "an.analysis", title: "Analysis", summary: "Input equations from the gates; state equations from the characteristic equations; the state table row by row." }],
+  objectives: [{ id: "an.obj.inputs", conceptId: "an.analysis", text: "Read the flip-flop input equations and the output equation from a circuit." }],
+  activities: [analysisInputsActivity],
+};
