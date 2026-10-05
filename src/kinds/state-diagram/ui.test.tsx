@@ -151,6 +151,19 @@ describe("a long state table on a phone (#468)", () => {
     expect(screen.getByRole("button", { name: "Show only the rows of 000" })).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("with more than 8 arrows the arrows still to come are not drawn; the ring is tight enough for a phone", async () => {
+    render(<Harness variant={jk} />);
+    await screen.findByText(/^Arrow 1 of 16: 000 →/);
+    // only the active arrow: no dashed preview of the other fifteen
+    expect(arrows()).toHaveLength(1);
+    expect(arrows()[0]).toMatch(/^000>\d{3}:active$/);
+    // a 3 × 3 ring, circles 130 units apart
+    const ring: [number, number][] = [[0, 0], [1, 0], [2, 0], [2, 1], [2, 2], [1, 2], [0, 2], [0, 1]];
+    const { at, spacing } = statePositions(ring);
+    expect(spacing).toBe(130);
+    expect(Math.max(...at.map((p) => p.x)) - Math.min(...at.map((p) => p.x))).toBe(260);
+  });
+
   it("a four-state table is always whole: no toggle", async () => {
     render(<Harness variant={labelV} />);
     await screen.findByText("Arrow 1 of 8: 00 → 00");
