@@ -1,0 +1,39 @@
+/* the diagram with its state table beside it (below it on phones) */
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.layout > :first-child {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.table {
+  flex: none;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.table th,
+.table td {
+  min-width: 44px;
+  height: 32px;
+  padding: 0 var(--space-2);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.table th {
+  font-weight: 700;
+  border-bottom: 2px solid var(--text-muted);
+  white-space: nowrap;
+}
+
+/* a new present state every two rows */
+.table tbody tr:nth-child(2n + 1) td {
+  border-top: 1px solid var(--text-muted);
+}
