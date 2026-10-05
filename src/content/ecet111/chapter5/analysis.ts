@@ -70,16 +70,14 @@ const typeOf = (c: Circuit) => (c.inputs[0][0].startsWith("D") ? "D" : c.inputs[
 
 /**
  * The circuit at block level (#454, plan §5): one flip-flop per state variable with its input
- * equations, the asked one in focus. `known` shows the equations (stage 2); stage 1 asks for them, so "?".
+ * equations, the asked one in focus (state equations; input equations draw their gates, #489).
  */
-function circuitFigure(c: Circuit, focus: string, known: boolean): VariantInput["figure"] {
+function circuitFigure(c: Circuit, focus: string): VariantInput["figure"] {
   const ff = typeOf(c).toLowerCase() as "d" | "jk" | "t";
   const states = c.vars.slice(0, -1);
-  const flipFlops = states.map((name) => ({ name, ff, equations: c.inputs.filter(([label]) => label.endsWith(name)).map(([label, expr]) => `${label} = ${known ? show(expr) : "?"}`) }));
+  const flipFlops = states.map((name) => ({ name, ff, equations: c.inputs.filter(([label]) => label.endsWith(name)).map(([label, expr]) => `${label} = ${show(expr)}`) }));
   return { type: "sequential", input: c.vars.at(-1), flipFlops, focus };
 }
-
-const wiring = (c: Circuit) => c.inputs.map(([label, , words]) => `${label} comes from ${words}`).join("; ");
 
 /* ---------- stage 1 (#312): input and output equations, read from the circuit ---------- */
 
@@ -90,9 +88,10 @@ function inputVariant(c: Circuit, i: number): VariantInput {
   const [label, expr, words] = c.inputs[ASKED_INPUT[i]];
   return {
     id: c.id,
-    prompt: `A clocked circuit with ${c.name.split(" (")[0]} A and B and input x. ${wiring(c)}. Write the input equation ${label} = …`,
+    // the gates are drawn (#489); the sentence stays as their text alternative, one line
+    prompt: `A clocked circuit with ${c.name.split(" (")[0]} A and B and input x. ${label} comes from ${words}. Write the input equation ${label} = …`,
     spec: { kind: "expression", vars: c.vars, target: expr },
-    figure: circuitFigure(c, label.slice(-1), false),
+    figure: { type: "gates", output: label, expr, vars: c.vars },
     hints: [
       { rung: 2, text: `Not yet. Follow the wire into ${label} back to its gate.` },
       { rung: 3, text: "Name the gate first, then its inputs." },
@@ -122,6 +121,7 @@ function outputVariant(set: { id: string; vars: string[]; output: [string, strin
     id: set.id,
     prompt: `The circuit's output ${label} comes from ${words}. Write ${label} = …`,
     spec: { kind: "expression", vars: set.vars, target: expr },
+    figure: { type: "gates", output: label, expr, vars: set.vars }, // drawn gates (#489)
     hints: [
       { rung: 2, text: `Not yet. Follow ${label} back to its gate, then to that gate's inputs.` },
       { rung: 3, text: "Write the inner gate first, then the outer one around it." },
@@ -176,7 +176,7 @@ function stateVariant(c: Circuit, ff: 0 | 1, i: number): VariantInput {
     id: c.id,
     prompt: `${c.name.split(" (")[0]}, with ${own}. Substitute into the characteristic equation and write ${v}(t+1) in A, B and x.`,
     spec: { kind: "expression", vars: c.vars, target: c.next[ff] },
-    figure: circuitFigure(c, v, true),
+    figure: circuitFigure(c, v),
     hints: [
       { rung: 2, text: `Not yet. Start from the ${type} characteristic equation, with ${v} in place of Q.` },
       { rung: 3, text: `${CHAR[type]}: put ${v} for Q and ${own} for the inputs.` },

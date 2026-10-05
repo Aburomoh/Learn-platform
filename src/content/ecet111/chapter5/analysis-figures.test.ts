@@ -6,8 +6,10 @@ const summary = (activity: string, id: string) =>
   question(activity, id).variants.map(({ figure: f }) => (f?.type === "sequential" ? `${f.focus}: ${f.flipFlops.map((x) => x.equations.join(", ")).join(" | ")}` : ""));
 
 describe("Chapter 5 analysis figures (#454)", () => {
-  it("input-equation questions show the circuit with every input equation still to find, the asked flip-flop in focus", () => {
-    expect(summary("analysis-inputs", "an.q.input")).toEqual(["A: DA = ? | DB = ?", "A: JA = ?, KA = ? | JB = ?, KB = ?", "A: TA = ? | TB = ?"]);
+  it("input- and output-equation questions draw the gates that drive the asked pin (#489)", () => {
+    const gates = (id: string) => question("analysis-inputs", id).variants.map(({ figure: f, spec }) => (f?.type === "gates" && spec.kind === "expression" && f.expr === spec.target ? `${f.output} = ${f.expr}` : ""));
+    expect(gates("an.q.input")).toEqual(["DA = Ax + Bx", "KA = Bx'", "TA = Bx"]);
+    expect(gates("an.q.output")).toEqual(["y = (A + B)x'", "y = AB", "y = x + B'"]);
   });
 
   it("state-equation questions show the input equations, the asked flip-flop in focus", () => {
