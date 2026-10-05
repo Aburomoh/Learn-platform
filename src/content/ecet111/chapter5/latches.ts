@@ -53,8 +53,9 @@ function nandVariant([set, reset, q]: [Bit, Bit, Bit], k: number): VariantInput 
   else if (activeHigh !== right) misconceptions.push({ id: "lt.active-high", title: "Set and Reset read as active high", nudgeKey: "lt.active-high", detect: { type: "option", optionId: activeHigh } });
   return {
     id: `n${set}${reset}${q}`,
-    prompt: `A NAND SR latch holds Q = ${q}. Now Set = ${set} and Reset = ${reset}. What happens to Q?`,
-    spec: { kind: "multiple-choice", options: outcomeOptions(k + 1), correctOptionId: right },
+    prompt: `This NAND SR latch holds Q = ${q}. Now S (Set) = ${set} and R (Reset) = ${reset}. What happens to Q?`,
+    // the latch drawn above the question, outputs shown once answered (#440)
+    spec: { kind: "multiple-choice", options: outcomeOptions(k + 1), correctOptionId: right, context: { type: "latch", latch: "nand-sr", values: { s: set, r: reset, q } } },
     hints: [
       { rung: 2, text: "Not yet. On the NAND latch, Set and Reset act when they are 0, not 1." },
       { rung: 3, text: "Set = 0 makes Q = 1; Reset = 0 makes Q = 0; both at 1 keeps Q." },
@@ -85,8 +86,8 @@ function gatedVariant([en, s, r, q]: [Bit, Bit, Bit, Bit], k: number): VariantIn
   const ignored = gatedLatch(1, s, r, q); // the inputs applied as if En were 1
   return {
     id: `g${en}${s}${r}${q}`,
-    prompt: `A gated SR latch holds Q = ${q}. Now En = ${en}, S = ${s} and R = ${r}. What is Q?`,
-    spec: { kind: "multiple-choice", options: outcomeOptions(k + 2), correctOptionId: right },
+    prompt: `This gated SR latch holds Q = ${q}. Now En = ${en}, S = ${s} and R = ${r}. What is Q?`,
+    spec: { kind: "multiple-choice", options: outcomeOptions(k + 2), correctOptionId: right, context: { type: "latch", latch: "gated-sr", values: { s, r, q, en } } },
     hints: [
       { rung: 2, text: "Not yet. Look at En first." },
       { rung: 3, text: "En = 0 blocks S and R: the latch keeps its value. En = 1 lets them act: S sets, R resets." },

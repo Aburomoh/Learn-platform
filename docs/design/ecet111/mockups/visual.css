@@ -1,0 +1,26 @@
+/* ECET 111 visual system mock-ups (symbol cards, figures in context). Proposed only. */
+.vs-gallery { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.vs-card { background: var(--surface); border-radius: var(--radius-lg); padding: var(--space-4); display: grid; gap: var(--space-3); align-content: start; }
+.vs-fig { background: var(--surface-sunk); border-radius: var(--radius-md); padding: var(--space-3); display: grid; place-items: center; min-height: 190px; }
+.vs-name { font-size: var(--text-md); margin: 0; }
+.vs-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.vs-chip { font: 600 var(--text-xs) var(--font-mono); background: var(--surface-2); border-radius: var(--radius-sm); padding: 4px 8px; }
+
+.vs-topic { padding: var(--space-6); display: grid; gap: var(--space-6); }
+.vs-meet { display: grid; gap: var(--space-3); }
+.vs-callouts { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); font-size: var(--text-sm); }
+.vs-callouts li { display: flex; gap: var(--space-2); align-items: baseline; }
+.vs-callouts b { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 12px; display: inline-grid; place-items: center; }
+
+.vs-two { display: grid; gap: var(--space-5); }
+.vs-two .well { display: grid; place-items: center; }
+.vs-opts { display: grid; gap: var(--space-2); }
+.vs-opt { display: flex; align-items: center; gap: var(--space-3); min-height: 44px; padding: 0 var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-md); font: 600 var(--text-base) var(--font-mono); background: var(--surface); }
+.vs-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--text-muted); flex: none; }
+.vs-rowon td { box-shadow: inset 0 2px 0 var(--accent), inset 0 -2px 0 var(--accent); }
+
+@media (min-width: 900px) {
+  .vs-topic { grid-template-columns: minmax(0, 1fr) minmax(0, 420px); align-items: center; }
+  .vs-two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+}
+@media (max-width: 640px) { .vs-topic { padding: var(--space-4); } }
