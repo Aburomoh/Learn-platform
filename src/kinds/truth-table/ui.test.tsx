@@ -76,3 +76,33 @@ describe("truth-table kind in the stage (#217)", () => {
     expect(screen.getAllByRole("row")[2]).toHaveTextContent(/^01101$/);
   });
 });
+
+describe("state-table headers (#440)", () => {
+  it("draws the input groups over the input columns, before the column groups", async () => {
+    const table = VariantSchema.parse({
+      id: "v-state",
+      prompt: "Fill the next state.",
+      spec: {
+        kind: "truth-table",
+        inputs: ["A", "B", "x"],
+        inputGroups: [
+          { label: "Present state", span: 2 },
+          { label: "Input", span: 1 },
+        ],
+        columns: [
+          { id: "da", label: "DA", expr: "Ax + Bx", group: "Flip-flop inputs", given: true },
+          { id: "an", label: "A", expr: "Ax + Bx", group: "Next state" },
+        ],
+      },
+      hints: [{ rung: 2, text: "Not yet." }],
+      explanation: [
+        { id: "s1", say: "One." },
+        { id: "s2", say: "Two." },
+      ],
+    });
+    render(<QuestionView variant={table} last={undefined} stepIndex={0} locked={false} explanation={null} onSubmit={() => {}} onPredict={() => {}} onContinue={() => {}} />);
+    await screen.findByRole("grid");
+    const bands = screen.getAllByRole("row")[0].querySelectorAll("th");
+    expect([...bands].map((th) => `${th.textContent}:${th.colSpan}`)).toEqual(["Present state:2", "Input:1", "Flip-flop inputs:1", "Next state:1"]);
+  });
+});

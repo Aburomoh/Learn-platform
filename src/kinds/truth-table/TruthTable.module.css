@@ -92,6 +92,7 @@
 
 /* Now: the halo behind the active column */
 .head.now,
+.row:nth-child(even) .cell.now,
 .cell.now {
   background: var(--focus-halo);
 }
@@ -149,6 +150,85 @@
   color: var(--text-muted);
 }
 
+/* mux-pairs: a cell per pair of rows; pairs are banded two rows at a time */
+.pair {
+  min-width: 84px;
+  padding: 0 var(--space-3);
+  white-space: nowrap;
+}
+
+.table:has(.pair) .row .cell {
+  background: none;
+}
+
+.table:has(.pair) .pairBand .cell,
+.table:has(.pair) .row:has(+ .pairBand) .pair {
+  background: color-mix(in srgb, var(--surface-2) 45%, transparent);
+}
+
+.table:has(.pair) .row .cell.now,
+.table:has(.pair) .pairBand .cell.now {
+  background: var(--focus-halo);
+}
+
 .actions {
   display: flex;
+}
+
+/* answer chips (mux-pairs): one radiogroup, 48 px targets */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-width: 0;
+}
+
+.chip {
+  display: grid;
+  place-items: center;
+  min-width: 56px;
+  height: 48px;
+  padding: 0 var(--space-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-size: var(--text-md);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* chosen: filled with an inset ring, not colour alone */
+.chipOn {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--surface);
+  box-shadow: inset 0 0 0 3px var(--surface);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.chip:has(input:disabled) {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.answer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
 }
