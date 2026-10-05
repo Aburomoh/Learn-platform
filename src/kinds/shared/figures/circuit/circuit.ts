@@ -114,3 +114,18 @@ export function circuitFromExpression(expr: BoolExpr, output: string): CircuitSh
   last.label = output;
   return { inputs, gates, outputGateId: last.id };
 }
+
+/**
+ * The wiring in words, from the output back: "an OR gate fed by AND(A, x) and AND(B, x)". It names
+ * gates and connections, as the drawing does, and never the simplified expression.
+ */
+export function describeWiring(circuit: CircuitShape): string {
+  const signal = (id: string): string => {
+    const input = circuit.inputs.find((i) => i.id === id);
+    if (input) return input.label;
+    const g = circuit.gates.find((x) => x.id === id)!;
+    return `${g.type}(${g.from.map(signal).join(", ")})`;
+  };
+  const out = circuit.gates.find((g) => g.id === circuit.outputGateId)!;
+  return `${/^[AO]/.test(out.type) ? "an" : "a"} ${out.type} gate fed by ${out.from.map(signal).join(" and ")}`;
+}
