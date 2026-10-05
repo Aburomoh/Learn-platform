@@ -20,7 +20,7 @@ export function Practice({ variant, prompt, state, last, locked, onSubmit }: Pra
     );
   return (
     <>
-      <ContextView id={`${variant.id}-ctx`} context={spec.context} />
+      <ContextView id={`${variant.id}-ctx`} context={spec.context} revealed={locked && state === "correct"} />
       <NumericInput
         id={variant.id}
         prompt={prompt}
