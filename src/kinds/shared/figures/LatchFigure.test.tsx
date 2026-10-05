@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { LatchFigure } from "./LatchFigure";
-import { NumericContext } from "./contextSpec";
+import { NumericContext } from "../contextSpec";
 import { latchAfter } from "./latch";
 
 const texts = () => [...screen.getByRole("img").querySelectorAll("text")].map((t) => t.textContent);

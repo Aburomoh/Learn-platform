@@ -1,0 +1,128 @@
+/* One style sheet for every figure (ADR-0009): a sunk well, 2 px strokes, 16-unit text (12 px at the smallest scale). */
+.well {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunk);
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.center {
+  margin-inline: auto;
+}
+
+.body {
+  fill: var(--surface);
+  stroke: var(--text);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 700;
+  fill: var(--text);
+}
+
+/* ---- block symbols: a line is a pin with its name and value ---- */
+.line path {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 2;
+}
+
+.line text {
+  font-size: 16px;
+  fill: var(--text);
+}
+
+.value {
+  font-weight: 700;
+}
+
+/* result: signal colour, thicker, with its value printed (never colour alone) */
+.on path {
+  stroke: var(--signal-high);
+  stroke-width: 3.5;
+}
+
+.on text {
+  fill: var(--signal-high);
+  font-weight: 700;
+}
+
+.path {
+  fill: none;
+  stroke: var(--signal-high);
+  stroke-width: 3.5;
+  stroke-dasharray: 7 5;
+}
+
+/* tapping a line picks it, same as its chip */
+.live {
+  cursor: pointer;
+}
+
+.hit {
+  fill: transparent;
+  stroke: none;
+}
+
+.picked path {
+  stroke: var(--accent);
+  stroke-width: 3.5;
+}
+
+.picked text {
+  font-weight: 700;
+  fill: var(--accent);
+}
+
+/* focus: the halo behind one pin, with a bold name (never colour alone) */
+.focus .hit {
+  fill: var(--focus-halo);
+}
+
+.focus text {
+  font-weight: 700;
+}
+
+/* ---- gate-level figures: wires, branch dots, mono labels ---- */
+.wire {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.junction {
+  fill: var(--text);
+}
+
+.label {
+  fill: var(--text);
+  font-family: var(--font-mono);
+  font-size: 16px;
+}
+
+.high {
+  fill: var(--signal-high);
+  font-weight: 700;
+}
+
+/* ---- the figure of a question (FigureView): above the answer, and no taller than 220 px on phones ---- */
+.figure {
+  min-width: 0;
+}
+
+@media (max-width: 899px) {
+  .figure .svg {
+    max-height: 220px;
+  }
+}

@@ -1,5 +1,5 @@
 import { latchAfter, type LatchType, type LatchValues } from "./latch";
-import styles from "./LatchFigure.module.css";
+import styles from "./figures.module.css";
 
 export interface LatchFigureProps {
   id: string;
@@ -40,8 +40,8 @@ export function LatchFigure({ id, latch, values, revealed = false }: LatchFigure
   const given = [`S = ${values.s}`, `R = ${values.r}`, ...(gated ? [`En = ${values.en}`] : []), `Q = ${values.q}`].join(", ");
   const result = revealed ? ` Now Q = ${after.q} and Q′ = ${after.qn}.` : "";
   return (
-    <div className={styles.root} data-diagram={id}>
-      <svg className={styles.svg} viewBox="0 -10 300 210" role="img" aria-label={`${gated ? ALT_GATED : ALT} Given: ${given}.${result}`}>
+    <div className={styles.well} data-diagram={id}>
+      <svg className={`${styles.svg} ${styles.center}`} style={{ minWidth: 225, maxWidth: 420 }} viewBox="0 -10 300 210" role="img" aria-label={`${gated ? ALT_GATED : ALT} Given: ${given}.${result}`}>
         {gated ? (
           <>
             {/* S and R into the input NANDs; En branches to both */}

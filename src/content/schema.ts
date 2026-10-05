@@ -5,6 +5,7 @@
  */
 import { z } from "zod";
 import { GateType } from "@/kinds/circuit-predict/spec";
+import { FigureSpec } from "@/kinds/shared/figures/figureSpec";
 import { kindDetectors, kindSpecs } from "@/kinds/specs";
 import { id, template } from "./primitives";
 
@@ -89,6 +90,8 @@ export const VariantSchema = z.object({
   id,
   prompt: template,
   spec: InteractionSpec,
+  /** The device or circuit the question is about, drawn by the stage for any kind (ADR-0009). */
+  figure: FigureSpec.optional(),
   /** Values for `{name}` slots in templates (hints, steps, messages). */
   vars: z.record(z.string(), z.union([z.string(), z.number()])).default({}),
   hints: z.array(HintSchema).min(1),

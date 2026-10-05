@@ -22,7 +22,7 @@ device is drawn. **One goal per entry of `asks`:** the student picks a line. Ans
 - Step vars: `given` ("S1 = 1, S0 = 0", or "I6" for an encoder), `codeBits`, `answerName`,
   `deviceSize` ("3-to-8"), `askCount`, `stepNumber`.
 
-## View (`ui.tsx`, `DeviceDiagram.tsx`; representations §8)
+## View (`ui.tsx`, `DeviceDiagram.tsx`; the block is `shared/figures/DeviceFigure`, ADR-0009; representations §8)
 
 - **Block:** a rectangle labelled "3→8 DEC" / "8→3 ENC", or the slides' trapezoid "4→1 MUX".
   Inputs on the left, outputs on the right; a mux's selects enter from the bottom.
