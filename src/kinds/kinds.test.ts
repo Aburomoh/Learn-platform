@@ -27,6 +27,9 @@ describe("kind registry (ADR-0008)", () => {
       numeric: () => import("./numeric/ui"),
       "place-value": () => import("./place-value/ui"),
       "repeated-division": () => import("./repeated-division/ui"),
+      device: () => import("./device/ui"),
+      timing: () => import("./timing/ui"),
+      "state-diagram": () => import("./state-diagram/ui"),
       "truth-table": () => import("./truth-table/ui"),
     };
     expect(Object.keys(modules).sort()).toEqual(names);

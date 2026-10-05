@@ -30,20 +30,21 @@ export function terms(expr: string): string[] {
 /**
  * The derivation so far (#198 §4): one numbered line per step in mono, the law muted on the right
  * (under the line on phones). The line being worked on is an empty dashed slot with the halo;
- * later lines show only "…". Drawing only: the goals are asked by the controls below it.
+ * the lines still to come are one dimmed row ("… 7 more lines"), so a long derivation does not push
+ * the question off a phone's screen (#438). Drawing only: the goals are asked by the controls below.
  */
 export function DerivationLines({ id, rows }: { id: string; rows: DerivationRow[] }) {
+  const shown = rows.filter((r) => r.state !== "later");
+  const later = rows.length - shown.length;
   return (
     <ol className={styles.root} data-diagram={id} aria-label="Derivation" {...focusTarget("derivation")}>
-      {rows.map((r, i) => (
+      {shown.map((r, i) => (
         <li key={i} className={styles.line} data-state={r.state} aria-current={r.state === "now" ? "step" : undefined} {...focusTarget(`line-${i + 1}`)}>
           <span className={styles.num} aria-hidden="true">
             {i + 1}
           </span>
           <span className={`${styles.expr} mono`}>
-            {r.state === "later" ? (
-              <span aria-label="later">…</span>
-            ) : r.expr === null ? (
+            {r.expr === null ? (
               <span className={styles.slot}>
                 next line<span className="sr-only"> (to find)</span>
               </span>
@@ -59,6 +60,14 @@ export function DerivationLines({ id, rows }: { id: string; rows: DerivationRow[
           {r.law && <span className={styles.law}>{r.law}</span>}
         </li>
       ))}
+      {later > 0 && (
+        <li className={styles.line} data-state="later">
+          <span className={styles.num} aria-hidden="true" />
+          <span className={styles.more}>
+            … {later} more {later === 1 ? "line" : "lines"}
+          </span>
+        </li>
+      )}
     </ol>
   );
 }

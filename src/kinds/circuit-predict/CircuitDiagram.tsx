@@ -24,6 +24,11 @@ export interface CircuitDiagramProps {
   activeGateId?: string;
   /** Show the output value on the final gate. */
   revealOutput?: boolean;
+  /**
+   * Expression mode (#348): the expression at each gate's output, by gate id. The diagram is then
+   * symbolic: no 0/1 values or signal colours; a lit gate shows its expression above its output.
+   */
+  expressions?: Record<string, string>;
   disabled?: boolean;
 }
 
@@ -40,7 +45,8 @@ const MIN_SCALE = 0.75;
  * (role="switch") when toggleable; gates carry data-focus-target="gate-<id>" so hints can
  * point at them.
  */
-export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], activeGateId, revealOutput = false, disabled = false }: CircuitDiagramProps) {
+export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], activeGateId, revealOutput = false, expressions, disabled = false }: CircuitDiagramProps) {
+  const symbolic = expressions !== undefined;
   const values = evaluateCircuit(spec, inputs);
   const layout = useMemo(() => layoutCircuit(spec), [spec]);
   const { viewBox } = layout;
@@ -48,6 +54,7 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
   const inputIds = new Set(spec.inputs.map((i) => i.id));
   /** A signal's value is known when it is a given input or its gate has been answered. */
   const isKnown = (id: string) => inputIds.has(id) || lit.includes(id);
+  const isOutputGate = (gateId: string) => layout.outputs.some((o) => o.gateId === gateId);
   /** During a gate walk, parts not reached yet are dimmed. */
   const walking = activeGateId !== undefined;
 
@@ -72,14 +79,15 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
         <title id={`${id}-title`}>{`Circuit with ${spec.gates.map((g) => g.type).join(", ")} gates`}</title>
         {/* wires: a signal is coloured only once its value is known and its gate has been reached */}
         {layout.wires.map((w, i) => {
-          const shown = isKnown(w.from) && (lit.includes(w.to) || lit.includes(w.from) || w.to === activeGateId);
-          const pending = walking && !shown;
+          const reached = isKnown(w.from) && (lit.includes(w.to) || lit.includes(w.from) || w.to === activeGateId);
+          const shown = reached && !symbolic;
+          const pending = walking && !reached;
           const pin = w.points[w.points.length - 1];
           return (
             <g key={`${w.from}-${w.to}-${i}`} data-wire={`${w.from}-${w.to}`} data-signal={shown ? values[w.from] : undefined} className={pending ? styles.pending : undefined}>
               <path d={w.points.map((p, k) => `${k ? "L" : "M"} ${p.x} ${p.y}`).join(" ")} className={`${styles.wire} ${shown ? (values[w.from] === 1 ? styles.wireHigh : styles.wireLow) : ""}`} />
               {w.junction && <circle cx={w.junction.x} cy={w.junction.y} r="3.5" className={`${styles.junction} ${shown && values[w.from] === 1 ? styles.junctionHigh : ""}`} />}
-              {w.to === activeGateId && (
+              {w.to === activeGateId && !symbolic && (
                 <text x={pin.x - 6} y={pin.y - 5} textAnchor="end" className={`${styles.pinValue} ${values[w.from] === 1 ? styles.valueHigh : styles.valueLow} mono`}>
                   {values[w.from]}
                 </text>
@@ -90,9 +98,10 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
         {/* one stub per output: the main one is revealed at the end, another (S of a half adder) once its gate is answered */}
         {layout.outputs.map((o) => {
           const main = o.gateId === spec.outputGateId;
-          const shown = main ? revealOutput : revealOutput || lit.includes(o.gateId);
+          const reached = main ? revealOutput : revealOutput || lit.includes(o.gateId);
+          const shown = reached && !symbolic;
           return (
-            <g key={o.gateId} className={walking && !shown ? styles.pending : undefined} data-wire={main ? "output" : `output-${o.gateId}`} data-signal={shown ? values[o.gateId] : undefined}>
+            <g key={o.gateId} className={walking && !reached ? styles.pending : undefined} data-wire={main ? "output" : `output-${o.gateId}`} data-signal={shown ? values[o.gateId] : undefined}>
               <path d={`M ${o.from.x} ${o.from.y} L ${o.to.x} ${o.to.y}`} className={`${styles.wire} ${shown ? (values[o.gateId] === 1 ? styles.wireHigh : styles.wireLow) : ""}`} />
               <text x={o.to.x + 8} y={o.to.y + 5} className={styles.label}>
                 {o.label}
@@ -106,7 +115,7 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
         {spec.inputs.map((inp) => {
           const p = layout.inputs[inp.id];
           const v = values[inp.id];
-          const common = { className: `${styles.input} ${v === 1 ? styles.inputOn : ""} ${toggleable ? styles.toggleable : ""}` };
+          const common = { className: `${styles.input} ${v === 1 && !symbolic ? styles.inputOn : ""} ${toggleable ? styles.toggleable : ""}` };
           return (
             <g
               key={inp.id}
@@ -131,12 +140,14 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
             >
               {toggleable && <rect x="-12" y="-12" width={INPUT_W + 24} height={INPUT_H + 24} className={styles.hitArea} />}
               <rect width={INPUT_W} height={INPUT_H} rx="8" className={styles.inputBox} />
-              <text x="7" y="26" className={styles.label}>
+              <text x={symbolic ? INPUT_W / 2 : 7} y="26" textAnchor={symbolic ? "middle" : undefined} className={styles.label}>
                 {inp.label}
               </text>
-              <text x="23" y="26" className={`${styles.value} ${v === 1 ? styles.valueHigh : styles.valueLow} mono`}>
-                {v}
-              </text>
+              {!symbolic && (
+                <text x="23" y="26" className={`${styles.value} ${v === 1 ? styles.valueHigh : styles.valueLow} mono`}>
+                  {v}
+                </text>
+              )}
             </g>
           );
         })}
@@ -160,9 +171,15 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
               <text x={g.type === "NOT" ? 20 : g.type === "AND" || g.type === "NAND" ? 27 : 31} y={g.type === "NOT" ? 58 : 27} textAnchor="middle" className={styles.gateLabel}>
                 {g.type}
               </text>
-              {isLit && (
+              {isLit && !symbolic && (
                 <text x={w + 6} y="14" className={`${styles.value} ${values[g.id] === 1 ? styles.valueHigh : styles.valueLow} mono`}>
                   {values[g.id]}
+                </text>
+              )}
+              {/* expression mode: the gate's expression above its output; an output gate's ends at its stub so it stays inside the drawing */}
+              {isLit && symbolic && (
+                <text x={isOutputGate(g.id) ? w + 60 : w - 6} y="-7" textAnchor={isOutputGate(g.id) ? "end" : "start"} className={`${styles.expression} mono`} data-expression={g.id}>
+                  {expressions[g.id]}
                 </text>
               )}
               {isActive && !isLit && (

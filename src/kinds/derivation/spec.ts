@@ -22,6 +22,8 @@ export const LawId = z.enum([
   "absorb",
   "absorb-not",
   "de-morgan",
+  "xor",
+  "xnor",
 ]);
 export type LawId = z.infer<typeof LawId>;
 

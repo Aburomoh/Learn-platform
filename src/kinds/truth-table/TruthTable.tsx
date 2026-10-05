@@ -34,6 +34,12 @@ export interface TruthTableProps {
   activeColumn?: number;
   /** Row-select mode: a pick column after the table; `onCheck` gets the picked rows. */
   select?: { label: string; picked?: number[] };
+  /**
+   * Mux-pairs mode (#308): a last column with one cell per pair of rows (rows 2p and 2p + 1),
+   * e.g. "I2 = z′". `values[p]` is shown for a done pair, "?" for the `active` one, nothing later.
+   * The active pair's two rows carry the halo. The answer chips live in the kind's view.
+   */
+  pairs?: { header: string; names: string[]; values: string[]; active?: number; done: number };
   /** Explain mode: read-only; the active column shows this many rows from the top. */
   revealed?: number;
   /** Allow X (don't care) in the active column. */
@@ -72,7 +78,7 @@ function groupRuns(columns: TruthColumn[]): { label: string; span: number; band:
  * cells toggle. After a wrong Check only the first wrong cell is marked and the student's entries
  * stay. The component never grades.
  */
-export function TruthTable({ id, columns, rowNames, activeColumn, select, revealed, allowX = false, state = "idle", wrongRow, disabled = false, onCheck, checkLabel }: TruthTableProps) {
+export function TruthTable({ id, columns, rowNames, activeColumn, select, pairs, revealed, allowX = false, state = "idle", wrongRow, disabled = false, onCheck, checkLabel }: TruthTableProps) {
   const rows = rowNames.length;
   const [cells, setCells] = useState<(TruthCell | null)[]>(() => Array.from({ length: rows }, () => null));
   const [picked, setPicked] = useState<number[]>(() => select?.picked ?? []);
@@ -142,7 +148,7 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, reveal
   // a rule after the inputs and before the output
   const ruled = (col: number) => col > 0 && columns[col].role !== columns[col - 1].role && (columns[col - 1].role === "input" || columns[col].role === "output");
   const complete = select ? true : cells.every((c) => c !== null);
-  const label = active ? `Truth table, filling column ${active.header}` : select ? `Truth table, ${select.label}` : "Truth table";
+  const label = active ? `Truth table, filling column ${active.header}` : select ? `Truth table, ${select.label}` : pairs ? `Truth table, ${pairs.header} per pair of rows` : "Truth table";
 
   const editCell = (key: string, row: number, content: ReactNode, name: string, extra: string, ariaSelected?: boolean) => {
     const wrong = pointAt === row;
@@ -210,13 +216,18 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, reveal
                   {select.label}
                 </th>
               )}
+              {pairs && (
+                <th scope="col" className={`${styles.head} ${styles.rule}`}>
+                  {pairs.header}
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
             {rowNames.map((name, row) => (
-              <tr key={row} className={styles.row}>
+              <tr key={row} className={`${styles.row} ${pairs && Math.floor(row / 2) % 2 === 1 ? styles.pairBand : ""}`} data-pair-now={pairs && pairs.active === Math.floor(row / 2) ? "" : undefined}>
                 {columns.map((c, col) => {
-                  const cls = `${ruled(col) ? styles.rule : ""} ${col === activeColumn ? styles.now : ""} ${isLater(col) ? styles.later : ""}`;
+                  const cls = `${ruled(col) ? styles.rule : ""} ${col === activeColumn || (pairs && pairs.active === Math.floor(row / 2)) ? styles.now : ""} ${isLater(col) ? styles.later : ""}`;
                   if (col === activeColumn && fillEditing)
                     return editCell(c.id, row, show(cells[row]), `Row ${name}, column ${c.header}, ${show(cells[row]) || "empty"}`, cls);
                   const value = shown(col, row);
@@ -234,6 +245,29 @@ export function TruthTable({ id, columns, rowNames, activeColumn, select, reveal
                       {picked.includes(row) ? "✓" : ""}
                     </td>
                   ))}
+                {pairs && row % 2 === 0 && (
+                  <td
+                    role="gridcell"
+                    rowSpan={2}
+                    className={`${styles.cell} ${styles.pair} ${styles.rule} ${pairs.active === row / 2 ? styles.now : ""} mono`}
+                    aria-readonly="true"
+                    aria-label={`${pairs.names[row / 2]}: ${row / 2 < pairs.done ? pairs.values[row / 2] : pairs.active === row / 2 ? "to find" : "later"}`}
+                    data-pair={row / 2}
+                    {...focusTarget(`pair-${row / 2}`)}
+                  >
+                    {row / 2 < pairs.done ? (
+                      <>
+                        {pairs.names[row / 2]} = <strong>{pairs.values[row / 2]}</strong>
+                      </>
+                    ) : pairs.active === row / 2 ? (
+                      <>
+                        {pairs.names[row / 2]} = <span className={styles.unknown}>?</span>
+                      </>
+                    ) : (
+                      <span className={styles.later}>{pairs.names[row / 2]}</span>
+                    )}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
