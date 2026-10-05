@@ -38,7 +38,7 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
         <p className={styles.prompt}>
           <Notation text={prompt} />
         </p>
-        {variant.figure && <FigureView id={variant.id} figure={variant.figure} revealed={isLast || !!step.stage?.figureResult} focus={step.stage?.figureFocus as string | undefined} />}
+        {variant.figure && <FigureView id={variant.id} figure={variant.figure} revealed={isLast || !!step.stage?.figureResult} focus={step.stage?.figureFocus} />}
         {createElement(views[variant.spec.kind].Explain, { variant, stage: step.stage ?? {}, isLast, answered: !step.ask || !!explanation.prediction, hasAsk: !!step.ask })}
         {step.ask && (
           <PredictionBeforeReveal id={step.id} prompt={fill(step.ask.prompt, variant.vars)} options={step.ask.options} onPredict={onPredict} result={explanation.prediction} />

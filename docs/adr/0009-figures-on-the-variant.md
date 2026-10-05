@@ -1,5 +1,5 @@
 # 0009 — Figures on the variant
-Status: Proposed · Date: 2026-10-05 · Owner: Technical Lead (written by Frontend, decision on #454)
+Status: Accepted · Date: 2026-10-05 · Owner: Technical Lead (written by Frontend, decision on #454)
 
 ## Context
 Owner directive (2026-10-05, epic #454): a student can finish decoders, adders and multiplexers
@@ -18,7 +18,7 @@ UX plan: `docs/design/ecet111-visual-system.md`.
 3. **Three states, the same for every figure:**
    - *given*: the values printed on the pins;
    - *focus*: one named pin or line has the halo (`figure.focus`, or `stage.figureFocus` on an
-     Explain step);
+     Explain step), checked at build against the figure's pin names;
    - *result*: the computed line or path in `--signal-high` with its value. The stage sets it only
      after a correct final answer, on the last Explain step, or on a step with
      `stage.figureResult`. Never before a correct answer.

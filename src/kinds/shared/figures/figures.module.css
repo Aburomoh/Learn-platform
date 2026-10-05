@@ -87,6 +87,8 @@
 /* focus: the halo behind one pin, with a bold name (never colour alone) */
 .focus .hit {
   fill: var(--focus-halo);
+  stroke: var(--accent);
+  stroke-width: 1.5;
 }
 
 .focus text {

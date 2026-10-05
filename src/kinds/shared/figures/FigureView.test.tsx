@@ -20,6 +20,12 @@ describe("FigureSpec (ADR-0009)", () => {
     expect(ok({ type: "device", device: "mux", bits: 2, given: 2, data: [0, 1, 1, 0] })).toBe(true);
     expect(ok({ type: "device", device: "encoder", bits: 2, given: 2, data: [0, 1, 1, 0] })).toBe(false);
     expect(ok({ type: "latch", latch: "gated-sr", values: { s: 1, r: 0, q: 0 } })).toBe(false);
+    // the focus names a real pin of this device
+    expect(ok({ type: "device", device: "decoder", bits: 2, given: 1, focus: "D3" })).toBe(true);
+    expect(ok({ type: "device", device: "decoder", bits: 2, given: 1, focus: "D4" })).toBe(false);
+    expect(ok({ type: "device", device: "decoder", bits: 2, given: 1, focus: "Y" })).toBe(false);
+    expect(ok({ type: "device", device: "mux", bits: 2, given: 1, focus: "Y" })).toBe(true);
+    expect(ok({ type: "device", device: "mux", bits: 2, given: 1, names: ["a", "b"], focus: "S1" })).toBe(false);
     // a result is never authored: there is no field for it
     expect(FigureSpec.parse({ type: "device", device: "decoder", bits: 2, given: 1, answer: 1 })).not.toHaveProperty("answer");
   });
@@ -65,6 +71,27 @@ const variant = VariantSchema.parse({
     { id: "s2", say: "Two." },
   ],
 });
+describe("figure checks on the variant (ADR-0009)", () => {
+  const base = { id: "v", prompt: "p", hints: [{ rung: 2, text: "Not yet." }] };
+  const steps = (stage: object) => [{ id: "s1", say: "One.", stage }, { id: "s2", say: "Two." }];
+  const table = { kind: "truth-table", inputs: ["x", "y"], columns: [{ id: "d1", label: "D1", expr: "x'y" }] };
+  const dec = { type: "device", device: "decoder", bits: 2, given: 1, names: ["x", "y"] };
+  const ok = (v: object) => VariantSchema.safeParse({ ...base, ...v }).success;
+
+  it("a step's figureFocus is a pin of the figure, and its type is checked", () => {
+    expect(ok({ spec: table, figure: dec, explanation: steps({ figureFocus: "D1", figureResult: true }) })).toBe(true);
+    expect(ok({ spec: table, figure: dec, explanation: steps({ figureFocus: "D9" }) })).toBe(false);
+    expect(ok({ spec: table, figure: dec, explanation: steps({ figureResult: "yes" }) })).toBe(false);
+    // kind-specific stage keys still pass through
+    expect(ok({ spec: table, figure: dec, explanation: steps({ step: 0, revealed: 2 }) })).toBe(true);
+  });
+
+  it("figure keys need a figure, and a device question takes none", () => {
+    expect(ok({ spec: table, explanation: steps({ figureFocus: "D1" }) })).toBe(false);
+    expect(ok({ spec: { kind: "device", device: "decoder", bits: 2, asks: [1] }, figure: dec, explanation: steps({}) })).toBe(false);
+  });
+});
+
 const activity: Activity = { id: "fg", title: "Figure", summary: "", authority: "DEMO", minutes: 1, questions: [{ id: "q", conceptId: "c", objectiveId: "o", variants: [variant] }] };
 const reducer = createRunnerReducer(activity);
 
