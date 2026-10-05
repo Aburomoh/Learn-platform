@@ -94,20 +94,20 @@ All K-map rows grade **any** minimal cover: several slide examples have more tha
 | Subtopic | Slides | Class | Covered | Training | Interaction | Status |
 |---|---|---|---|---|---|---|
 | Sequential model, intro | I 4–7 | CONTEXT | N/A | — | — | — |
-| NAND SR latch, gated SR | I 8–13 | CORE (outputs per input pair, incl. invalid); internals CONTEXT | MISSING | predict one output; table | truth-table | #295 |
-| Clock edges; SR, JK, D, T characteristic tables | I 14–37 | CORE | MISSING | one edge at a time | truth-table | #296 |
-| Characteristic equations and next state on one edge | I 14–37 | CORE | MISSING | equation; next state | expression | #297 |
-| Timing diagrams (all types, both edges) | I 17–37 | WORKED / PRACTICE | MISSING | Q per active edge | timing | #298 |
-| Analysis stage 1: input equations and output from a circuit | II 4–30 | CORE | MISSING | read equations | expression | #312 |
-| Analysis stage 2: state equations | II 4–30 | CORE | MISSING | substitute into characteristic equation | expression | #313 |
-| Analysis stage 3: state table by column group | II 4–30 | CORE | MISSING | one column group at a time | truth-table | #314 |
-| Analysis stage 4: state diagram | II 4–30 | CORE | MISSING | table → diagram | state-diagram | #315 |
-| Three JK flip-flops: 16-row table, diagram, timing | II 37–52 | WORKED | MISSING | column by column | truth-table, state-diagram, timing | #316 |
-| Analysis exercises | II 31–33, 53–54 | PRACTICE | MISSING | exercise mode; owner confirms machine-worked answers | as above | #317 |
-| Design: spec → state table | III 4–27 | CORE | MISSING | stage 1 | truth-table | #290 |
-| Design: excitation columns (D, T, JK, with X) | III 4–27 | CORE | MISSING | stage 2 | truth-table (X) | #291 |
-| Design: K-map per input → equations (don't-cares) | III 4–27 | CORE | MISSING | stage 3 | K-map, expression | #292 |
-| Design problems (3 flip-flops) | III 28–34 | PRACTICE | MISSING | exercise mode | as above | #293 |
+| NAND SR latch, gated SR | I 8–13 | CORE (outputs per input pair, incl. invalid); internals CONTEXT | COMPLETE (SR latch table, gated SR) | predict one output; table | truth-table | #295 |
+| Clock edges; SR, JK, D, T characteristic tables | I 14–37 | CORE | COMPLETE (four flip-flop tables) | one edge at a time | truth-table | #296 |
+| Characteristic equations and next state on one edge | I 14–37 | CORE | COMPLETE (equations per flip-flop) | equation; next state | expression | #297 |
+| Timing diagrams (all types, both edges) | I 17–37 | WORKED / PRACTICE | COMPLETE (timing for all types) | Q per active edge | timing | #298 |
+| Analysis stage 1: input equations and output from a circuit | II 4–30 | CORE | COMPLETE (reading circuit equations) | read equations | expression | #312 |
+| Analysis stage 2: state equations | II 4–30 | CORE | COMPLETE (state equation substitution) | substitute into characteristic equation | expression | #313 |
+| Analysis stage 3: state table by column group | II 4–30 | CORE | COMPLETE (state table construction) | one column group at a time | truth-table | #314 |
+| Analysis stage 4: state diagram | II 4–30 | CORE | COMPLETE (table-to-diagram conversion) | table → diagram | state-diagram | #315 |
+| Three JK flip-flops: 16-row table, diagram, timing | II 37–52 | WORKED | COMPLETE (16-row table, diagram, timing) | column by column | truth-table, state-diagram, timing | #316 |
+| Analysis exercises | II 31–33, 53–54 | PRACTICE | COMPLETE (exercise mode and answers) | exercise mode; owner confirms machine-worked answers | as above | #317 |
+| Design: spec → state table | III 4–27 | CORE | COMPLETE (state table from spec) | stage 1 | truth-table | #290 |
+| Design: excitation columns (D, T, JK, with X) | III 4–27 | CORE | COMPLETE (excitation table with don't-cares) | stage 2 | truth-table (X) | #291 |
+| Design: K-map per input → equations (don't-cares) | III 4–27 | CORE | COMPLETE (K-map and equations) | stage 3 | K-map, expression | #292 |
+| Design problems (3 flip-flops) | III 28–34 | PRACTICE | COMPLETE (design exercises) | exercise mode | as above | #293 |
 
 ## Course-level
 | Item | Status |
