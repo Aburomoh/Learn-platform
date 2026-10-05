@@ -21,11 +21,15 @@ describe("kind registry (ADR-0008)", () => {
       "circuit-predict": () => import("./circuit-predict/ui"),
       derivation: () => import("./derivation/ui"),
       expression: () => import("./expression/ui"),
+      kmap: () => import("./kmap/ui"),
       "column-addition": () => import("./column-addition/ui"),
       "multiple-choice": () => import("./multiple-choice/ui"),
       numeric: () => import("./numeric/ui"),
       "place-value": () => import("./place-value/ui"),
       "repeated-division": () => import("./repeated-division/ui"),
+      device: () => import("./device/ui"),
+      timing: () => import("./timing/ui"),
+      "state-diagram": () => import("./state-diagram/ui"),
       "truth-table": () => import("./truth-table/ui"),
     };
     expect(Object.keys(modules).sort()).toEqual(names);

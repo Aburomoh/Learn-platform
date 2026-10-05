@@ -35,10 +35,13 @@ test("home lists the course and navigates to an activity", async ({ page }) => {
   await expect(page.locator("[data-primary-action]")).toHaveCount(1);
   // chapters fold (#232): the chapter with the next step is open; another one opens from the keyboard
   await expect(page.getByRole("heading", { level: 2, name: /^Chapter 2: / })).toBeVisible();
+  const closedBefore = await page.locator("details:not([open])").count();
+  expect(closedBefore).toBeGreaterThan(0);
   const closed = page.locator("details:not([open]) > summary").first();
   await closed.focus();
   await page.keyboard.press("Enter");
-  await expect(page.locator("details:not([open])")).toHaveCount(0);
+  // that chapter opens; the others stay folded (more chapters arrive as ECET 111 grows)
+  await expect(page.locator("details:not([open])")).toHaveCount(closedBefore - 1);
   await page.setViewportSize({ width: 320, height: 700 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
   // on phones the row's filled button takes the row's full width (#172)

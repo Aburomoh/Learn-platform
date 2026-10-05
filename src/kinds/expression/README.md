@@ -12,7 +12,7 @@ A Boolean expression typed by the student (#219), graded by meaning with the Boo
   does not parse or uses another variable: `expression-unreadable` (never throws).
 - Answer `{ kind: "expression", text }`; `normalized` is the answer in course notation. Single goal.
 
-## View (`ui.tsx`, `ExpressionEntry.tsx`)
+## View (`ui.tsx`, `../shared/ExpressionEntry.tsx`, also used by the K-map)
 
 - A text field in mono; students type the prime (`'`), which any keyboard has. `.` and `*` work
   for AND. Under it, "Reads as" draws the expression as on the slides: an overbar for each

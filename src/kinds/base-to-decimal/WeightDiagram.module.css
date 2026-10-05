@@ -53,11 +53,13 @@
 }
 
 .cell {
+  box-sizing: border-box;
   display: grid;
   place-items: center;
-  min-width: 56px;
+  width: 100%;
+  min-width: 0;
   min-height: 44px;
-  padding: 0 var(--space-1);
+  padding: 0 2px;
   border-radius: var(--radius-sm);
   font-size: var(--text-base);
 }
@@ -79,7 +81,7 @@
 
 .input {
   width: 44px;
-  height: 40px;
+  height: 44px;
   padding: 0;
   border: 2px solid var(--accent);
   border-radius: var(--radius-sm);
@@ -89,8 +91,9 @@
   font-size: var(--text-base);
 }
 
+/* a term input fills its column */
 .wide {
-  width: 88px;
+  width: 100%;
 }
 
 .input:focus-visible {
@@ -98,10 +101,24 @@
   outline-offset: 1px;
 }
 
-/* the first wrong cell: border and background plus aria-invalid, never colour alone */
+/* the first wrong cell: border, background and a cross, never colour alone */
 .wrong {
   border-color: var(--error);
   background: var(--error-bg);
+}
+
+.fieldWrap {
+  position: relative;
+  display: inline-block;
+}
+
+.cross {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--error);
 }
 
 .sum {
@@ -124,4 +141,25 @@
 
 .actions {
   display: flex;
+}
+
+/* #414: the base at full size, the exponent raised beside it like a superscript */
+/* the weight row only, in every state */
+.weight {
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+
+.power {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  line-height: 1;
+}
+
+.power sup {
+  align-self: flex-start;
+  margin-bottom: 14px;
+  font-weight: 400;
+  line-height: 1;
 }

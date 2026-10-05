@@ -1,7 +1,7 @@
 # Current State — UX / Design Engineer
 
 Current assignment: Complete ECET 111 (#192): design specs ahead of Frontend, one verdict per screen PR at 390 and 1280 px.
-Recent important decision: Build notes §13 for K-map, timing and state-diagram views (4-var sizes, wrapped-group drawing, multi-output timing, next-state mode); tutor poses: waist-up in columns, head crop in the strip.
+Recent important decision: All new kind views have a UX verdict (K-map, timing, state diagram, device, mux pairs, bit-grouping point, latch figure); every open lesson PR swept live on its first screen; expressive poses limited to five moments (#419).
 Blocker: None
-Relevant issue/PR: #235 K-map view, #238 timing view, #240 state-diagram view, #333, #340, docs/design/ecet111-representations.md
-Next expected action: Verdict on the K-map view PR when Frontend opens it; then timing and state-diagram views; live check of each new Chapter 2–5 screen.
+Relevant issue/PR: #440 (state-table input headers: check on #418 once it sets inputGroups), #394 (label paint order), #378 (pose expressions with AI Tutor; Pedagogy to confirm caution/reassuring), #371 (Pedagogy: K-map 'fill the rest with 0'), #333, #340.
+Next expected action: Live check of the first timing and state-diagram lessons when content lands; walk each chapter end to end at 390 and 1280 px before its quality gate.
