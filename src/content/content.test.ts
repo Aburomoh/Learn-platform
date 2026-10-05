@@ -14,12 +14,14 @@ import { resolveMessage } from "@/tutor/messages";
 import { equivalent, formatCube, isPOS, isSOP, literalCount, mintermsOf, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
 import { isCanonical } from "./ecet111/chapter2/minterms";
-import { columnTruth } from "@/kinds/truth-table/logic";
+import { columnTruth, muxPairs } from "@/kinds/truth-table/logic";
+import { pickName, rightPick } from "@/kinds/device/logic";
 import { kmapCovers } from "@/kinds/kmap/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 import { lawChips, lineOptions } from "@/kinds/derivation/logic";
 import type { DerivationSpec } from "@/kinds/derivation/spec";
 import { exactValue } from "@/kinds/base-to-decimal/logic";
+import { gatedLatch, nandLatch } from "./ecet111/chapter5/latches";
 
 const COURSE = "ecet111";
 
@@ -493,6 +495,44 @@ describe("content registry", () => {
     expect(sums).toEqual([["C"], ["A + BC'"], ["x + z"], ["A + B'D"]]);
   });
 
+  it("latches (#295): outputs from the latch equations match the pack's tables (ch5-parti §2)", () => {
+    const x = getActivity(COURSE, "latches", "latches")!.activity;
+    const pick = (q: (typeof x.questions)[number]) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    // NAND: 0 1 sets, 1 0 resets, 1 1 holds, 0 0 invalid; gated: En = 0 holds, then set and reset
+    expect(pick(x.questions[0])).toEqual(["Q = 1", "Q = 0", "Q = 0", "Invalid"]);
+    expect(pick(x.questions[1])).toEqual(["Q = 0", "Q = 1", "Q = 0"]);
+    expect([nandLatch(1, 1, 1), gatedLatch(1, 0, 0, 1), gatedLatch(1, 1, 1, 0)]).toEqual(["q1", "q1", "invalid"]);
+  });
+
+  it("flip-flop tables (#296): each table is its equation, as verified in the pack (JK = Σ(1,4,5,6), T = Σ(1,2))", () => {
+    const x = getActivity(COURSE, "flip-flops", "flip-flop-tables")!.activity;
+    const [row, ...tables] = x.questions;
+    const column = (q: (typeof tables)[number]) => {
+      const spec = q.variants[0].spec;
+      if (spec.kind !== "truth-table") throw new Error("expected a truth table");
+      return columnTruth(spec, spec.columns[0]).join("");
+    };
+    expect(tables.map(column)).toEqual(["010011XX", "01001110", "0011", "0110"]); // SR, JK, D, T
+    const picked = row.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(picked).toEqual(["Q(t+1) = 1", "Q(t+1) = 0", "Q(t+1) = 1", "Q(t+1) = 0"]);
+  });
+
+  it("flip-flop equations (#297): each question's minterms are its table's 1-rows; next states by the equation", () => {
+    const x = getActivity(COURSE, "flip-flops", "flip-flop-equations")!.activity;
+    const mts = x.questions.slice(0, 3).map((q) => (q.variants[0].spec.kind === "expression" ? q.variants[0].spec.minterms : []));
+    expect(mts).toEqual([[1, 4, 5, 6], [1, 2], [2, 3]]); // JK, T, D (pack ch5-parti §3)
+    const picked = x.questions[3].variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(picked).toEqual(["1", "1", "0"]);
+    // every JK set catches the swapped equation (JQ + KQ′): it gives the other answer
+    for (const v of x.questions[3].variants.filter((v) => v.id.startsWith("xjk"))) expect(v.misconceptions.map((m) => m.id), v.id).toContain("ff.equation-swapped");
+  });
+
+  it("analysis 1 (#312): every equation is the pack's, and each wiring sentence names its gate", () => {
+    const x = getActivity(COURSE, "analysis", "analysis-inputs")!.activity;
+    const targets = x.questions.map((q) => q.variants.map((v) => (v.spec.kind === "expression" ? v.spec.target : "")));
+    expect(targets).toEqual([["Ax + Bx", "Bx'", "Bx"], ["(A + B)x'", "AB", "x + B'"]]);
+  });
+
   it("full adder table (#301): S = Σ(1,2,4,7), Co = Σ(3,5,6,7) as in the pack; one-row answers are the binary count", () => {
     const x = getActivity(COURSE, "full-adder", "full-adder-table")!.activity;
     const [row, table] = x.questions;
@@ -533,7 +573,7 @@ describe("content registry", () => {
   it("decoders and encoders (#305): Dk is minterm k; each encoder bit's OR is the inputs whose code has that bit", () => {
     const dec = getActivity(COURSE, "decoders-encoders", "decoders")!.activity;
     const [predict, mt, table] = dec.questions;
-    const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : spec.kind === "device" ? pickName(spec, rightPick(spec, spec.asks[0])) : ""));
     expect(pick(predict)).toEqual(["D6", "D3", "D4"]);
     for (const v of mt.variants) if (v.spec.kind === "expression") expect(v.spec.minterms).toEqual([Number(v.id.slice(1))]);
     for (const v of table.variants) {
@@ -555,7 +595,7 @@ describe("content registry", () => {
   it("multiplexers (#307): Y is the selected input, by the mux equation; routes and terms match S1 S0", () => {
     const x = getActivity(COURSE, "multiplexers", "multiplexers")!.activity;
     const [predict, route, term] = x.questions;
-    const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    const pick = (q: typeof predict) => q.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : spec.kind === "device" ? pickName(spec, rightPick(spec, spec.asks[0])) : ""));
     expect(pick(predict)).toEqual(["Y = 1", "Y = 0", "Y = 0"]);
     expect(pick(route)).toEqual(["I1", "I2", "I3"]);
     expect(pick(term)).toEqual(["S1S0′", "S1′S0", "S1S0"]);
@@ -604,6 +644,55 @@ describe("content registry", () => {
     }
   });
 
+  it("analysis 2 (#313): each state equation is its characteristic equation with the inputs put in (pack Σ lists)", () => {
+    const x = getActivity(COURSE, "analysis", "analysis-state")!.activity;
+    const sig = x.questions.map((q) => q.variants.map((v) => (v.spec.kind === "expression" ? mintermsOf(parseBool(v.spec.target!, { vars: v.spec.vars }), v.spec.vars) : [])));
+    // A(t+1): D (3,5,7), JK (2,3,4,5,7), T (3,4,5,6); B(t+1): D (1,3), JK (0,2,4,7), T (1,2,5,6)
+    expect(sig).toEqual([[[3, 5, 7], [2, 3, 4, 5, 7], [3, 4, 5, 6]], [[1, 3], [0, 2, 4, 7], [1, 2, 5, 6]]]);
+    // and from the characteristic equations, with the stage 1 input equations put in
+    const vars = ["A", "B", "x"];
+    const sub = { D: (d: string) => d, JK: (j: string, k: string, q: string) => `(${j})${q}' + (${k})'${q}`, T: (t: string, q: string) => `(${t}) ⊕ ${q}` };
+    const viaChar = [
+      [sub.D("Ax + Bx"), sub.D("A'x")],
+      [sub.JK("B", "Bx'", "A"), sub.JK("x'", "A ⊕ x", "B")],
+      [sub.T("Bx", "A"), sub.T("x", "B")],
+    ];
+    expect([0, 1].map((ff) => viaChar.map((c) => mintermsOf(parseBool(c[ff], { vars }), vars)))).toEqual(sig);
+  });
+
+  it("analysis 3 (#314): the state tables match the pack's simulated tables (ch5-partii §2–4)", () => {
+    const x = getActivity(COURSE, "analysis", "analysis-table")!.activity;
+    const tables = x.questions[0].variants.map(({ spec }) => {
+      if (spec.kind !== "truth-table") throw new Error("expected a truth table");
+      return Object.fromEntries(spec.columns.map((c) => [c.label, columnTruth(spec, c).join("")]));
+    });
+    // D: next A B per row 00 01 00 11 00 10 00 10, y 0 0 1 0 1 0 1 0
+    expect(tables[0]).toEqual({ DA: "00010101", DB: "01010000", A: "00010101", B: "01010000", y: "00101010" });
+    // JK: JA KA 00 00 11 10 00 00 11 10; JB KB 10 01 10 01 11 00 11 00; next 01 00 11 10 11 10 00 11
+    expect(tables[1]).toEqual({ JA: "00110011", KA: "00100010", JB: "10101010", KB: "01011010", A: "00111101", B: "10101001" });
+    // T: TA TB 00 01 00 11 00 01 00 11; next 00 01 01 10 10 11 11 00; Y 0 0 0 0 0 0 1 1
+    expect(tables[2]).toEqual({ TA: "00010001", TB: "01010101", A: "00011110", B: "01100110", y: "00000011" });
+  });
+
+  it("functions with a MUX (#308): the pairs give the slides' data inputs (s.48–51, s.52–55, s.57–61)", () => {
+    const x = getActivity(COURSE, "multiplexers", "mux-functions")!.activity;
+    const [wiring, pairs] = x.questions;
+    const inputs = pairs.variants.map(({ spec }) => {
+      if (spec.kind !== "truth-table") throw new Error("expected a truth table");
+      const data = spec.inputs.at(-1)!;
+      return muxPairs(spec).map((p) => (p.choice === "v" ? data : p.choice === "v'" ? `${data}'` : p.choice)).join(", ");
+    });
+    expect(inputs).toEqual(["z, z', 0, 1", "z, z', z, 0, 0, z, z, 0", "D, D, D', 0, 0, D, 1, 1"]);
+    const right = wiring.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
+    expect(right).toEqual(["x → S1, y → S0", "w → S2, x → S1, y → S0", "A → S2, B → S1, C → S0"]);
+  });
+
+  it("full adder K-map (#303): Co = AB + BCi + ACi; S keeps its four minterms (no two 1s touch)", () => {
+    const x = getActivity(COURSE, "full-adder", "full-adder-kmap")!.activity;
+    const sums = x.questions[0].variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")) : []));
+    expect(sums).toEqual([["AB + ACi + BCi"], ["A'B'Ci + A'BCi' + AB'Ci' + ABCi"]]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -624,7 +713,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
