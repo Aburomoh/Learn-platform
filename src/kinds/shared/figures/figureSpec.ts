@@ -1,5 +1,6 @@
 /** The figure of a question (ADR-0009): build time, Zod. Content names the figure and what is given; results are computed. */
 import { z } from "zod";
+import { BooleanParseError, parseBool } from "@/content/boolean";
 import { adderPins, flipFlopInputs } from "./blocks";
 import { codeNames } from "./device";
 
@@ -88,8 +89,52 @@ const FlipFlopFigure = z
     if (f.focus && !pins.includes(f.focus)) ctx.addIssue({ code: "custom", message: `focus "${f.focus}" is not a pin of this flip-flop (${pins.join(", ")})` });
   });
 
+/**
+ * A sequential circuit at block level (analysis): a gate block carrying the input equations, the
+ * flip-flops as symbols, each Q fed back to the gates, one clock. Structure only: no values, no
+ * result state. `equations` are the circuit as the lesson writes it, one per flip-flop input:
+ * "DA = Ax + Bx", checked at build (the left side names the input, the right side parses over the
+ * state names and the input). A question that asks for an equation writes it as "DA = ?".
+ */
+const SequentialFigure = z
+  .object({
+    type: z.literal("sequential"),
+    flipFlops: z
+      .array(z.object({ name: z.string().min(1).max(2), ff: z.enum(["d", "t", "sr", "jk"]), equations: z.array(z.string().min(1).max(16)).min(1).max(2) }))
+      .min(1)
+      .max(3),
+    /** The circuit's input, if any: x. */
+    input: z.string().min(1).max(2).optional(),
+    /** The circuit's output; set it only on questions about the output. */
+    output: z.string().min(1).max(2).optional(),
+    /** The flip-flop with the halo, by its state name (A, B), or "gates". */
+    focus: z.string().min(1).optional(),
+  })
+  .superRefine((f, ctx) => {
+    const names = f.flipFlops.map((x) => x.name);
+    if (new Set(names).size !== names.length) ctx.addIssue({ code: "custom", message: "flip-flop names must be distinct" });
+    const vars = [...names, ...(f.input ? [f.input] : [])];
+    for (const x of f.flipFlops) {
+      const pins = flipFlopInputs(x.ff);
+      if (x.equations.length !== pins.length) ctx.addIssue({ code: "custom", message: `${x.name}: one equation per input (${pins.join(", ")})` });
+      x.equations.forEach((eq, k) => {
+        const [left, right, ...rest] = eq.split("=").map((part) => part.trim());
+        const expected = `${pins[k] ?? ""}${x.name}`;
+        if (rest.length || right === undefined || left !== expected) return void ctx.addIssue({ code: "custom", message: `"${eq}": write it as "${expected} = …"` });
+        if (right === "?") return;
+        try {
+          parseBool(right, { vars });
+        } catch (err) {
+          if (!(err instanceof BooleanParseError)) throw err;
+          ctx.addIssue({ code: "custom", message: `"${eq}" does not parse over ${vars.join(", ")}` });
+        }
+      });
+    }
+    if (f.focus && ![...names, "gates"].includes(f.focus)) ctx.addIssue({ code: "custom", message: `focus "${f.focus}" is not a flip-flop of this circuit (${names.join(", ")}) or "gates"` });
+  });
+
 /** One figure per question, drawn by the stage above (or beside) any kind's answer area. */
-export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure]);
+export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure]);
 export type FigureSpec = z.infer<typeof FigureSpec>;
 
 /** The pins a focus may name (`figure.focus`, `stage.figureFocus`). A latch figure has no focus state yet. */
@@ -101,6 +146,8 @@ export function figurePins(figure: FigureSpec): string[] {
       return [...adderPins(figure.adder).inputs, ...adderPins(figure.adder).outputs];
     case "flip-flop":
       return [...flipFlopInputs(figure.ff), "Clk", "Q", "Q′"];
+    case "sequential":
+      return [...figure.flipFlops.map((f) => f.name), "gates"];
     default:
       return [];
   }
