@@ -124,18 +124,9 @@ export const en = {
   "tt.rows-out-of-order": "The rows count up in binary, starting from all zeros. The last input changes on every row.",
   "tt.rows-inverted": "Those are the rows where it is 0. Pick the rows where it is 1.",
   "ff.zero-rows": "That expression is 1 where Q(t+1) is 0. Build it from the rows where Q(t+1) = 1.",
-  "sd.output-wrong-row": "That output belongs to the other input's row. Read the output on this arrow's own row.",
-  "sd.label-input-wrong": "Which input value is on this arrow's row? It decides where the arrow goes.",
-  "sd.label-reversed": "A label reads input/output: the input first, then the output.",
   "an.next-complement": "That is 1 exactly where the next state is 0. Check the complements you put in, especially K′.",
   "ff.equation-swapped": "Check the equation: it is JQ′ + K′Q. Which Q goes with J, and which with K?",
   "ff.not-simplified": "That is the right function, but it can be shorter. Group the rows by what Q was before.",
-  "tm.wrong-edge": "Check which edge this flip-flop acts on. Read the inputs just before that edge, not the other one.",
-  "tm.input-after-edge": "Read the inputs just before the edge. What were they before the clock changed?",
-  "tm.jk-toggle-missed": "J and K are both 1 here. What does a JK flip-flop do with 1 1?",
-  "tm.inputs-swapped": "Which input sets Q, and which one resets it? Check which one is 1 at this edge.",
-  "tm.held-not-applied": "The inputs at this edge change Q. Which way?",
-  "tm.changed-on-hold": "The inputs at this edge hold Q. What was Q just before it?",
   "dz.dontcare-as-zero": "Those X entries are don't-cares, not 0s. Leave them as X: either value works there, and the K-map can use them.",
   "dz.excitation-reversed": "Read the excitation from the present bit to the next bit: where does the flip-flop start, and where must it go?",
   "ff.jk-11-invalid": "1 1 is not allowed on an SR flip-flop, but JK was built to fix that. What does JK do with 1 1?",
@@ -195,6 +186,31 @@ export const en = {
   "gate.output-of": "the {gateType} output",
   "gate.input": "{name} = {value}",
   "gate.inputs-two": "{first} and {second}",
+
+  // timing diagram nudges
+  "tm.jk-toggle-missed": "When J = 1 and K = 1, the flip-flop toggles: it flips from 0 to 1 or from 1 to 0.",
+  "tm.t-as-d": "T is not D. With T, the flip-flop toggles (flips) when T = 1, and holds when T = 0. It does not just copy T.",
+  "tm.wrong-edge": "Read the inputs just before the active edge. Check that you have a {edgeName} edge here, not the opposite edge.",
+  "tm.input-after-edge": "Read the inputs at the active edge, not after it. Look one column to the left.",
+  "tm.inputs-swapped": "The order matters. Check the input labels: which is first?",
+  "tm.held-not-applied": "Q stayed the same, but it should have changed at this edge. Check the inputs and the flip-flop rule.",
+  "tm.changed-on-hold": "Q changed, but it should have stayed the same at this edge. Check the inputs and the flip-flop rule.",
+
+  // state diagram nudges
+  "sd.next-wrong-row": "That is the next state for the other input. Check which input—{input}—this row is for.",
+  "sd.next-is-present": "That is the present state, not the next state. With input {input}, it moves to a different state.",
+  "sd.label-input-wrong": "Which input value is on this arrow's row? It decides where the arrow goes.",
+  "sd.label-reversed": "The label format is input/output, not output/input. Check which is which.",
+  "sd.output-wrong-row": "That is the output for the other input. Check which input—{input}—this row is for.",
+
+  // timing and state-diagram step lines
+  "step.next-timing.edge": "Good. Now the next clock edge.",
+  "step.next-state-diagram.next": "Good. Now the next state for this arrow.",
+  "step.next-state-diagram.label": "Good. Now the label for this arrow.",
+  "wrong.first.timing.edge": "Not quite. Use the state just before this edge and the next-state equation(s).",
+  "wrong.first.state-diagram.next": "Not quite. Use the state table or equations to find the next state for this input.",
+  "wrong.first.state-diagram.label": "Not quite. The label is {inputName}/{outputName}.",
+  "wrong.first.state-diagram.label.no-output": "Not quite. The label is just {inputName}.",
 } satisfies Record<string, string>;
 
 export type MessageKey = keyof typeof en;

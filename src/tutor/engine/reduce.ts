@@ -198,16 +198,20 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
   return { state: s, actions: out };
 }
 
-/**
- * The generic wrong line: a grid answer with wrong cells says `wrong.cell` (points at the marked
+/** The generic wrong line: a grid answer with wrong cells says `wrong.cell` (points at the marked
  * cell), anything else the plain fallback. Either may have a step form `<key>.<stepTag>`, and a
  * kind-specific one `<key>.<kind>.<stepTag>` first (tags such as "group" mean different things in
- * different kinds).
+ * different kinds). Special: state-diagram labels may have variant forms with/without output.
  */
 function genericWrongKey(ctx: ActivityContext, event: { vars?: Record<string, string | number> }, fallback: string): string {
   const key = event.vars?.wrongCount === undefined ? fallback : "wrong.cell";
   if (!ctx.stepTag) return key;
-  for (const form of [`${key}.${ctx.kind}.${ctx.stepTag}`, `${key}.${ctx.stepTag}`]) if (hasMessage(form)) return form;
+  const forms: string[] = [];
+  if (ctx.kind === "state-diagram" && ctx.stepTag === "label" && !ctx.vars.outputName) {
+    forms.push(`${key}.${ctx.kind}.${ctx.stepTag}.no-output`);
+  }
+  forms.push(`${key}.${ctx.kind}.${ctx.stepTag}`, `${key}.${ctx.stepTag}`);
+  for (const form of forms) if (hasMessage(form)) return form;
   return key;
 }
 
@@ -219,6 +223,9 @@ function stepNextKey(ctx: ActivityContext): string {
   if (ctx.vars.groupNumber !== undefined && ctx.stepTag === "group") return ctx.vars.groupNumber === 1 ? "step.next-kmap-group" : "step.next-kmap-group-more";
   if (ctx.vars.groupNumber !== undefined && ctx.stepTag === "term") return "step.next-kmap-term";
   if (ctx.vars.groupNumber !== undefined && ctx.stepTag === "answer") return "step.next-kmap-answer";
+  if (ctx.stepTag === "edge") return `step.next-${ctx.kind}.edge`;
+  if (ctx.stepTag === "next") return `step.next-${ctx.kind}.next`;
+  if (ctx.stepTag === "label") return `step.next-${ctx.kind}.label`;
   if (ctx.stepTag === "law") return "step.next-law";
   if (ctx.stepTag === "line") return "step.next-line";
   if (ctx.stepTag === "digit") return "step.next-digit";
