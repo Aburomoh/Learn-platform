@@ -202,12 +202,17 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
  * The generic wrong line: a grid answer with wrong cells says `wrong.cell` (points at the marked
  * cell), anything else the plain fallback. Either may have a step form `<key>.<stepTag>`, and a
  * kind-specific one `<key>.<kind>.<stepTag>` first (tags such as "group" mean different things in
- * different kinds).
+ * different kinds). Special: state-diagram labels may have variant forms with/without output.
  */
 function genericWrongKey(ctx: ActivityContext, event: { vars?: Record<string, string | number> }, fallback: string): string {
   const key = event.vars?.wrongCount === undefined ? fallback : "wrong.cell";
   if (!ctx.stepTag) return key;
-  for (const form of [`${key}.${ctx.kind}.${ctx.stepTag}`, `${key}.${ctx.stepTag}`]) if (hasMessage(form)) return form;
+  const forms: string[] = [];
+  if (ctx.kind === "state-diagram" && ctx.stepTag === "label" && !ctx.vars.outputName) {
+    forms.push(`${key}.${ctx.kind}.${ctx.stepTag}.no-output`);
+  }
+  forms.push(`${key}.${ctx.kind}.${ctx.stepTag}`, `${key}.${ctx.stepTag}`);
+  for (const form of forms) if (hasMessage(form)) return form;
   return key;
 }
 
