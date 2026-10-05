@@ -107,10 +107,10 @@ const excitationHints = (reminder: string): HintInput[] => [
 function excitationVariant(c: (typeof COUNTERS)[number], ff: "T" | "JK", k: number): VariantInput {
   const cols =
     ff === "T"
-      ? ([0, 1] as const).map((f) => ({ id: `t${VARS[f].toLowerCase()}`, label: `T${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, tOf) }))
+      ? ([0, 1] as const).map((f) => ({ id: `t${VARS[f].toLowerCase()}`, label: `T${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, tOf), needs: [`n${VARS[f].toLowerCase()}`] }))
       : ([0, 1] as const).flatMap((f) => [
-          { id: `j${VARS[f].toLowerCase()}`, label: `J${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, jOf), slipValues: { excitationReversed: reversed(c.seq, f, jOf) } },
-          { id: `k${VARS[f].toLowerCase()}`, label: `K${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, kOf), slipValues: { excitationReversed: reversed(c.seq, f, kOf) } },
+          { id: `j${VARS[f].toLowerCase()}`, label: `J${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, jOf), slipValues: { excitationReversed: reversed(c.seq, f, jOf) }, needs: [`n${VARS[f].toLowerCase()}`] },
+          { id: `k${VARS[f].toLowerCase()}`, label: `K${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, kOf), slipValues: { excitationReversed: reversed(c.seq, f, kOf) }, needs: [`n${VARS[f].toLowerCase()}`] },
         ]);
   const reminder = ff === "T" ? T_REMINDER : JK_REMINDER;
   const [q, q1] = bits(c.seq, 3, 0); // flip-flop A on the row 0 1 1

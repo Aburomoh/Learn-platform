@@ -26,6 +26,11 @@ export const TableColumn = z
      * excitation column read the wrong way (Q_t+1 → Q_t). One value per row, like `values`.
      */
     slipValues: z.object({ excitationReversed: z.array(Cell).optional() }).optional(),
+    /**
+     * Earlier columns this one is worked out from, besides the inputs (#508): next state A needs JA
+     * and KA. A narrow view keeps them in sight while the column is filled.
+     */
+    needs: z.array(z.string().min(1)).optional(),
   })
   .refine((c) => (c.expr === undefined) !== (c.values === undefined), "a column has either expr or values");
 
@@ -63,6 +68,7 @@ export const TruthTableSpec = z
     if (new Set(ids).size !== ids.length) ctx.addIssue({ code: "custom", message: "column ids must be distinct" });
     for (const c of t.columns) {
       if (c.values && c.values.length !== rows) ctx.addIssue({ code: "custom", message: `column ${c.id} needs ${rows} values` });
+      for (const n of c.needs ?? []) if (ids.indexOf(n) < 0 || ids.indexOf(n) >= ids.indexOf(c.id)) ctx.addIssue({ code: "custom", message: `column ${c.id}: needs "${n}" must be an earlier column` });
       if (c.expr) {
         try {
           parseBool(c.expr, { vars: t.inputs });
