@@ -36,6 +36,8 @@ function addVariant(a: Bit, b: Bit, k: number): VariantInput {
     id: pairId([a, b]),
     prompt: `A half adder adds two bits. With A = ${a} and B = ${b}, what are the sum bit S and the carry C?`,
     spec: { kind: "multiple-choice", options, correctOptionId: `s${s}c${c}` },
+    // the HA block with the prompt's bits; S and C read "?" until a correct answer (#454)
+    figure: { type: "adder", adder: "half", given: { a, b } },
     hints: [
       { rung: 2, text: "Not yet. Add the two bits as in Chapter 1." },
       { rung: 3, text: "In binary, 0 + 0 = 0, 0 + 1 = 1 and 1 + 1 = 10." },
@@ -62,6 +64,7 @@ const tableVariant: VariantInput = {
   id: "vtable",
   prompt: "Fill the half adder's table: first the sum S, then the carry C, for each row A + B.",
   spec: { kind: "truth-table", inputs: ["A", "B"], columns: [{ id: "s", label: "S", expr: "A ⊕ B" }, { id: "c", label: "C", expr: "AB" }] },
+  figure: { type: "adder", adder: "half" }, // the symbol alone (#454)
   hints: [
     { rung: 2, text: "Not yet. Each row adds A + B; the {columnLabel} column holds one bit of that sum." },
     { rung: 3, text: "S is the right-hand bit of A + B; C is the left-hand bit, the carry." },
@@ -92,6 +95,7 @@ function gateVariant(output: "S" | "C", k: number): VariantInput {
     id: `v${output.toLowerCase()}`,
     prompt: `The ${output} column reads ${column}, top to bottom. Which gate gives exactly that column?`,
     spec: { kind: "multiple-choice", options, correctOptionId: right.toLowerCase() },
+    figure: { type: "adder", adder: "half", focus: output }, // the symbol, the asked output in focus (#454)
     hints: [
       { rung: 2, text: "Not yet. Compare the column with each gate's truth table, row by row." },
       { rung: 3, text: "Look at the last row, A = 1 and B = 1. What does each gate give there?" },
