@@ -37,6 +37,6 @@ describe("MeetCard (visual system §11)", () => {
 
   it("the P0 device topics carry a card", () => {
     const withCard = getCourse("ecet111")!.modules.flatMap((m) => m.topics).filter((t) => t.meet).map((t) => t.id);
-    expect(withCard).toEqual(expect.arrayContaining(["decoders-encoders", "multiplexers", "half-adder", "full-adder", "flip-flops"]));
+    expect(withCard).toEqual(expect.arrayContaining(["decoders-encoders", "multiplexers", "half-adder", "full-adder", "flip-flops", "analysis"]));
   });
 });

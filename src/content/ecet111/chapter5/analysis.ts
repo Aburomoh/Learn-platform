@@ -414,6 +414,11 @@ export const analysisTopic: TopicInput = {
   title: "Analysing clocked circuits",
   summary: "From a circuit to its behaviour, one stage at a time: input equations, state equations, the state table.",
   preview: "DA = Ax + Bx → A(t+1) = Ax + Bx",
+  // the card shows the circuit's structure; its equations read "?" because finding them is the first practice
+  meet: {
+    figure: { type: "sequential", input: "x", flipFlops: [{ name: "A", ff: "d", equations: ["DA = ?"] }, { name: "B", ff: "d", equations: ["DB = ?"] }] },
+    callouts: ["The gates work out each flip-flop's input.", "At the clock edge the flip-flops store them.", "Their outputs feed back, so the present state shapes the next."],
+  },
   concepts: [{ id: "an.analysis", title: "Analysis", summary: "Input equations from the gates; state equations from the characteristic equations; the state table row by row." }],
   objectives: [
     { id: "an.obj.inputs", conceptId: "an.analysis", text: "Read the flip-flop input equations and the output equation from a circuit." },
