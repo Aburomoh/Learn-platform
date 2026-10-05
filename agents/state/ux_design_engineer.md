@@ -1,7 +1,7 @@
 # Current State — UX / Design Engineer
 
-Current assignment: ECET 111 visual system (#454, owner directive 2026-10-05) and one verdict per screen PR at 390 and 1280 px (#192).
-Recent important decision: Symbols at four moments (meet it, answer on it, see inside, keep it); block symbol by default; gate group alone is enough for analysis equations; verdicts in the #484 format.
+Current assignment: ECET 111 close-out (#242 C6 audit) and the visual system (#454).
+Recent important decision: C6 UX verdict Approved at aec6815, no P0 (149 challenges × 390/1280 walked: attempt, hint, Explain slowly). Wide state tables: sticky inputs + repeated headers; compact columns on phones pending Pedagogy (#512).
 Blocker: None
-Relevant issue/PR: #454 (P0 done on main: 6 topic cards, 17 practices open with a figure); open P1: linked table row → pins, 'look inside' faces, decoder/mux function figures, Symbols sheet, Ch 2 gate cards, demux (Product). Analysis prompt wording with Backend/Pedagogy.
-Next expected action: Verdicts on the P1 visual-system PRs; walk each chapter end to end before its quality gate.
+Relevant issue/PR: #242 (verdict posted), #516 (P1: column-addition input height; slide refs in prompts), #512 (Pedagogy), #454 P1 items (linked rows, 'look inside' faces, Symbols sheet, Ch 2 gate cards, demux scope).
+Next expected action: Re-verdict if the audited SHA moves; verdicts on #512 follow-ups and the #454 P1 PRs. Audit method: seed `completedQuestions` in local progress to open any challenge; run against a static build.
