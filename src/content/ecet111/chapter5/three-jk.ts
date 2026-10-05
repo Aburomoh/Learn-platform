@@ -35,7 +35,8 @@ const tableVariant: VariantInput = {
     inputGroups: [{ label: "Present state", span: 3 }, { label: "Input", span: 1 }],
     columns: [
       ...INPUT_EQS.map(([l, e]) => ({ id: l.toLowerCase(), label: l, expr: e, group: "Flip-flop inputs" })),
-      ...NEXT.map((e, i) => ({ id: `n${VARS[i].toLowerCase()}`, label: VARS[i], expr: e, group: "Next state" })),
+      // each next state is worked out from its own J and K (#508)
+      ...NEXT.map((e, i) => ({ id: `n${VARS[i].toLowerCase()}`, label: VARS[i], expr: e, group: "Next state", needs: INPUT_EQS.filter(([l]) => l.endsWith(VARS[i])).map(([l]) => l.toLowerCase()) })),
       { id: "y", label: OUTPUT[0], expr: OUTPUT[1], group: "Output" },
     ],
   },
