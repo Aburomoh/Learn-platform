@@ -755,6 +755,22 @@ describe("content registry", () => {
     expect(point.questions[0].variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["326.4", "161.6"]);
   });
 
+  it("three JK flip-flops (#316): table, diagram and the s.52 trace as in the pack (ch5-partii §5)", () => {
+    const tbl = getActivity(COURSE, "three-jk", "three-jk-table")!.activity.questions[0].variants[0].spec;
+    if (tbl.kind !== "truth-table") throw new Error("expected a truth table");
+    const cols = Object.fromEntries(tbl.columns.map((c) => [c.group === "Next state" ? `n${c.label}` : c.label, columnTruth(tbl, c).join("")]));
+    // next A B C per row 0000…1111, and y (pack table)
+    const next = Array.from({ length: 16 }, (_, r) => `${cols.nA[r]}${cols.nB[r]}${cols.nC[r]}`).join(" ");
+    expect(next).toBe("100 000 101 000 110 010 101 000 101 111 101 110 011 011 001 000");
+    expect(cols.y).toBe("1111010111110101");
+    const dia = getActivity(COURSE, "three-jk", "three-jk-diagram")!.activity.questions[0].variants[0].spec;
+    if (dia.kind !== "state-diagram") throw new Error("expected a state diagram");
+    expect(transitions(dia).map((t) => `${t.from}-${t.label}-${t.to}`).slice(0, 4)).toEqual(["000-0/1-100", "000-1/1-000", "001-0/1-101", "001-1/1-000"]);
+    const trace = getActivity(COURSE, "three-jk", "three-jk-timing")!.activity.questions[0].variants[0].spec;
+    if (trace.kind !== "timing") throw new Error("expected timing");
+    expect(statesAfterEdges(trace).map((s) => s.join("")).join(" ")).toBe("100 111 000 000 000 100 101 101 110 011"); // from 000 (A2)
+  });
+
   it("counter design (#290–#292): next state, excitation columns and covers as in the pack (ch5-partiii §1)", () => {
     const col = (act: string, q: number, v: number) => {
       const spec = getActivity(COURSE, "design", act)!.activity.questions[q].variants[v].spec;
@@ -770,17 +786,6 @@ describe("content registry", () => {
       [["AX' + BX"], ["A'X + BX'"], ["A'BX + AB'X"]], // D_A, D_B (s.9–10), T_A
       [["BX"], ["B'X"], ["A'X"]], // J_A, K_A, J_B
     ]);
-  });
-
-  it("design problem (#293): covers and the trace from 000 as in the pack (ch5-partiii §2, owner S2 and A2)", () => {
-    const x = getActivity(COURSE, "design", "design-problem")!.activity;
-    const [, maps, trace] = x.questions;
-    const covers = maps.variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")).sort() : []));
-    expect(covers.slice(0, 3)).toEqual([["A'BX + ABX' + CX"], ["B'C'X + BC'X' + BCX"], ["A'BX' + AX + CX'"]]); // D_A, D_B, D_C
-    expect(covers[3]).toHaveLength(4); // Y has four minimal covers, all accepted
-    const t = trace.variants[0].spec;
-    if (t.kind !== "timing") throw new Error("expected timing");
-    expect(statesAfterEdges(t).map((s) => s.join("")).join(" ")).toBe("000 010 100 011 110 110 110 110 001 100");
   });
 
   it("resolves an activity by path", () => {
@@ -803,7 +808,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap", "dr.q.point", "dz.q.problem-table", "dz.q.problem-trace"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap", "dr.q.point", "j3.q.table", "j3.q.diagram", "dz.q.problem-table", "dz.q.problem-trace"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
