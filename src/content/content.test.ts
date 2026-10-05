@@ -19,7 +19,7 @@ import { transitions } from "@/kinds/state-diagram/logic";
 import { statesAfterEdges } from "@/kinds/timing/logic";
 import { pickName, rightPick } from "@/kinds/device/logic";
 import { gateExpressions } from "@/kinds/circuit-predict/logic";
-import { latchAfter } from "@/kinds/shared/latch";
+import { latchAfter } from "@/kinds/shared/figures/latch";
 import { kmapCovers } from "@/kinds/kmap/logic";
 import { computedAnswer } from "@/kinds/bit-grouping/logic";
 import { lawChips, lineOptions } from "@/kinds/derivation/logic";

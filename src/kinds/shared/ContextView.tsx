@@ -5,7 +5,7 @@ import { BitRow } from "@/interactions/BitRow/BitRow";
 import { ColumnAddition, type AdditionColumn } from "@/interactions/ColumnAddition/ColumnAddition";
 import { DivisionChain } from "@/interactions/DivisionChain/DivisionChain";
 import { BitGroups } from "./BitGroups";
-import { LatchFigure } from "./LatchFigure";
+import { LatchFigure } from "./figures/LatchFigure";
 import type { NumericContext } from "./contextSpec";
 
 /** Every step of a column addition as `ColumnAddition` draws it. */
