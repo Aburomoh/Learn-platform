@@ -216,7 +216,8 @@ export const analysisStateActivity: Activity = {
 function tableVariant(c: Circuit): VariantInput {
   const columns = [
     ...c.inputs.map(([label, expr]) => ({ id: label.toLowerCase(), label, expr, group: "Flip-flop inputs" })),
-    ...c.next.map((expr, i) => ({ id: `n${c.vars[i].toLowerCase()}`, label: c.vars[i], expr, group: "Next state" })),
+    // each next state is worked out from its own flip-flop inputs (#508)
+    ...c.next.map((expr, i) => ({ id: `n${c.vars[i].toLowerCase()}`, label: c.vars[i], expr, group: "Next state", needs: c.inputs.filter(([label]) => label.endsWith(c.vars[i])).map(([label]) => label.toLowerCase()) })),
     ...(c.output ? [{ id: "out", label: c.output[0], expr: c.output[1], group: "Output" }] : []),
   ];
   const equations = [...c.inputs.map(([l, e]) => `${l} = ${show(e)}`), ...(c.output ? [`${c.output[0]} = ${show(c.output[1])}`] : [])].join(", ");
