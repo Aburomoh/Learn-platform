@@ -8,6 +8,7 @@ import { flipFlopsTopic } from "./flip-flops";
 import { timingTopic } from "./timing";
 import { analysisTopic } from "./analysis";
 import { threeJkTopic } from "./three-jk";
+import { designTopic } from "./design";
 
 export const chapter5: ModuleInput = {
   id: "chapter-5",
@@ -18,5 +19,6 @@ export const chapter5: ModuleInput = {
     timingTopic,
     analysisTopic,
     threeJkTopic,
+    designTopic,
   ],
 };

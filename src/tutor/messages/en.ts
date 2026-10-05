@@ -136,6 +136,8 @@ export const en = {
   "tm.inputs-swapped": "Which input sets Q, and which one resets it? Check which one is 1 at this edge.",
   "tm.held-not-applied": "The inputs at this edge change Q. Which way?",
   "tm.changed-on-hold": "The inputs at this edge hold Q. What was Q just before it?",
+  "dz.dontcare-as-zero": "Those X entries are don't-cares, not 0s. Leave them as X: either value works there, and the K-map can use them.",
+  "dz.excitation-reversed": "Read the excitation from the present bit to the next bit: where does the flip-flop start, and where must it go?",
   "ff.jk-11-invalid": "1 1 is not allowed on an SR flip-flop, but JK was built to fix that. What does JK do with 1 1?",
   "ff.t-as-d": "T is not copied into Q. T = 1 means complement: what is Q′ here?",
   "lt.active-high": "On a NAND latch the inputs act at 0, not 1. Which input is 0 here?",
