@@ -181,6 +181,30 @@ describe("truth-table kind: mux-pairs (#308, ch4 pack §6)", () => {
   });
 });
 
+describe("truth-table kind: excitation columns (#291)", () => {
+  // JK design, flip-flop A of the s.16–25 counter: J_A = 0 0 0 1 X X X X
+  const ja = variant(
+    {
+      kind: "truth-table",
+      inputs: ["A", "B", "X"],
+      columns: [
+        { id: "na", label: "A", values: [0, 0, 0, 1, 1, 0, 1, 1], given: true },
+        { id: "ja", label: "J_A", values: [0, 0, 0, 1, "X", "X", "X", "X"], slipValues: { excitationReversed: [0, 0, 0, "X", 1, 0, 1, 1] } },
+      ],
+    },
+    [
+      { id: "dc0", title: "X as 0", nudgeKey: "dc0", detect: detector("dontcare-as-zero") },
+      { id: "rev", title: "reversed", nudgeKey: "rev", detect: detector("excitation-reversed") },
+    ],
+  );
+  it("names X written as 0, and the excitation read the wrong way", () => {
+    expect(truthTable.grade(ja, fill(0, "0001XXXX"))).toMatchObject({ correct: true });
+    expect(truthTable.grade(ja, fill(0, "00010000")).misconceptionId).toBe("dc0");
+    expect(truthTable.grade(ja, fill(0, "000X1011")).misconceptionId).toBe("rev");
+    expect(truthTable.grade(ja, fill(0, "00010001")).misconceptionId).toBeUndefined();
+  });
+});
+
 describe("truth-table spec", () => {
   it("inputGroups must span every input (#440)", () => {
     const base = { kind: "truth-table", inputs: ["A", "B", "x"], columns: [{ id: "f", label: "F", expr: "Ax" }] };

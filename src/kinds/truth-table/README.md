@@ -18,6 +18,9 @@ columns in order, as on the slides (UX: docs/design/ecet111-representations.md Â
 - After a wrong check, `wrongCells` gives the first wrong row and the count; mark only that one.
 - Detectors: `and-or-swapped`, `not-missing` (column of the expression without its complements),
   `rows-out-of-order` (another input's column written), `rows-inverted` (0-rows picked);
+  design columns (#291): `dontcare-as-zero` (every X written as 0) and `excitation-reversed`
+  (the column equals `slipValues.excitationReversed`, which content gives because only it knows
+  what the reversed reading is);
   mux-pairs: `pair-complement-swapped` (v for vâ€²), `pair-constant-for-variable` (0/1 where v
   applies), `pair-variable-for-constant`.
 - Step vars: `columnLabel`, `columnExpr`, `stepNumber`, `columnCount`, `rowCount`, `inputCount`;

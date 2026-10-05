@@ -131,6 +131,10 @@ export const truthTable: KindLogic<TruthTableSpec, TruthTableAnswer> = {
       // the student wrote another input's column here: the significance (row order) is off
       const asOther = spec.inputs.some((_, i) => i !== goal.index && sameCells(values, inputColumn(spec, i)));
       if (asOther) kind = "rows-out-of-order";
+    } else if (truth.includes("X") && sameCells(values, truth.map((v) => (v === "X" ? 0 : v)))) {
+      kind = "dontcare-as-zero";
+    } else if (goal.column.slipValues?.excitationReversed && sameCells(values, goal.column.slipValues.excitationReversed)) {
+      kind = "excitation-reversed";
     } else if (goal.column.expr) {
       const e = exprOf(spec, goal.column);
       const swapped = evalColumn(spec, swapAndOr(e));
