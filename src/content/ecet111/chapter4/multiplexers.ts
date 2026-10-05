@@ -54,6 +54,8 @@ function predictVariant({ id, select, data }: (typeof PREDICT_SETS)[number], i: 
     id,
     prompt: `A 4-to-1 multiplexer has ${dataText}, and S1 S0 = ${sel(select).split("").join(" ")} (S1 is the MSB). What is Y?`,
     spec: { kind: "multiple-choice", options, correctOptionId: `y${y}` },
+    // the prompt's data and selects on the pins; the routed path lights only after a correct answer (#454)
+    figure: { type: "device", device: "mux", bits: 2, given: select, data, focus: "Y" },
     hints: [
       { rung: 2, text: "Not yet. The select bits pick one input; Y copies it." },
       { rung: 3, text: "Read S1 S0 as a binary number, S1 first: that is the number of the input." },
