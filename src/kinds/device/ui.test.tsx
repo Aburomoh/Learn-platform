@@ -65,7 +65,10 @@ describe("device kind in the stage (#381, #382)", () => {
   it("mux: the selects are printed under the body; the routed input is drawn to Y", async () => {
     render(<Harness variant={mux} />);
     const user = userEvent.setup();
-    await screen.findByText("1 of 1: S1 = 1, S0 = 0, which input reaches Y?");
+    // one ask: no goal line (the prompt says it); the selects are on the figure
+    await screen.findByRole("radiogroup", { name: "Which input reaches Y?" });
+    expect(screen.queryByText(/^1 of 1/)).toBeNull();
+    expect(screen.getByRole("img")).toHaveAccessibleName(/Given: S1 = 1, S0 = 0\./);
     // tapping a line picks it, the same as its chip
     await user.click(document.querySelector("[data-line='I2']")!);
     expect(screen.getByRole("radio", { name: "I2" })).toBeChecked();
@@ -78,7 +81,7 @@ describe("device kind in the stage (#381, #382)", () => {
   it("encoder: the active input is marked; the code is picked from the chips", async () => {
     render(<Harness variant={encoder} />);
     const user = userEvent.setup();
-    await screen.findByText("1 of 1: I6 is active, what is the output code?");
+    await screen.findByRole("radiogroup", { name: "Output code" });
     expect(lit()).toEqual(["I6"]);
     await answer(user, "011"); // bits reversed
     expect(screen.getByText("Not correct yet.")).toBeInTheDocument();
