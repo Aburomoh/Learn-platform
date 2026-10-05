@@ -24,6 +24,9 @@ export function nextQ(ff: FlipFlop, inputs: Bit[], q: Bit): Bit | undefined {
   return evaluate(parseBool(EQUATION[ff], { vars }), envFor(vars, [...inputs, q].reduce<number>((a, b) => a * 2 + b, 0)));
 }
 
+/** The figure's name for a flip-flop (ADR-0009). */
+const symbolOf = (ff: FlipFlop) => ff.toLowerCase() as "sr" | "jk" | "d" | "t";
+
 function rotate<T>(xs: T[], k: number): T[] {
   const r = k % xs.length;
   return [...xs.slice(r), ...xs.slice(0, r)];
@@ -54,6 +57,8 @@ function rowVariant([ff, inputs, q]: [FlipFlop, Bit[], Bit], k: number): Variant
     id: `r${ff.toLowerCase()}`,
     prompt: `A ${ff} flip-flop has Q(t) = ${q}. At the active clock edge ${inputText(ff, inputs)}. What is Q(t+1)?`,
     spec: { kind: "multiple-choice", options, correctOptionId: `q${next}` },
+    // the symbol with the prompt's Q and inputs; Q after the edge is drawn only after a correct answer (#454)
+    figure: { type: "flip-flop", ff: symbolOf(ff), given: { q, inputs } },
     hints: [
       { rung: 2, text: `Not yet. Recall the ${ff} table: what does this input combination do?` },
       { rung: 3, text: ff === "JK" ? "JK: 0 0 no change, 1 0 set, 0 1 reset, 1 1 toggle." : ff === "T" ? "T: 0 keeps Q, 1 complements it." : ff === "SR" ? "SR: 0 0 no change, 1 0 set, 0 1 reset, 1 1 not allowed." : "D: Q(t+1) is whatever D is." },
@@ -85,6 +90,7 @@ function tableVariant(ff: FlipFlop): VariantInput {
     id: `t${ff.toLowerCase()}`,
     prompt: `Fill the ${ff} flip-flop's characteristic table: Q(t+1) for each row of ${vars.join(", ")}${ff === "SR" ? " (X where S = R = 1 is not allowed)" : ""}.`,
     spec: { kind: "truth-table", inputs: vars, columns: [{ id: "next", label: "Q(t+1)", values }] },
+    figure: { type: "flip-flop", ff: symbolOf(ff) }, // the symbol alone: the table walks every row (#454)
     hints: [
       { rung: 2, text: "Not yet. Go row by row: read the inputs, then the present Q." },
       { rung: 3, text: ff === "JK" ? "0 0 keeps Q, 1 0 gives 1, 0 1 gives 0, 1 1 gives Q′." : ff === "T" ? "T = 0 keeps Q; T = 1 gives Q′." : ff === "SR" ? "0 0 keeps Q, 1 0 gives 1, 0 1 gives 0; 1 1 is X." : "Q(t+1) copies D, whatever Q was." },
@@ -137,6 +143,7 @@ function equationVariant(ff: Exclude<FlipFlop, "SR">): VariantInput {
     id: `e${ff.toLowerCase()}`,
     prompt: `From the ${ff} table, write Q(t+1) as an expression in ${vars.join(", ")}, as simple as you can.`,
     spec: ff === "JK" ? { kind: "expression", vars, minterms: ones, form: "sop", maxLiterals: 4 } : { kind: "expression", vars, minterms: ones },
+    figure: { type: "flip-flop", ff: symbolOf(ff), focus: "Q" }, // (#454)
     hints: [
       { rung: 2, text: "Not yet. Look at the rows where Q(t+1) = 1." },
       { rung: 3, text: ff === "JK" ? "Q(t+1) is 1 when J sets a Q that was 0, or when K does not reset a Q that was 1." : ff === "T" ? "Q(t+1) is 1 when exactly one of T and Q is 1." : "Q(t+1) is 1 exactly when D is 1." },
@@ -186,6 +193,8 @@ function nextVariant([ff, inputs, q]: [FlipFlop, Bit[], Bit], k: number): Varian
     id: `x${ff.toLowerCase()}${inputs.join("")}${q}`,
     prompt: `Q(t+1) = ${EQUATION[ff].replace(/'/g, "′")}. With ${inputText(ff, inputs)} and Q(t) = ${q}, what is Q(t+1)?`,
     spec: { kind: "multiple-choice", options, correctOptionId: `q${next}` },
+    // the symbol with the prompt's Q and inputs; Q after the edge is drawn only after a correct answer (#454)
+    figure: { type: "flip-flop", ff: symbolOf(ff), given: { q, inputs } },
     hints: [
       { rung: 2, text: "Not yet. Put the values into the equation, one term at a time." },
       { rung: 3, text: `Q(t) = ${q}, so Q′ = ${1 - q}.` },
@@ -224,6 +233,10 @@ export const flipFlopsTopic: TopicInput = {
   title: "Flip-flops",
   summary: "Edge-triggered SR, JK, D and T flip-flops: what each does at the active edge, as a table and as an equation.",
   preview: "J K = 1 1 → Q toggles",
+  meet: {
+    figure: { type: "flip-flop", ff: "d", given: { q: 0, inputs: [1] } },
+    callouts: ["D = 1 is waiting at the input.", "At the rising clock edge the flip-flop stores D.", "So Q becomes 1, and Q′ becomes 0."],
+  },
   concepts: [{ id: "ff.flip-flop", title: "Flip-flop", summary: "At the active clock edge Q(t+1) follows the inputs: SR set/reset, JK adds toggle, D copies, T complements on 1." }],
   objectives: [
     { id: "ff.obj.table", conceptId: "ff.flip-flop", text: "Give Q(t+1) of SR, JK, D and T flip-flops for every input and present state." },

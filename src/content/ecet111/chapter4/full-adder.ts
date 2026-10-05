@@ -298,6 +298,10 @@ export const fullAdderTopic: TopicInput = {
   title: "Full adder",
   summary: "Add three bits, A + B + a carry in: the table first, then its minterms and maps, in separate activities.",
   preview: "1 + 1 + 1 → 11 → S = 1, Co = 1",
+  meet: {
+    figure: { type: "adder", adder: "full", given: { a: 1, b: 0, ci: 1 } },
+    callouts: ["Two bits and a carry in.", "1 + 0 + 1 is 2, written 10.", "S is the 0, Co carries the 1 to the next column."],
+  },
   concepts: [{ id: "fa.adder", title: "Full adder", summary: "Adds A, B and the carry in Ci: S is 1 for an odd count of 1s, Co for two or more." }],
   objectives: [
     { id: "fa.obj.table", conceptId: "fa.adder", text: "Fill the full adder's 8-row table, S then Co." },
