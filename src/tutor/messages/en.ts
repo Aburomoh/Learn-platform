@@ -161,6 +161,14 @@ export const en = {
   "fa.carry-in-dropped": "That is A + B alone. The carry in Ci counts too: add all three bits.",
   "ha.c-as-xor": "Check the row 1 1. The carry is 1 there; what does XOR give on equal inputs?",
   "lg.nor-inverted": "NOR is the opposite of OR. Which gate outputs 1 when any input is 1?",
+  "sp.sop-pos": "Look at what joins the outermost parts: + between products is SOP; brackets of sums multiplied together is POS.",
+  "sp.one-per-row": "The function is right, but this asks for one product per 1-row, with every letter in each product.",
+  "sp.zero-rows": "Those products come from the rows where F is 0. Use the rows where F is 1.",
+  "expr.unreadable": "I cannot read that. Use only the variables in the question, a prime (') for NOT and + for OR.",
+  "expr.wrong-form": "The function is right, but it is not in the form the question asks for. Look at the form it names.",
+  "expr.not-simplified": "Correct function, but it can be simpler. Look for terms you can combine.",
+  "expr.complement": "That is the opposite of what is asked. Check where a bar (NOT) is missing or extra.",
+  "expr.and-or-swapped": "Look at the AND and OR signs again. AND needs every part to be 1; OR needs just one.",
 
   // gate-by-gate circuit walk: filled into {gateRule}, {gateAnalogy}, {gateInputs} for the active gate
   "gate.rule.NOT": "NOT flips its input: 0 becomes 1 and 1 becomes 0.",
