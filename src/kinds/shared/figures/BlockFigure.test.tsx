@@ -59,10 +59,10 @@ describe("AdderFigure", () => {
 describe("FlipFlopFigure", () => {
   it("JK: inputs above and below the clock; the next Q is drawn only in the result state", () => {
     const { rerender } = render(<FlipFlopFigure ff="jk" given={{ q: 0, inputs: [1, 1] }} />);
-    expect(pinTexts()).toEqual(["J = 1", "K = 1", "Q = 0", "Q′", "Clk"]);
-    expect(screen.getByRole("img")).toHaveAccessibleName("JK flip-flop, rising-edge triggered. Given: J = 1, K = 1, Q = 0.");
+    expect(pinTexts()).toEqual(["J = 1", "K = 1", "Q(t) = 0", "Q′", "Clk"]);
+    expect(screen.getByRole("img")).toHaveAccessibleName("JK flip-flop, rising-edge triggered. Given: J = 1, K = 1, Q(t) = 0.");
     rerender(<FlipFlopFigure ff="jk" given={{ q: 0, inputs: [1, 1] }} revealed />);
-    expect(pinTexts()).toEqual(["J = 1", "K = 1", "Q = 1", "Q′ = 0", "Clk"]);
+    expect(pinTexts()).toEqual(["J = 1", "K = 1", "Q(t+1) = 1", "Q′(t+1) = 0", "Clk"]);
     expect(lit()).toEqual(["Q"]);
   });
 
@@ -91,6 +91,6 @@ describe("adder and flip-flop figures in the spec (ADR-0009)", () => {
 
   it("FigureView draws them, lazily", async () => {
     render(<FigureView id="f" figure={FigureSpec.parse({ type: "flip-flop", ff: "t", edge: "falling", given: { q: 1, inputs: [1] } })} revealed />);
-    expect(await screen.findByRole("img")).toHaveAccessibleName("T flip-flop, falling-edge triggered. Given: T = 1, Q = 1. After the clock edge: Q = 0, Q′ = 1.");
+    expect(await screen.findByRole("img")).toHaveAccessibleName("T flip-flop, falling-edge triggered. Given: T = 1, Q(t) = 1. After the clock edge: Q(t+1) = 0, Q′(t+1) = 1.");
   });
 });

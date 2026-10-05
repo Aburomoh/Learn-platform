@@ -5,6 +5,8 @@ import styles from "./figures.module.css";
 /** One pin of a block: its name, where it sits, and what is printed beside it. */
 interface Pin {
   name: string;
+  /** Printed instead of the name when it says more: Q(t), Q(t+1). */
+  label?: string;
   /** Distance from the top of the body, in units. */
   y: number;
   /** Printed after the name: "1", "0" or "?" (asked, not answered yet). Omitted: the name alone. */
@@ -24,20 +26,21 @@ interface BlockProps {
   clock?: { y: number; edge: "rising" | "falling" };
   focus?: string;
   summary: string;
+  /** Where the body starts and how long the pin stubs are; a flip-flop sits further left to leave room for "Q′(t+1) = 0". */
+  bodyX?: number;
+  stub?: number;
 }
 
 // Geometry in SVG units (visual system §4): 330 wide at most, 15-unit text, never drawn below 0.8× (12 px).
 const WIDTH = 330;
-const BODY_X = 120;
 const BODY_W = 90;
-const STUB = 44;
 const TOP = 12;
 const MIN_SCALE = 0.8;
 
 /** A rectangular block symbol: pins on the left and right, the name inside. The adders and flip-flops are this drawing. */
-function Block({ title, subtitle, height, left, right, clock, focus, summary }: BlockProps) {
-  const lx = BODY_X - STUB;
-  const rx = BODY_X + BODY_W + STUB;
+function Block({ title, subtitle, height, left, right, clock, focus, summary, bodyX: BODY_X = 120, stub = 44 }: BlockProps) {
+  const lx = BODY_X - stub;
+  const rx = BODY_X + BODY_W + stub;
   const total = TOP + height + (clock ? 40 : 12);
   const pin = (p: Pin, side: "left" | "right") => {
     const y = TOP + p.y;
@@ -46,10 +49,10 @@ function Block({ title, subtitle, height, left, right, clock, focus, summary }: 
     const focused = focus === p.name;
     return (
       <g key={p.name} className={`${styles.line} ${on ? styles.on : ""} ${focused ? styles.focus : ""}`} data-line={p.name} data-on={on || undefined} data-focus={focused || undefined} {...focusTarget(`line-${p.name}`)}>
-        {focused && <rect x={side === "left" ? 2 : BODY_X + BODY_W + 2} y={y - 14} width={BODY_X - 4} height={28} className={styles.hit} />}
+        {focused && <rect x={side === "left" ? 2 : BODY_X + BODY_W + 2} y={y - 14} width={side === "left" ? BODY_X - 4 : WIDTH - BODY_X - BODY_W - 4} height={28} className={styles.hit} />}
         <path d={side === "left" ? `M ${lx} ${y} H ${BODY_X}` : `M ${BODY_X + BODY_W} ${y} H ${rx}`} />
         <text x={side === "left" ? lx - 6 : rx + 6} y={y + 5} textAnchor={side === "left" ? "end" : "start"} className={`${styles.pin} mono`}>
-          {p.name}
+          {p.label ?? p.name}
           {p.value !== undefined && <tspan className={`${styles.value} ${asked ? styles.asked : ""}`}>{` = ${p.value}`}</tspan>}
         </text>
       </g>
@@ -77,8 +80,8 @@ function Block({ title, subtitle, height, left, right, clock, focus, summary }: 
               Clk
             </text>
             {/* the mini clock edge points the same way as the trigger */}
-            <path d={clock.edge === "rising" ? `M 84 ${total - 8} H 94 V ${total - 22} H 104` : `M 84 ${total - 22} H 94 V ${total - 8} H 104`} className={styles.edge} />
-            <text x={112} y={total - 10} className={styles.sub}>
+            <path d={clock.edge === "rising" ? `M ${BODY_X - 36} ${total - 8} h 10 v -14 h 10` : `M ${BODY_X - 36} ${total - 22} h 10 v 14 h 10`} className={styles.edge} />
+            <text x={BODY_X - 8} y={total - 10} className={styles.sub}>
               {clock.edge} edge
             </text>
           </g>
@@ -125,7 +128,7 @@ export interface FlipFlopFigureProps {
   edge?: "rising" | "falling";
   /** The inputs and the present Q. Omitted: the symbol alone. */
   given?: FlipFlopGiven;
-  /** Result state: Q and Q′ after the clock edge, computed. */
+  /** Result state: Q(t+1) and Q′(t+1), computed. Before it the figure shows the given Q(t). */
   revealed?: boolean;
   focus?: string;
 }
@@ -137,8 +140,8 @@ export function FlipFlopFigure({ ff, edge = "rising", given, revealed = false, f
   const q = given ? (revealed ? next! : given.q) : undefined;
   const two = inputs.length === 2;
   const letter = ff.toUpperCase();
-  const givenText = given ? ` Given: ${inputs.map((n, i) => `${n} = ${given.inputs[i]}`).join(", ")}, Q = ${given.q}.` : "";
-  const answer = revealed && next !== undefined ? ` After the clock edge: Q = ${next}, Q′ = ${next ? 0 : 1}.` : "";
+  const givenText = given ? ` Given: ${inputs.map((n, i) => `${n} = ${given.inputs[i]}`).join(", ")}, Q(t) = ${given.q}.` : "";
+  const answer = revealed && next !== undefined ? ` After the clock edge: Q(t+1) = ${next}, Q′(t+1) = ${next ? 0 : 1}.` : "";
   return (
     <Block
       title={letter}
@@ -146,9 +149,12 @@ export function FlipFlopFigure({ ff, edge = "rising", given, revealed = false, f
       height={116}
       left={inputs.map((n, i) => ({ name: n, y: i === 0 ? 24 : 92, value: given ? String(given.inputs[i]) : undefined }))}
       right={[
-        { name: "Q", y: 24, value: q === undefined ? undefined : String(q), result: revealed },
-        { name: "Q′", y: 92, value: revealed && q !== undefined ? String(q ? 0 : 1) : undefined, result: revealed },
+        // the characteristic tables' notation: Q(t) is the state given, Q(t+1) the state after the edge
+        { name: "Q", label: q === undefined ? undefined : revealed ? "Q(t+1)" : "Q(t)", y: 24, value: q === undefined ? undefined : String(q), result: revealed },
+        { name: "Q′", label: revealed && q !== undefined ? "Q′(t+1)" : undefined, y: 92, value: revealed && q !== undefined ? String(q ? 0 : 1) : undefined, result: revealed },
       ]}
+      bodyX={82}
+      stub={30}
       clock={{ y: two ? 58 : 66, edge }}
       focus={focus}
       summary={`${letter} flip-flop, ${edge}-edge triggered.${givenText}${answer}`}
