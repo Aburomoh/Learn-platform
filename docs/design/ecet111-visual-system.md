@@ -133,3 +133,47 @@ Steps 1–3 and the wiring of their P0 screens are the must-haves before the Cha
 - **Technical Lead:** `figure` on the variant (preferred: one place, every kind) versus widening `context`.
 - **Pedagogy:** the guards in §7; whether the topic-page callouts may show one fully worked case.
 - **Product:** is the demultiplexer in ECET 111's assessed scope (it isn't in the Chapter 4 pack)?
+
+## 10. Symbols, sheet 2 (for build steps 2, 3 and 6)
+Mock-up `visual-symbols-2.html`, renders `visual-symbols-2-{1280,390}.png`. Same drawing rules as §4.
+- **Flip-flops (D, T, SR, JK):** one body for all four, 90 × 116 units. Inputs on the left (one input centred
+  high; two inputs above and below the clock), the clock triangle on the left edge, Q top right and Q′ bottom
+  right. The type letter and "flip-flop" sit inside the body.
+- **Negative-edge trigger:** a bubble in front of the clock triangle. Wherever a flip-flop is shown with a
+  timing diagram or an edge question, the mini clock edge beside "Clk" points the same way as the trigger.
+- **Demultiplexer:** the mux mirrored (one data line in on the narrow side, outputs on the wide side,
+  selects from the bottom). Build it only if Product confirms it is in scope.
+- **Full adder, inside:** two HA blocks and one OR gate, block level. The half adders carry small S and C
+  pin names inside their right edge; a dashed `--brand` frame marks "inside the Σ block".
+- **Sequential circuit (analysis):** one gate block that carries the input equations, the flip-flops as
+  symbols to its right, feedback from each Q around the outside back to the gate block, the clock along the
+  bottom. The flip-flop the current question asks about takes the focus halo. The circuit's output (y) leaves
+  the gate block; draw it only on questions about the output.
+- Composite figures (the last two) may be up to 360 units wide with 15-unit text, so they stay at 12 px or
+  more on a 390 px phone.
+
+## 11. "Meet it" cards for the P0 topics (build step 4)
+One card per topic page, in place of the preview tiles: the symbol in its *result* state for one worked
+case, and exactly three callouts (what comes in, what the device does, what comes out). Each callout is one
+short sentence, numbered, 15 px. No case repeats a practice's numbers (preview guard); the adder and flip-flop cases are rows of a complete fixed table, so they cannot avoid it and are allowed.
+
+| Topic | Figure and worked case | Callouts |
+|---|---|---|
+| Decoders | 2→4 decoder, x y = 1 0, D2 lit (a size no 3→8 question can repeat) | 1. A code comes in: x y = 10. · 2. 10 is 2, so line D2 goes to 1. · 3. Every other line stays 0. |
+| Encoders | 8→3 encoder, I5 = 1, outputs 1 0 1 | 1. One input line is 1: I5. · 2. The encoder writes its number in binary. · 3. 5 is 101, so x y z = 101. |
+| Multiplexers | 4→1 mux, S1 S0 = 0 0, path I0 → Y | 1. Four data inputs wait at the left. · 2. The selects say 00, which is 0. · 3. So Y copies I0, whatever I0 is. |
+| Half adder | HA block, A = 1, B = 1 → S = 0, C = 1 | 1. Two bits come in: 1 and 1. · 2. 1 + 1 is 2, written 10 in binary. · 3. S is the 0, C is the carry 1. |
+| Full adder | Σ block, A = 1, B = 0, Ci = 1 → S = 0, Co = 1 | 1. Two bits and a carry in. · 2. 1 + 0 + 1 is 2, written 10. · 3. S is the 0, Co carries the 1 to the next column. |
+| Flip-flops | D flip-flop, D = 1, Q(t) = 0, rising edge → Q(t+1) = 1 | 1. Q holds one bit: now 0. · 2. Nothing changes until the clock edge. · 3. At the edge Q takes D, so Q becomes 1. |
+| Analysis | the block-level circuit (§10), no values | 1. The gates work out each flip-flop's input. · 2. At the clock edge the flip-flops store them. · 3. Their outputs feed back, so the present state shapes the next. |
+
+- **Layout:** as in M2. From 900 px the card sits to the right of the title and the Start button; on a phone
+  it sits between the "Today" line and the Start button, figure first, callouts under it. The card never
+  pushes the Start button below the first screen on a 390 × 844 phone: if it would, the callouts collapse
+  behind "How it works" (closed by default) and the figure stays.
+- **Numbering:** the three callouts carry `--brand` numbered discs; the matching pins on the figure carry
+  the same small numbers (1 at the inputs, 2 inside the body, 3 at the outputs), so text and picture point
+  at each other without arrows.
+- **Topics with several devices** (flip-flops: SR, D, JK, T) show one card (the D flip-flop) and a quiet
+  "All four symbols" link to the Symbols sheet.
+- The tutor's one line stays where it is; the card doesn't replace it.

@@ -37,3 +37,27 @@
 .table tbody tr:nth-child(2n + 1) td {
   border-top: 1px solid var(--text-muted);
 }
+
+/* a long table on a phone: only the current state's rows, and a toggle for the rest (#468) */
+.tableBox {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+  flex: none;
+}
+
+.toggle {
+  display: none;
+  min-height: 44px;
+}
+
+@media (max-width: 899px) {
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .table[data-short] tr[data-other] {
+    display: none;
+  }
+}

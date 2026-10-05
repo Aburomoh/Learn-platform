@@ -5,6 +5,7 @@
 import type { ModuleInput } from "../../schema";
 import { placeValueTopic } from "./place-value";
 import { numberSystemsTopic } from "./number-systems";
+import { digitReplacementTopic } from "./digit-replacement";
 import { binaryArithmeticTopic } from "./binary-arithmetic";
 
 export const chapter1: ModuleInput = {
@@ -13,6 +14,7 @@ export const chapter1: ModuleInput = {
   topics: [
     placeValueTopic,
     numberSystemsTopic,
+    digitReplacementTopic,
     binaryArithmeticTopic,
   ],
 };

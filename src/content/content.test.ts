@@ -711,7 +711,7 @@ describe("content registry", () => {
       const data = spec.inputs.at(-1)!;
       return muxPairs(spec).map((p) => (p.choice === "v" ? data : p.choice === "v'" ? `${data}'` : p.choice)).join(", ");
     });
-    expect(inputs).toEqual(["z, z', 0, 1", "z, z', z, 0, 0, z, z, 0", "D, D, D', 0, 0, D, 1, 1"]);
+    expect(inputs).toEqual(["z, z', 0, 1", "z, z', z, 0, 0, z, z, 0", "D, D, D', 0, 0, D, 1, 1", "0, w', w', w, 0, 1, 0, 0"]); // s.56: owner-confirmed (A1)
     const right = wiring.variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
     expect(right).toEqual(["x → S1, y → S0", "w → S2, x → S1, y → S0", "A → S2, B → S1, C → S0"]);
   });
@@ -741,6 +741,53 @@ describe("content registry", () => {
     for (const v of [...rising.variants, ...falling.variants]) expect(q(v).length, v.id).toBeGreaterThan(0);
   });
 
+  it("digit replacement (#214): bits and checks from the pack (s.21, s.20 owner S4, s.27–28, s.29–30, s.22)", () => {
+    const x = getActivity(COURSE, "digit-replacement", "digit-replacement")!.activity;
+    const [octBits, octCheck, hexBits, hexCheck, hex16] = x.questions;
+    const bits = (q: typeof octBits) => q.variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.bits : ""));
+    expect(bits(octBits)).toEqual(["11101001", "1111010", "110000101", "1110110"]); // (166)₈ = 1110110₂ (S4)
+    expect(bits(hexBits)).toEqual(["1011010110", "111101001", "1110110100"]);
+    const checks = (q: typeof octCheck) => q.variants.map(({ spec }) => (spec.kind === "numeric" ? spec.answer : ""));
+    expect(checks(octCheck)).toEqual(["233", "122", "389", "118"]);
+    expect(checks(hexCheck)).toEqual(["726", "489", "948"]);
+    expect(hex16.variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["B6E3", "E95C", "9F2B"]);
+    const point = getActivity(COURSE, "digit-replacement", "binary-point")!.activity;
+    expect(point.questions[0].variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["326.4", "161.6"]);
+  });
+
+  it("three JK flip-flops (#316): table, diagram and the s.52 trace as in the pack (ch5-partii §5)", () => {
+    const tbl = getActivity(COURSE, "three-jk", "three-jk-table")!.activity.questions[0].variants[0].spec;
+    if (tbl.kind !== "truth-table") throw new Error("expected a truth table");
+    const cols = Object.fromEntries(tbl.columns.map((c) => [c.group === "Next state" ? `n${c.label}` : c.label, columnTruth(tbl, c).join("")]));
+    // next A B C per row 0000…1111, and y (pack table)
+    const next = Array.from({ length: 16 }, (_, r) => `${cols.nA[r]}${cols.nB[r]}${cols.nC[r]}`).join(" ");
+    expect(next).toBe("100 000 101 000 110 010 101 000 101 111 101 110 011 011 001 000");
+    expect(cols.y).toBe("1111010111110101");
+    const dia = getActivity(COURSE, "three-jk", "three-jk-diagram")!.activity.questions[0].variants[0].spec;
+    if (dia.kind !== "state-diagram") throw new Error("expected a state diagram");
+    expect(transitions(dia).map((t) => `${t.from}-${t.label}-${t.to}`).slice(0, 4)).toEqual(["000-0/1-100", "000-1/1-000", "001-0/1-101", "001-1/1-000"]);
+    const trace = getActivity(COURSE, "three-jk", "three-jk-timing")!.activity.questions[0].variants[0].spec;
+    if (trace.kind !== "timing") throw new Error("expected timing");
+    expect(statesAfterEdges(trace).map((s) => s.join("")).join(" ")).toBe("100 111 000 000 000 100 101 101 110 011"); // from 000 (A2)
+  });
+
+  it("counter design (#290–#292): next state, excitation columns and covers as in the pack (ch5-partiii §1)", () => {
+    const col = (act: string, q: number, v: number) => {
+      const spec = getActivity(COURSE, "design", act)!.activity.questions[q].variants[v].spec;
+      if (spec.kind !== "truth-table") throw new Error("expected a truth table");
+      return Object.fromEntries(spec.columns.map((c) => [c.label, columnTruth(spec, c).join("")]));
+    };
+    expect(col("design-state-table", 0, 0)).toEqual({ A: "00011011", B: "01110010" }); // s.6–8
+    expect(col("design-excitation", 0, 0)).toMatchObject({ T_A: "00010100", T_B: "01000001" });
+    expect(col("design-excitation", 1, 0)).toMatchObject({ J_A: "0001XXXX", K_A: "XXXX0100", J_B: "01XX00XX", K_B: "XX00XX01" });
+    const maps = getActivity(COURSE, "design", "design-maps")!.activity;
+    const covers = maps.questions.map((q) => q.variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((x) => formatCube(x, spec.vars)).sort().join(" + ")) : [])));
+    expect(covers).toEqual([
+      [["AX' + BX"], ["A'X + BX'"], ["A'BX + AB'X"]], // D_A, D_B (s.9–10), T_A
+      [["BX"], ["B'X"], ["A'X"]], // J_A, K_A, J_B
+    ]);
+  });
+
   it("resolves an activity by path", () => {
     expect(getActivity(COURSE, "number-systems", "decimal-to-binary")?.activity.questions.length).toBe(6);
     expect(getActivity("nope", "x", "y")).toBeUndefined();
@@ -761,7 +808,7 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap"]);
+    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap", "dr.q.point", "j3.q.table", "j3.q.diagram", "dz.q.problem-table", "dz.q.problem-trace", "an.q.ex-diagram"]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)

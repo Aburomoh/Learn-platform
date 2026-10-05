@@ -150,33 +150,44 @@ const muxActivity: Activity = {
 
 /* ---------- functions with a MUX (#308, pack ch4 §6): first n−1 variables on the selects, the last decides each data input ---------- */
 
-/** The slides' worked functions (s.48–51, s.52–55, s.57–61). s.56 (w as the data variable) waits for the owner (DECISIONS A1). */
-const FN_SETS: { id: string; vars: string[]; minterms: number[] }[] = [
+/**
+ * The slides' worked functions (s.48–51, s.52–55, s.57–61), and s.56: the same F as s.52–55 with x, y, z
+ * on the selects and w on the data inputs (owner-confirmed, DECISIONS A1). `order` is the table's input
+ * order when the data variable is not the last one.
+ */
+const FN_SETS: { id: string; vars: string[]; minterms: number[]; order?: string[] }[] = [
   { id: "f3", vars: ["x", "y", "z"], minterms: [1, 2, 6, 7] },
   { id: "f4", vars: ["w", "x", "y", "z"], minterms: [1, 2, 5, 11, 13] },
   { id: "f4b", vars: ["A", "B", "C", "D"], minterms: [1, 3, 4, 11, 12, 13, 14, 15] },
 ];
+const S56 = { id: "f56", vars: ["w", "x", "y", "z"], minterms: [1, 2, 5, 11, 13], order: ["x", "y", "z", "w"] };
 
 const sigmaText = (ms: number[]) => `Σ(${ms.join(", ")})`;
 const muxSize = (n: number) => `${2 ** (n - 1)}-to-1`;
 
-const PROBE = [0, 3, 2];
+const PROBE = [0, 3, 2, 0];
 
 function pairsVariant(set: (typeof FN_SETS)[number], i: number): VariantInput {
   const { vars, minterms } = set;
-  const p = PROBE[i];
-  const [f0, f1] = [minterms.includes(2 * p) ? 1 : 0, minterms.includes(2 * p + 1) ? 1 : 0];
-  const data = vars.at(-1)!;
+  const cols = set.order ?? vars;
   const rows = 2 ** vars.length;
+  // F on each table row (in `cols` order), read from the Σ over `vars`
+  const fAt = (r: number) => {
+    const bits = Object.fromEntries(cols.map((v, j) => [v, (r >> (cols.length - 1 - j)) & 1]));
+    return minterms.includes(vars.reduce((m, v) => m * 2 + bits[v], 0)) ? 1 : 0;
+  };
+  const p = PROBE[i];
+  const [f0, f1] = [fAt(2 * p), fAt(2 * p + 1)];
+  const data = cols.at(-1)!;
   return {
     id: set.id,
-    prompt: `F(${vars.join(", ")}) = ${sigmaText(minterms)} with a ${muxSize(vars.length)} MUX: ${vars.slice(0, -1).join(", ")} on the selects, ${data} on the data inputs. For each pair of rows, what does its data input get: 0, 1, ${data} or ${data}′?`,
+    prompt: `F(${vars.join(", ")}) = ${sigmaText(minterms)} with a ${muxSize(vars.length)} MUX: ${cols.slice(0, -1).join(", ")} on the selects, ${data} on the data inputs. For each pair of rows, what does its data input get: 0, 1, ${data} or ${data}′?`,
     spec: {
       kind: "truth-table",
-      inputs: vars,
+      inputs: cols,
       mode: "mux-pairs",
       target: "f",
-      columns: [{ id: "f", label: "F", values: Array.from({ length: rows }, (_, m) => (minterms.includes(m) ? 1 : 0)), given: true }],
+      columns: [{ id: "f", label: "F", values: Array.from({ length: rows }, (_, r) => fAt(r)), given: true }],
     },
     hints: [
       { rung: 2, text: "Not yet. Look only at the two rows of this pair: {dataVar} = 0, then {dataVar} = 1." },
@@ -190,7 +201,7 @@ function pairsVariant(set: (typeof FN_SETS)[number], i: number): VariantInput {
       { id: "mx.pair-variable", title: "A variable where F does not change", nudgeKey: "mx.pair-variable", detect: { type: "pair-variable-for-constant" } },
     ],
     explanation: [
-      { id: "s1", say: `The selects take ${vars.slice(0, -1).join(", ")}; each select value picks a pair of rows that differ only in ${data}.`, stage: { step: 0 } },
+      { id: "s1", say: `The selects take ${cols.slice(0, -1).join(", ")}; each select value picks a pair of rows that differ only in ${data}.`, stage: { step: 0 } },
       {
         id: "s2",
         say: `Take the pair for I${p}: F = ${f0} for ${data} = 0 and F = ${f1} for ${data} = 1.`,
@@ -247,7 +258,7 @@ const muxFunctionsActivity: Activity = {
   minutes: 15,
   questions: [
     { id: "mx.q.wiring", label: "Which selects?", conceptId: "mx.function", objectiveId: "mx.obj.function", variants: FN_SETS.map((s, i) => wiringVariant(s, i)) },
-    { id: "mx.q.pairs", label: "Each data input", conceptId: "mx.function", objectiveId: "mx.obj.function", variants: FN_SETS.map((s, i) => pairsVariant(s, i)) },
+    { id: "mx.q.pairs", label: "Each data input", conceptId: "mx.function", objectiveId: "mx.obj.function", variants: [...FN_SETS, S56].map((s, i) => pairsVariant(s, i)) },
   ],
 };
 

@@ -21,6 +21,11 @@ export const TableColumn = z
     given: z.boolean().default(false),
     /** Two-level header for state tables: "Present state", "Next state", "Flip-flop inputs"… */
     group: z.string().optional(),
+    /**
+     * A known slip's whole column, for slips the column itself cannot reveal (#291): e.g. an
+     * excitation column read the wrong way (Q_t+1 → Q_t). One value per row, like `values`.
+     */
+    slipValues: z.object({ excitationReversed: z.array(Cell).optional() }).optional(),
   })
   .refine((c) => (c.expr === undefined) !== (c.values === undefined), "a column has either expr or values");
 
@@ -88,6 +93,10 @@ export const truthTableDetectors = [
   z.object({ type: z.literal("not-missing") }),
   /** Input columns hold every combination but not in ascending binary order. */
   z.object({ type: z.literal("rows-out-of-order") }),
+  /** A column with don't-cares: every X written as 0 (#291). */
+  z.object({ type: z.literal("dontcare-as-zero") }),
+  /** An excitation column read the wrong way round (from Q_t+1 back to Q_t), given in `slipValues` (#291). */
+  z.object({ type: z.literal("excitation-reversed") }),
   /** row-select: the 0-rows were picked instead of the 1-rows. */
   z.object({ type: z.literal("rows-inverted") }),
   /** mux-pairs: v and v′ exchanged. */
