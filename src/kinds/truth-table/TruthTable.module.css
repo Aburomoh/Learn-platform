@@ -85,6 +85,74 @@
   background: color-mix(in srgb, var(--surface-2) 80%, transparent);
 }
 
+/* ---- given input columns stay put when a wide table scrolls sideways (#508) ---- */
+.stick {
+  position: sticky;
+  z-index: 2;
+  background: var(--surface-sunk);
+}
+
+.head.stick {
+  z-index: 3;
+}
+
+/* opaque versions of the row and band tints, so scrolled cells do not show through */
+.row:nth-child(even) .cell.stick {
+  background: linear-gradient(color-mix(in srgb, var(--surface-2) 45%, transparent), color-mix(in srgb, var(--surface-2) 45%, transparent)), var(--surface-sunk);
+}
+
+.table .stick[data-band="0"] {
+  background: linear-gradient(color-mix(in srgb, var(--accent-soft) 60%, transparent), color-mix(in srgb, var(--accent-soft) 60%, transparent)), var(--surface-sunk);
+}
+
+.table .stick[data-band="1"] {
+  background: linear-gradient(color-mix(in srgb, var(--brand-soft) 60%, transparent), color-mix(in srgb, var(--brand-soft) 60%, transparent)), var(--surface-sunk);
+}
+
+.table .stick[data-band="2"] {
+  background: linear-gradient(color-mix(in srgb, var(--success-soft) 60%, transparent), color-mix(in srgb, var(--success-soft) 60%, transparent)), var(--surface-sunk);
+}
+
+.table .stick[data-band="3"] {
+  background: linear-gradient(color-mix(in srgb, var(--surface-2) 80%, transparent), color-mix(in srgb, var(--surface-2) 80%, transparent)), var(--surface-sunk);
+}
+
+/* the first stuck column also covers the well's left padding, so nothing scrolls past in that strip */
+.firstStick::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  right: 100%;
+  width: var(--space-3);
+  background: var(--surface-sunk);
+}
+
+/* the right edge of the stuck columns is the 2 px rule; a soft shadow joins it while something is scrolled beneath */
+.lastStick {
+  border-right: 2px solid var(--text-muted);
+}
+
+.well[data-fade="start"] .lastStick,
+.well[data-fade="both"] .lastStick {
+  box-shadow: 6px 0 6px -6px color-mix(in srgb, var(--text) 40%, transparent);
+}
+
+/* the stuck columns sit on the left edge, so only the right edge fades */
+.well[data-sticky][data-fade="start"] {
+  mask-image: none;
+}
+
+.well[data-sticky][data-fade="both"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+}
+
+/* a long table repeats its column labels after every 8 rows */
+.repeat {
+  height: 28px;
+  color: var(--text-muted);
+  border-block: 1px solid var(--border);
+}
+
 /* 2 px rule between inputs and derived columns, and before the output */
 .rule {
   border-left: 2px solid var(--text-muted);
