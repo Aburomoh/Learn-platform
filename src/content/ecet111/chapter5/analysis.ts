@@ -88,8 +88,8 @@ function inputVariant(c: Circuit, i: number): VariantInput {
   const [label, expr, words] = c.inputs[ASKED_INPUT[i]];
   return {
     id: c.id,
-    // the gates are drawn (#489); the sentence stays as their text alternative, one line
-    prompt: `A clocked circuit with ${c.name.split(" (")[0]} A and B and input x. ${label} comes from ${words}. Write the input equation ${label} = …`,
+    // the gates are drawn (#489): the prompt no longer spells the wiring out (UX on #454)
+    prompt: `${c.name.split(" (")[0]} A and B, input x. Read the gates and write the input equation ${label} = …`,
     spec: { kind: "expression", vars: c.vars, target: expr },
     figure: { type: "gates", output: label, expr, vars: c.vars },
     hints: [
@@ -119,7 +119,7 @@ function outputVariant(set: { id: string; vars: string[]; output: [string, strin
   const [label, expr, words] = set.output;
   return {
     id: set.id,
-    prompt: `The circuit's output ${label} comes from ${words}. Write ${label} = …`,
+    prompt: `Read the gates that drive the circuit's output and write ${label} = …`,
     spec: { kind: "expression", vars: set.vars, target: expr },
     figure: { type: "gates", output: label, expr, vars: set.vars }, // drawn gates (#489)
     hints: [
