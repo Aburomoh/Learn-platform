@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CircuitSpec } from "@/content/schema";
-import { layoutCircuit, type Point } from "./layout";
+import { CHANNEL_GAP, layoutCircuit, type Point } from "./layout";
 
 type Gates = CircuitSpec["gates"];
 const circuit = (inputs: string[], gates: Gates, outputGateId: string): CircuitSpec => ({
@@ -86,3 +86,37 @@ describe("layoutCircuit junctions", () => {
     expect(layoutCircuit(specs["NOT-AND-OR"]).wires.some((w) => w.junction)).toBe(false);
   });
 });
+
+describe("fan-out channels (#387)", () => {
+  const half = circuit(["a", "b"], [
+    { id: "gs", type: "XOR", from: ["a", "b"] },
+    { id: "gc", type: "AND", from: ["a", "b"] },
+  ], "gc");
+  const all = { ...specs, "half adder": half };
+
+  it.each(Object.entries(all))("%s: one channel per signal, 16 units apart and 20 left of the nearest pin", (_, spec) => {
+    const layout = layoutCircuit(spec);
+    // vertical runs, by the gate column they lead into
+    const runs = layout.wires.flatMap((w) => w.points.slice(1).flatMap((b, i) => (w.points[i].x === b.x && w.points[i].y !== b.y ? [{ net: w.from, x: b.x, to: w.to }] : [])));
+    const xs = [...new Set(runs.map((r) => r.x))].sort((a, b) => a - b);
+    // one x per signal within a gap: no two signals share a channel
+    for (const x of xs) expect(new Set(runs.filter((r) => r.x === x).map((r) => r.net)).size).toBe(1);
+    for (const w of layout.wires) {
+      const pin = w.points[w.points.length - 1];
+      const sameGap = runs.filter((r) => layout.gates[r.to].x === layout.gates[w.to].x).map((r) => r.x);
+      for (const x of sameGap) expect(pin.x - x).toBeGreaterThanOrEqual(CHANNEL_GAP);
+      const distinct = [...new Set(sameGap)].sort((a, b) => a - b);
+      for (let i = 1; i < distinct.length; i++) expect(distinct[i] - distinct[i - 1]).toBeGreaterThanOrEqual(CHANNEL_GAP);
+    }
+  });
+
+  it("the half adder has two trunks and a dot only where a trunk really branches", () => {
+    const layout = layoutCircuit(half);
+    const trunks = new Set(layout.wires.flatMap((w) => w.points.slice(1, -1).map((pt) => pt.x)));
+    expect(trunks.size).toBe(2);
+    const dots = layout.wires.filter((w) => w.junction).map((w) => w.junction!);
+    expect(dots).toHaveLength(2); // A's and B's trunks each branch once
+    for (const d of dots) expect(trunks.has(d.x)).toBe(true);
+  });
+});
+
