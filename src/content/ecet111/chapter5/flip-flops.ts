@@ -226,7 +226,7 @@ export const flipFlopsTopic: TopicInput = {
   preview: "J K = 1 1 → Q toggles",
   meet: {
     figure: { type: "flip-flop", ff: "d", given: { q: 0, inputs: [1] } },
-    callouts: ["Q holds one bit: now 0.", "Nothing changes until the clock edge.", "At the edge Q takes D, so Q becomes 1."],
+    callouts: ["D = 1 is waiting at the input.", "At the rising clock edge the flip-flop stores D.", "So Q becomes 1, and Q′ becomes 0."],
   },
   concepts: [{ id: "ff.flip-flop", title: "Flip-flop", summary: "At the active clock edge Q(t+1) follows the inputs: SR set/reset, JK adds toggle, D copies, T complements on 1." }],
   objectives: [

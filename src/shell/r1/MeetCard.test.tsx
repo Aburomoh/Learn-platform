@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { getCourse } from "@/content";
+import { pickName, rightPick } from "@/kinds/shared/figures/device";
 import { FigureSpec } from "@/kinds/shared/figures/figureSpec";
 import { MeetCard } from "./MeetCard";
 
@@ -24,6 +25,14 @@ describe("MeetCard (visual system §11)", () => {
     await user.click(toggle);
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByRole("list")).toHaveAttribute("data-open", "true");
+  });
+
+  it("a device card's callouts name the line the figure lights (the text is authored, the result computed)", () => {
+    for (const t of getCourse("ecet111")!.modules.flatMap((m) => m.topics)) {
+      if (t.meet?.figure.type !== "device") continue;
+      const answer = pickName(t.meet.figure, rightPick(t.meet.figure, t.meet.figure.given));
+      expect(t.meet.callouts.join(" "), `${t.id} callouts name ${answer}`).toContain(answer);
+    }
   });
 
   it("the P0 device topics carry a card", () => {

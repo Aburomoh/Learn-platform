@@ -284,7 +284,7 @@ export const decodersTopic: TopicInput = {
   id: "decoders-encoders",
   title: "Decoders and encoders",
   summary: "A decoder makes one output active for each input code; an encoder writes the code of its one active input.",
-  preview: "x y z = 1 0 1 → D5 = 1",
+  preview: "x y = 1 0 → D2 = 1",
   // the card's case is a 2-to-4 decoder: a size no 3-to-8 question can repeat (visual system §11)
   meet: {
     figure: { type: "device", device: "decoder", bits: 2, given: 2, names: ["x", "y"] },
