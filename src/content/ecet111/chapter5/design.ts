@@ -93,7 +93,7 @@ function stateTableVariant(c: (typeof COUNTERS)[number], k: number): VariantInpu
 
 /* ---------- stage 2 (#291): the flip-flop input columns from the excitation table ---------- */
 
-const T_REMINDER = "T excitation: Q_t → Q_t+1 = 0 → 0 needs T = 0, 0 → 1 needs 1, 1 → 0 needs 1, 1 → 1 needs 0.";
+const T_REMINDER = "T excitation: Q(t) → Q(t+1) = 0 → 0 needs T = 0, 0 → 1 needs 1, 1 → 0 needs 1, 1 → 1 needs 0.";
 const JK_REMINDER = "JK excitation: 0 → 0 is J K = 0 X, 0 → 1 is 1 X, 1 → 0 is X 1, 1 → 1 is X 0.";
 
 const excitationHints = (reminder: string): HintInput[] => [
@@ -107,10 +107,10 @@ const excitationHints = (reminder: string): HintInput[] => [
 function excitationVariant(c: (typeof COUNTERS)[number], ff: "T" | "JK", k: number): VariantInput {
   const cols =
     ff === "T"
-      ? ([0, 1] as const).map((f) => ({ id: `t${VARS[f].toLowerCase()}`, label: `T_${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, tOf) }))
+      ? ([0, 1] as const).map((f) => ({ id: `t${VARS[f].toLowerCase()}`, label: `T${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, tOf) }))
       : ([0, 1] as const).flatMap((f) => [
-          { id: `j${VARS[f].toLowerCase()}`, label: `J_${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, jOf), slipValues: { excitationReversed: reversed(c.seq, f, jOf) } },
-          { id: `k${VARS[f].toLowerCase()}`, label: `K_${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, kOf), slipValues: { excitationReversed: reversed(c.seq, f, kOf) } },
+          { id: `j${VARS[f].toLowerCase()}`, label: `J${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, jOf), slipValues: { excitationReversed: reversed(c.seq, f, jOf) } },
+          { id: `k${VARS[f].toLowerCase()}`, label: `K${VARS[f]}`, group: "Flip-flop inputs", values: column(c.seq, f, kOf), slipValues: { excitationReversed: reversed(c.seq, f, kOf) } },
         ]);
   const reminder = ff === "T" ? T_REMINDER : JK_REMINDER;
   const [q, q1] = bits(c.seq, 3, 0); // flip-flop A on the row 0 1 1
@@ -118,7 +118,7 @@ function excitationVariant(c: (typeof COUNTERS)[number], ff: "T" | "JK", k: numb
   const slip = ff === "T" ? String(1 - tOf(q, q1)) : `${jOf(q1, q)} ${kOf(q1, q)}` === right ? "X X" : `${jOf(q1, q)} ${kOf(q1, q)}`;
   return {
     id: c.id,
-    prompt: `The ${c.name} counter, with ${ff} flip-flops: the next state is filled. Fill the flip-flop input columns${ff === "JK" ? ", flip-flop A first (J_A, K_A), then B" : ""}, using X where either value works.`,
+    prompt: `The ${c.name} counter, with ${ff} flip-flops: the next state is filled. Fill the flip-flop input columns${ff === "JK" ? ", flip-flop A first (JA, KA), then B" : ""}, using X where either value works.`,
     spec: { kind: "truth-table", inputs: VARS, inputGroups: INPUT_GROUPS, columns: [...nextColumns(c.seq, true), ...cols] },
     hints: excitationHints(reminder),
     misconceptions: columnMisconceptions,
@@ -128,7 +128,7 @@ function excitationVariant(c: (typeof COUNTERS)[number], ff: "T" | "JK", k: numb
         id: "s2",
         say: `Take the row 0 1 1: A goes from ${q} to ${q1}.`,
         stage: { step: 0, revealed: 0 },
-        ask: { prompt: ff === "T" ? "So T_A is…" : "So J_A K_A is…", options: k % 2 ? [slip, right] : [right, slip], correctIndex: k % 2, afterCorrect: `Yes: ${right}.`, afterWrong: `${q} → ${q1} needs ${right}.` },
+        ask: { prompt: ff === "T" ? "So TA is…" : "So JA KA is…", options: k % 2 ? [slip, right] : [right, slip], correctIndex: k % 2, afterCorrect: `Yes: ${right}.`, afterWrong: `${q} → ${q1} needs ${right}.` },
       },
       { id: "s3", say: "Every row the same way, one column at a time.", stage: { step: 0, revealed: 0 } },
     ],
@@ -141,16 +141,16 @@ const ones = (cells: Cell[]) => ROWS.filter((m) => cells[m] === 1);
 const xs = (cells: Cell[]) => ROWS.filter((m) => cells[m] === "X");
 const GRAY = COUNTERS[0].seq;
 
-/** The slides' counter: D_A, D_B (s.9–10), T_A (computed), and the JK inputs of A and B with their Xs (computed). */
+/** The slides' counter: DA, DB (s.9–10), TA (computed), and the JK inputs of A and B with their Xs (computed). */
 const D_T_MAPS = [
-  { id: "da", label: "D_A", cells: column(GRAY, 0, (_q, q1) => q1) },
-  { id: "db", label: "D_B", cells: column(GRAY, 1, (_q, q1) => q1) },
-  { id: "ta", label: "T_A", cells: column(GRAY, 0, tOf) },
+  { id: "da", label: "DA", cells: column(GRAY, 0, (_q, q1) => q1) },
+  { id: "db", label: "DB", cells: column(GRAY, 1, (_q, q1) => q1) },
+  { id: "ta", label: "TA", cells: column(GRAY, 0, tOf) },
 ];
 const JK_MAPS = [
-  { id: "ja", label: "J_A", cells: column(GRAY, 0, jOf) },
-  { id: "ka", label: "K_A", cells: column(GRAY, 0, kOf) },
-  { id: "jb", label: "J_B", cells: column(GRAY, 1, jOf) },
+  { id: "ja", label: "JA", cells: column(GRAY, 0, jOf) },
+  { id: "ka", label: "KA", cells: column(GRAY, 0, kOf) },
+  { id: "jb", label: "JB", cells: column(GRAY, 1, jOf) },
 ];
 
 const mapVariant = (m: { id: string; label: string; cells: Cell[] }, k: number): VariantInput =>
@@ -214,9 +214,9 @@ const problemTable: VariantInput = {
 
 /** K-maps of the D design (s.29), and Y: four sets, don't-cares 10, 11, 14, 15 in each. */
 const PROBLEM_MAPS = [
-  { id: "pda", label: "D_A", cells: problemColumn(0) },
-  { id: "pdb", label: "D_B", cells: problemColumn(1) },
-  { id: "pdc", label: "D_C", cells: problemColumn(2) },
+  { id: "pda", label: "DA", cells: problemColumn(0) },
+  { id: "pdb", label: "DB", cells: problemColumn(1) },
+  { id: "pdc", label: "DC", cells: problemColumn(2) },
   { id: "py", label: "Y", cells: problemColumn("Y") },
 ];
 

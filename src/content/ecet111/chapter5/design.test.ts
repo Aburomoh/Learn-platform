@@ -11,7 +11,7 @@ describe("Chapter 5 design problem", () => {
     const x = getActivity(COURSE, "design", "design-problem")!.activity;
     const [, maps, trace] = x.questions;
     const covers = maps.variants.map(({ spec }) => (spec.kind === "kmap" ? kmapCovers(spec).map((c) => c.map((q) => formatCube(q, spec.vars)).sort().join(" + ")).sort() : []));
-    expect(covers.slice(0, 3)).toEqual([["A'BX + ABX' + CX"], ["B'C'X + BC'X' + BCX"], ["A'BX' + AX + CX'"]]); // D_A, D_B, D_C
+    expect(covers.slice(0, 3)).toEqual([["A'BX + ABX' + CX"], ["B'C'X + BC'X' + BCX"], ["A'BX' + AX + CX'"]]); // DA, DB, DC
     expect(covers[3]).toHaveLength(4); // Y has four minimal covers, all accepted
     const t = trace.variants[0].spec;
     if (t.kind !== "timing") throw new Error("expected timing");
