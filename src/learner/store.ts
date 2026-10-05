@@ -31,7 +31,7 @@ interface Store<T> {
 
 function createStore<T>(key: string, initial: () => T, validate: (v: unknown) => v is T, delay: number): Store<T> {
   let value: T | undefined;
-  let timer: number | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
   const listeners = new Set<() => void>();
   const load = () => {
     if (value === undefined) {
@@ -40,11 +40,13 @@ function createStore<T>(key: string, initial: () => T, validate: (v: unknown) =>
     }
     return value;
   };
+  // global timer functions, not window.*: a pending save may fire after a test's jsdom is gone (#455)
   const flush = () => {
     if (timer !== undefined) {
-      window.clearTimeout(timer);
+      clearTimeout(timer);
       timer = undefined;
     }
+    if (typeof window === "undefined") return;
     if (value !== undefined) writeJSON(key, value);
   };
   return {
@@ -54,8 +56,8 @@ function createStore<T>(key: string, initial: () => T, validate: (v: unknown) =>
       value = typeof next === "function" ? (next as (p: T) => T)(prev) : next;
       listeners.forEach((l) => l());
       if (typeof window === "undefined") return;
-      if (timer !== undefined) window.clearTimeout(timer);
-      timer = window.setTimeout(flush, delay);
+      if (timer !== undefined) clearTimeout(timer);
+      timer = setTimeout(flush, delay);
     },
     subscribe: (cb) => {
       listeners.add(cb);
@@ -88,12 +90,15 @@ const prefsStore = createStore<Prefs>(
   200,
 );
 
+/** Write every pending save now and stop its timer (page hide; test teardown, #455). */
+export function flushPendingWrites(): void {
+  progressStores.forEach((s) => s.flush());
+  prefsStore.flush();
+}
+
 // Persist pending writes when the page is hidden or unloaded.
 if (typeof window !== "undefined") {
-  const flushAll = () => {
-    progressStores.forEach((s) => s.flush());
-    prefsStore.flush();
-  };
+  const flushAll = flushPendingWrites;
   window.addEventListener("pagehide", flushAll);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") flushAll();
