@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import type { CircuitSpec } from "./spec";
-import { evaluateCircuit } from "./logic";
+import { evaluateCircuit, type CircuitShape, type GateType } from "./circuit";
 import { focusTarget } from "@/interactions/shared/types";
 import { useScrollFade } from "@/interactions/shared/useScrollFade";
 import { GATE_H, INPUT_H, INPUT_W, gateWidth, layoutCircuit } from "./layout";
@@ -10,7 +9,7 @@ import styles from "./CircuitDiagram.module.css";
 
 export interface CircuitDiagramProps {
   id: string;
-  spec: CircuitSpec;
+  spec: CircuitShape;
   /** Current input values (defaults to the spec's). */
   inputs?: Record<string, 0 | 1>;
   /** When given and spec.inputsToggleable, inputs become toggle switches. */
@@ -30,6 +29,8 @@ export interface CircuitDiagramProps {
    */
   expressions?: Record<string, string>;
   disabled?: boolean;
+  /** Text alternative of the drawing; the default names the gate types only. */
+  title?: string;
 }
 
 /**
@@ -45,7 +46,7 @@ const MIN_SCALE = 0.75;
  * (role="switch") when toggleable; gates carry data-focus-target="gate-<id>" so hints can
  * point at them.
  */
-export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], activeGateId, revealOutput = false, expressions, disabled = false }: CircuitDiagramProps) {
+export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], activeGateId, revealOutput = false, expressions, disabled = false, title }: CircuitDiagramProps) {
   const symbolic = expressions !== undefined;
   const values = evaluateCircuit(spec, inputs);
   const layout = useMemo(() => layoutCircuit(spec), [spec]);
@@ -76,7 +77,7 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
     <div className={styles.root} data-diagram={id} data-fade={fade} ref={rootRef} {...(fade === "none" ? {} : { tabIndex: 0, role: "group", "aria-label": "Circuit diagram, scrolls sideways" })}>
       <svg viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`} className={styles.svg} style={{ maxWidth: viewBox.width, minWidth: Math.round(viewBox.width * MIN_SCALE) }} role="img" aria-labelledby={`${id}-title`}>
         {/* One string child: React hydrates <title> text as a single node. */}
-        <title id={`${id}-title`}>{`Circuit with ${spec.gates.map((g) => g.type).join(", ")} gates`}</title>
+        <title id={`${id}-title`}>{title ?? `Circuit with ${spec.gates.map((g) => g.type).join(", ")} gates`}</title>
         {/* wires: a signal is coloured only once its value is known and its gate has been reached */}
         {layout.wires.map((w, i) => {
           const reached = isKnown(w.from) && (lit.includes(w.to) || lit.includes(w.from) || w.to === activeGateId);
@@ -195,7 +196,7 @@ export function CircuitDiagram({ id, spec, inputs, onToggleInput, lit = [], acti
   );
 }
 
-function GateShape({ type }: { type: CircuitSpec["gates"][number]["type"] }) {
+function GateShape({ type }: { type: GateType }) {
   switch (type) {
     case "NOT":
       return (

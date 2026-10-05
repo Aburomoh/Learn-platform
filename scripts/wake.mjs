@@ -2,10 +2,13 @@
 // Wake tooling (ADR-0006). Labels are the durable signal; this script reads and writes them.
 //   npm run wake <role>                              charter, state and open items for a role
 //   npm run alarm <role> <issue|pr #> "<reason>" [from-role]   wake a role (idempotent)
-//   npm run wake:watch <role>                        live session: one line per new/updated item
+//   node scripts/wake.mjs --watch <role>             live session: one line per new/updated item (run node directly:
+//                                                    an npm wrapper outlives its Monitor and leaks watchers, #350)
 //   npm run wake:ack <role> <issue|pr #>             clear the role's alarm label once picked up
 //   npm run wake:pending                             every open alarm, all roles (SessionStart hook)
-import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, writeFileSync, mkdirSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { basename, join } from "node:path";
 import { execFileSync } from "node:child_process";
 
 // `alarm` is the label any agent may apply to wake that role directly; `labels` are its other triggers.
@@ -61,7 +64,7 @@ const line = (it, labels) => {
 function usage() {
   console.error(
     'Usage:\n  npm run wake <role>\n  npm run alarm <role> <issue|pr #> "<reason>" [from-role]\n' +
-      "  npm run wake:watch <role>\n  npm run wake:ack <role> <issue|pr #>\n  npm run wake:pending\nRoles:\n  " +
+      "  node scripts/wake.mjs --watch <role>\n  npm run wake:ack <role> <issue|pr #>\n  npm run wake:pending\nRoles:\n  " +
       Object.keys(ROLES).join("\n  "),
   );
   process.exit(1);
@@ -88,8 +91,12 @@ if (mode === "--pending") {
   process.exit(0);
 }
 
-const role = argv[0];
-if (!role || !ROLES[role]) usage();
+// Short names are accepted too: the label suffix (qa, pedagogy, ux, tech-lead, ...) names the role.
+const ALIASES = Object.fromEntries(Object.entries(ROLES).map(([slug, r]) => [r.alarm.slice("wake:".length), slug]));
+const roleOf = (name) => (ROLES[name] ? name : ALIASES[name]);
+const role = roleOf(argv[0]);
+if (argv[3] && roleOf(argv[3])) argv[3] = roleOf(argv[3]);
+if (!role) usage();
 const { title, file, alarm, labels } = ROLES[role];
 const all = [alarm, ...labels];
 const number = Number(argv[1]);
@@ -102,7 +109,7 @@ if (mode === "--alarm") {
   gh("api", "-X", "POST", `${ISSUE(number)}/labels`, "-f", `labels[]=${alarm}`); // adding a present label is a no-op
   const seen = JSON.parse(gh("api", "--paginate", "--slurp", `${ISSUE(number)}/comments`)).flat();
   if (!seen.some((c) => c.body === body)) gh("api", "-X", "POST", `${ISSUE(number)}/comments`, "-f", `body=${body}`);
-  console.log(`#${number} now carries ${alarm}. ${title} sees it via wake:watch, at session start, and in npm run wake ${role}.`);
+  console.log(`#${number} now carries ${alarm}. ${title} sees it via its watcher, at session start, and in npm run wake ${role}.`);
 } else if (mode === "--ack") {
   // Several numbers at once, e.g. to clear a backlog of merge wakes.
   const numbers = argv.slice(1).map(Number);
@@ -135,9 +142,30 @@ if (mode === "--alarm") {
     }
   };
   process.stdout.on("error", () => process.exit(0));
+  // One watcher per role (owner, 2026-10-05): a role that re-armed on events ran 92 watchers. The
+  // newest watcher wins, because a re-armed Monitor only reads its own watcher. An older watcher sees
+  // that the lock names another pid and exits within 5 s (no kill: a stale pid may be reused).
+  const lockDir = join(tmpdir(), "cet-wake");
+  const lock = join(lockDir, `${role}.pid`);
+  mkdirSync(lockDir, { recursive: true });
+  writeFileSync(lock, String(process.pid));
+  const ownsLock = () => {
+    try {
+      return Number(readFileSync(lock, "utf8")) === process.pid;
+    } catch {
+      return false;
+    }
+  };
+  // Identity (owner, 2026-10-05): sessions run from the canonical root casing, and a role other than
+  // the Technical Lead works in its own sibling worktree, never in the main checkout. Warn once.
+  const cwd = process.cwd();
+  if (/learn_platform/i.test(cwd) && !/Learn_platform/.test(cwd))
+    console.log(`WAKE-WATCH WARNING for ${role}: path casing is "${cwd}"; use C:/Users/mnabu/OneDrive/Documents/Claude/Learn_platform (or its sibling worktree)`);
+  if (role !== "technical-lead" && /^learn_platform$/i.test(basename(cwd)))
+    console.log(`WAKE-WATCH WARNING for ${role}: running from the main checkout; work only in ../Learn_platform-${role} (git worktree add ../Learn_platform-${role} origin/main)`);
   const pause = async (ms) => {
     for (const end = Date.now() + ms; Date.now() < end; ) {
-      if (!parentAlive() || Date.now() > deadline) process.exit(0);
+      if (!parentAlive() || Date.now() > deadline || !ownsLock()) process.exit(0);
       await new Promise((r) => setTimeout(r, Math.min(5000, end - Date.now())));
     }
   };
@@ -176,7 +204,7 @@ if (mode === "--alarm") {
     console.log("  (gh unavailable or not authenticated)");
   }
   console.log(`\nWake another role: npm run alarm <role> <issue|pr #> "<reason>" ${role}`);
-  console.log(`Picked up an alarm? npm run wake:ack ${role} <#>. Live session: npm run wake:watch ${role}`);
+  console.log(`Picked up an alarm? npm run wake:ack ${role} <#>. Live session: node scripts/wake.mjs --watch ${role} (Monitor; re-arm only on expiry)`);
   console.log("Start in a task branch. Update agents/state/" + file + ".md minimally before stopping.");
 } else {
   usage();

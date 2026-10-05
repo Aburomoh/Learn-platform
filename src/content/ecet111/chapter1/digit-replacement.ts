@@ -135,6 +135,7 @@ function toHexVariant(n: number): VariantInput {
 const POINT = [
   { bits: "11010110.1", answer: "326.4" },
   { bits: "1110001.11", answer: "161.6" },
+  { bits: "1011101.1011", answer: "135.54" }, // third set (C1 gate, #216): both ends padded, a two-group fraction
 ];
 
 function pointVariant({ bits, answer }: (typeof POINT)[number], k: number): VariantInput {

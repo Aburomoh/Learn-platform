@@ -26,6 +26,7 @@ import { lawChips, lineOptions } from "@/kinds/derivation/logic";
 import type { DerivationSpec } from "@/kinds/derivation/spec";
 import { exactValue } from "@/kinds/base-to-decimal/logic";
 import { gatedLatch, nandLatch } from "./ecet111/chapter5/latches";
+import { splitNotation } from "./notation";
 
 const COURSE = "ecet111";
 
@@ -752,7 +753,7 @@ describe("content registry", () => {
     expect(checks(hexCheck)).toEqual(["726", "489", "948"]);
     expect(hex16.variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["B6E3", "E95C", "9F2B"]);
     const point = getActivity(COURSE, "digit-replacement", "binary-point")!.activity;
-    expect(point.questions[0].variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["326.4", "161.6"]);
+    expect(point.questions[0].variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["326.4", "161.6", "135.54"]);
   });
 
   it("three JK flip-flops (#316): table, diagram and the s.52 trace as in the pack (ch5-partii §5)", () => {
@@ -828,8 +829,7 @@ describe("pedagogy guard", () => {
       "ff.q.eq-t",
       "ff.q.eq-d",
       "fa.q.kmap",
-      "dr.q.point",
-      "j3.q.table",
+        "j3.q.table",
       "j3.q.diagram",
       "dz.q.problem-table",
       "dz.q.problem-trace",
@@ -1021,6 +1021,22 @@ describe("authored truth is internally consistent", () => {
         for (const t of [...texts, ...hintsForStep(variant, i).map((h) => h.text)]) expect(fill(t, vars), `${path} step ${i}: ${t}`).not.toMatch(/\{[a-zA-Z0-9_]+\}/);
       });
     }
+  });
+
+  it("no student text shows a raw base subscript once split into notation (#465)", () => {
+    const raw = /_(2|8|10|16)(?![0-9A-Za-z])/;
+    let checked = 0;
+    for (const { path, variant } of allVariants()) {
+      const texts = [variant.prompt, variant.reactions?.stepNext ?? "", ...variant.explanation.flatMap((s) => [s.say, s.ask?.prompt ?? "", ...(s.ask?.options ?? []), s.ask?.afterCorrect ?? "", s.ask?.afterWrong ?? ""])];
+      varSets(variant).forEach((vars, i) => {
+        for (const t of [...texts, ...hintsForStep(variant, i).map((h) => h.text)]) {
+          const plain = splitNotation(fill(t, vars)).flatMap((p) => ("text" in p ? [p.text] : []));
+          for (const run of plain) expect(run, `${path} step ${i}: ${t}`).not.toMatch(raw);
+          checked++;
+        }
+      });
+    }
+    expect(checked).toBeGreaterThan(1000);
   });
 
   it("every misconception nudge resolves all its slots in the variant it fires in", () => {

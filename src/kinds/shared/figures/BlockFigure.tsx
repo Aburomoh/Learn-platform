@@ -1,5 +1,6 @@
 import { focusTarget } from "@/interactions/shared/types";
 import { adderOutputs, adderPins, flipFlopInputs, flipFlopNext, type AdderGiven, type AdderType, type FlipFlopGiven, type FlipFlopType } from "./blocks";
+import { Marks } from "./Marks";
 import styles from "./figures.module.css";
 
 /** One pin of a block: its name, where it sits, and what is printed beside it. */
@@ -29,6 +30,8 @@ interface BlockProps {
   /** Where the body starts and how long the pin stubs are; a flip-flop sits further left to leave room for "Q′(t+1) = 0". */
   bodyX?: number;
   stub?: number;
+  /** Topic card: 1, 2, 3 over the inputs, the body and the outputs. */
+  marks?: boolean;
 }
 
 // Geometry in SVG units (visual system §4): 330 wide at most, 15-unit text, never drawn below 0.8× (12 px).
@@ -38,7 +41,7 @@ const TOP = 12;
 const MIN_SCALE = 0.8;
 
 /** A rectangular block symbol: pins on the left and right, the name inside. The adders and flip-flops are this drawing. */
-function Block({ title, subtitle, height, left, right, clock, focus, summary, bodyX: BODY_X = 120, stub = 44 }: BlockProps) {
+function Block({ title, subtitle, height, left, right, clock, focus, summary, bodyX: BODY_X = 120, stub = 44, marks = false }: BlockProps) {
   const lx = BODY_X - stub;
   const rx = BODY_X + BODY_W + stub;
   const total = TOP + height + (clock ? 40 : 12);
@@ -60,7 +63,8 @@ function Block({ title, subtitle, height, left, right, clock, focus, summary, bo
   };
   return (
     <div className={styles.well}>
-      <svg viewBox={`0 0 ${WIDTH} ${total}`} className={`${styles.svg} ${styles.center}`} style={{ maxWidth: Math.round(WIDTH * 1.25), minWidth: Math.round(WIDTH * MIN_SCALE) }} role="img" aria-label={summary} {...focusTarget("block")}>
+      <svg viewBox={marks ? `0 -26 ${WIDTH} ${total + 26}` : `0 0 ${WIDTH} ${total}`} className={`${styles.svg} ${styles.center}`} style={{ maxWidth: Math.round(WIDTH * 1.25), minWidth: Math.round(WIDTH * MIN_SCALE) }} role="img" aria-label={summary} {...focusTarget("block")}>
+        {marks && <Marks xs={[lx, BODY_X + BODY_W / 2, rx]} y={-12} />}
         <rect x={BODY_X} y={TOP} width={BODY_W} height={height} rx="6" className={styles.body} />
         <text x={BODY_X + BODY_W / 2 + (clock ? 6 : 0)} y={TOP + height / 2 - 2} textAnchor="middle" className={styles.name}>
           {title}
@@ -98,10 +102,11 @@ export interface AdderFigureProps {
   /** Result state: S and the carry are computed and printed. Before it they read "?". */
   revealed?: boolean;
   focus?: string;
+  marks?: boolean;
 }
 
 /** The half adder (HA) or full adder (Σ) as its block symbol (#454). Drawing only. */
-export function AdderFigure({ adder, given, revealed = false, focus }: AdderFigureProps) {
+export function AdderFigure({ adder, given, revealed = false, focus, marks }: AdderFigureProps) {
   const { inputs, outputs } = adderPins(adder);
   const values = given ? [given.a, given.b, given.ci ?? 0] : undefined;
   const out = given ? adderOutputs(given) : undefined;
@@ -118,6 +123,7 @@ export function AdderFigure({ adder, given, revealed = false, focus }: AdderFigu
       left={inputs.map((n, i) => ({ name: n, y: full ? 20 + i * 32 : 24 + i * 36, value: values ? String(values[i]) : undefined }))}
       right={outputs.map((n, i) => ({ name: n, y: full ? 32 + i * 40 : 24 + i * 36, value: out ? (revealed ? String(i === 0 ? out.s : out.c) : "?") : undefined, result: revealed }))}
       focus={focus}
+      marks={marks}
       summary={`${name}.${givenText}${answer}`}
     />
   );
@@ -131,10 +137,11 @@ export interface FlipFlopFigureProps {
   /** Result state: Q(t+1) and Q′(t+1), computed. Before it the figure shows the given Q(t). */
   revealed?: boolean;
   focus?: string;
+  marks?: boolean;
 }
 
 /** A D, T, SR or JK flip-flop as its symbol: one body for all four, the clock triangle on the left edge (#454). */
-export function FlipFlopFigure({ ff, edge = "rising", given, revealed = false, focus }: FlipFlopFigureProps) {
+export function FlipFlopFigure({ ff, edge = "rising", given, revealed = false, focus, marks }: FlipFlopFigureProps) {
   const inputs = flipFlopInputs(ff);
   const next = given ? flipFlopNext(ff, given) : undefined;
   const q = given ? (revealed ? next! : given.q) : undefined;
@@ -157,6 +164,7 @@ export function FlipFlopFigure({ ff, edge = "rising", given, revealed = false, f
       stub={30}
       clock={{ y: two ? 58 : 66, edge }}
       focus={focus}
+      marks={marks}
       summary={`${letter} flip-flop, ${edge}-edge triggered.${givenText}${answer}`}
     />
   );

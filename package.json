@@ -16,7 +16,6 @@
     "check": "npm run typecheck && npm run lint && npm run test && npm run build",
     "wake": "node scripts/wake.mjs",
     "alarm": "node scripts/wake.mjs --alarm",
-    "wake:watch": "node scripts/wake.mjs --watch",
     "wake:ack": "node scripts/wake.mjs --ack",
     "wake:pending": "node scripts/wake.mjs --pending",
     "prepush": "node scripts/prepush.mjs"

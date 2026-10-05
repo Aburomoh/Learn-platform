@@ -205,6 +205,88 @@
   font-weight: 700;
 }
 
+/* ---- a number with a binary point: two halves that meet at the point (#498) ---- */
+/* from 640 px the halves dissolve into the one row: buttons, whole part, point, fraction, buttons */
+.half {
+  display: contents;
+}
+
+.halfLabel,
+.pointEnd {
+  display: none;
+}
+
+.point + .cell {
+  border-inline-start-width: 1px;
+  border-start-start-radius: var(--radius-sm);
+  border-end-start-radius: var(--radius-sm);
+}
+
+/* phones: each half is its own row. The whole part is right-aligned and ends at the point; the
+   fraction starts at it. Cells flex from 36 px down to 28 px so a row fits; if it still does not,
+   the row scrolls inside its box with fade edges, starting at its point end. */
+@media (max-width: 639px) {
+  .row[data-point] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+
+  .half {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .halfLabel {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .pointEnd {
+    display: block;
+  }
+
+  .half .cells .cell {
+    flex: 1 1 var(--cell);
+    width: auto;
+    min-width: 28px;
+    max-width: var(--cell);
+  }
+
+  .half .cells .cut {
+    margin-inline-start: 12px;
+  }
+
+  .half .cells .cut::before {
+    inset-inline-start: -7px;
+  }
+
+  .half .cells .point {
+    padding: 0 var(--space-1);
+  }
+
+  /* right-aligned without justify-content, so a row that overflows can still scroll to its start */
+  .half[data-half="whole"] .cells > :first-child {
+    margin-inline-start: auto;
+  }
+
+  .half[data-half="whole"] .halfLabel,
+  .half[data-half="fraction"] .padEnd {
+    justify-self: end;
+  }
+
+  .half[data-half="whole"] .padButtons {
+    order: 3;
+  }
+
+  .half[data-half="fraction"] .padEnd {
+    margin-inline-start: 0;
+  }
+}
+
 /* to-bits: the slot holds 3 or 4 bits */
 .slotBits {
   min-width: 72px;

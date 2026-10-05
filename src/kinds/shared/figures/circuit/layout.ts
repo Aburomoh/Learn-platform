@@ -3,9 +3,7 @@
  * Each wire that needs a vertical run gets its own channel (x position) in the gap before its
  * destination column, so wires of different signals never share a segment.
  */
-import type { CircuitSpec } from "./spec";
-
-type GateType = CircuitSpec["gates"][number]["type"];
+import type { CircuitShape, GateType } from "./circuit";
 
 export interface Point {
   x: number;
@@ -43,7 +41,7 @@ export interface OutputLayout {
 }
 
 /** The circuit's outputs in drawing order: the main output gate, then other labelled gates nothing reads. */
-export function outputGates(spec: CircuitSpec): { gateId: string; label: string }[] {
+export function outputGates(spec: CircuitShape): { gateId: string; label: string }[] {
   const read = new Set(spec.gates.flatMap((g) => g.from));
   const main = spec.gates.find((g) => g.id === spec.outputGateId);
   const others = spec.gates.filter((g) => g.id !== spec.outputGateId && g.label && !read.has(g.id));
@@ -86,7 +84,7 @@ function pinInset(type: GateType, single: boolean): number {
   return 0;
 }
 
-export function gateDepths(spec: CircuitSpec): Record<string, number> {
+export function gateDepths(spec: CircuitShape): Record<string, number> {
   const depth: Record<string, number> = {};
   const inputIds = new Set(spec.inputs.map((i) => i.id));
   const resolve = (gid: string, guard = 0): number => {
@@ -120,7 +118,7 @@ interface Segment {
   x: number;
 }
 
-export function layoutCircuit(spec: CircuitSpec): CircuitLayout {
+export function layoutCircuit(spec: CircuitShape): CircuitLayout {
   const depth = gateDepths(spec);
   const maxDepth = Math.max(...Object.values(depth));
   const gateById = Object.fromEntries(spec.gates.map((g) => [g.id, g]));

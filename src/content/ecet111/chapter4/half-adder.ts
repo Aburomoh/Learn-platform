@@ -165,6 +165,10 @@ export const halfAdderTopic: TopicInput = {
   title: "Half adder",
   summary: "Add two bits: predict one row, fill the table, name the gates (S = A ⊕ B, C = A·B), then walk the circuit.",
   preview: "1 + 1 → 10 → S = 0, C = 1",
+  meet: {
+    figure: { type: "adder", adder: "half", given: { a: 1, b: 1 } },
+    callouts: ["Two bits come in: 1 and 1.", "1 + 1 is 2, written 10 in binary.", "S is the 0, C is the carry 1."],
+  },
   concepts: [
     { id: "ha.adder", title: "Half adder", summary: "Adds two bits A and B: the sum bit S = A ⊕ B and the carry C = A·B." },
   ],

@@ -233,6 +233,10 @@ export const flipFlopsTopic: TopicInput = {
   title: "Flip-flops",
   summary: "Edge-triggered SR, JK, D and T flip-flops: what each does at the active edge, as a table and as an equation.",
   preview: "J K = 1 1 → Q toggles",
+  meet: {
+    figure: { type: "flip-flop", ff: "d", given: { q: 0, inputs: [1] } },
+    callouts: ["D = 1 is waiting at the input.", "At the rising clock edge the flip-flop stores D.", "So Q becomes 1, and Q′ becomes 0."],
+  },
   concepts: [{ id: "ff.flip-flop", title: "Flip-flop", summary: "At the active clock edge Q(t+1) follows the inputs: SR set/reset, JK adds toggle, D copies, T complements on 1." }],
   objectives: [
     { id: "ff.obj.table", conceptId: "ff.flip-flop", text: "Give Q(t+1) of SR, JK, D and T flip-flops for every input and present state." },

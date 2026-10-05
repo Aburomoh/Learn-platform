@@ -19,7 +19,8 @@ export function Practice({ variant, prompt, state, stepIndex, locked, onSubmit }
   return (
     <>
       <Prompt text={prompt} />
-      {!finished && (
+      {/* one ask: the prompt already says it, so no goal line (it would repeat the prompt) */}
+      {!finished && spec.asks.length > 1 && (
         <p className={shared.stepLabel} aria-live="polite">
           {step + 1} of {spec.asks.length}: {spec.device === "encoder" ? `${given} is active` : given}, {QUESTION[spec.device]}
         </p>

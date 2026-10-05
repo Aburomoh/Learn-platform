@@ -290,7 +290,12 @@ export const decodersTopic: TopicInput = {
   id: "decoders-encoders",
   title: "Decoders and encoders",
   summary: "A decoder makes one output active for each input code; an encoder writes the code of its one active input.",
-  preview: "x y z = 1 0 1 → D5 = 1",
+  preview: "x y = 1 0 → D2 = 1",
+  // the card's case is a 2-to-4 decoder: a size no 3-to-8 question can repeat (visual system §11)
+  meet: {
+    figure: { type: "device", device: "decoder", bits: 2, given: 2, names: ["x", "y"] },
+    callouts: ["A code comes in: x y = 10.", "10 is 2, so line D2 goes to 1.", "Every other line stays 0."],
+  },
   concepts: [
     { id: "dc.decoder", title: "Decoder", summary: "N inputs, up to 2^N outputs; input number k makes Dk = 1, so each output is one minterm." },
     { id: "dc.encoder", title: "Encoder", summary: "One active input Ik gives the code of k; each output bit is an OR of the inputs whose code has that bit." },
