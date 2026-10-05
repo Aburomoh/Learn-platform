@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { formatBool, parseBool } from "@/content/boolean";
 import { CircuitDiagram } from "./CircuitDiagram";
-import { circuitFromExpression, gateExpressions } from "./circuit";
+import { circuitFromExpression, describeWiring, gateExpressions } from "./circuit";
 
 export interface GatesFigureProps {
   id: string;
@@ -27,5 +27,7 @@ export function GatesFigure({ id, output, expr, vars, revealed = false }: GatesF
     const all = gateExpressions(circuit);
     return Object.fromEntries(circuit.gates.map((g) => [g.id, formatBool(all[g.id])]));
   }, [circuit]);
-  return <CircuitDiagram id={id} spec={circuit} expressions={expressions} lit={revealed ? circuit.gates.map((g) => g.id) : []} />;
+  // the wiring in words is the text alternative: a screen-reader user reads the same circuit, not the answer
+  const title = `Gates that drive ${output}: ${describeWiring(circuit)}.${revealed ? ` So ${output} = ${expressions[circuit.outputGateId]}.` : ""}`;
+  return <CircuitDiagram id={id} spec={circuit} expressions={expressions} lit={revealed ? circuit.gates.map((g) => g.id) : []} title={title} />;
 }
