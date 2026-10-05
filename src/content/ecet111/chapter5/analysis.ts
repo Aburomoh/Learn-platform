@@ -243,6 +243,55 @@ export const analysisTableActivity: Activity = {
   questions: [{ id: "an.q.table", label: "State table", conceptId: "an.analysis", objectiveId: "an.obj.table", variants: CIRCUITS.map(tableVariant) }],
 };
 
+/* ---------- stage 4 (#315): the state diagram, one arrow per state-table row ---------- */
+
+function diagramVariant(c: Circuit, k: number): VariantInput {
+  const spec = {
+    kind: "state-diagram" as const,
+    stateVars: c.vars.slice(0, 2),
+    input: c.vars[2],
+    next: c.next,
+    ...(c.output ? { output: { name: c.output[0], expr: c.output[1] } } : {}),
+    mode: "label" as const,
+  };
+  const labelForm = c.output ? `input/output (x/${c.output[0]})` : "the input x";
+  return {
+    id: c.id,
+    prompt: `${c.name.split(" (")[0]}: the diagram is drawn from its state table, one arrow per row. Label each arrow with ${labelForm}, in table order.`,
+    spec,
+    hints: [
+      { rung: 2, text: "Not yet. Find the table row for this arrow: present state {from}, going to {to}." },
+      { rung: 3, text: c.output ? "The label is the row's input, a slash, then the row's output." : "The label is the row's input." },
+      { rung: 4, text: "Which input value takes {from} to {to}?" },
+      { rung: 9, text: "This arrow is labelled {label}." },
+    ],
+    misconceptions: [
+      { id: "sd.output-wrong-row", title: "The output of the other row", nudgeKey: "sd.output-wrong-row", detect: { type: "output-wrong-row" } },
+      { id: "sd.label-input-wrong", title: "The wrong input value", nudgeKey: "sd.label-input-wrong", detect: { type: "label-input-wrong" } },
+      { id: "sd.label-reversed", title: "Output/input instead of input/output", nudgeKey: "sd.label-reversed", detect: { type: "label-reversed" } },
+    ],
+    explanation: [
+      { id: "s1", say: "Each row of the state table is one arrow: from its present state to its next state.", stage: { revealed: 0 } },
+      {
+        id: "s2",
+        say: "The first row is present state 00 with input 0.",
+        stage: { revealed: 0 },
+        ask: { prompt: "Which part of the label comes first?", options: k % 2 ? ["the output", "the input"] : ["the input", "the output"], correctIndex: k % 2, afterCorrect: "Yes: input first.", afterWrong: "The input comes first, then the output." },
+      },
+      { id: "s3", say: c.output ? "So each arrow reads input/output, row by row." : "With no output, each arrow carries just its input.", stage: { revealed: 1 } },
+    ],
+  };
+}
+
+export const analysisDiagramActivity: Activity = {
+  id: "analysis-diagram",
+  title: "Analysis 4: the state diagram",
+  summary: "One arrow per state-table row: label each with its input (and output).",
+  authority: "DEMO",
+  minutes: 15,
+  questions: [{ id: "an.q.diagram", label: "State diagram", conceptId: "an.analysis", objectiveId: "an.obj.diagram", variants: CIRCUITS.map((c, k) => diagramVariant(c, k)) }],
+};
+
 export const analysisTopic: TopicInput = {
   id: "analysis",
   title: "Analysing clocked circuits",
@@ -253,6 +302,7 @@ export const analysisTopic: TopicInput = {
     { id: "an.obj.inputs", conceptId: "an.analysis", text: "Read the flip-flop input equations and the output equation from a circuit." },
     { id: "an.obj.state", conceptId: "an.analysis", text: "Write the state equations by substituting into the characteristic equations." },
     { id: "an.obj.table", conceptId: "an.analysis", text: "Fill a state table one column at a time: flip-flop inputs, next state, output." },
+    { id: "an.obj.diagram", conceptId: "an.analysis", text: "Draw the state diagram from the state table: one labelled arrow per row." },
   ],
-  activities: [analysisInputsActivity, analysisStateActivity, analysisTableActivity],
+  activities: [analysisInputsActivity, analysisStateActivity, analysisTableActivity, analysisDiagramActivity],
 };
