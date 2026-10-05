@@ -12,10 +12,16 @@ import styles from "./state-diagram.module.css";
 /**
  * The state table the diagram is read from (§13.3): beside the diagram on wide screens, below it
  * on phones. Read-only; a row is a focus target (`row-<n>`) so hint rung 5 can point at it.
+ *
+ * A long table (8 states, 16 rows) would sit a full screen below the diagram on a phone, so below
+ * 900 px it shows only the rows of `current`, the state the arrow being asked leaves, with a
+ * toggle for the whole table (#468). Reading the answer from those rows is still the student's work.
  */
-function StateTable({ spec, rows }: { spec: StateDiagramSpec; rows: Transition[] }) {
-  return (
-    <table className={styles.table} aria-label="State table">
+function StateTable({ spec, rows, current }: { spec: StateDiagramSpec; rows: Transition[]; current?: string }) {
+  const [whole, setWhole] = useState(false);
+  const short = current !== undefined && rows.length > SHORT_TABLE_ROWS;
+  const table = (
+    <table className={styles.table} aria-label="State table" data-short={short && !whole ? "" : undefined}>
       <thead>
         <tr>
           <th scope="col">{spec.stateVars.join("")}</th>
@@ -26,7 +32,7 @@ function StateTable({ spec, rows }: { spec: StateDiagramSpec; rows: Transition[]
       </thead>
       <tbody>
         {rows.map((t, i) => (
-          <tr key={i} data-focus-target={`row-${i}`}>
+          <tr key={i} data-focus-target={`row-${i}`} data-other={short && t.from !== current ? "" : undefined}>
             <td className="mono">{t.from}</td>
             <td className="mono">{t.input}</td>
             <td className="mono">{t.to}</td>
@@ -36,7 +42,19 @@ function StateTable({ spec, rows }: { spec: StateDiagramSpec; rows: Transition[]
       </tbody>
     </table>
   );
+  if (!short) return table;
+  return (
+    <div className={styles.tableBox}>
+      {table}
+      <button type="button" className={`btn btn-quiet ${styles.toggle}`} aria-pressed={whole} onClick={() => setWhole((w) => !w)}>
+        {whole ? `Show only the rows of ${current}` : "Show whole table"}
+      </button>
+    </div>
+  );
 }
+
+/** Tables up to this many rows (4 states) are always shown whole. */
+const SHORT_TABLE_ROWS = 8;
 
 export function Practice({ variant, prompt, state, stepIndex, locked, onSubmit }: PracticeProps<StateDiagramSpec, StateDiagramAnswer>) {
   const { spec } = variant;
@@ -79,7 +97,7 @@ export function Practice({ variant, prompt, state, stepIndex, locked, onSubmit }
             onSubmit({ kind: "state-diagram", step: stepIndex, label: answer, taken });
           }}
         />
-        <StateTable spec={spec} rows={table} />
+        <StateTable spec={spec} rows={table} current={finished ? undefined : table[current].from} />
       </div>
     </>
   );
