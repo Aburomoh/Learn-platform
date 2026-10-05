@@ -171,7 +171,8 @@ function buildVariant(set: (typeof BUILD)[number], step: number, k: number): Var
       {
         id: "s2",
         say: `In ${show(set.f)}, find what is evaluated ${step === 0 ? "first" : step === 1 ? "next" : "last"}.`,
-        ask: { prompt: "Is it inside a bracket, or does it join the brackets?", options: k % 2 ? ["joins them", "inside"] : ["inside", "joins them"], correctIndex: (step < 2) === (k % 2 === 0) ? 0 : 1, afterCorrect: "Right.", afterWrong: step < 2 ? "It is inside: brackets come first." : "It joins them: that is the last gate." },
+        // one wording for every F, with or without brackets (Reviewer on #436)
+        ask: { prompt: "Is it the last operation of F, or one done before it?", options: k % 2 ? ["last", "before"] : ["before", "last"], correctIndex: (step < 2) === (k % 2 === 0) ? 0 : 1, afterCorrect: "Right.", afterWrong: step < 2 ? "It is done before the last one: inner operations come first." : "It is the last operation: its gate gives F." },
       },
       { id: "s3", say: `So: ${right}.` },
     ],
