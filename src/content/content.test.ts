@@ -808,7 +808,33 @@ describe("pedagogy guard", () => {
   it("gives every question at least three number sets (owner, #192), apart from fixed-fact checks", () => {
     // Fixed facts (a single addition rule, the 2's-complement rule) have no third set of numbers.
     // bg.q.not: NOT is the fixed fact 1 0; relabelled copies would add nothing (Pedagogy on #337).
-    const EXEMPT = new Set(["ba.q.zero", "ba.q.one", "ba.q.two", "ba.q.twos-rule", "bg.q.not", "ha.q.table", "ha.q.gates", "fa.q.table", "fa.q.rows", "fa.q.sigma", "ff.q.sr", "ff.q.jk", "ff.q.d", "ff.q.t", "ff.q.eq-jk", "ff.q.eq-t", "ff.q.eq-d", "fa.q.kmap", "dr.q.point", "j3.q.table", "j3.q.diagram", "dz.q.problem-table", "dz.q.problem-trace", "an.q.ex-diagram"]);
+    // One id per line, so parallel PRs adding entries do not collide.
+    const EXEMPT = new Set([
+      "ba.q.zero",
+      "ba.q.one",
+      "ba.q.two",
+      "ba.q.twos-rule",
+      "bg.q.not",
+      "ha.q.table",
+      "ha.q.gates",
+      "fa.q.table",
+      "fa.q.rows",
+      "fa.q.sigma",
+      "ff.q.sr",
+      "ff.q.jk",
+      "ff.q.d",
+      "ff.q.t",
+      "ff.q.eq-jk",
+      "ff.q.eq-t",
+      "ff.q.eq-d",
+      "fa.q.kmap",
+      "dr.q.point",
+      "j3.q.table",
+      "j3.q.diagram",
+      "dz.q.problem-table",
+      "dz.q.problem-trace",
+      "an.q.ex-diagram",
+    ]);
     // Written before the rule; each entry leaves this list when its third set lands. Do not add to it.
     const PENDING = new Set<string>(); // empty since #224: keep it so a future backfill can use it
     for (const c of courses)
