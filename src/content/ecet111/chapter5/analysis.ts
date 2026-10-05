@@ -209,7 +209,8 @@ function tableVariant(c: Circuit): VariantInput {
   return {
     id: c.id,
     prompt: `${c.name.split(" (")[0]} with ${equations}. Fill the state table one column at a time: the flip-flop inputs first, then the next state${c.output ? ", then the output" : ""}.`,
-    spec: { kind: "truth-table", inputs: c.vars, columns },
+    // "Present state" over the flip-flops, "Input" over x, as the slides head the table (#440)
+    spec: { kind: "truth-table", inputs: c.vars, columns, inputGroups: [{ label: "Present state", span: c.vars.length - 1 }, { label: "Input", span: 1 }] },
     hints: [
       { rung: 2, text: "Not yet. Work out {columnLabel} on each row from that row's A, B and x." },
       { rung: 3, text: "Use the column's equation, {columnExpr}, one row at a time." },

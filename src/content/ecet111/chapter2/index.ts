@@ -5,6 +5,7 @@
 import type { ModuleInput } from "../../schema";
 import { basicGatesTopic } from "./basic-gates";
 import { derivedGatesTopic } from "./derived-gates";
+import { circuitsTopic } from "./circuits";
 import { sopPosTopic } from "./sop-pos";
 import { lawsAndRulesTopic } from "./laws-and-rules";
 import { simplificationTopic } from "./simplification";
@@ -17,6 +18,7 @@ export const chapter2: ModuleInput = {
   topics: [
     basicGatesTopic,
     derivedGatesTopic,
+    circuitsTopic,
     sopPosTopic,
     lawsAndRulesTopic,
     simplificationTopic,
