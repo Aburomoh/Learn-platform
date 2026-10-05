@@ -151,3 +151,29 @@ Mock-up `visual-symbols-2.html`, renders `visual-symbols-2-{1280,390}.png`. Same
   the gate block; draw it only on questions about the output.
 - Composite figures (the last two) may be up to 360 units wide with 15-unit text, so they stay at 12 px or
   more on a 390 px phone.
+
+## 11. "Meet it" cards for the P0 topics (build step 4)
+One card per topic page, in place of the preview tiles: the symbol in its *result* state for one worked
+case, and exactly three callouts (what comes in, what the device does, what comes out). Each callout is one
+short sentence, numbered, 15 px. Pedagogy checks that no case repeats a practice's numbers (preview guard).
+
+| Topic | Figure and worked case | Callouts |
+|---|---|---|
+| Decoders | 3→8 decoder, x y z = 1 0 1, D5 lit | 1. A code comes in: x y z = 101. · 2. 101 is 5, so line D5 goes to 1. · 3. Every other line stays 0. |
+| Encoders | 8→3 encoder, I6 = 1, outputs 1 1 0 | 1. One input line is 1: I6. · 2. The encoder writes its number in binary. · 3. 6 is 110, so x y z = 110. |
+| Multiplexers | 4→1 mux, S1 S0 = 1 0, path I2 → Y | 1. Four data inputs wait at the left. · 2. The selects say 10, which is 2. · 3. So Y copies I2, whatever I2 is. |
+| Half adder | HA block, A = 1, B = 1 → S = 0, C = 1 | 1. Two bits come in: 1 and 1. · 2. 1 + 1 is 2, written 10 in binary. · 3. S is the 0, C is the carry 1. |
+| Full adder | Σ block, A = 1, B = 0, Ci = 1 → S = 0, Co = 1 | 1. Two bits and a carry in. · 2. 1 + 0 + 1 is 2, written 10. · 3. S is the 0, Co carries the 1 to the next column. |
+| Flip-flops | D flip-flop, D = 1, Q(t) = 0, rising edge → Q(t+1) = 1 | 1. Q holds one bit: now 0. · 2. Nothing changes until the clock edge. · 3. At the edge Q takes D, so Q becomes 1. |
+| Analysis | the block-level circuit (§10), no values | 1. The gates work out each flip-flop's input. · 2. At the clock edge the flip-flops store them. · 3. Their outputs feed back, so the present state shapes the next. |
+
+- **Layout:** as in M2. From 900 px the card sits to the right of the title and the Start button; on a phone
+  it sits between the "Today" line and the Start button, figure first, callouts under it. The card never
+  pushes the Start button below the first screen on a 390 × 844 phone: if it would, the callouts collapse
+  behind "How it works" (closed by default) and the figure stays.
+- **Numbering:** the three callouts carry `--brand` numbered discs; the matching pins on the figure carry
+  the same small numbers (1 at the inputs, 2 inside the body, 3 at the outputs), so text and picture point
+  at each other without arrows.
+- **Topics with several devices** (flip-flops: SR, D, JK, T) show one card (the D flip-flop) and a quiet
+  "All four symbols" link to the Symbols sheet.
+- The tutor's one line stays where it is; the card doesn't replace it.
