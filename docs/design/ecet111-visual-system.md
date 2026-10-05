@@ -155,13 +155,13 @@ Mock-up `visual-symbols-2.html`, renders `visual-symbols-2-{1280,390}.png`. Same
 ## 11. "Meet it" cards for the P0 topics (build step 4)
 One card per topic page, in place of the preview tiles: the symbol in its *result* state for one worked
 case, and exactly three callouts (what comes in, what the device does, what comes out). Each callout is one
-short sentence, numbered, 15 px. Pedagogy checks that no case repeats a practice's numbers (preview guard).
+short sentence, numbered, 15 px. No case repeats a practice's numbers (preview guard); the adder and flip-flop cases are rows of a complete fixed table, so they cannot avoid it and are allowed.
 
 | Topic | Figure and worked case | Callouts |
 |---|---|---|
-| Decoders | 3→8 decoder, x y z = 1 0 1, D5 lit | 1. A code comes in: x y z = 101. · 2. 101 is 5, so line D5 goes to 1. · 3. Every other line stays 0. |
-| Encoders | 8→3 encoder, I6 = 1, outputs 1 1 0 | 1. One input line is 1: I6. · 2. The encoder writes its number in binary. · 3. 6 is 110, so x y z = 110. |
-| Multiplexers | 4→1 mux, S1 S0 = 1 0, path I2 → Y | 1. Four data inputs wait at the left. · 2. The selects say 10, which is 2. · 3. So Y copies I2, whatever I2 is. |
+| Decoders | 2→4 decoder, x y = 1 0, D2 lit (a size no 3→8 question can repeat) | 1. A code comes in: x y = 10. · 2. 10 is 2, so line D2 goes to 1. · 3. Every other line stays 0. |
+| Encoders | 8→3 encoder, I5 = 1, outputs 1 0 1 | 1. One input line is 1: I5. · 2. The encoder writes its number in binary. · 3. 5 is 101, so x y z = 101. |
+| Multiplexers | 4→1 mux, S1 S0 = 0 0, path I0 → Y | 1. Four data inputs wait at the left. · 2. The selects say 00, which is 0. · 3. So Y copies I0, whatever I0 is. |
 | Half adder | HA block, A = 1, B = 1 → S = 0, C = 1 | 1. Two bits come in: 1 and 1. · 2. 1 + 1 is 2, written 10 in binary. · 3. S is the 0, C is the carry 1. |
 | Full adder | Σ block, A = 1, B = 0, Ci = 1 → S = 0, Co = 1 | 1. Two bits and a carry in. · 2. 1 + 0 + 1 is 2, written 10. · 3. S is the 0, Co carries the 1 to the next column. |
 | Flip-flops | D flip-flop, D = 1, Q(t) = 0, rising edge → Q(t+1) = 1 | 1. Q holds one bit: now 0. · 2. Nothing changes until the clock edge. · 3. At the edge Q takes D, so Q becomes 1. |
