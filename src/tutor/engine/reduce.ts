@@ -198,12 +198,6 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
   return { state: s, actions: out };
 }
 
-/**
- * The generic wrong line: a grid answer with wrong cells says `wrong.cell` (points at the marked
- * cell), anything else the plain fallback. Either may have a step form `<key>.<stepTag>`, and a
- * kind-specific one `<key>.<kind>.<stepTag>` first (tags such as "group" mean different things in
- * different kinds).
- */
 /** The generic wrong line: a grid answer with wrong cells says `wrong.cell` (points at the marked
  * cell), anything else the plain fallback. Either may have a step form `<key>.<stepTag>`, and a
  * kind-specific one `<key>.<kind>.<stepTag>` first (tags such as "group" mean different things in

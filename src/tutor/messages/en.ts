@@ -208,8 +208,10 @@ export const en = {
   "step.next-sd-next": "Good. Now the next state for this arrow.",
   "step.next-sd-label": "Good. Now the label for this arrow.",
   "wrong.first.tm.edge": "Not quite. Look at the {flipFlop} characteristic equation: {flipFlop} → {outputList}.",
+  "wrong.first.tm.machine.edge": "Not quite. Use the state before this edge and its next-state equations.",
   "wrong.first.sd.next": "Not quite. Use the state table or equations to find the next state for this input.",
-  "wrong.first.sd.label": "Not quite. The label is {inputName} over {outputName} (or just {inputName} if there is no output).",
+  "wrong.first.sd.label": "Not quite. The label is {inputName}/{outputName}.",
+  "wrong.first.sd.label.no-output": "Not quite. The label is just {inputName}.",
 } satisfies Record<string, string>;
 
 export type MessageKey = keyof typeof en;
