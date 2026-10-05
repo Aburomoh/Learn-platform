@@ -27,8 +27,11 @@ two sessions for one role.
 - **The wake label is the queue.** `wake:<role>` on an issue/PR means that role acts next. A READY task
   carries exactly one owner wake label; the Product Manager keeps each role at 1–2 READY items.
 - **Your own worktree.** Project root (exact casing): `C:\Users\mnabu\OneDrive\Documents\Claude\Learn_platform`; open sessions from there. Each role works only in the sibling worktree `../Learn_platform-<slug>` (create once: `git worktree add ../Learn_platform-<slug> origin/main`, then one task branch per task). Never commit, switch branches or edit files in the main checkout; it belongs to the Technical Lead.
-- **Watch, always.** One Monitor watcher per session (`node scripts/wake.mjs --watch <slug>`); re-arm at every
-  30-minute expiry. Watchers exit by themselves when the session ends (#360).
+- **Watch, always.** One Monitor watcher per session (`node scripts/wake.mjs --watch <slug>`, run with `node`, not `npm run`). Re-arm **only when the Monitor expires**, never in response to a wake event: a new watcher re-reports every open wake, so re-arming on events multiplies watchers (92 in 8 minutes on 2026-10-05). Watchers exit by themselves when the session ends (#360).
+- **Verdicts are structured and on GitHub (owner, 2026-10-05).** Every review, Pedagogy, UX, QA and Performance verdict is one PR comment that starts with these lines:
+  `Verdict: <Role> · <commit SHA (7+)> · Approved | Changes needed`
+  `Checks: <what you actually ran or looked at, one per line or ;-separated>`
+  A verdict only in your terminal does not count. A CI summary is not a QA verdict on a PR that needs manual QA. A new push after your verdict invalidates it where the push changes what you checked: re-check that commit and post a new verdict.
 - **Hand off explicitly.** `npm run alarm <role> <#> "<done> / <needed>" <your-slug>`; one wake per hand-off;
   never re-wake the sender for the same item except to return a failure with a reason; no FYI wakes.
 - **Automatic hand-offs:** PR opened → Reviewer; `qa:passed` + green CI → Technical Lead; merge → Product
@@ -46,6 +49,7 @@ two sessions for one role.
   - Syllabus: `C:\Users\mnabu\OneDrive\Documents\Claude\Learn_platform\ECET111 materials\ECET111- Syllabus-Fall2026.pdf`
   - Tutor poses: `C:\Users\mnabu\OneDrive\Documents\Claude\Learn_platform\MyPics\tutor-pose-library\expressive`
   Never commit, upload or quote them; commit only processed tutor images under `public/tutor/`.
+- **Unacknowledged wakes (owner, 2026-10-05).** A wake not acknowledged within about 30 minutes starts a health/recovery check by the Technical Lead (the order below). The owner is involved only when manual action is needed, such as approving a prompt or restarting a session.
 - **No substitutes (owner, 2026-10-04).** One permanent session per role; no temporary duplicate of any role unless the owner explicitly authorises it. An unacknowledged wake is a coordination incident: fix its cause and recover the **same** role. Diagnose in order: (1) is the role's session alive; (2) is its watcher running (`node scripts/wake.mjs --watch <slug>` process); (3) is the wake label/queue correct; (4) did it acknowledge but not update its state; (5) is its worktree healthy; (6) did the session hit its context limit or crash; (7) resume or restart it from its prompt + state file. Recovery = wake queue + state file + git/PR state → resume the permanent role → it acks pending work → continue.
 
 ## Prompts

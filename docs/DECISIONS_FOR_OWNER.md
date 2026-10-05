@@ -12,6 +12,17 @@ Do not escalate deterministic, computable answers (Boolean, conversions, state t
 ## Non-blocking owner checks
 - Phone check (#153): type bits into a filled row on a real phone and confirm each digit lands in the next cell. Development and merges do not wait for it.
 
+## Wake system revision (owner, 2026-10-05, retrospective #483)
+Approved: Phases 0–2, delivered by DevOps one reviewed PR at a time, without disrupting ECET111. Adjustments:
+- **No stand-ins:** recover the permanent role.
+- **30-minute rule:** an unacknowledged wake after about 30 minutes triggers a TL health/recovery check; the owner is involved only if manual intervention is needed.
+- **Wake labels:** an alarm never removes other roles' valid wakes; de-duplicate only the same role's duplicate wake for the same item and commit.
+- **Stacked PRs:** after a predecessor merges, the author refreshes, rebases or retargets onto current main and resolves conflicts through the normal PR process.
+- **Structured verdicts:** each states Role, commit SHA, Approved or Changes needed, and the checks performed. A new push invalidates the previous approval where relevant.
+- **Health:** lightweight, with no per-role heartbeat traffic or processes. The long-term target is one central dispatcher/health monitor.
+- **Shared-watcher pilot:** PM, Reviewer and QA. Measure missed, duplicate and stale wakes, GitHub API calls, background process count, and recovery after restart/outage. After Phase 2, report before/after and recommend.
+- **Identity:** implement role/path/worktree validation now; defer bot accounts and tokens.
+
 ## Resolved
 - 2026-10-05 — Pipeline fragmentation (owner, Technical Lead session): one PR per coherent learning unit; Pedagogy reviews upstream (new behaviour, scaffolding rules, new kinds, deviations from approved packs), not every faithful implementation; QA by risk (new kinds, major screens, behaviour changes, fixes, chapter integration), with routine content on tested kinds merging on Reviewer (answers verified independently) + CI; Vercel previews only for app-affecting changes, label-triggered if still near the Hobby limit (no plan upgrade); owner preview refreshed after milestones; P0 work first. Recorded in `agents/SESSION_PROMPTS.md` (#444).
 - 2026-10-04 — Answer confirmations and slide notes (owner, quoted on #192):
