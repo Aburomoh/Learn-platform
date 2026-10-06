@@ -1,0 +1,101 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>cpu-schedule mock-up (#541)</title>
+<link rel="stylesheet" href="../../redesign-r1/mockups/r1.css"><link rel="stylesheet" href="../../ecet111/mockups/kinds.css"><link rel="stylesheet" href="cpet181.css"></head><body>
+<main class="stack-6" style="padding-top:var(--space-5)">
+
+<!-- Challenge: timeline, segment 5 of 8 -->
+<section class="stagecard">
+<p class="eyebrow">Challenge 2 of 4 · Round Robin · quantum 2 ms</p>
+<p class="qtext">Build the timeline for these jobs under Round Robin (quantum 2 ms), one segment at a time.</p>
+<div class="sched">
+  <table class="tt jobs" aria-label="Jobs"><thead><tr><th>Job</th><th>Arrival</th><th>CPU</th><th class="left">Left</th></tr></thead><tbody>
+  <tr><td>A</td><td>0</td><td>5</td><td class="left">1</td></tr>
+  <tr><td>B</td><td>1</td><td>3</td><td class="left">1</td></tr>
+  <tr><td>C</td><td>3</td><td>2</td><td class="left done">✓</td></tr>
+  <tr><td>D</td><td>4</td><td>4</td><td class="left">4</td></tr>
+  </tbody></table>
+  <div class="well lanewell"><div class="lanerow"><div class="lanenames"><span style="top:4px">Arrive</span><span style="top:38px">CPU</span><span style="top:84px">t</span></div><div class="lanescroll">
+  <svg viewBox="0 0 470 104" width="470" height="104" role="img" aria-label="Timeline: Round Robin, quantum 2. A runs 0 to 2, B 2 to 4, A 4 to 6, C 6 to 8; next starts at 8.">
+    <!-- arrivals strip -->
+    <g font-family="ui-monospace,monospace" font-size="12" font-weight="700" fill="var(--text-muted)">
+      <path d="M14 18 l-4 6 h8 z" fill="var(--text-muted)"/><text x="14" y="14" text-anchor="middle">A</text>
+      <path d="M46 18 l-4 6 h8 z" fill="var(--text-muted)"/><text x="46" y="14" text-anchor="middle">B</text>
+      <path d="M110 18 l-4 6 h8 z" fill="var(--text-muted)"/><text x="110" y="14" text-anchor="middle">C</text>
+      <path d="M142 18 l-4 6 h8 z" fill="var(--text-muted)"/><text x="142" y="14" text-anchor="middle">D</text>
+    </g>
+    <!-- boundary guides -->
+    <g stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="2 4"><path d="M14 26 V96"/><path d="M78 26 V96"/><path d="M142 26 V96"/><path d="M206 26 V96"/><path d="M270 26 V96"/></g>
+    <!-- current-time guide through arrivals -->
+    <path d="M270 2 V96" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <!-- segments: done -->
+    <g font-family="ui-monospace,monospace" font-size="13" font-weight="700" fill="var(--text)">
+      <rect x="14" y="30" width="64" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="46" y="53" text-anchor="middle">A 2 ↩</text>
+      <rect x="78" y="30" width="64" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="110" y="53" text-anchor="middle">B 2 ↩</text>
+      <rect x="142" y="30" width="64" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="174" y="53" text-anchor="middle">A 2 ↩</text>
+      <rect x="206" y="30" width="64" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="238" y="53" text-anchor="middle">C 2</text>
+      <!-- dotted right edge = preempted, continues later -->
+      <path d="M78 30 V66 M142 30 V66 M206 30 V66" stroke="var(--surface)" stroke-width="3"/><path d="M78 30 V66 M142 30 V66 M206 30 V66" stroke="var(--text)" stroke-width="2" stroke-dasharray="3 3"/>
+    </g>
+    <!-- now: dashed slot with halo -->
+    <rect x="270" y="27" width="64" height="42" rx="6" fill="var(--focus-halo)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="302" y="53" text-anchor="middle" font-family="system-ui" font-size="15" font-weight="700" fill="var(--accent)">?</text>
+    <!-- ticks -->
+    <g font-family="ui-monospace,monospace" font-size="12" font-weight="700" fill="var(--text)" text-anchor="middle">
+      <text x="14" y="92">0</text><text x="78" y="92">2</text><text x="142" y="92">4</text><text x="206" y="92">6</text><text x="270" y="92">8</text><text x="334" y="92" fill="var(--accent)">?</text>
+    </g>
+  </svg></div></div></div>
+</div>
+<div class="stack-2">
+  <p class="goal">Segment <b>5 of 8</b> · starts at 8: which job runs, and until when?</p>
+  <div class="chips" role="radiogroup" aria-label="Job for segment 5"><span class="chip">A</span><span class="chip">B</span><span class="chip dis" aria-disabled="true">C ✓</span><span class="chip sel">D</span><span class="chip">Idle</span></div>
+  <div class="edgebar"><label class="until">until <input class="num" inputmode="numeric" value="10" aria-label="Segment 5 ends at"> ms</label><a class="btn btn-primary" href="#">Check segment</a><a class="btn btn-quiet" href="#">Hint</a></div>
+</div>
+<div class="legend"><span><i class="sw active"></i>Now</span><span><i class="sw done"></i>Done</span><span><i class="sw dot"></i>Continues later</span><span><i class="sw hatch"></i>Idle</span><span><i class="sw wrong"></i>Try again</span></div>
+</section>
+
+<!-- Challenge: result table, column Turnaround, one wrong cell -->
+<section class="stagecard">
+<p class="eyebrow">Challenge 3 of 4 · Turnaround time</p>
+<p class="qtext">The timeline is complete. Fill the finish time, then the turnaround time of each job.</p>
+<div class="well lanewell"><div class="lanerow"><div class="lanenames"><span style="top:6px">CPU</span><span style="top:52px">t</span></div><div class="lanescroll">
+  <svg viewBox="0 0 470 70" width="470" height="70" role="img" aria-label="Completed timeline: A 0–2, B 2–4, A 4–6, C 6–8, D 8–10, B 10–11, A 11–12, D 12–14.">
+    <g font-family="ui-monospace,monospace" font-size="13" font-weight="700" fill="var(--text)" text-anchor="middle">
+      <rect x="14" y="4" width="64" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="46" y="27">A 2</text>
+      <rect x="78" y="4" width="64" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="110" y="27">B 2</text>
+      <rect x="142" y="4" width="64" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="174" y="27">A 2</text>
+      <rect x="206" y="4" width="64" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="238" y="27">C 2</text>
+      <rect x="270" y="4" width="64" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="302" y="27">D 2</text>
+      <rect x="334" y="4" width="32" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="350" y="27">B</text>
+      <rect x="366" y="4" width="32" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="382" y="27">A</text>
+      <rect x="398" y="4" width="64" height="36" fill="var(--surface)" stroke="var(--text)" stroke-width="2"/><text x="430" y="27">D 2</text>
+    </g>
+    <g font-family="ui-monospace,monospace" font-size="12" font-weight="700" fill="var(--text)" text-anchor="middle">
+      <text x="14" y="60">0</text><text x="78" y="60">2</text><text x="142" y="60">4</text><text x="206" y="60">6</text><text x="270" y="60">8</text><text x="334" y="60">10</text><text x="366" y="60">11</text><text x="398" y="60">12</text><text x="462" y="60">14</text>
+    </g>
+  </svg></div></div></div>
+<p class="goal">Column <b>Turnaround</b>: finish − arrival, for each job.</p>
+<div class="well"><table class="tt result" aria-label="Finish and turnaround times"><thead><tr><th>Job</th><th>Arrival</th><th>CPU</th><th class="sep">Finish</th><th class="act">Turnaround</th><th class="pend">Wait</th></tr></thead><tbody>
+<tr><td>A</td><td>0</td><td>5</td><td class="sep">12</td><td class="act"><span class="cellbtn w">12</span></td><td class="pend"></td></tr>
+<tr><td>B</td><td>1</td><td>3</td><td class="sep">11</td><td class="act"><span class="cellbtn w wrong">11</span></td><td class="pend"></td></tr>
+<tr><td>C</td><td>3</td><td>2</td><td class="sep">8</td><td class="act"><span class="cellbtn w">5</span></td><td class="pend"></td></tr>
+<tr><td>D</td><td>4</td><td>4</td><td class="sep">14</td><td class="act"><span class="cellbtn w">10</span></td><td class="pend"></td></tr>
+</tbody></table></div>
+<p class="feedback">1 cell is not right yet; look at job B. Turnaround counts from the arrival, not from 0.</p>
+<div class="row"><a class="btn btn-primary" href="#">Check column</a><a class="btn btn-quiet" href="#">Hint</a></div>
+<div class="legend"><span><i class="sw active"></i>Now</span><span><i class="sw done"></i>Done</span><span><i class="sw pend"></i>Later</span><span><i class="sw wrong"></i>Try again</span></div>
+</section>
+
+<!-- Challenge: average (keep it) -->
+<section class="stagecard">
+<p class="eyebrow">Challenge 4 of 4 · Average turnaround</p>
+<p class="qtext">What is the average turnaround time?</p>
+<div class="well"><table class="tt result" aria-label="Turnaround times"><thead><tr><th>Job</th><th>Arrival</th><th class="sep">Finish</th><th>Turnaround</th></tr></thead><tbody>
+<tr><td>A</td><td>0</td><td class="sep">12</td><td>12 <span class="sub">12 − 0</span></td></tr>
+<tr><td>B</td><td>1</td><td class="sep">11</td><td>10 <span class="sub">11 − 1</span></td></tr>
+<tr><td>C</td><td>3</td><td class="sep">8</td><td>5 <span class="sub">8 − 3</span></td></tr>
+<tr><td>D</td><td>4</td><td class="sep">14</td><td>10 <span class="sub">14 − 4</span></td></tr>
+</tbody></table></div>
+<p class="goal">Average turnaround = (sum of turnarounds) / 4 = ?</p>
+<div class="edgebar"><input class="num wide" inputmode="decimal" placeholder="?" aria-label="Average turnaround time"> <span class="unit">ms</span><a class="btn btn-primary" href="#">Check average</a><a class="btn btn-quiet" href="#">Hint</a></div>
+</section>
+
+</main></body></html>
