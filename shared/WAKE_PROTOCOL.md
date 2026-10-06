@@ -17,7 +17,7 @@ whether to start that specialist for the named task.
 
 ## Mechanism
 - **Dispatcher** (`scripts/dispatch.mjs`, one per machine, `npm run dispatch:start`): the only process that polls GitHub (every 60 s). It appends each new or updated wake to `<tmp>/cet-wake/inbox/<role>.log`, sends on-demand wakes, 30-minute stale wakes and its own errors to the Lead's inbox, and writes `<tmp>/cet-wake/status.json`.
-- **Listener** (`node scripts/inbox.mjs <role>`): what each permanent session runs in the Monitor tool. No network calls; newest listener per role wins; exits with its session or after 35 minutes; re-arm only on expiry.
+- **Listener** (`node scripts/inbox.mjs <role>`): each permanent session runs it as a background Bash command. It waits with no time limit and no network calls, completes once when new wakes arrive (a saved read position means nothing is lost), and the session starts it again after acting. No model turns while idle. Newest listener per role wins; it exits with its session. `--stream` is a Monitor fallback only.
 - **Health:** `npm run wake:health`: dispatcher status, each listener, each role's open wakes and their age.
 - **Session start:** the SessionStart hook prints open wakes (`npm run wake:pending`).
 - **Commands:** `npm run alarm <role> <#> "<done> / <needed>" <your-role>` (adds only that role's label, never removes another's), `npm run wake:ack <role> <#…>`, `npm run wake <role>`. Short names and retired Team V1 names map to their Team V2 owner (`scripts/roles.mjs`).

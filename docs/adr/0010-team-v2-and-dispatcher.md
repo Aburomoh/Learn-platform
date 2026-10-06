@@ -22,5 +22,6 @@ state-file PRs, and 110 conflict/refresh wakes from stacked branches.
 ## Consequences
 Fewer sessions and no per-session GitHub polling; a single place to see health (`npm run wake:health`).
 The dispatcher is a single point of failure: if it stops, the Lead sees it in `wake:health`, and
-session-start still lists open wakes (`npm run wake:pending`). Claude's Monitor still expires after 30
-minutes, so permanent sessions re-arm their listener on expiry; the listener itself makes no calls.
+session-start still lists open wakes (`npm run wake:pending`). Listeners run as background Bash commands that complete only when a real wake
+arrives, so idle sessions take no model turns (a Monitor would expire every 30 minutes and cost a turn
+each time; `--stream` remains as a fallback only).

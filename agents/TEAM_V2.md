@@ -45,7 +45,7 @@ comment per role, edited in place). The Team V1 charters and state files are arc
 | Per-role state files and state PRs | state board #519 (no PRs) |
 
 ## Operating rules
-- **One dispatcher** (`npm run dispatch:start`, one per machine) polls GitHub; each permanent session streams only its own inbox (`node scripts/inbox.mjs <role>` in the Monitor tool, re-armed only on expiry). On-demand wakes, stale wakes (over 30 min) and dispatcher errors go to the Lead's inbox. `npm run wake:health` shows everything.
+- **One dispatcher** (`npm run dispatch:start`, one per machine) polls GitHub; each permanent session runs only a passive listener on its own inbox (`node scripts/inbox.mjs <role>` as a background Bash command; it completes once per real wake and is started again after acting; no model turns while idle). On-demand wakes, stale wakes (over 30 min) and dispatcher errors go to the Lead's inbox. `npm run wake:health` shows everything.
 - **No stacked branches.** Every PR is cut from `origin/main`; the next PR starts after the previous merges. Authors resolve their own conflicts.
 - **No state-file PRs.** Update your comment on #519 instead.
 - **One PR per coherent learning unit.**

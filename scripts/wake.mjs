@@ -41,7 +41,8 @@ const mode = argv[0]?.startsWith("--") ? argv.shift() : "--show";
 if (mode === "--pending") {
   // SessionStart hook: runs at every session start, resume and context compaction.
   console.log(
-    "Team V2 (ADR-0010): if this session holds a permanent role, keep ONE listener in the Monitor tool and re-arm it only when it expires:\n" +
+    "Team V2 (ADR-0010): if this session holds a permanent role, run ONE listener as a background Bash command (run_in_background);\n" +
+      "it completes once per real wake: read it, act, start it again. No Monitor, no polling:\n" +
       "  node scripts/inbox.mjs <lead|content-engineer|ui-engineer|code-architecture-reviewer|qa-test-engineer>\n" +
       `Recover from repository truth: agents/SESSION_PROMPTS.md, your charter agents/<role>.md, and your comment on state board #${BOARD}.`,
   );
@@ -118,7 +119,7 @@ if (mode === "--alarm") {
   } catch {
     console.log("  (gh unavailable or not authenticated)");
   }
-  console.log(`\nWake: npm run alarm <role> <#> "<done> / <needed>" ${role}. Ack: npm run wake:ack ${role} <#>. Listener: node scripts/inbox.mjs ${role}`);
+  console.log(`\nWake: npm run alarm <role> <#> "<done> / <needed>" ${role}. Ack: npm run wake:ack ${role} <#>. Listener (background Bash, restart after each wake): node scripts/inbox.mjs ${role}`);
 } else {
   usage();
 }
