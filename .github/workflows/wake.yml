@@ -1,12 +1,10 @@
-# Idempotent wake signals (ADR-0006). Applies a label describing who should act next.
+# Idempotent wake signals (ADR-0006, Team V2: ADR-0010). Applies a label describing who should act next.
 # Labels are only added when absent, so re-running never duplicates work.
 name: Wake
 
 on:
   pull_request:
-    types: [opened, reopened, ready_for_review, closed, labeled]
-  pull_request_review:
-    types: [submitted]
+    types: [opened, reopened, ready_for_review, labeled]
   workflow_run:
     workflows: [CI]
     types: [completed]
@@ -22,36 +20,28 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            const WAKE = ['wake:reviewer', 'wake:qa', 'wake:tech-lead', 'wake:product-manager'];
             async function setWake(number, label) {
               const { data: current } = await github.rest.issues.listLabelsOnIssue({ ...context.repo, issue_number: number });
               const names = current.map(l => l.name);
               if (names.includes(label)) return;               // idempotent
-              for (const old of names.filter(n => WAKE.includes(n))) {
-                await github.rest.issues.removeLabel({ ...context.repo, issue_number: number, name: old }).catch(() => {});
-              }
+              // Never removes another role's wake (owner, 2026-10-05); each role acks its own.
               await github.rest.issues.addLabels({ ...context.repo, issue_number: number, labels: [label] });
             }
             const ev = context.eventName;
             if (ev === 'pull_request') {
               const pr = context.payload.pull_request;
-              if (context.payload.action === 'closed') {
-                if (pr.merged) await setWake(pr.number, 'wake:product-manager');
-              } else if (context.payload.action === 'labeled') {
+              // Team V2: merges wake nobody (the Lead merges); Reviewer approval routes itself (QA is risk-based).
+              if (context.payload.action === 'labeled') {
                 // QA often labels after CI has finished, so the workflow_run path never fires (#355).
-                if (context.payload.label?.name === 'qa:passed') await setWake(pr.number, 'wake:tech-lead');
+                if (context.payload.label?.name === 'qa:passed') await setWake(pr.number, 'wake:lead');
               } else if (!pr.draft) {
                 await setWake(pr.number, 'wake:reviewer');
-              }
-            } else if (ev === 'pull_request_review') {
-              if (context.payload.review.state === 'approved') {
-                await setWake(context.payload.pull_request.number, 'wake:qa');
               }
             } else if (ev === 'workflow_run') {
               const run = context.payload.workflow_run;
               if (run.conclusion !== 'success') return;
               for (const pr of run.pull_requests || []) {
                 const { data: labels } = await github.rest.issues.listLabelsOnIssue({ ...context.repo, issue_number: pr.number });
-                if (labels.some(l => l.name === 'qa:passed')) await setWake(pr.number, 'wake:tech-lead');
+                if (labels.some(l => l.name === 'qa:passed')) await setWake(pr.number, 'wake:lead');
               }
             }

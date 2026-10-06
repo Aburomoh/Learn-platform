@@ -10,7 +10,7 @@ Required: engineer + reviewer + basic QA.
 
 ## Level 3
 Core interaction, tutor behavior, data handling, cross-system work.
-Required: relevant specialist + reviewer + QA + Technical Lead where appropriate.
+Required: Reviewer + QA (by risk) + Lead; the Lead calls the relevant on-demand specialist (Team V2).
 
 ## Level 4
 Auth, student privacy, major architecture, significant migration, major deployment change.

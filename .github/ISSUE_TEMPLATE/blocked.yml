@@ -31,6 +31,6 @@ body:
     id: decider
     attributes:
       label: Decision needed from
-      options: ["Technical Lead", "Product Manager", "Director", "Owner"]
+      options: ["Lead", "Owner"]
     validations:
       required: true

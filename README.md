@@ -25,7 +25,7 @@ npm run test:e2e   # Playwright smoke tests (needs `npx playwright install chrom
 | `docs/adr/` | Architecture Decision Records |
 | `docs/MILESTONES.md` | Current milestone, acceptance criteria, short status |
 | `docs/DECISIONS_FOR_OWNER.md` | Decisions waiting on the owner |
-| `agents/` | Permanent role charters; `agents/state/` compact current state per role |
+| `agents/` | Permanent role charters; Team V2 in `agents/TEAM_V2.md`; state on pinned issue #519 |
 | `shared/` | Communication, review levels, wake protocol, owner-approval rules |
 | `.claude/agents/` | Thin launchers that let each role be started by name in Claude Code |
 | `scripts/wake.mjs` | `npm run wake <role>` prints what a role must read and its open items |
@@ -33,5 +33,5 @@ npm run test:e2e   # Playwright smoke tests (needs `npx playwright install chrom
 
 ## Workflow
 
-Protected `main`, one branch per task, PR per change, CI required, squash merge, Technical Lead
+Protected `main`, one branch per task, PR per change, CI required, squash merge, Lead
 merges. See `shared/` and `.github/`.
