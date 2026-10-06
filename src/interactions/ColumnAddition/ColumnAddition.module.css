@@ -135,6 +135,17 @@
   font-size: var(--text-md);
 }
 
+/* phones: both boxes are full touch targets (44 px tall); the carry row grows to hold its box */
+@media (max-width: 640px) {
+  .grid {
+    grid-template-rows: var(--touch-min) var(--touch-min) var(--touch-min) auto var(--touch-min);
+  }
+  .input,
+  .carryInput {
+    height: var(--touch-min);
+  }
+}
+
 /* nine columns (8 bits + the final carry) still fit a 320 px phone */
 @media (max-width: 480px) {
   .grid {
