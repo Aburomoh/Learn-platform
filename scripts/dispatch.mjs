@@ -36,7 +36,7 @@ if (existsSync(LOCK)) {
 }
 writeFileSync(LOCK, String(process.pid));
 
-const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 30_000 });
+const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 30_000, windowsHide: true });
 const labels = Object.values(ROLES).flatMap((r) => [r.alarm, ...r.labels]).filter((l) => l !== "ready");
 const SEEN = join(DIR, "dispatch-seen.json");
 const seen = new Map(existsSync(SEEN) ? Object.entries(JSON.parse(readFileSync(SEEN, "utf8"))) : []);

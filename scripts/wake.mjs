@@ -13,7 +13,7 @@ import { execFileSync } from "node:child_process";
 import { ROLES, RETIRED, roleOf } from "./roles.mjs";
 
 const BOARD = 519; // Team V2 state board (pinned issue): one comment per role, edited in place.
-const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 30_000 });
+const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 30_000, windowsHide: true });
 const ISSUE = (n) => `repos/{owner}/{repo}/issues/${n}`;
 
 function openItems(labels) {
