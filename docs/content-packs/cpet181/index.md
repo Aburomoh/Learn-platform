@@ -44,7 +44,7 @@ Teaching order is **not** chapter order: 1, 2, 3, 8, 5, (midterm), 4, 6, 7, 9 (`
 |---|---|---|
 | Page replacement (FIFO, LRU, OPT), page faults counted | **No** | Ch3 teaches paging and segmentation address translation only; "page fault" appears only as a state-transition label (Ch4 s.8) and thrashing only as a word (Ch3 s.20) |
 | Banker's algorithm, safe/unsafe states, avoidance | **No** | Ch5 teaches the four conditions, seven deadlock cases, recovery methods and starvation |
-| Resource-allocation graphs (formal) | **No** | Ch5 s.16–19 use small hold/request sketches per condition; no graph notation or cycle detection exercise |
+| Resource-allocation graphs | **Pictures only** | Ch5 s.7, s.13 draw the textbook's directed graphs (circle = process, box = resource, solid = allocated, dashed = requested) and s.16–19 hold/request sketches; no graph-reading or cycle-detection exercise |
 | Disk-seek scheduling (FCFS/SSTF/SCAN/LOOK) | **No** | Ch7 covers device types and storage media only |
 | RAID | **No** | Not mentioned |
 | File allocation methods (contiguous/linked/indexed) | **No** | Ch8 teaches record organization (sequential, direct, indexed sequential), compression, FAT vs NTFS |
@@ -61,5 +61,6 @@ Teaching order is **not** chapter order: 1, 2, 3, 8, 5, (midterm), 4, 6, 7, 9 (`
 | Compaction: new start addresses and relocation register | ch2 | Ch2 s.33–37; Q1 Q3 |
 | Page number and displacement; physical address from PMT | ch3 | Ch3 s.11–13 |
 | Segment + displacement lookup in the SMT | ch3 | Ch3 s.16–17 |
-| Concurrent evaluation of an arithmetic expression (step count) | ch6 | Ch6 s.22–24 |
+| Concurrent evaluation of an arithmetic expression (steps, processors) | ch6 | Ch6 s.22–24 |
+| Deadlock: which of the four conditions holds / which removal breaks it | ch5 | Ch5 s.15–19; Q2 MCQ 4 |
 | Repeated-character and front-end compression | ch8 | Ch8 s.10–11 |
