@@ -4,6 +4,7 @@
 *.pdf
 source-material
 ECET111 materials
+CPET181
 MyPics
 .tmp
 .env*
