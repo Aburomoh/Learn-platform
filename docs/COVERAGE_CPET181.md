@@ -5,7 +5,7 @@ Source: syllabus Fall 2025 (`CPET181/`, git-ignored) and the private knowledge b
 
 **Class:** CORE (assessed) · WORKED · CONTEXT · PRACTICE (pending pack, conservative when unclear). **Covered:** COMPLETE · PARTIAL · MISSING · N/A. A chapter is COMPLETE only after its gate passes.
 Kinds: `cpu-schedule` and `memory-map` are new (spec #541). Everything else reuses the existing kinds. Truth module: #539. Course shell: #540.
-Out of scope unless pack A–D shows the source teaches it: FIFO/LRU/OPT page replacement, Banker's algorithm, disk-seek scheduling, RAID.
+Out of scope (confirmed by packs #544–#548, not taught): FIFO/LRU/OPT page replacement, Banker's algorithm and safe states, disk-seek scheduling, RAID, file-allocation methods. Resource-allocation graphs are figures only; semaphores are named only; waiting time is not assessed. Delivery order follows the syllabus: 1, 2, 3, 8, 5, 4, 6, 7, 9 (#528).
 
 ## C1 Introduction (gate #529)
 | Topic | Source | Class | Covered | Interaction | Status |
