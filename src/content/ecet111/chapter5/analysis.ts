@@ -320,10 +320,10 @@ interface Exercise {
 }
 
 const EXERCISES: Record<string, Exercise> = {
-  jk: { id: "xjk", name: "s.32–33 (JK)", given: "JA = x, KA = B, JB = x, KB = A′", inputs: ["x"], next: ["xA' + AB'", "xB' + AB"] },
-  t: { id: "xt", name: "s.53 (T)", given: "TA = xBA′, TB = x + A, Y = x ⊕ A", inputs: ["x"], next: ["A + xB", "A'Bx' + AB' + xB'"], output: ["Y", "x ⊕ A"] },
-  mod3: { id: "xm3", name: "s.54 (T, no input)", given: "TA = A + B, TB = A′ + B", inputs: [], next: ["A'B", "A'B'"] },
-  d2: { id: "xd", name: "s.31 (D, inputs x and y)", given: "A(t+1) = xy′ + xB, B(t+1) = xA + xB′, z = A", inputs: ["x", "y"], next: ["xy' + xB", "xA + xB'"], output: ["z", "A"] },
+  jk: { id: "xjk", name: "JK", given: "JA = x, KA = B, JB = x, KB = A′", inputs: ["x"], next: ["xA' + AB'", "xB' + AB"] },
+  t: { id: "xt", name: "T", given: "TA = xBA′, TB = x + A, Y = x ⊕ A", inputs: ["x"], next: ["A + xB", "A'Bx' + AB' + xB'"], output: ["Y", "x ⊕ A"] },
+  mod3: { id: "xm3", name: "T, no input", given: "TA = A + B, TB = A′ + B", inputs: [], next: ["A'B", "A'B'"] },
+  d2: { id: "xd", name: "D, inputs x and y", given: "A(t+1) = xy′ + xB, B(t+1) = xA + xB′, z = A", inputs: ["x", "y"], next: ["xy' + xB", "xA + xB'"], output: ["z", "A"] },
 };
 
 /** Write A(t+1) or B(t+1) from the flip-flop inputs (JK, T and the input-free counter). */
@@ -331,7 +331,7 @@ function exStateVariant(e: Exercise, ff: 0 | 1, k: number): VariantInput {
   const v = ff === 0 ? "A" : "B";
   return {
     id: e.id,
-    prompt: `Exercise ${e.name}: ${e.given}. Write ${v}(t+1) in A, B${e.inputs.length ? ` and ${e.inputs.join(", ")}` : ""}.`,
+    prompt: `Chapter 5 exercise (${e.name}): ${e.given}. Write ${v}(t+1) in A, B${e.inputs.length ? ` and ${e.inputs.join(", ")}` : ""}.`,
     spec: { kind: "expression", vars: ["A", "B", ...e.inputs], target: e.next[ff] },
     hints: [
       { rung: 2, text: `Not yet. Put ${v}'s inputs into its flip-flop's characteristic equation.` },
@@ -362,7 +362,7 @@ function exTableVariant(e: Exercise): VariantInput {
   ];
   return {
     id: e.id,
-    prompt: `Exercise ${e.name}: ${e.given}. Fill the state table: next A, next B${e.output ? `, then ${e.output[0]}` : ""}.`,
+    prompt: `Chapter 5 exercise (${e.name}): ${e.given}. Fill the state table: next A, next B${e.output ? `, then ${e.output[0]}` : ""}.`,
     spec: { kind: "truth-table", inputs: vars, columns, inputGroups: [{ label: "Present state", span: 2 }, { label: "Input", span: e.inputs.length }] },
     hints: [
       { rung: 2, text: "Not yet. Work out {columnLabel} on each row from that row's values." },
@@ -384,7 +384,7 @@ function exTableVariant(e: Exercise): VariantInput {
 function exDiagramVariant(e: Exercise, k: number): VariantInput {
   return {
     id: e.id,
-    prompt: `Exercise ${e.name}: label each arrow of the state diagram${e.output ? " x/Y" : " with its x"}, in table order.`,
+    prompt: `Chapter 5 exercise (${e.name}): label each arrow of the state diagram${e.output ? " x/Y" : " with its x"}, in table order.`,
     spec: { kind: "state-diagram", stateVars: ["A", "B"], input: e.inputs[0], next: e.next, ...(e.output ? { output: { name: e.output[0], expr: e.output[1] } } : {}), mode: "label" },
     hints: [
       { rung: 2, text: "Not yet. Find the table row for this arrow: present state {from}, going to {to}." },

@@ -189,7 +189,7 @@ const P_XS = (cells: Cell[]) => P_ROWS.filter((m) => cells[m] === "X");
 
 const problemTable: VariantInput = {
   id: "p3",
-  prompt: "Design problem (s.28): flip-flops A, B, C, input X, output Y, from the state diagram. Fill the state table: next A, B, C, then Y. The unused states 101 and 111 are X.",
+  prompt: "Chapter 5 design problem: flip-flops A, B, C, input X, output Y, from the state diagram. Fill the state table: next A, B, C, then Y. The unused states 101 and 111 are X.",
   spec: {
     kind: "truth-table",
     inputs: P_VARS,
