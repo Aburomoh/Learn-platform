@@ -1023,6 +1023,10 @@ describe("authored truth is internally consistent", () => {
     }
   });
 
+  it("no student prompt carries an internal slide note such as s.32 (#516)", () => {
+    for (const { path, variant } of allVariants()) expect(variant.prompt, path).not.toMatch(/\bs\.\d/);
+  });
+
   it("no student text shows a raw base subscript once split into notation (#465)", () => {
     const raw = /_(2|8|10|16)(?![0-9A-Za-z])/;
     let checked = 0;
