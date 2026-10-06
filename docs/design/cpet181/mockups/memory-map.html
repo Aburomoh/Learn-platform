@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>memory-map mock-up (#541)</title>
+<link rel="stylesheet" href="../../redesign-r1/mockups/r1.css"><link rel="stylesheet" href="../../ecet111/mockups/kinds.css"><link rel="stylesheet" href="cpet181.css"></head><body>
+<main class="stack-6" style="padding-top:var(--space-5)">
+
+<!-- Challenge: fixed partitions, first-fit, placing P3 -->
+<section class="stagecard">
+<p class="eyebrow">Challenge 1 of 3 · Fixed partitions · first-fit</p>
+<p class="qtext">Place the jobs in memory with first-fit, one job at a time.</p>
+<div class="mem">
+  <div class="memcol" role="radiogroup" aria-label="Block for P3">
+    <span class="addr">0</span><div class="blk os first">OS · 10 KB</div>
+    <span class="addr">10</span><div class="blk part" style="height:88px"><div class="fill" style="height:33%"></div><strong>P1 · 10 KB</strong><small>Partition 1 · 30 KB</small></div>
+    <span class="addr">40</span><div class="blk free pick" style="height:56px" aria-checked="true">Partition 2 · 18 KB<span class="fits">fits</span></div>
+    <span class="addr">58</span><div class="blk part" style="height:110px"><div class="fill" style="height:60%"></div><strong>P2 · 24 KB</strong><small>Partition 3 · 40 KB</small></div>
+    <span class="addr">98</span><div class="blk free" style="height:44px" aria-checked="false">Partition 4 · 12 KB</div>
+    <span class="addr">110</span><div></div>
+  </div>
+  <div class="stack-3">
+    <div class="queue" aria-label="Job queue"><span class="chip done">P1 10 KB ✓</span><span class="chip done">P2 24 KB ✓</span><span class="chip now">P3 16 KB</span><span class="chip">P4 26 KB</span></div>
+    <p class="goal">Job <b>P3</b> (16 KB), first-fit: which partition? Tap a free partition, or choose <b>Waits</b>.</p>
+    <div class="chips"><span class="chip">Waits</span></div>
+    <div class="row"><a class="btn btn-primary" href="#">Place job</a><a class="btn btn-quiet" href="#">Hint</a></div>
+    <table class="tt list" aria-label="Partition table"><caption>Partition table</caption><thead><tr><th>Partition</th><th>Size</th><th>Address</th><th>Status</th></tr></thead><tbody>
+      <tr><td>1</td><td>30</td><td>10</td><td>busy · P1</td></tr>
+      <tr><td>2</td><td>18</td><td>40</td><td>free</td></tr>
+      <tr><td>3</td><td>40</td><td>58</td><td>busy · P2</td></tr>
+      <tr><td>4</td><td>12</td><td>98</td><td>free</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="legend"><span><i class="sw active"></i>Picked</span><span><i class="sw free"></i>Free</span><span><i class="sw busy"></i>Busy</span><span><i class="sw wrong"></i>Try again</span></div>
+</section>
+
+<!-- Challenge: dynamic partitions, release P2 (case 2) -->
+<section class="stagecard">
+<p class="eyebrow">Challenge 2 of 3 · Dynamic partitions · deallocation</p>
+<p class="qtext">P2 finishes. Update the free list.</p>
+<div class="mem">
+  <div class="memcol">
+    <span class="addr">0</span><div class="blk os first">OS · 10 KB</div>
+    <span class="addr">10</span><div class="blk busy" style="height:52px">P1 · 12 KB</div>
+    <span class="addr">22</span><div class="blk free" style="height:44px">free · 8 KB</div>
+    <span class="addr">30</span><div class="blk busy releasing" style="height:64px">P2 · 16 KB · releasing</div>
+    <span class="addr">46</span><div class="blk free" style="height:44px">free · 4 KB</div>
+    <span class="addr">50</span><div class="blk busy" style="height:72px">P3 · 20 KB</div>
+    <span class="addr">70</span><div class="blk free" style="height:96px">free · 30 KB</div>
+    <span class="addr">100</span><div></div>
+  </div>
+  <div class="stack-3">
+    <p class="goal"><b>P2</b> releases its block (start 30, 16 KB). What free block results?</p>
+    <div class="fields"><label>Start <input class="num" inputmode="numeric" value="22" aria-label="Start address of the resulting free block"></label><label>Size <input class="num" inputmode="numeric" placeholder="?" aria-label="Size of the resulting free block"> KB</label></div>
+    <div class="row"><a class="btn btn-primary" href="#">Check release</a><a class="btn btn-quiet" href="#">Hint</a></div>
+    <div class="lists">
+      <table class="tt list" aria-label="Free list"><caption>Free list</caption><thead><tr><th>Beginning</th><th>Size</th><th>Status</th></tr></thead><tbody>
+        <tr><td>22</td><td>8</td><td>free</td></tr>
+        <tr><td>46</td><td>4</td><td>free</td></tr>
+        <tr><td>70</td><td>30</td><td>free</td></tr>
+      </tbody></table>
+      <table class="tt list" aria-label="Busy list"><caption>Busy list</caption><thead><tr><th>Beginning</th><th>Size</th><th>Status</th></tr></thead><tbody>
+        <tr><td>10</td><td>12</td><td>busy · P1</td></tr>
+        <tr><td class="chg">30</td><td class="chg">16</td><td class="chg">busy · P2 (releasing)</td></tr>
+        <tr><td>50</td><td>20</td><td>busy · P3</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</div>
+<div class="legend"><span><i class="sw active"></i>Releasing</span><span><i class="sw free"></i>Free</span><span><i class="sw busy"></i>Busy</span><span><i class="sw wrong"></i>Try again</span></div>
+</section>
+
+<!-- Challenge: compaction, after the merge above (free 22–50 = 28 KB) -->
+<section class="stagecard">
+<p class="eyebrow">Challenge 3 of 3 · Relocatable dynamic partitions · compaction</p>
+<p class="qtext">Compact memory. Give each job's new starting address, then its relocation register.</p>
+<div class="mem">
+  <div class="pair">
+    <div><h4>Before</h4><div class="memcol">
+      <span class="addr">0</span><div class="blk os first">OS 10</div>
+      <span class="addr">10</span><div class="blk busy" style="height:52px">P1 12</div>
+      <span class="addr">22</span><div class="blk free" style="height:92px">free 28</div>
+      <span class="addr">50</span><div class="blk busy pick" style="height:72px">P3 20</div>
+      <span class="addr">70</span><div class="blk free" style="height:96px">free 30</div>
+      <span class="addr">100</span><div></div>
+    </div></div>
+    <div><h4>After</h4><div class="memcol">
+      <span class="addr">0</span><div class="blk os first">OS 10</div>
+      <span class="addr">10</span><div class="blk busy" style="height:52px">P1 12</div>
+      <span class="addr">22</span><div class="blk after" style="height:72px">P3 → ?</div>
+      <span class="addr"></span><div class="blk after" style="height:140px">free ?</div>
+      <span class="addr">100</span><div></div>
+    </div></div>
+  </div>
+  <div class="stack-3">
+    <p class="goal">After compaction, where does <b>P3</b> start?</p>
+    <div class="fields"><label>Start <input class="num" inputmode="numeric" placeholder="?" aria-label="New start address of P3"> KB</label></div>
+    <div class="row"><a class="btn btn-primary" href="#">Check address</a><a class="btn btn-quiet" href="#">Hint</a></div>
+    <p class="goal" style="opacity:var(--pending-opacity)">Then: relocation register of P3 (bytes).</p>
+  </div>
+</div>
+<div class="legend"><span><i class="sw active"></i>Moving</span><span><i class="sw dot"></i>After (to fill)</span><span><i class="sw free"></i>Free</span><span><i class="sw busy"></i>Busy</span></div>
+</section>
+
+</main></body></html>
