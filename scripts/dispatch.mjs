@@ -40,7 +40,8 @@ const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ig
 const labels = Object.values(ROLES).flatMap((r) => [r.alarm, ...r.labels]).filter((l) => l !== "ready");
 const SEEN = join(DIR, "dispatch-seen.json");
 const seen = new Map(existsSync(SEEN) ? Object.entries(JSON.parse(readFileSync(SEEN, "utf8"))) : []);
-const escalated = new Set();
+const escalated = new Set([...seen].filter(([, v]) => v.escalated).map(([k]) => k)); // survives restarts
+// Inboxes are not trimmed: listeners keep a byte cursor, and a few KB a day needs no rotation.
 const deliver = (role, line) => appendFileSync(join(INBOX, `${role}.log`), `${new Date().toISOString().slice(11, 16)}Z ${line}\n`);
 
 function poll() {
@@ -63,13 +64,14 @@ function poll() {
         const target = ROLES[role].onDemand ? "lead" : role;
         const tag = ROLES[role].onDemand ? `SPECIALIST ${ROLES[role].title} needed` : `WAKE ${role}`;
         deliver(target, `${tag} ${prev ? "(updated) " : ""}[${l}] #${it.number} ${it.title}  ${it.url}`);
-        seen.set(key, { updatedAt: it.updatedAt, since: prev?.since ?? now });
+        seen.set(key, { updatedAt: it.updatedAt, since: prev?.since ?? now, escalated: prev?.escalated });
       }
       const age = Math.round((now - (seen.get(key).since ?? now)) / 60000);
       (status[role] ??= []).push({ number: it.number, label: l, ageMinutes: age });
       // 30-minute rule (owner, 2026-10-05): an unacknowledged wake starts a Lead health check.
       if (age >= staleMinutes && !ROLES[role].onDemand && role !== "lead" && !escalated.has(key)) {
         escalated.add(key);
+        seen.get(key).escalated = true;
         deliver("lead", `STALE ${role} #${it.number} unacknowledged for ${age} min: run the health check`);
       }
     }

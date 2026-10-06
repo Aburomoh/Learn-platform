@@ -10,6 +10,8 @@
 // `npm run wake:health`.
 import { closeSync, existsSync, mkdirSync, openSync, readFileSync, readSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
+import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { basename, join } from "node:path";
 import { ROLES, roleOf } from "./roles.mjs";
 
@@ -45,6 +47,37 @@ process.stdout.on("error", () => process.exit(0));
 // First run ever starts at the end (open items are listed by `npm run wake <role>` at startup).
 let pos = existsSync(cursor) ? Math.min(Number(readFileSync(cursor, "utf8")) || 0, statSync(file).size) : statSync(file).size;
 writeFileSync(cursor, String(pos));
+// A stopped dispatcher must not look like a quiet day (#483). If its last poll is over 5 minutes old,
+// try to restart it (no model turn); if it is still down, report once per outage and, by default, exit.
+const STATUS = join(tmpdir(), "cet-wake", "status.json");
+const DOWN = join(DIR, `${role}.dispatch-down`);
+const lastPoll = () => {
+  try {
+    return JSON.parse(readFileSync(STATUS, "utf8")).lastPoll ?? "never";
+  } catch {
+    return "never";
+  }
+};
+let restarted = 0;
+function checkDispatcher() {
+  const lp = lastPoll();
+  const age = lp === "never" ? Infinity : (Date.now() - Date.parse(lp)) / 60000;
+  if (age <= 5) return false;
+  const restart = () => {
+    restarted = Date.now();
+    const starter = fileURLToPath(new URL("./dispatch-start.mjs", import.meta.url));
+    spawn(process.execPath, [starter], { detached: true, stdio: "ignore", windowsHide: true }).unref();
+  };
+  if (!restarted) return restart(), false;
+  if (Date.now() - restarted < 2 * 60_000) return false; // give the restart time to poll
+  if (existsSync(DOWN) && readFileSync(DOWN, "utf8") === lp) {
+    if (Date.now() - restarted > 10 * 60_000) restart(); // keep retrying quietly
+    return false; // this outage is already reported
+  }
+  writeFileSync(DOWN, lp);
+  console.log(`DISPATCHER DOWN for ${role}: last GitHub poll ${lp === "never" ? "never" : `${Math.round(age)} min ago`}; automatic restart failed. Run npm run dispatch:start (check npm run wake:health) or tell the Lead.`);
+  return true;
+}
 let beat = 0;
 for (;;) {
   if (!parentAlive() || Date.now() > deadline || readFileSync(lock, "utf8") !== String(process.pid)) process.exit(0);
@@ -62,6 +95,7 @@ for (;;) {
   if (Date.now() - beat > 60_000) {
     writeFileSync(join(DIR, `${role}.seen`), new Date().toISOString());
     beat = Date.now();
+    if (checkDispatcher() && !stream) process.exit(0);
   }
   await new Promise((r) => setTimeout(r, 2000));
 }
