@@ -49,5 +49,5 @@ comment per role, edited in place). The Team V1 charters and state files are arc
 - **No stacked branches.** Every PR is cut from `origin/main`; the next PR starts after the previous merges. Authors resolve their own conflicts.
 - **No state-file PRs.** Update your comment on #519 instead.
 - **One PR per coherent learning unit.**
-- **Own worktree:** `C:/Users/mnabu/OneDrive/Documents/Claude/Learn_platform-<role>` (capital L). Nobody but the Lead uses the main checkout.
+- **Own worktree:** locally the sibling `../Learn_platform-<role>` of the main checkout `Learn_platform` (capital L); in the cloud, your own clone (`docs/CLOUD_BOOTSTRAP.md`). Nobody but the Lead uses the main checkout.
 - **On-demand specialists** run only when the Lead starts them for a named task, with the prompt in `agents/SESSION_PROMPTS.md`; they post one verdict or deliverable, update nothing else, and end.

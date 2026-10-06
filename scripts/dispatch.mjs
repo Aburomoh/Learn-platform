@@ -4,18 +4,25 @@
 // (scripts/inbox.mjs) instead of polling GitHub themselves.
 //   node scripts/dispatch.mjs            run in the foreground (one instance per machine, lock-protected)
 //   npm run dispatch:start               start it detached (Windows: hidden window) and return
+//   DISPATCH_ROLES=<slug>[,<slug>]       optional (cloud session): deliver only to these roles' inboxes;
+//                                        Lead-bound lines (SPECIALIST, STALE, DISPATCH) need `lead` in it
 // Files live in <tmp>/cet-wake/: inbox/<role>.log, dispatch.pid, dispatch-seen.json, status.json.
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
-import { ROLES, labelRole } from "./roles.mjs";
+import { ROLES, labelRole, roleOf } from "./roles.mjs";
 
 const DIR = join(tmpdir(), "cet-wake");
 const INBOX = join(DIR, "inbox");
 mkdirSync(INBOX, { recursive: true });
 const every = (Number(process.env.DISPATCH_SECONDS) || 60) * 1000;
 const staleMinutes = Number(process.env.DISPATCH_STALE_MINUTES) || 30;
+const only = process.env.DISPATCH_ROLES ? process.env.DISPATCH_ROLES.split(",").map((r) => roleOf(r.trim())) : null;
+if (only?.includes(undefined)) {
+  console.error(`DISPATCH_ROLES="${process.env.DISPATCH_ROLES}" names an unknown role`);
+  process.exit(1);
+}
 
 // One dispatcher per machine: if the pid in the lock file is alive, exit.
 const LOCK = join(DIR, "dispatch.pid");
@@ -42,7 +49,9 @@ const SEEN = join(DIR, "dispatch-seen.json");
 const seen = new Map(existsSync(SEEN) ? Object.entries(JSON.parse(readFileSync(SEEN, "utf8"))) : []);
 const escalated = new Set([...seen].filter(([, v]) => v.escalated).map(([k]) => k)); // survives restarts
 // Inboxes are not trimmed: listeners keep a byte cursor, and a few KB a day needs no rotation.
-const deliver = (role, line) => appendFileSync(join(INBOX, `${role}.log`), `${new Date().toISOString().slice(11, 16)}Z ${line}\n`);
+const deliver = (role, line) => {
+  if (!only || only.includes(role)) appendFileSync(join(INBOX, `${role}.log`), `${new Date().toISOString().slice(11, 16)}Z ${line}\n`);
+};
 
 function poll() {
   const search = "label:" + labels.map((l) => `"${l}"`).join(",");

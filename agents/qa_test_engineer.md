@@ -47,6 +47,10 @@ open platform
 → retry
 → state remains valid
 
+## Practical checks (ported from local memory, #550)
+- Seed stored progress or prefs with `page.addInitScript` before the first load; editing storage on an open page is overwritten by the app's own save.
+- CI's Linux fonts are wider than local Windows fonts: re-run 320 px overflow checks with a forced wide font (for example `font-family: Verdana !important`).
+
 ## Do Not
 - Create huge test suites for trivial changes.
 - Test unrealistic scenarios just to increase coverage numbers.
