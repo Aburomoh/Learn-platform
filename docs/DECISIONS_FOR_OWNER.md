@@ -23,6 +23,16 @@ Approved: Phases 0–2, delivered by DevOps one reviewed PR at a time, without d
 - **Shared-watcher pilot:** PM, Reviewer and QA. Measure missed, duplicate and stale wakes, GitHub API calls, background process count, and recovery after restart/outage. After Phase 2, report before/after and recommend.
 - **Identity:** implement role/path/worktree validation now; defer bot accounts and tokens.
 
+## Team V2 (owner, 2026-10-06, after the post-project review)
+Approved: five permanent roles (Lead = Technical Lead + Product Manager + Director; Content Engineer =
+Backend + AI Tutor; UI / Interaction Engineer = Frontend + routine UX; Independent Reviewer; Independent
+QA) and six on-demand specialists (Pedagogy, UX (Fable), Material Analyst, Security, Performance,
+DevOps) without permanent polling sessions. One non-LLM dispatcher replaces per-agent polling; no
+stacked branches; no state-file PRs (state board #519); Reviewer is the default gate; QA is risk-based;
+specialists only when needed. Conditions: transfer open ownership before retiring any session; a fresh
+Lead session after the migration; live handoff tests (Content → Reviewer → Lead, and UI → Reviewer → QA
+→ Lead) before old sessions are retired. Implemented in #521 (`agents/TEAM_V2.md`, ADR-0010).
+
 ## Resolved
 - 2026-10-05 — Pipeline fragmentation (owner, Technical Lead session): one PR per coherent learning unit; Pedagogy reviews upstream (new behaviour, scaffolding rules, new kinds, deviations from approved packs), not every faithful implementation; QA by risk (new kinds, major screens, behaviour changes, fixes, chapter integration), with routine content on tested kinds merging on Reviewer (answers verified independently) + CI; Vercel previews only for app-affecting changes, label-triggered if still near the Hobby limit (no plan upgrade); owner preview refreshed after milestones; P0 work first. Recorded in `agents/SESSION_PROMPTS.md` (#444).
 - 2026-10-04 — Answer confirmations and slide notes (owner, quoted on #192):
