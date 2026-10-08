@@ -49,8 +49,8 @@ Lead session after the migration; live handoff tests (Content → Reviewer → L
   - **Phone check #153:** non-blocking real-device item (above).
   - **Old commit email addresses:** leave history as-is; no history rewrite or force-push of `main`.
   - **M1.1 / M1.2 / redesign R1:** explicitly accepted as the current direction; reopen only for a regression or a concrete problem.
-  - **Tutor images:** supplied. Pose library at `C:\Users\mnabu\OneDrive\Documents\Claude\Learn_platform\MyPics\tutor-pose-library` (expressive extension in `\expressive`); integration in #355 and #378. Only processed images are committed.
-  - **Source materials:** ECET 111 materials at `C:\Users\mnabu\OneDrive\Documents\Claude\Learn_platform\ECET111 materials`, syllabus `…\ECET111 materials\ECET111- Syllabus-Fall2026.pdf` (git-ignored; never committed or uploaded).
+  - **Tutor images:** supplied. Local pose library at `MyPics/tutor-pose-library` (extension `expressive/`); integration in #355 and #378. Only processed images are committed.
+  - **Source materials:** local `ECET111 materials/`, syllabus `ECET111 materials/ECET111- Syllabus-Fall2026.pdf` (git-ignored; never committed or uploaded). CPET181 private-source boundaries and cloud continuation are in `docs/CLOUD_BOOTSTRAP.md` (#550).
   - **Release policy unchanged:** preview-only; ECET 111 completing does not trigger production; production when ready and with at least three courses.
   - **Chapter 3 K-map answers:** the machine-worked answers in `ch3.md` are confirmed (quoted on #192).
 - 2026-10-04 — Owner decisions (quoted on #192): issue comments limited to collaborators (renew every 6 months, #256); topic preview keeps 53; three, sometimes four, number sets per question (random numbers later, curated); commits use the GitHub private address.

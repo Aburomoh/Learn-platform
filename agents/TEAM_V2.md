@@ -49,5 +49,9 @@ comment per role, edited in place). The Team V1 charters and state files are arc
 - **No stacked branches.** Every PR is cut from `origin/main`; the next PR starts after the previous merges. Authors resolve their own conflicts.
 - **No state-file PRs.** Update your comment on #519 instead.
 - **One PR per coherent learning unit.**
-- **Own worktree:** `C:/Users/mnabu/OneDrive/Documents/Claude/Learn_platform-<role>` (capital L). Nobody but the Lead uses the main checkout.
+- **Own checkout:** locally `../Learn_platform-<role>` (capital L); in the cloud, your own clone. Nobody but the Lead uses the local main checkout.
+- **Cloud coordination:** GitHub and git only; never read another session's filesystem. One dispatcher per machine (each cloud machine starts its own), then one listener per permanent role. See `docs/CLOUD_BOOTSTRAP.md` (#550).
+- **Worktree cleanup:** remove a `node_modules` junction/link itself before removing its worktree; never recursively delete through it. Install real dependencies with `npm ci` for builds.
+- **QA:** test the PR merged with current `origin/main`, not the isolated head; green CI alone is not manual QA.
+- **Commit privacy:** use `Aburomoh <76401257+Aburomoh@users.noreply.github.com>` in each clone; squash with an explicit subject/body so personal addresses from old commits do not reach main.
 - **On-demand specialists** run only when the Lead starts them for a named task, with the prompt in `agents/SESSION_PROMPTS.md`; they post one verdict or deliverable, update nothing else, and end.
