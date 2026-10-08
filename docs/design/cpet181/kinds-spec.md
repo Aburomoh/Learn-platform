@@ -35,6 +35,19 @@ the packs (#527).
 - **Keyboard:** no drag anywhere. Choices are one `radiogroup` with a single tab stop (arrows move,
   Space/Enter picks, Check confirms). Number fields are `inputmode="numeric"` inputs, 44 px tall.
   Grids follow the truth-table ARIA grid model (one tab stop, arrows move, typing sets).
+### 0.1 Signed and decimal entry (#558)
+`NumericInput` base 10 has two opt-in props, off by default (PR #558); every other numeric field in
+the two kinds stays a plain whole-number field.
+- **`decimals={2}`** for every average: one decimal point, at most 2 places after it, `inputmode=decimal`.
+  The student types the value as the pack prints it (9.25, 16.67). Graded exactly against the truth
+  module's value rounded to 2 places; a whole result (10) is accepted as "10" or "10.00".
+- **`signed`** for relocation registers (`register` step, §2.7): one leading minus, `inputmode=text`
+  (phone number pads have no minus key). A typed "−" (U+2212) is stored as "-". The slides print
+  registers as negative numbers (for example −8192); a positive register is the `register-sign` detector.
+- Both are shown in the field's hint line ("digits 0 to 9, a leading minus sign"); the unit sits after
+  the field, outside it. All other numeric fields (end time, start, size, addresses, totals) are
+  whole, unsigned numbers.
+
 - **Primitives reused** (kinds never import each other; shared code moves to `src/kinds/shared/`):
 
 | Need | Reuse | From |
@@ -45,7 +58,7 @@ the packs (#527).
 | Fill one table column per goal; `wrongCells.first`; 36 × 44 px cells; two-level headers; sticky header on phones | the truth-table grid model and styles, lifted into `src/kinds/shared/GridColumn.tsx` + CSS (the truth-table component itself stays Boolean-only) | `src/kinds/truth-table/TruthTable.tsx`, `TruthTable.module.css` |
 | Multi-digit cell inputs, 44 px, first-wrong marking | column-addition's `.input` cells | `src/interactions/ColumnAddition/ColumnAddition.module.css` |
 | Given / focus / result states on a drawing | ADR-0009 figure states (no `figure` field needed: the drawing is the kind's own) | `src/kinds/shared/figures/figures.module.css` |
-| Numeric single answer (average, register) | `NumericInput` (base 10) | `src/interactions/NumericInput` |
+| Numeric single answer (average, register) | `NumericInput` (base 10) with `signed` / `decimals` (§0.1) | `src/interactions/NumericInput` |
 
 ---
 
@@ -58,20 +71,21 @@ the packs (#527).
   policy: "FCFS" | "SJN" | "SRT" | "Priority" | "RR",
   quantum?: number,                  // RR only
   jobs: { id: "A"|"B"|…, arrival: number, cpu: number, priority?: number }[],  // 3–6, slide order
-  phases: ("timeline" | "finish" | "turnaround" | "wait" | "average")[],       // in this order; default all
+  phases: ("timeline" | "finish" | "turnaround" | "average")[],               // in this order; default all four
   unit?: "ms",                       // label only
 }
 ```
 Truth: `schedule(jobs, policy, { quantum, tieBreak })` → `segments[] {job | "idle", start, end}`,
-per-job `finish`, `turnaround`, `wait`, and averages. Tie-break and quantum-boundary conventions
+per-job `finish` and `turnaround`, and the average turnaround. Waiting time is never asked or shown
+(the truth module may compute it internally; nothing in the kinds reads it). Tie-break and quantum-boundary conventions
 are the truth module's (pack A); the view shows nothing that depends on them.
 
 ### 1.2 Steps (ADR-0007)
 | tag | one per | answer | Check label |
 |---|---|---|---|
 | `segment` | timeline segment, in time order | `{ step, job: id \| "idle", end: number }` | Check segment |
-| `column` | phase column in `phases` order: finish, turnaround, wait | `{ step, values: number[] }` (one per job, jobs order) | Check column |
-| `average` | the asked average (turnaround; wait if `wait` is in phases) | `{ step, value: number }` | Check average |
+| `column` | phase column in `phases` order: finish, turnaround | `{ step, values: number[] }` (one per job, jobs order) | Check column |
+| `average` | the average turnaround | `{ step, value: number }`, entered to 2 decimals (§0.1) | Check average |
 
 Step vars: `segmentNumber`, `segmentCount`, `time` (the segment's start), `readyList` (ids ready at
 `time`, for hint rung 5 only), `jobId`, `segmentEnd`, `columnLabel`, `jobCount`, `quantum`,
@@ -137,9 +151,9 @@ Exactly the slide's picture: one row of boxes, tick numbers underneath.
   for the next segment, live region: "Segment 3 correct: A runs 5 to 9. Next starts at 9."
 - Last segment correct: the lane is complete; the live region says "Timeline complete."
 
-### 1.6 Result table (phases finish → turnaround → wait → average)
+### 1.6 Result table (phases finish → turnaround → average)
 The slides list Finish time and Turn Around Time as "15 − 0 = 15" per job, then the average.
-- A table under the lane: **Job · Arrival · CPU · Finish · Turnaround (· Wait)**, one row per job in
+- A table under the lane: **Job · Arrival · CPU · Finish · Turnaround**, one row per job in
   table order. Given columns are filled; the asked column is *Now*; later columns are *Later*
   (headers visible, dim). Column per goal, as truth-table fill mode; cells are 44 px tall and 56 px
   wide (two-digit numbers), 48 px on phones. First wrong cell only is marked; the feedback names
@@ -147,11 +161,9 @@ The slides list Finish time and Turn Around Time as "15 − 0 = 15" per job, the
 - Turnaround cells show the subtraction as a muted hint only after the column is correct:
   "9 − 1 = 8" (see inside). Never before.
 - **Average**: a single `NumericInput` under the table, "Average turnaround = (sum) / n = ?" with the
-  sum written out **after** the check (see inside), two decimals accepted as the pack states them
-  (truth module decides rounding). Check average. On correct: the lane's finish ticks get their
+  sum written out **after** the check (see inside), entered to **2 decimals**
+  (`decimals={2}`, §0.1) and graded exactly against the truth module's value rounded to 2 places. Check average. On correct: the lane's finish ticks get their
   job id under them (keep it) and the summary line reads the average.
-- `wait` is optional (`phases`); the slides do not compute it, so content adds it only where the
-  pack does.
 
 ### 1.7 Hints and detectors (what the view must be able to show)
 - Rung 5 (visual) focus targets: `ready-now` (the arrivals strip at `time` plus a "ready: B, D"
@@ -164,12 +176,12 @@ The slides list Finish time and Turn Around Time as "15 − 0 = 15" per job, the
   (SJN/Priority/FCFS: stopped a job early), `end-past-remaining` (RR: full quantum though less was
   left), `priority-reversed` (pack's convention inverted), `rr-queue-order` (requeued job placed
   before a same-tick arrival, or vice versa; convention from pack A), `turnaround-as-finish`
-  (forgot the arrival), `wait-as-turnaround`, `average-wrong-count`.
+  (forgot the arrival), `average-wrong-count`.
 
 ### 1.8 Phone (390 px) and desktop (1280 px)
 - 390: jobs table full width (4–5 compact columns), lane scrolls inside the well (first ~12 units
-  visible at COL 24), chips wrap to two rows, end field and Check on one row. Result table fits 6
-  columns at 48 px; a 7th (Wait) scrolls inside the well with a sticky Job column.
+  visible at COL 24), chips wrap to two rows, end field and Check on one row. Result table fits its 5
+  columns at 48 px without scrolling.
 - 1280: table beside the lane, lane fits ~26 units without scrolling at COL 32, tutor column right.
 
 ### 1.9 Explain slowly stages
@@ -275,7 +287,7 @@ Two columns from 900 px; stacked below.
 - `move`: one goal per job in address order: "After compaction, where does **Job 3** start?" A
   numeric field; on correct the job draws in the *after* column at its new address and a thin
   connector joins before → after. The last correct move draws the single free block with its size.
-- `register`: per moved job, "Relocation register of Job 3 (bytes)": numeric, negative accepted
+- `register`: per moved job, "Relocation register of Job 3 (bytes)": `NumericInput` with `signed`, negative
   as the slides write it (for example −8192). A muted note after the check shows the conversion
   "−8 KB × 1024" (see inside). Jobs that did not move are asked too (answer 0) only if the pack
   does; otherwise skipped.
@@ -301,5 +313,6 @@ free/busy lists), `merge` (indices being joined), `after` (compacted list to dra
   best-fit after a split; release case 2; compaction after the last move.
 - Keyboard-only run of one question of each kind; screen-reader summary read once per check.
 - No text under 12 px at 320 px; no sideways page scroll; one filled action per view.
+- Each question needs at least 3 number sets from the truth module (three-variant rule).
 - Nothing computed by the truth module is visible before the check that asks it (QA checks the
   Left column, waste numbers and the free-size after a split).

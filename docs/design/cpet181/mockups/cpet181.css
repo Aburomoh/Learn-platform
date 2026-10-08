@@ -67,3 +67,7 @@
 .fields { display: flex; gap: var(--space-3); flex-wrap: wrap; align-items: center; }
 .fields label { display: inline-flex; align-items: center; gap: var(--space-2); font-weight: 600; font-size: var(--text-sm); }
 @media (max-width: 640px) { .queue { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; } .queue .chip { white-space: nowrap; } }
+
+/* the wrong-cell mark sits in the cell's top-right corner, clear of the digits (#545 review note) */
+.tt.result .cellbtn { position: relative; }
+.tt.result .cellbtn.wrong::after { position: absolute; left: auto; right: 3px; top: 1px; }
