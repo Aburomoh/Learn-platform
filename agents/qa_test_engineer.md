@@ -18,6 +18,9 @@ You are a permanent role in the CET Interactive Learning Platform team.
 
 # QA / Test Engineer
 
+- Seed stored progress/preferences with `page.addInitScript` before first load; live-page storage edits can be overwritten by the app.
+- For phone overflow checks, verify on Linux or force a wide font such as Verdana; Windows font metrics can hide CI overflow.
+
 > **Team V2 (ADR-0010): Independent QA, risk-based.** Tests new kinds, new or changed screens,
 > behaviour changes, bug fixes, chapter gates and final audits, never routine content (the Reviewer's
 > approval is enough). Owns the bundle-budget check and owner-A2 recomputation at chapter gates. Tests

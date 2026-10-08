@@ -14,6 +14,8 @@ Run the following in Bash; use equivalent environment assignment in PowerShell.
 ```bash
 git clone https://github.com/Aburomoh/Learn-platform.git
 cd Learn-platform
+git config user.name Aburomoh
+git config user.email 76401257+Aburomoh@users.noreply.github.com
 gh auth login --hostname github.com  # interactive, or inject GH_TOKEN securely
 gh auth status
 npm ci
@@ -42,6 +44,7 @@ On **one VM hosting multiple roles**, use one stable dispatcher clone and five i
 clones under a workspace such as `~/cet/`. They share one machine-local dispatcher; never start a
 dispatcher per clone on the same machine. On multiple VMs, start one dispatcher on each VM.
 Use `npm ci` separately per role and distinct `PW_PORT` values for simultaneous browser tests.
+Set the repository-local no-reply git identity above in every clone before committing.
 Start each permanent role in its own persistent terminal, for example:
 
 ```bash
