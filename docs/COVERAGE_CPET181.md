@@ -5,7 +5,23 @@ Source: syllabus Fall 2025 (`CPET181/`, git-ignored) and the private knowledge b
 
 **Class:** CORE (assessed) · WORKED · CONTEXT · PRACTICE (pending pack, conservative when unclear). **Covered:** COMPLETE · PARTIAL · MISSING · N/A. A chapter is COMPLETE only after its gate passes.
 Kinds: `cpu-schedule` and `memory-map` are new (spec #541). Everything else reuses the existing kinds. Truth module: #539. Course shell: #540.
-Out of scope (confirmed by packs #544–#548, not taught): FIFO/LRU/OPT page replacement, Banker's algorithm and safe states, disk-seek scheduling, RAID, file-allocation methods. Resource-allocation graphs are figures only; semaphores are named only; waiting time is not assessed. Delivery order follows the syllabus: 1, 2, 3, 8, 5, (midterm), 4, 6, 7, 9 (#528).
+Packs on main: A #544 (index, weeks, Ch1, Ch4), B #546 (Ch2, Ch3), D #548 (Ch8, Ch9, quiz patterns). **Pack C (Ch5, Ch6, Ch7) is only on PR #547 (Changes needed, not merged):** the C5–C7 rows below are provisional and nothing is built from them until #547 merges.
+Out of scope (Plan update on #528): FIFO/LRU/OPT page replacement (pack B), disk-seek scheduling, seek/rotation/transfer-time calculations and RAID (pack C, #547), Banker's algorithm and safe states (pack C, #547), file-allocation methods (pack D). Resource-allocation graphs are figures only; semaphores are named only; waiting time is not assessed.
+
+## Delivery order and previews (#528 Plan update)
+Teaching order (syllabus Fall 2025): C1, C2, C3, C8, C5, midterm, C4, C6, C7, C9.
+- **UI:** shell #540 → `memory-map` (C2) → `cpu-schedule` (C4) → figures (C3 tables, C5 resource sketches, C8 organisations).
+- **Content:** truth module #539 → C1 → C8 and C5 (no new kind) → C3 → C2 (after `memory-map`) → C4 (after `cpu-schedule`) → C6, C7, C9.
+- **Previews:** P1 = shell + C1 + C2. P2 = pre-midterm (C1, C2, C3, C8, C5). P3 = all nine chapters after the C10 audit.
+
+## Required acceptance gates vs deferred source checks
+**Required (block merge or gate):** Reviewer verdict on every PR at its head SHA (answers recomputed once from the truth module and packs) + green CI; QA verdict for new or changed screens, kinds, behaviour and bug fixes; chapter gate #529–#537 (QA, owner A2 recomputation) before a chapter is COMPLETE; C10 audit #538 before P3; owner approval for production.
+**Deferred (LOCAL SOURCE VERIFICATION NEEDED; never block a cloud PR or chapter gate):** checks that need the original slides or the private errata. Builders use the pack's stated default and keep it a named option; reviewers note the item and pass. They are resolved locally by the owner or a local specialist, and must be cleared before **P3 / production**, not before:
+- inferred tie rules: SJN ties (pack A ch4), SRT arrival equal to remaining time (pack A ch4), best-fit ties (pack B ch2);
+- quiz answer keys that disagree with pack values (owner errata; pack D quiz-patterns "see owner note");
+- pack C ch7 storage-capacity comparison: confirming the slide's own value (s.24 owner note) is deferred, but #547 must still remove or mark as unverified the "about 15 × a CD" claim before it merges (required);
+- Fall 2025 as the authoritative syllabus;
+- figure fidelity to slides and Pedagogy chapter sign-off against slides (requested by the Lead per chapter; not a cloud gate).
 
 ## C1 Introduction (gate #529)
 | Topic | Source | Class | Covered | Interaction | Status |
@@ -66,6 +82,7 @@ Interaction: cpu-schedule (new) for the algorithm rows.
 | Multiple-level queues | pack | CONTEXT | MISSING | — | — |
 
 ## C5 Process management (gate #533)
+Source: pack C, PR #547 (not merged). Provisional rows.
 | Topic | Source | Class | Covered | Interaction | Status |
 |---|---|---|---|---|---|
 | Deadlock and starvation definitions | pack | TBD | MISSING | — | — |
@@ -75,6 +92,7 @@ Interaction: cpu-schedule (new) for the algorithm rows.
 | Starvation | pack | TBD | MISSING | — | — |
 
 ## C6 Concurrent processes (gate #534)
+Source: pack C, PR #547 (not merged). Provisional rows.
 | Topic | Source | Class | Covered | Interaction | Status |
 |---|---|---|---|---|---|
 | Parallel processing and multiprocessing | pack | TBD | MISSING | — | — |
@@ -86,6 +104,7 @@ Interaction: cpu-schedule (new) for the algorithm rows.
 | Concurrent programming and applications | pack | TBD | MISSING | — | — |
 
 ## C7 Device management (gate #535)
+Source: pack C, PR #547 (not merged). Provisional rows.
 | Topic | Source | Class | Covered | Interaction | Status |
 |---|---|---|---|---|---|
 | Device classes: dedicated, shared, virtual | pack | TBD | MISSING | — | — |
@@ -93,7 +112,7 @@ Interaction: cpu-schedule (new) for the algorithm rows.
 | Storage-media classification | pack | TBD | MISSING | — | — |
 | Magnetic tape and blocking | pack | TBD | MISSING | — | — |
 | Magnetic disk: fixed-head and movable-head | pack | TBD | MISSING | — | — |
-| Hard disk: cylinder, surface, record address | pack | TBD | MISSING | — | — |
+| Hard disk: cylinder, surface, record address (no access-time calculation) | pack C | TBD | MISSING | — | — |
 | Optical disks (CD, DVD, Blu-ray) | pack | TBD | MISSING | — | — |
 | Solid-state storage and flash; HDD vs SSD | pack | TBD | MISSING | — | — |
 
