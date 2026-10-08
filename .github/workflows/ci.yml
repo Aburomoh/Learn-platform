@@ -54,6 +54,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run test
+      - run: node --test scripts/github.test.mjs
       - run: npm run build
       - name: First-load JS per route (report only)
         run: node scripts/size-report.mjs out >> "$GITHUB_STEP_SUMMARY"

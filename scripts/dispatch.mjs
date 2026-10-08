@@ -8,7 +8,7 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { execFileSync } from "node:child_process";
+import { openItems } from "./github.mjs";
 import { ROLES, labelRole } from "./roles.mjs";
 
 const DIR = join(tmpdir(), "cet-wake");
@@ -36,7 +36,6 @@ if (existsSync(LOCK)) {
 }
 writeFileSync(LOCK, String(process.pid));
 
-const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 30_000 });
 const labels = Object.values(ROLES).flatMap((r) => [r.alarm, ...r.labels]).filter((l) => l !== "ready");
 const SEEN = join(DIR, "dispatch-seen.json");
 const seen = new Map(existsSync(SEEN) ? Object.entries(JSON.parse(readFileSync(SEEN, "utf8"))) : []);
@@ -45,11 +44,7 @@ const escalated = new Set([...seen].filter(([, v]) => v.escalated).map(([k]) => 
 const deliver = (role, line) => appendFileSync(join(INBOX, `${role}.log`), `${new Date().toISOString().slice(11, 16)}Z ${line}\n`);
 
 function poll() {
-  const search = "label:" + labels.map((l) => `"${l}"`).join(",");
-  const items = [];
-  for (const kind of ["issue", "pr"]) {
-    items.push(...JSON.parse(gh(kind, "list", "--state", "open", "--search", search, "--json", "number,title,url,updatedAt,labels", "--limit", "100") || "[]"));
-  }
+  const items = openItems(labels);
   const status = {};
   const now = Date.now();
   for (const it of items) {

@@ -9,21 +9,11 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { execFileSync } from "node:child_process";
+import { gh, openItems } from "./github.mjs";
 import { ROLES, RETIRED, roleOf } from "./roles.mjs";
 
 const BOARD = 519; // Team V2 state board (pinned issue): one comment per role, edited in place.
-const gh = (...args) => execFileSync("gh", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 30_000 });
 const ISSUE = (n) => `repos/{owner}/{repo}/issues/${n}`;
-
-function openItems(labels) {
-  const search = "label:" + labels.map((l) => `"${l}"`).join(",");
-  const out = [];
-  for (const kind of ["issue", "pr"]) {
-    out.push(...JSON.parse(gh(kind, "list", "--state", "open", "--search", search, "--json", "number,title,url,updatedAt,labels", "--limit", "100") || "[]"));
-  }
-  return out.filter((it) => it.labels.some((l) => labels.includes(l.name)));
-}
 const line = (it, labels) => `[${it.labels.map((l) => l.name).filter((n) => labels.includes(n)).join(", ")}] #${it.number} ${it.title}  ${it.url}`;
 
 function usage() {
@@ -109,7 +99,7 @@ if (mode === "--alarm") {
 } else if (mode === "--show") {
   const path = `agents/${charter}.md`;
   console.log(`\n=== CHARTER (${path}) ===\n` + (existsSync(path) ? readFileSync(path, "utf8").trim() : "(missing)"));
-  console.log(`\n=== STATE: your comment on board #${BOARD} (gh issue view ${BOARD} --comments) ===`);
+  console.log(`\n=== STATE: your comment on board #${BOARD} (gh api --paginate repos/{owner}/{repo}/issues/${BOARD}/comments) ===`);
   console.log("\n=== ACTIVE ADRs ===");
   for (const f of readdirSync("docs/adr").filter((n) => /^\d{4}-/.test(n))) console.log("  docs/adr/" + f);
   console.log("\n=== OPEN ITEMS ===");

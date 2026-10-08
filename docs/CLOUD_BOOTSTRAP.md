@@ -1,10 +1,11 @@
 # Team V2 cloud continuation (#550)
 
 Prepare and verify first; this document does not authorize migration or production deployment.
+Repository validation does not require launching a cloud session or changing account settings.
 GitHub issues, PRs, labels, verdicts, state board #519 and epic #528 are the handoff. Never depend on
 conversation memory, another machine's files, or a running local session.
 
-## Fresh machine
+## Verification in a disposable clone
 
 Use Linux or Windows with git, GitHub CLI (`gh`), and Node **24** (`.nvmrc`; package minimum is 22).
 Each permanent role needs its own clone and a host that retains background processes and surfaces
@@ -16,7 +17,7 @@ git clone https://github.com/Aburomoh/Learn-platform.git
 cd Learn-platform
 git config user.name Aburomoh
 git config user.email 76401257+Aburomoh@users.noreply.github.com
-gh auth login --hostname github.com  # interactive, or inject GH_TOKEN securely
+gh auth login --hostname github.com  # self-managed clone only; hosted sessions use proxy auth
 gh auth status
 npm ci
 npm run typecheck
@@ -31,43 +32,36 @@ PW_PORT=4189 npm run test:e2e -- --workers=1
 No application API keys or private sources are required. Do not share `node_modules` through a
 junction: Next's build needs a real installation. Keep logs of the commit, commands and results.
 
-## Selected target: Claude Code on a Linux VM
+## Selected target: Anthropic-hosted `claude --cloud`
 
-Owner selection: 2026-10-08. Use the existing VM; no paid service or new VM is authorized by this
-guide. Confirm its distribution, SSH alias, available RAM/disk and installed tools before setup.
-Run as the ordinary development user, with a persistent terminal such as tmux so an SSH disconnect
-does not end Claude. Install Claude via the [official Linux setup](https://code.claude.com/docs/en/setup),
-then run `claude --version`, `claude doctor`, and `claude` to complete owner-controlled sign-in.
-Authenticate GitHub separately with `gh auth login`; do not copy credentials from the local machine.
+Owner clarification: 2026-10-08. Use the owner's existing Claude cloud credits; SSH, a separately
+managed VM and tmux setup are not required. Local CLI 2.1.294 supports this flag. See the
+[cloud session guide](https://code.claude.com/docs/en/claude-code-on-the-web) and
+[environment configuration](https://code.claude.com/docs/en/cloud-environments).
 
-On **one VM hosting multiple roles**, use one stable dispatcher clone and five independent role
-clones under a workspace such as `~/cet/`. They share one machine-local dispatcher; never start a
-dispatcher per clone on the same machine. On multiple VMs, start one dispatcher on each VM.
-Use `npm ci` separately per role and distinct `PW_PORT` values for simultaneous browser tests.
-Set the repository-local no-reply git identity above in every clone before committing.
-Start each permanent role in its own persistent terminal, for example:
+Launch from a clean, pushed task branch. The command creates a new session, so its prompt must
+name #550, #519, #528 and the role charter. It does not transfer the current local conversation.
+Connect GitHub for this repository through Claude's onboarding; prefer repository cloning through
+its GitHub App rather than a local bundle. Never force a bundle or upload private sources.
 
 ```bash
-# After bootstrap checks pass and reviewed main contains the handoff documents:
-mkdir -p ~/cet
-git clone https://github.com/Aburomoh/Learn-platform.git ~/cet/dispatcher
-cd ~/cet/dispatcher
-npm run dispatch:start
-npm run wake:health
-# Repeat with the correct slug for each role; these are independent clones.
-git clone https://github.com/Aburomoh/Learn-platform.git ~/cet/lead
-cd ~/cet/lead
-npm ci
-tmux new-session -s cet-lead
-claude
+# From a clean checkout of the pushed preparation branch, for a bounded readiness pilot:
+claude --cloud "Check cloud readiness for Aburomoh/Learn-platform issue #550. Read docs/CLOUD_BOOTSTRAP.md and agents/TEAM_V2.md. Run node --version, npm ci, node --test scripts/github.test.mjs and npm run wake lead. Verify gh api can read #519 and #550. Report versions, results and blockers. Do not edit files, post comments, change labels, migrate roles or deploy. Stop after reporting."
 ```
 
-Inside each Claude session paste its exact prompt from `agents/SESSION_PROMPTS.md` with the clone
-path substituted. Have it run the listener with the Bash tool's `run_in_background: true` and
-verify a real alarm wakes that session; shell `&` or tmux alone does not prove agent notification.
-Background tasks are documented in [Claude interactive mode](https://code.claude.com/docs/en/interactive-mode).
-After VM reboot, reattach/restart the terminals, dispatcher and role listeners, then recover from
-#519 and GitHub queues. tmux survives disconnection, not reboot. Keep local source specialists available.
+Hosted GitHub access uses a credential proxy: prefer `gh api` REST calls and the supplied auth;
+`gh issue`/`gh pr` GraphQL commands are blocked. The wake tooling uses REST, including paginated
+issue/PR queues. Do not run `gh auth login` or inject a personal token just to bypass this proxy.
+Read state with `gh api --paginate repos/{owner}/{repo}/issues/519/comments`. PR/state operations
+must use supported REST or built-in tools. Each isolated session starts its own dispatcher.
+
+Install project dependencies after checkout. Match Node 24 (.nvmrc) for implementation/checks;
+if the provided runtime differs, record it and configure the environment toolchain first. Allow
+npm, GitHub and Playwright downloads as needed. Setup caching does not preserve running processes;
+start dispatcher/listener in the session, and recover from GitHub after reclamation. Hosted idle
+sessions may pause/reclaim their VM, so verify actual Claude background wake delivery before
+promising permanent-role continuity. Do not replace this gate with scheduled polling or routines.
+Keep local source specialists and current sessions available until the handoff passes.
 
 ## Role startup and recovery
 
@@ -100,7 +94,7 @@ If the sandbox terminates background processes, startup alone is not a persisten
 
 | Variable | Required / purpose |
 |---|---|
-| `GH_TOKEN` | Alternative to `gh auth login`; securely injected GitHub credential able to read/write this repo's issues, PRs and labels. Never commit or print it. |
+| `GH_TOKEN` | Self-managed alternative to `gh auth login`; hosted sessions use supplied proxy auth. Never print credentials or replace proxy auth unnecessarily. |
 | `GH_REPO` | Optional `Aburomoh/Learn-platform` override if CLI cannot infer the remote; normally run commands inside the clone. |
 | `PW_PORT` | Optional unique e2e port, default 4173. |
 | `CI` | Optional `1` for CI reporter/retry behaviour. |
