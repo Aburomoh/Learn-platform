@@ -29,6 +29,43 @@ PW_PORT=4189 npm run test:e2e -- --workers=1
 No application API keys or private sources are required. Do not share `node_modules` through a
 junction: Next's build needs a real installation. Keep logs of the commit, commands and results.
 
+## Selected target: Claude Code on a Linux VM
+
+Owner selection: 2026-10-08. Use the existing VM; no paid service or new VM is authorized by this
+guide. Confirm its distribution, SSH alias, available RAM/disk and installed tools before setup.
+Run as the ordinary development user, with a persistent terminal such as tmux so an SSH disconnect
+does not end Claude. Install Claude via the [official Linux setup](https://code.claude.com/docs/en/setup),
+then run `claude --version`, `claude doctor`, and `claude` to complete owner-controlled sign-in.
+Authenticate GitHub separately with `gh auth login`; do not copy credentials from the local machine.
+
+On **one VM hosting multiple roles**, use one stable dispatcher clone and five independent role
+clones under a workspace such as `~/cet/`. They share one machine-local dispatcher; never start a
+dispatcher per clone on the same machine. On multiple VMs, start one dispatcher on each VM.
+Use `npm ci` separately per role and distinct `PW_PORT` values for simultaneous browser tests.
+Start each permanent role in its own persistent terminal, for example:
+
+```bash
+# After bootstrap checks pass and reviewed main contains the handoff documents:
+mkdir -p ~/cet
+git clone https://github.com/Aburomoh/Learn-platform.git ~/cet/dispatcher
+cd ~/cet/dispatcher
+npm run dispatch:start
+npm run wake:health
+# Repeat with the correct slug for each role; these are independent clones.
+git clone https://github.com/Aburomoh/Learn-platform.git ~/cet/lead
+cd ~/cet/lead
+npm ci
+tmux new-session -s cet-lead
+claude
+```
+
+Inside each Claude session paste its exact prompt from `agents/SESSION_PROMPTS.md` with the clone
+path substituted. Have it run the listener with the Bash tool's `run_in_background: true` and
+verify a real alarm wakes that session; shell `&` or tmux alone does not prove agent notification.
+Background tasks are documented in [Claude interactive mode](https://code.claude.com/docs/en/interactive-mode).
+After VM reboot, reattach/restart the terminals, dispatcher and role listeners, then recover from
+#519 and GitHub queues. tmux survives disconnection, not reboot. Keep local source specialists available.
+
 ## Role startup and recovery
 
 1. Read `agents/TEAM_V2.md`, your charter, your comment on #519, assigned issue/PR, then only linked
