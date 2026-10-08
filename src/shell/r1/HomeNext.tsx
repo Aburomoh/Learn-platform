@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { CourseOutline } from "@/content/outline";
 import type { Course } from "@/content/schema";
 import { getProgressStore } from "@/learner";
 import { emptyProgress, type OfferingProgress } from "@/learner/progress";
@@ -47,7 +48,7 @@ export function remainingCue(done: number, total: number, minutes: number): stri
  * Progress lives in this browser, so the content is shown once it has been read; the server
  * renders the first-visit version invisibly.
  */
-export function HomeNext({ courses }: { courses: Course[] }) {
+export function HomeNext({ courses, outlines = [] }: { courses: Course[]; outlines?: CourseOutline[] }) {
   const ready = useHydrated();
   const progressOf = (course: Course) => (ready ? getProgressStore(course.offeringId).get() : emptyProgress(course.offeringId));
   const { course, progress, action } = pickCourse(courses, progressOf);
@@ -102,7 +103,7 @@ export function HomeNext({ courses }: { courses: Course[] }) {
 
       <section className={styles.chapter} aria-labelledby="courses-h">
         <h2 id="courses-h" className={styles.h2}>
-          {courses.length === 1 ? "Your course" : "Your courses"}
+          {courses.length + outlines.length === 1 ? "Your course" : "Your courses"}
         </h2>
         <ol className={styles.topicList}>
           {courses.map((c) => {
@@ -125,6 +126,20 @@ export function HomeNext({ courses }: { courses: Course[] }) {
               </li>
             );
           })}
+          {outlines.map((c) => (
+            <li key={c.id} className={styles.practiceRow}>
+              <div className={styles.practiceText}>
+                <p className={styles.eyebrow}>{c.code}</p>
+                <h3 className={styles.topicTitle}>{c.title}</h3>
+                <p className={`${styles.topicStatus} ${styles.statusMuted}`}>
+                  {c.chapters.length} chapters · Not started · Topics coming soon
+                </p>
+              </div>
+              <Link href={`/courses/${c.id}/`} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`View chapters: ${c.title}`}>
+                View chapters <span aria-hidden="true">→</span>
+              </Link>
+            </li>
+          ))}
         </ol>
       </section>
     </div>

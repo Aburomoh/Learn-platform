@@ -1,17 +1,17 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { courses, getCourse } from "@/content";
-import { ChapterIndex, CourseTopics, CourseTutor, PageFrame, PageHeading } from "@/shell/r1";
+import { courses, getCourse, getOutline, outlines } from "@/content";
+import { ChapterIndex, CourseOutline, CourseTopics, CourseTutor, PageFrame, PageHeading } from "@/shell/r1";
 
 type Params = { course: string };
 
 export function generateStaticParams(): Params[] {
-  return courses.map((c) => ({ course: c.id }));
+  return [...courses, ...outlines].map((c) => ({ course: c.id }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { course } = await params;
-  return { title: getCourse(course)?.title ?? "Course" };
+  return { title: (getCourse(course) ?? getOutline(course))?.title ?? "Course" };
 }
 
 /**
@@ -22,7 +22,16 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function CoursePage({ params }: { params: Promise<Params> }) {
   const { course: courseId } = await params;
   const course = getCourse(courseId);
-  if (!course) notFound();
+  if (!course) {
+    const outline = getOutline(courseId);
+    if (!outline) notFound();
+    return (
+      <PageFrame demo={false}>
+        <PageHeading eyebrow={outline.code} title={outline.title} route={outline.summary} />
+        <CourseOutline outline={outline} />
+      </PageFrame>
+    );
+  }
 
   return (
     <PageFrame
