@@ -5,12 +5,13 @@ Source: syllabus Fall 2025 (`CPET181/`, git-ignored) and the private knowledge b
 
 **Class:** CORE (assessed) · WORKED · CONTEXT · PRACTICE (pending pack, conservative when unclear). **Covered:** COMPLETE · PARTIAL · MISSING · N/A. A chapter is COMPLETE only after its gate passes.
 Kinds: `cpu-schedule` and `memory-map` are new (spec #541). Everything else reuses the existing kinds. Truth module: #539. Course shell: #540.
-Out of scope (confirmed by packs #544–#548, not taught): FIFO/LRU/OPT page replacement, Banker's algorithm and safe states, disk-seek scheduling, RAID, file-allocation methods. Resource-allocation graphs are figures only; semaphores are named only; waiting time is not assessed. Delivery order follows the syllabus: 1, 2, 3, 8, 5, 4, 6, 7, 9 (#528).
+Out of scope (confirmed by packs #544–#548, not taught): FIFO/LRU/OPT page replacement, Banker's algorithm and safe states, disk-seek scheduling, RAID, file-allocation methods. Resource-allocation graphs are figures only; semaphores are named only; waiting time is not assessed. Delivery order follows the syllabus: 1, 2, 3, 8, 5, (midterm), 4, 6, 7, 9 (#528).
 
 ## C1 Introduction (gate #529)
 | Topic | Source | Class | Covered | Interaction | Status |
 |---|---|---|---|---|---|
 | Computer system fundamentals | pack | TBD | MISSING | — | — |
+| Primary memory: RAM vs ROM | pack | CORE | MISSING | — | — |
 | Operating systems in context | pack | TBD | MISSING | — | — |
 | Applications and troubleshooting | pack | TBD | MISSING | — | — |
 | Definition of an operating system | pack | TBD | MISSING | — | — |
@@ -37,7 +38,7 @@ Interaction: numeric/derivation + page/segment table figure.
 |---|---|---|---|---|---|
 | Non-contiguous allocation | pack | TBD | MISSING | — | — |
 | Paging fundamentals and page tables | pack | TBD | MISSING | — | — |
-| Page number and offset: address translation | pack | TBD | MISSING | — | — |
+| Page number and displacement: address translation | pack | TBD | MISSING | — | — |
 | Paging advantages and disadvantages | pack | TBD | MISSING | — | — |
 | Segmentation fundamentals and segment tables | pack | TBD | MISSING | — | — |
 | Segment addressing | pack | TBD | MISSING | — | — |
@@ -56,11 +57,13 @@ Interaction: cpu-schedule (new) for the algorithm rows.
 | Job and process states | pack | TBD | MISSING | — | — |
 | Process control block (PCB) | pack | TBD | MISSING | — | — |
 | Scheduling policy criteria (throughput, response, turnaround, wait) | pack | TBD | MISSING | — | — |
+| Turnaround and average turnaround | pack | CORE | MISSING | — | — |
 | FCFS | pack | TBD | MISSING | — | — |
 | SJN | pack | TBD | MISSING | — | — |
 | SRT | pack | TBD | MISSING | — | — |
 | Priority | pack | TBD | MISSING | — | — |
 | Round Robin and quantum trade-off | pack | TBD | MISSING | — | — |
+| Multiple-level queues | pack | CONTEXT | MISSING | — | — |
 
 ## C5 Process management (gate #533)
 | Topic | Source | Class | Covered | Interaction | Status |
@@ -90,7 +93,7 @@ Interaction: cpu-schedule (new) for the algorithm rows.
 | Storage-media classification | pack | TBD | MISSING | — | — |
 | Magnetic tape and blocking | pack | TBD | MISSING | — | — |
 | Magnetic disk: fixed-head and movable-head | pack | TBD | MISSING | — | — |
-| Hard disk and access time | pack | TBD | MISSING | — | — |
+| Hard disk: cylinder, surface, record address | pack | TBD | MISSING | — | — |
 | Optical disks (CD, DVD, Blu-ray) | pack | TBD | MISSING | — | — |
 | Solid-state storage and flash; HDD vs SSD | pack | TBD | MISSING | — | — |
 
@@ -111,8 +114,8 @@ Interaction: cpu-schedule (new) for the algorithm rows.
 | Network basics and distributed-system terms | pack | TBD | MISSING | — | — |
 | Topologies: star, ring, bus, tree, hybrid | pack | TBD | MISSING | — | — |
 | Network types and interconnection; wireless LAN | pack | TBD | MISSING | — | — |
-| Connection models | pack | TBD | MISSING | — | — |
-| Security and backup | pack | TBD | MISSING | — | — |
+| Switching: circuit vs packet | pack | TBD | MISSING | — | — |
+| Security (protection methods) | pack | TBD | MISSING | — | — |
 | Ethics | pack | TBD | MISSING | — | — |
 
 ## C10 Final audit (#538)
