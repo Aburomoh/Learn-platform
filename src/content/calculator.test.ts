@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { courses } from "./index";
+import { courses, getActivity } from "./index";
 import { stepCount, stepTag, stepVars } from "./steps";
 import { fill } from "./template";
 import { evaluateExpression } from "@/kinds/shared/calc";
@@ -38,5 +38,14 @@ describe("calculator expressions", () => {
                 }
               }
     expect(checked).toBeGreaterThan(20);
+  });
+
+  it("8-bit subtraction results and sizes have the calculator; the 4-bit ones do not (#578 skill line)", () => {
+    const has = (activity: string, question: string) =>
+      getActivity("ecet111", "binary-arithmetic", activity)!.activity.questions.find((q) => q.id === question)!.variants.map((v) => v.calculator !== undefined);
+    expect(has("subtraction-8bit-positive", "sb8p.q.result")).toEqual([true, true, true]);
+    expect(has("subtraction-8bit-negative", "sb8n.q.size")).toEqual([true, true, true]);
+    expect(has("subtraction-positive", "sub.q.result").every((x) => !x)).toBe(true);
+    expect(has("subtraction-exercise-negative", "subn.q.size").every((x) => !x)).toBe(true);
   });
 });

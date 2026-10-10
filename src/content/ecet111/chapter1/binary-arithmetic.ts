@@ -356,6 +356,8 @@ function resultVariant(set: SubtractionSet): VariantInput {
     prompt: `Discard the end carry. What is ${s.result} in decimal?`,
     spec: { kind: "numeric", base: 10, answer: String(v.resultValue), context: { type: "addition", operands: { a: s.A, b: s.twos } } },
     vars: v,
+    // beyond the 4-bit skill (#578): the 8-bit result's weights are added with the calculator
+    ...(s.result.length > 4 ? { calculator: { "*": weightSum(s.result) } } : {}),
     hints: resultHints,
     misconceptions: [
       { id: "sub.kept-carry", title: "Kept the end carry", nudgeKey: "sub.kept-carry", detect: { type: "equals", value: String(parseInt(s.sum, 2)) } },
@@ -424,6 +426,7 @@ function magnitudeVariant(set: SubtractionSet): VariantInput {
     prompt: `The result is negative and its size is ${s.magnitude}. What is ${s.magnitude} in decimal?`,
     spec: { kind: "numeric", base: 10, answer: String(size), context: { type: "addition", operands: { a: complementBits(s.result), b: "1".padStart(s.result.length, "0"), endCarry: "drop" } } },
     vars: subtractionVars(set),
+    ...(s.magnitude.length > 4 ? { calculator: { "*": weightSum(s.magnitude) } } : {}),
     hints: [
       { rung: 2, text: "Not yet. Read the re-complemented bits, not the sum bits." },
       { rung: 3, text: "The weights double from the right: 1, 2, 4, 8, … Add the weights of the 1s." },
