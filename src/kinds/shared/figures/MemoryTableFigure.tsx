@@ -48,7 +48,7 @@ export function MemoryTableFigure({ table, size, rows, address, unit = "", revea
     (show ? ` ${partName} ${show.part}, displacement ${show.displacement}, ${atName} ${show.at}, physical address ${show.physical}.` : "");
 
   const cell = (name: string, x: number, y: number, text: string, extra = "", anchor: "middle" | "start" = "middle") => (
-    <text x={x} y={y} textAnchor={anchor} className={`${styles.pin} mono ${extra}`} data-cell={name}>
+    <text x={x} y={y} textAnchor={anchor} className={`${styles.label} ${extra}`} data-cell={name}>
       {text}
     </text>
   );
