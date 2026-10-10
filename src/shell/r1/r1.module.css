@@ -505,9 +505,26 @@
   width: 200px;
 }
 
-/* the row's mini preview stays on one line: small tiles, no wrapping */
+/* the row's mini preview: small tiles that wrap inside their column, never into the text (#567) */
+.topicVisual {
+  min-width: 0;
+}
+
 .topicVisual .chain {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+}
+
+.topicVisual .chainItem {
+  flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* a long tile breaks at spaces (and inside an unbroken token) rather than overflowing the column */
+.topicVisual .tile {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
 }
 
 .topicVisual .chain,
