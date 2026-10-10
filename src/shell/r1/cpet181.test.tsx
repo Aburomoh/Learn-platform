@@ -1,18 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { courses } from "@/content";
-import { cpet181 } from "@/content/cpet181";
-import { CourseOutline } from "./CourseOutline";
 import { HomeNext } from "./HomeNext";
 
-describe("CPET181 outline", () => {
-  it("lists nine chapters, each Not started and Coming soon", () => {
-    render(<CourseOutline outline={cpet181} />);
-    expect(screen.getAllByRole("heading", { level: 2 })).toHaveLength(9);
-    expect(screen.getAllByText("Not started · Coming soon")).toHaveLength(9);
-    expect(screen.getByRole("heading", { name: /Chapter 9:\s*Networks and security/ })).toBeTruthy();
-  });
-
+describe("CPET181 as a registered course (#562)", () => {
   it("is registered as a course now (#562): chapter 1 has topics, the other eight are coming soon", () => {
     const c = courses.find((x) => x.id === "cpet181")!;
     expect(c.modules).toHaveLength(9);
