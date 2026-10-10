@@ -40,6 +40,13 @@ caricature.
 - Distractors encode real misconceptions, not random wrong values.
 - Every interaction has a learning purpose; movement communicates meaning.
 
+## Question context (owner rule, 2026-10-10, #568)
+Every practice must be one of these:
+- **A. Standalone:** a student who opens it directly has everything needed to understand and solve it.
+- **B. Explicit continuation:** it depends on earlier work, and that context is shown again on the same screen (the circuit or figure, the equations, the state, the earlier result, the relevant givens).
+
+Never rely on invisible references such as "the same circuit", "as above", "the previous question" or "from before" unless the object is shown again. For circuits, state machines, timing diagrams, memory maps and process tables, the student must **see** the object being reasoned about. Practices are reachable directly (course map, resume, deep links), so in-order reading is never assumed. Hints may refer to work on the same screen (for example `{previous}` within a derivation).
+
 ## Step size (owner rule, 2026-10-03)
 A question asks for one small step, never a whole procedure. Procedures taught in class are
 walked through in the same layout and order as the slides (for example: divide by 2 one step at
