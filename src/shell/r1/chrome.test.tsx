@@ -122,7 +122,7 @@ describe("TutorCard", () => {
   it("shows the monogram disc, the name and the line it is given", () => {
     render(<TutorCard name="Mr. Mohanad" message="We'll do this one step at a time." />);
     const card = screen.getByRole("complementary", { name: "Tutor" });
-    expect(card.querySelector("[data-monogram]")).toHaveTextContent("DM");
+    expect(card.querySelector("[data-monogram]")).toHaveTextContent("MM");
     expect(card).toHaveTextContent("Mr. Mohanad");
     expect(card).toHaveTextContent("We'll do this one step at a time.");
     expect(card.querySelector("img")).toBeNull();
