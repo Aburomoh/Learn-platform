@@ -47,7 +47,7 @@ const describes: Row[] = [
   type("It is a computer built into the product it controls. Which type of operating system is this?", "Embedded", "A computer built into its product is an embedded system.", "Think of where the computer sits."),
 ];
 const examples: Row[] = [
-  type("Which type of operating system runs the engine, brakes and navigation of a car?", "Embedded", "A computer built into a car is embedded.", "Is the computer a separate machine or part of the product?"),
+  type("Which type of operating system is a computer built into the product it controls, such as the engine, brakes and navigation of a car?", "Embedded", "A computer built into a car is embedded.", "Is the computer a separate machine or part of the product?"),
   type("Which type of operating system fits air-traffic control?", "Real-time", "Air-traffic control must meet a strict deadline every time: real-time.", "What happens if the answer comes late?"),
   type("Which type of operating system fits an early punched-card system?", "Batch", "Punched-card jobs were entered whole and run in sequence: batch.", "Cards were fed in as whole jobs, one after another."),
   type("Which type of operating system fits terminal users sharing one computer?", "Interactive", "Several users in progress at once with fast response: interactive.", "Several users each expect an answer quickly."),

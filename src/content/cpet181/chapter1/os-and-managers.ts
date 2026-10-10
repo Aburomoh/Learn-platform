@@ -61,12 +61,12 @@ const inCharge = (manager: string, what: string, rule: string): Row => ({
   correct: manager,
   wrong: others(manager),
   rule,
-  apply: `${manager}: ${rule.charAt(0).toLowerCase()}${rule.slice(1)}`,
+  apply: rule,
   hint: "Each manager is named after the resource it looks after.",
 });
 const charge: Row[] = [
   inCharge("Memory Manager", "main memory (RAM)", "The Memory Manager is in charge of main memory."),
-  inCharge("Processor Manager", "allocating the CPU and tracking the status of each process", "The Processor Manager allocates the CPU and tracks process status."),
+  inCharge("Processor Manager", "allocating the CPU and tracking the status of the work being run", "The Processor Manager allocates the CPU and tracks process status."),
   inCharge("Device Manager", "devices, channels and control units", "The Device Manager is in charge of devices, channels and control units."),
   inCharge("File Manager", "every file: data, programs, compilers and applications", "The File Manager is in charge of every file."),
 ];
@@ -83,7 +83,7 @@ const duties: Row[] = [
   duty("Memory Manager", "checks that requests are valid and legal and keeps a tracking table", "The Memory Manager protects the OS's space, checks that requests are valid and legal, keeps a tracking table and deallocates to reclaim memory."),
   duty("File Manager", "enforces access restrictions and modification rights such as read-only, read-write, create and delete", "The File Manager enforces access restrictions and modification rights (read-only, read-write, create, delete); it allocates a file by opening it and deallocates by closing it."),
   duty("Processor Manager", "works on two levels, the Job Scheduler and the Process Scheduler", "The Processor Manager has two levels: the Job Scheduler admits jobs and the Process Scheduler runs the processes inside them."),
-  duty("Network Manager", "shares hardware and software resources over a network while keeping user access control", "The Network Manager, the fifth manager, shares hardware and software resources in networked systems while keeping user access control."),
+  duty("Network Manager", "shares hardware and software resources among users while keeping user access control", "The Network Manager, the fifth manager, shares hardware and software resources in networked systems while keeping user access control."),
 ];
 
 const common = (correct: string, wrong: string[]): Row => ({
