@@ -145,7 +145,9 @@ function checkBackVariant(value: number, base: 8 | 16, k: number): VariantInput 
     id: `v${value}`,
     prompt: `Check your answer: what is (${text})_${base} in decimal?`,
     spec: { kind: "numeric", base: 10, answer: String(value) },
-    vars: { value, answerText: text, terms: placeTerms(text, base) },
+    // digits as numbers (a letter is worth 10 to 15), for the calculator
+    vars: { value, answerText: text, terms: placeTerms(text, base), calc: [...text].map((d, i) => `${parseInt(d, 16)} × ${base ** (text.length - 1 - i)}`).join(" + ") },
+    calculator: { "*": "{calc}" },
     hints: checkBackHints(base),
     misconceptions,
     reactions: { correct: done, correctAfterHints: done },

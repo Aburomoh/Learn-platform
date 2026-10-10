@@ -129,6 +129,8 @@ function checkVariant(a: string, b: string, which: "a" | "b" | "sum"): VariantIn
     prompt: which === "sum" ? `Last check: what is the sum ${bits} in decimal?` : `Check the addition in decimal. What is ${bits} in decimal?`,
     spec: { kind: "numeric", base: 10, answer: String(value), context: { type: "addition", operands: { a, b } } },
     vars: { checkBits: bits, checkValue: value, checkSum: weightSum(bits), topWeight: 2 ** (bits.replace(/^0+/, "").length - 1) },
+    // the sum has five or more bits: its weights are added with the calculator; the operands are the 4-bit skill (#578)
+    ...(which === "sum" ? { calculator: { "*": "{checkSum}" } } : {}),
     hints: checkHints,
     misconceptions,
     reactions: done ? { correct: done, correctAfterHints: done } : undefined,

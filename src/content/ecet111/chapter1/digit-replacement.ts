@@ -2,10 +2,11 @@
  * DEMO / NOT AUTHORITATIVE COURSE CONTENT — pending instructor approval.
  * ECET 111 Chapter 1, digit replacement both ways and grouping with a binary point (#214, content
  * pack ch1 §4, §5, §8, §9): octal → binary (3 bits per digit), hex → binary (4 bits per digit), each
- * checked back in decimal as its own step; 16-bit binary → hex; and one binary-point grouping with a
+ * checked back in decimal as its own step; 12-bit binary → hex; and one binary-point grouping with a
  * worked lead-in (Pedagogy, #244). Bits, digits and decimal values are computed, never typed.
  */
 import type { CourseInput, VariantInput } from "../../schema";
+import { weightSum } from "../../generators";
 
 type TopicInput = CourseInput["modules"][number]["topics"][number];
 type Activity = TopicInput["activities"][number];
@@ -15,8 +16,8 @@ type HintInput = NonNullable<VariantInput["hints"]>[number];
 const OCTAL = [0o351, 0o172, 0o605, 0o166];
 /** Hex sets: the pack's fresh numbers (§8). */
 const HEX = [0x2d6, 0x1e9, 0x3b4];
-/** 16-bit binary → hex (§9). */
-const HEX16 = [0xb6e3, 0xe95c, 0x9f2b];
+/** 12-bit binary → hex (§9 uses 16 bits; the owner limit is 16^2, three hex digits, #580). */
+const HEX16 = [0xb6e, 0xe95, 0x9f2];
 
 const digitsOf = (n: number, base: 8 | 16) => n.toString(base).toUpperCase();
 const groupsOf = (n: number, base: 8 | 16) => [...digitsOf(n, base)].map((d) => parseInt(d, 16).toString(2).padStart(base === 8 ? 3 : 4, "0"));
@@ -73,7 +74,9 @@ function checkVariant(n: number, base: 8 | 16): VariantInput {
     id: `${base === 8 ? "o" : "h"}${digits.toLowerCase()}`,
     prompt: `Check: (${digits})_${base} gave (${bits})_2. What is (${bits})_2 in decimal? It should equal (${digits})_${base}.`,
     spec: { kind: "numeric", base: 10, answer: String(n) },
-    vars: { value: n },
+    vars: { value: n, calc: weightSum(bits) },
+    // five or more bits: the sum of the weights is arithmetic the slides do not assess (#578)
+    calculator: { "*": "{calc}" },
     hints: [
       { rung: 2, text: "Not yet. Add the place weights of the 1s, reading from the right: 1, 2, 4, 8, …" },
       { rung: 3, text: `Or work out (${digits})_${base} in decimal: the two must agree.` },
@@ -88,7 +91,7 @@ function checkVariant(n: number, base: 8 | 16): VariantInput {
   };
 }
 
-/* ---------- 16-bit binary → hex: group, then one digit per group ---------- */
+/* ---------- 12-bit binary → hex: group, then one digit per group ---------- */
 
 const groupHints: HintInput[] = [
   { rung: 2, text: "Not yet. Start at the right-hand end of {bits}." },
@@ -111,7 +114,7 @@ const groupingMisconceptions: VariantInput["misconceptions"] = [
 ];
 
 function toHexVariant(n: number): VariantInput {
-  const bits = n.toString(2).padStart(16, "0");
+  const bits = n.toString(2).padStart(12, "0");
   const groups = groupsOf(n, 16);
   return {
     id: `b${digitsOf(n, 16).toLowerCase()}`,
@@ -122,7 +125,7 @@ function toHexVariant(n: number): VariantInput {
     hintsByStep: { group: groupHints, digit: digitHints },
     misconceptions: groupingMisconceptions,
     explanation: [
-      { id: "s1", say: "Sixteen bits make exactly four groups of four, so no padding is needed here.", stage: { groups: [] } },
+      { id: "s1", say: "Twelve bits make exactly three groups of four, so no padding is needed here.", stage: { groups: [] } },
       { id: "s2", say: `Each group becomes one hex digit: ${groups.map((g) => `${g} → ${parseInt(g, 2).toString(16).toUpperCase()}`)[0]}, and so on.`, stage: { groups, attention: 0 } },
       { id: "s3", say: `So the answer is ${digitsOf(n, 16)}.`, stage: { groups, done: true } },
     ],
@@ -135,7 +138,7 @@ function toHexVariant(n: number): VariantInput {
 const POINT = [
   { bits: "11010110.1", answer: "326.4" },
   { bits: "1110001.11", answer: "161.6" },
-  { bits: "1011101.1011", answer: "135.54" }, // third set (C1 gate, #216): both ends padded, a two-group fraction
+  { bits: "11011.1", answer: "33.4" }, // third set (C1 gate, #216; re-picked for the one-fraction-digit limit, #580): both ends padded
 ];
 
 function pointVariant({ bits, answer }: (typeof POINT)[number], k: number): VariantInput {
@@ -168,7 +171,7 @@ function pointVariant({ bits, answer }: (typeof POINT)[number], k: number): Vari
 const replacementActivity: Activity = {
   id: "digit-replacement",
   title: "Digit replacement",
-  summary: "Octal and hex to binary one digit at a time, each checked in decimal; 16-bit binary to hex.",
+  summary: "Octal and hex to binary one digit at a time, each checked in decimal; 12-bit binary to hex.",
   authority: "DEMO",
   minutes: 20,
   questions: [
@@ -176,7 +179,7 @@ const replacementActivity: Activity = {
     { id: "dr.q.oct-check", label: "Octal check", conceptId: "dr.replacement", objectiveId: "dr.obj.replace", variants: OCTAL.map((n) => checkVariant(n, 8)) },
     { id: "dr.q.hex-bits", label: "Hex → binary", conceptId: "dr.replacement", objectiveId: "dr.obj.replace", variants: HEX.map((n, k) => toBitsVariant(n, 16, k)) },
     { id: "dr.q.hex-check", label: "Hex check", conceptId: "dr.replacement", objectiveId: "dr.obj.replace", variants: HEX.map((n) => checkVariant(n, 16)) },
-    { id: "dr.q.hex16", label: "16 bits → hex", conceptId: "dr.replacement", objectiveId: "dr.obj.replace", variants: HEX16.map(toHexVariant) },
+    { id: "dr.q.hex16", label: "12 bits → hex", conceptId: "dr.replacement", objectiveId: "dr.obj.replace", variants: HEX16.map(toHexVariant) },
   ],
 };
 

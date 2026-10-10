@@ -113,8 +113,6 @@ const xnor = (id: string, [a, b]: [string, string]) =>
 /* ---------- rows = 2^n (p.19–20) ---------- */
 
 function rowCount(n: number, k: number): VariantInput {
-  // 2 × n is the slip; when it equals 2^n (n = 2), the highest row number is (Reviewer on #338)
-  const slip = 2 * n === 2 ** n ? 2 ** n - 1 : 2 * n;
   const right = 2 ** n;
   // real slips: 2 × n, n², and the highest row number 2^n − 1
   const wrong = [2 * n, n * n, right - 1].filter((w, i, all) => w !== right && all.indexOf(w) === i);
@@ -132,11 +130,7 @@ function rowCount(n: number, k: number): VariantInput {
     misconceptions: [{ id: "dg.highest-row", title: "Gave the highest row number", nudgeKey: "dg.highest-row", detect: { type: "option", optionId: `r${right - 1}` } }],
     explanation: [
       { id: "s1", say: "One input gives 2 rows: 0 and 1. Each further input doubles them." },
-      {
-        id: "s2",
-        say: `So ${n} inputs give 2^${n} rows.`,
-        ask: { prompt: `2^${n} = ?`, options: k % 2 ? [String(slip), String(right)] : [String(right), String(slip)], correctIndex: k % 2, afterCorrect: `Yes: ${right} rows, numbered 0 to ${right - 1}.`, afterWrong: `2^${n} = ${right}, so ${right} rows, numbered 0 to ${right - 1}.` },
-      },
+      { id: "s2", say: `So ${n} inputs give 2^${n} = ${right} rows, numbered 0 to ${right - 1}.` },
     ],
   };
 }
