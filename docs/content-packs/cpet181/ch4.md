@@ -149,6 +149,27 @@ Q2 Q3: SJN table, 5 jobs. Q2 Q4: RR q = 4, 5 jobs (see owner note for version A)
 jobs arriving together at 0. T/F and MCQ items: job vs process, context switch, RR fixed slice, priority
 starvation, RR large quantum → FCFS, Process Scheduler, PCB, SRT preemptive, SJN non-preemptive.
 
+## High-value comparisons and definitions (#588)
+Inventory for match/distinguish activities (#586): every contrast, definition set or list of
+distinguishing characteristics in the deck, in our own words. CORE = students are expected to know it;
+CONTEXT = shown, not expected.
+
+| ID | Ref | Concepts compared | Distinguishing attributes | Level |
+|---|---|---|---|---|
+| C4-1 | s.2 | Program (job) vs process (task) | Inactive submitted unit, e.g. a file on disk vs active entity using CPU and registers (quizzed T/F) | CORE |
+| C4-2 | s.3 | Processor in single-user vs multiprogramming systems | Busy only during the user's job vs shared, needing a policy and an algorithm | CONTEXT |
+| C4-3 | s.4 | Interrupt vs context switch | Hardware signal that suspends the program and starts the handler vs saving the job's state in its PCB (quizzed T/F) | CORE |
+| C4-4 | s.5 | Job Scheduler vs Process Scheduler | Admits jobs to READY by criteria vs gives the CPU to READY processes (quizzed MCQ) | CORE |
+| C4-5 | s.6 | I/O-bound vs CPU-bound | Many short CPU bursts, long I/O (printing documents) vs long CPU bursts, short I/O (computing primes) | CORE |
+| C4-6 | s.7–8 | HOLD, READY, RUNNING, WAITING, FINISHED | Each transition and its trigger; HOLD→READY and RUNNING→FINISHED by the Job Scheduler, the rest by the Process Scheduler | CORE |
+| C4-7 | s.9–10 | PCB parts: identification, status, state, accounting | Unique id vs current job state vs register, memory, resource and priority detail vs billing and performance data (quizzed MCQ) | CORE |
+| C4-8 | s.12 | Criteria to maximise vs minimise | Throughput, CPU efficiency (maximise) vs response, turnaround, waiting time (minimise); plus fairness | CORE |
+| C4-9 | s.14–34 | Preemptive vs non-preemptive algorithms | SRT and RR preempt; FCFS, SJN and Priority run each job to the end | CORE |
+| C4-10 | s.15–34 | FCFS vs SJN vs SRT vs Priority vs RR vs multiple-level queues | Arrival order; shortest CPU time; shortest remaining time, re-decided on arrivals; smallest priority number; fixed quantum in turn; separate queues per job group | CORE |
+| C4-11 | s.19, s.23 | SJN vs SRT | Same shortest-first idea; SJN decides only at completions vs SRT also at every arrival | CORE |
+| C4-12 | s.16 | FCFS advantage vs disadvantage | Simple vs short jobs stuck behind a long one (s.17 vs s.18) | CORE |
+| C4-13 | s.29 | RR quantum too large vs too small | Turns into FCFS vs heavy context-switch overhead | CORE |
+
 ## Ambiguities
 | Where | Note |
 |---|---|

@@ -87,6 +87,26 @@ Two distinguishing features: response time, and how data enters the system (s.30
 | Hybrid (s.35) | Interactive in front, batch in the background when load is light; the most common today | — |
 | Embedded (s.36) | Computer built into the product it controls | Cars (engine, brakes, navigation), music players, elevators, pacemakers |
 
+## High-value comparisons and definitions (#588)
+Inventory for match/distinguish activities (#586): every contrast, definition set or list of
+distinguishing characteristics in the deck, in our own words. CORE = students are expected to know it;
+CONTEXT = shown, not expected.
+
+| ID | Ref | Concepts compared | Distinguishing attributes | Level |
+|---|---|---|---|---|
+| C1-1 | s.3, s.17 | Hardware vs software | Physical machine and electronics vs encoded instructions (programs); the OS is software | CORE |
+| C1-2 | s.4–5, s.9 | Input vs output vs secondary-storage devices | Brings data in (mouse, scanner, barcode reader) vs presents results (monitor, printer, projector, speakers) vs keeps data (HDD, SD, flash, CD/DVD) | CORE |
+| C1-3 | s.7–9 | Primary vs secondary memory | RAM/ROM inside the machine vs HDD, SD, flash, optical disks | CORE |
+| C1-4 | s.8 | RAM vs ROM | Name; read/write in any order vs read only; runs applications vs boots the computer; volatile vs non-volatile (the four quizzed rows) | CORE |
+| C1-5 | s.20–24 | Memory vs Processor vs Device vs File vs Network Manager | The resource each owns: RAM; CPU and process status; devices, channels, control units; every file and its access rights; shared networked resources | CORE |
+| C1-6 | s.19 | The four tasks every manager performs | Monitor continuously; enforce the who/what/when/how-much policy; allocate; deallocate | CORE |
+| C1-7 | s.21 | Job Scheduler vs Process Scheduler | Admits jobs as they enter vs runs the processes inside them (developed in Ch4) | CORE |
+| C1-8 | s.26–29 | GUI vs command line | Pointing device vs typed commands; easy, menus differ per OS vs chainable powerful commands that demand exact spelling and syntax | CORE |
+| C1-9 | s.30–36 | Batch vs interactive vs real-time vs hybrid vs embedded | Classified by response time and how data enters: whole jobs in sequence, one at a time; many jobs, faster replies; hard deadlines, reliability first; interactive front with batch in idle time (most common); computer built into the product | CORE |
+| C1-10 | s.34 | Hard vs soft real-time | Missed deadline means total system failure vs only degraded performance | CORE |
+| C1-11 | s.16 | macOS vs Linux vs Windows common issues | Start-up, slowness, app crashes vs boot, packages, network vs blue screen, slowness, drivers | CONTEXT |
+| C1-12 | s.12 | OS difficulty ranking | Linux most, Windows middle, macOS least (instructor's view) | CONTEXT |
+
 ## Ambiguities
 | Where | Note |
 |---|---|

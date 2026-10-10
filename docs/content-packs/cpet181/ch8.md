@@ -76,6 +76,21 @@ A file system names files and places them logically for storage and retrieval; m
 | Limits / strengths | Partitions up to 4 GB; slows on large partitions | No performance loss; designed so repair utilities are not needed; keeps copies of critical files; transparent compression and encryption |
 | Reserved names (FAT) | CON, AUX, COM1–COM4, LPT1–LPT3, PRN, NUL | — |
 
+## High-value comparisons and definitions (#588)
+Inventory for match/distinguish activities (#586): every contrast, definition set or list of
+distinguishing characteristics in the deck, in our own words. CORE = students are expected to know it;
+CONTEXT = shown, not expected.
+
+| ID | Ref | Concepts compared | Distinguishing attributes | Level |
+|---|---|---|---|---|
+| C8-1 | s.3 | Field vs record vs file vs database vs directory | Named typed bytes; group of fields; group of records for an application; linked files; list of filenames with attributes | CORE |
+| C8-2 | s.4 | Absolute vs relative filename vs extension | Full path vs short name chosen at creation vs suffix giving the type | CORE |
+| C8-3 | s.5 | Fixed vs variable-length records | Easy direct access, may truncate or pad, data files vs hard direct access, no waste or truncation, sequential files | CORE |
+| C8-4 | s.7–9 | Sequential vs direct vs indexed sequential | Read from the start, easiest, slow search; address computed from the key, fast, collisions; ordered blocks plus an index, no collisions | CORE |
+| C8-5 | s.6 | Factors for choosing an organization | Volatility, activity, file size, response time | CORE |
+| C8-6 | s.10–11 | Repeated characters vs repeated terms vs front-end compression | Run replaced by a code (b + count, # + count); frequent word replaced by a symbol; prefix shared with the entry above replaced by its length | CORE |
+| C8-7 | s.13–15 | FAT vs NTFS | Old DOS/Win9x table, best under about 200 MB, 4 GB partition limit, slows when large vs later Windows, not under about 400 MB, no slowdown, self-recovering, copies of critical files, built-in compression and encryption | CORE |
+
 ## Ambiguities
 | Where | Note |
 |---|---|

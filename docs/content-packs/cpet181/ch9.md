@@ -73,6 +73,23 @@ traffic; password management (complex, memorable, changed often). Ethics (s.25):
 standards; respect privacy and proprietary information; issues: piracy, plagiarism, eavesdropping,
 cracking/hacking, unauthorized access.
 
+## High-value comparisons and definitions (#588)
+Inventory for match/distinguish activities (#586): every contrast, definition set or list of
+distinguishing characteristics in the deck, in our own words. CORE = students are expected to know it;
+CONTEXT = shown, not expected.
+
+| ID | Ref | Concepts compared | Distinguishing attributes | Level |
+|---|---|---|---|---|
+| C9-1 | s.3–4 | Site vs host vs node; local vs remote; client vs server | Location vs computer whose services are used remotely vs identifying name; own resources vs other processors'; requests and waits vs provides | CORE |
+| C9-2 | s.2 | NOS vs D/OS | Named only; the deck gives no distinguishing attributes, so build no distinguish item | CONTEXT |
+| C9-3 | s.7–12 | Star vs ring vs bus vs tree vs hybrid | Central controller; one-way closed loop, every node must work or be bypassed; one shared line, one sender, collision control; branching busses, no loops, survives a node failure; mix of strengths | CORE |
+| C9-4 | s.6 | Topology trade-off factors | Message cost and time, reliability after a failure, link cost, difficulty of connecting many sites | CORE |
+| C9-5 | s.14 | LAN vs MAN vs WAN | Building/campus vs city (to about 100 km) vs country/world; one organization vs one operator vs common carriers; fastest vs high-speed logical ring vs slower; office network vs city Wi-Fi/cable TV vs Internet | CORE |
+| C9-6 | s.15 | Bridge vs gateway | Joins networks with the same protocol vs different protocols, translating | CORE |
+| C9-7 | s.16 | 802.11a vs b vs g | 54 Mbps at 5 GHz, short range vs 11 Mbps at 2.4 GHz vs 54 Mbps at 2.4 GHz (compatibility: see owner note) | CORE |
+| C9-8 | s.19–22 | Circuit vs packet switching | Dedicated path set up first, real time, good for voice, low line efficiency vs store-and-forward equal packets, shared line, efficient, flexible, priorities, poor for voice | CORE |
+| C9-9 | s.24 | Antivirus vs firewall vs encryption vs password management | Detects and prevents malware vs filters and logs access, hides the network vs protects sensitive data vs complex, memorable, changed often | CORE |
+
 ## Ambiguities
 | Where | Note |
 |---|---|
