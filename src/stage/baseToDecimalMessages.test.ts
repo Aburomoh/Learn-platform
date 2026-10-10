@@ -31,10 +31,10 @@ function runOn(v: Variant, actions: RunnerAction[]): RunnerState {
 }
 const open: RunnerAction = { type: "OPEN" };
 const powers = (p: number[]): RunnerAction => ({ type: "SUBMIT", answer: { kind: "base-to-decimal", step: 0, powers: p } });
-const terms = (t: string[]): RunnerAction => ({ type: "SUBMIT", answer: { kind: "base-to-decimal", step: 1, terms: t } });
+const terms = (t: string[]): RunnerAction => ({ type: "SUBMIT", answer: { kind: "base-to-decimal", step: 1, digits: t } });
 const sum = (x: string): RunnerAction => ({ type: "SUBMIT", answer: { kind: "base-to-decimal", step: 2, sum: x } });
 const goodPowers = [2, 1, 0, -1, -2, -3];
-const goodTerms = ["4", "0", "1", "0.5", "0", "0.125"];
+const goodTerms = ["1", "0", "1", "1", "0", "1"]; // the digit values (#597)
 const sentences = (m: string) => m.split(/(?<=[.?!])\s/).length;
 
 describe("#212 base to decimal: step lines", () => {
@@ -45,7 +45,7 @@ describe("#212 base to decimal: step lines", () => {
 
   it("a wrong weight or term points at the marked cell for that goal", () => {
     expect(runOn(binary, [open, powers([2, 1, 1, -1, -2, -3])]).message).toBe("Weights not right yet: 1. Check the marked one first: count the places from the point.");
-    expect(runOn(binary, [open, powers(goodPowers), terms(["4", "0", "2", "0.5", "0", "0.125"])]).message).toBe("Terms not right yet: 1. Check the marked one first: the digit times its weight.");
+    expect(runOn(binary, [open, powers(goodPowers), terms(["1", "0", "2", "1", "0", "1"])]).message).toBe("Terms not right yet: 1. Check the marked one first: the digit times its weight.");
   });
 
   it("a wrong sum adds up step by step, without the value", () => {
@@ -68,7 +68,7 @@ describe("#212 base to decimal: every detector has its own nudge, none gives the
   });
 
   it("hex-letter-as-digit", () => {
-    const m = runOn(hex, [open, powers([2, 1, 0]), terms(["256", "16", "3"])]).message; // A used as 1
+    const m = runOn(hex, [open, powers([2, 1, 0]), terms(["1", "1", "3"])]).message; // A used as 1
     expect(m).toBe("The letters A to F stand for 10 to 15. Use that value in the term.");
     expect(m).not.toContain("160");
   });
