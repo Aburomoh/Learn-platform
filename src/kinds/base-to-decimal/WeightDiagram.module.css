@@ -121,6 +121,56 @@
   color: var(--error);
 }
 
+/* the given-term row: terms wrap by line on a phone (#597) */
+.terms {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  min-height: 48px;
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+}
+
+.terms[data-state="now"] {
+  background: var(--focus-halo);
+}
+
+.terms[data-state="later"] {
+  opacity: var(--pending-opacity);
+}
+
+.term {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.plus,
+.times {
+  font-weight: 700;
+}
+
+.times sup {
+  font-size: max(0.75em, 12px);
+}
+
+/* a done digit value, boxed like its digit above */
+.given {
+  display: inline-grid;
+  place-items: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 var(--space-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-weight: 700;
+}
+
 .sum {
   display: flex;
   flex-wrap: wrap;
