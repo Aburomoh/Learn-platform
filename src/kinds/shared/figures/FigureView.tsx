@@ -16,6 +16,7 @@ const FlipFlopFigure = dynamic(() => import("./BlockFigure").then((m) => m.FlipF
 const SequentialFigure = dynamic(() => import("./SequentialFigure").then((m) => m.SequentialFigure));
 const GatesFigure = dynamic(() => import("./circuit/GatesFigure").then((m) => m.GatesFigure));
 const LatchFigure = dynamic(() => import("./LatchFigure").then((m) => m.LatchFigure));
+const FileLayoutFigure = dynamic(() => import("./FileLayoutFigure").then((m) => m.FileLayoutFigure));
 
 export interface FigureViewProps {
   id: string;
@@ -62,6 +63,8 @@ function draw(id: string, figure: FigureSpec, revealed: boolean, focus: string |
       return <SequentialFigure flipFlops={figure.flipFlops} input={figure.input} output={figure.output} focus={focus ?? figure.focus} marks={marks} />;
     case "gates":
       return <GatesFigure id={`${id}-gates`} output={figure.output} expr={figure.expr} vars={figure.vars} revealed={revealed} />;
+    case "file-layout":
+      return <FileLayoutFigure layout={figure.layout} records={figure.records} searchKey={figure.key} blockSize={figure.blockSize} slots={figure.slots} focus={focus ?? figure.focus} caption={figure.caption} />;
     default: {
       const unhandled: never = figure;
       throw new Error(`No renderer for figure ${JSON.stringify(unhandled)}`);

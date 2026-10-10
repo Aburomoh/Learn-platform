@@ -144,6 +144,30 @@
   font-weight: 700;
 }
 
+/* file organisations (#605): arrowheads, the record on the search path, arrow words */
+.arrowHead {
+  fill: var(--text-muted);
+}
+
+.focus .arrowHead {
+  fill: var(--accent);
+}
+
+.rowOn {
+  fill: var(--success-soft);
+  stroke: var(--signal-high);
+  stroke-width: 1.5;
+}
+
+.edgeLabel {
+  font-size: 13px;
+  fill: var(--text-muted);
+  paint-order: stroke;
+  stroke: var(--surface-sunk);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+
 /* topic card: the numbered discs that match the callouts */
 .mark {
   fill: var(--brand);
