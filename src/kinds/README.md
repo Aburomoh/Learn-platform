@@ -35,7 +35,7 @@ Nothing else is edited: the schema, grader, step helpers and stage pick the kind
 
 ## Kinds
 
-`bit-grouping`, `circuit-predict`, `column-addition`, `memory-map` (CPET181 Ch2), `multiple-choice`, `numeric` (with its
+`bit-grouping`, `circuit-predict`, `column-addition`, `cpu-schedule` (CPET181 Ch4), `memory-map` (CPET181 Ch2), `multiple-choice`, `numeric` (with its
 contexts, including the bit row), `place-value`, `repeated-division`.
 
 `shared/` holds what several kinds use: `Prompt`, the built-in `Calculator` (#579: pre-loaded expression, press =, never fills an answer), the worked contexts above a numeric or

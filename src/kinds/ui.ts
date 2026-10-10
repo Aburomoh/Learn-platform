@@ -51,6 +51,11 @@ export const kindUI = {
     Explain: dynamic(() => import("./column-addition/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./column-addition/ui").then((m) => m.Preload)),
   },
+  "cpu-schedule": {
+    Practice: dynamic(() => import("./cpu-schedule/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./cpu-schedule/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./cpu-schedule/ui").then((m) => m.Preload)),
+  },
   "multiple-choice": {
     Practice: dynamic(() => import("./multiple-choice/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./multiple-choice/ui").then((m) => m.Explain)),

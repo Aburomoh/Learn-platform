@@ -24,6 +24,7 @@ describe("kind registry (ADR-0008)", () => {
       kmap: () => import("./kmap/ui"),
       "memory-map": () => import("./memory-map/ui"),
       "column-addition": () => import("./column-addition/ui"),
+      "cpu-schedule": () => import("./cpu-schedule/ui"),
       "multiple-choice": () => import("./multiple-choice/ui"),
       numeric: () => import("./numeric/ui"),
       "place-value": () => import("./place-value/ui"),
