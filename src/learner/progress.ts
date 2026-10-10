@@ -2,7 +2,8 @@
  * Offering-scoped learner progress (docs/LEARNER_MODEL.md). Pure functions over a plain object.
  * No ability labels, ever. Recent evidence outweighs old evidence.
  */
-export type ActivityStatus = "new" | "started" | "completed";
+/** `skipped` (#579): left through the hidden skip; never counts as completed anywhere. */
+export type ActivityStatus = "new" | "started" | "completed" | "skipped";
 
 export interface MasteryEvidence {
   questionId: string;
@@ -22,6 +23,8 @@ export interface ActivityProgress {
   lastAt: number;
   /** Question ids finished in this practice (R1, #117). Optional: older stored data has none. */
   completedQuestions?: string[];
+  /** Explain Slowly was opened in this practice (#579 skip gate). Optional: older stored data has none. Local only. */
+  explained?: boolean;
 }
 
 export interface OfferingProgress {
@@ -40,6 +43,8 @@ export function emptyProgress(offeringId: string): OfferingProgress {
 
 export function startActivity(p: OfferingProgress, activityId: string, now = Date.now()): OfferingProgress {
   const a = p.activities[activityId];
+  // coming back to a skipped practice starts it again (its finished challenges are kept)
+  if (a?.status === "skipped") return { ...p, activities: { ...p.activities, [activityId]: { ...a, status: "started", lastAt: now } } };
   if (a && a.status !== "new") return p;
   return {
     ...p,
@@ -77,6 +82,24 @@ export function recordAttempt(p: OfferingProgress, input: AttemptInput, now = Da
 export function completeActivity(p: OfferingProgress, activityId: string, independent: boolean, now = Date.now()): OfferingProgress {
   const prev = p.activities[activityId] ?? { status: "started" as const, attempts: 0, hintsUsed: 0, independent: false, lastAt: now };
   return { ...p, activities: { ...p.activities, [activityId]: { ...prev, status: "completed", independent: prev.independent || independent, lastAt: now } } };
+}
+
+/** Explain Slowly was opened: the practice no longer counts toward the skip gate (#579). */
+export function markExplained(p: OfferingProgress, activityId: string, now = Date.now()): OfferingProgress {
+  const prev = p.activities[activityId] ?? { status: "started" as const, attempts: 0, hintsUsed: 0, independent: false, lastAt: now };
+  if (prev.explained) return p;
+  return { ...p, activities: { ...p.activities, [activityId]: { ...prev, explained: true, lastAt: now } } };
+}
+
+/** The hidden skip (#579): the practices left behind become `skipped`; a completed one is untouched. */
+export function skipActivities(p: OfferingProgress, activityIds: string[], now = Date.now()): OfferingProgress {
+  const activities = { ...p.activities };
+  for (const id of activityIds) {
+    const prev = activities[id] ?? { status: "new" as const, attempts: 0, hintsUsed: 0, independent: false, lastAt: now };
+    if (prev.status === "completed") continue;
+    activities[id] = { ...prev, status: "skipped", lastAt: now };
+  }
+  return { ...p, activities };
 }
 
 /** Records a finished question (challenge). Idempotent; never removes entries, so Review keeps them. */
