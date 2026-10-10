@@ -1,0 +1,99 @@
+/* a quiet disclosure under a step's controls; opens into a small panel */
+.root {
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 650;
+  color: var(--accent);
+  cursor: pointer;
+  list-style: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+.icon {
+  font-size: var(--text-base);
+}
+
+/* the pre-loaded expression, shown while closed so the student knows what it holds */
+.preview {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.root[open] .preview {
+  display: none;
+}
+
+.panel {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.field {
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-size: var(--text-md);
+  color: var(--text);
+}
+
+.field:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* bordered, not filled: the step's Check stays the one filled action on the view */
+.equals {
+  min-width: 64px;
+  border-color: var(--accent);
+  color: var(--accent);
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.result {
+  display: block;
+  min-height: 1.5em;
+  font-size: var(--text-md);
+  font-weight: 700;
+}
+
+.error {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--error);
+}
