@@ -40,6 +40,8 @@ Answer two questions: did the new behavior work, and did it break something impo
 - Core guest/student flow.
 - Basic responsive checks.
 
+- **Direct-entry check at every chapter gate (#568):** open at least five practices out of order (deep link or course map, including the last practice of each multi-practice topic), on a fresh profile. Each must be understandable alone: the object it reasons about (circuit, figure, equations, state, table) is visible. Record one line per practice in the gate verdict.
+
 ## Core Student Smoke Flow
 open platform
 → choose course
