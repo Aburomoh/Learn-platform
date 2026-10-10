@@ -12,3 +12,4 @@ Base-aware text entry (binary, octal, decimal, hexadecimal) with explicit submit
 - Enter or the Check button submits. The input carries `data-focus-target="numeric-input"`.
 - `aria-invalid` is set on incorrect state; a visible hint names the allowed digits.
 - Mobile: numeric keyboard for bases 2/8/10, text keyboard for hex.
+- Base 10 only, both off by default: `signed` allows one leading minus (a typed "−" is stored as "-"); `decimals={n}` allows a point with up to n digits after it. With `signed`, the keyboard hint is `text` (phone number pads have no minus); with only `decimals`, it is `decimal`. The hint line names what is allowed.
