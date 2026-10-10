@@ -144,6 +144,29 @@
   font-weight: 700;
 }
 
+/* resource sketches (#605): a dashed request arrow, the arrowhead in the line colour */
+.dashed {
+  stroke-dasharray: 6 5;
+}
+
+.arrowHead {
+  fill: var(--text-muted);
+}
+
+/* an arrow's word, kept legible over crossing lines by a stroke in the well's colour */
+.edgeLabel {
+  font-size: 13px;
+  fill: var(--text-muted);
+  paint-order: stroke;
+  stroke: var(--surface-sunk);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+
+.focus .arrowHead {
+  fill: var(--accent);
+}
+
 /* topic card: the numbered discs that match the callouts */
 .mark {
   fill: var(--brand);

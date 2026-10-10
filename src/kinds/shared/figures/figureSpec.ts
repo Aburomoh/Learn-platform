@@ -156,8 +156,35 @@ const GatesFigure = z
     }
   });
 
+/**
+ * A resource-allocation sketch (CPET181 Ch5, #605): processes (circles), resources (boxes), and
+ * the arrows between them: `holds` = allocated (solid, resource → process), `requests` = waiting
+ * (dashed, process → resource). A picture only: nothing is computed and there is no result state.
+ */
+const nodeName = z.string().min(1).max(12);
+const ResourceGraphFigure = z
+  .object({
+    type: z.literal("resource-graph"),
+    processes: z.array(nodeName).min(1).max(4),
+    resources: z.array(nodeName).min(1).max(4),
+    edges: z.array(z.object({ process: nodeName, resource: nodeName, kind: z.enum(["holds", "requests"]), label: z.string().min(1).max(14).optional() })).max(8),
+    /** The node with the halo: a process or resource name. */
+    focus: nodeName.optional(),
+    /** One line for assistive technology, when the generated list reads badly. */
+    caption: z.string().min(1).max(200).optional(),
+  })
+  .superRefine((f, ctx) => {
+    const all = [...f.processes, ...f.resources];
+    if (new Set(all).size !== all.length) ctx.addIssue({ code: "custom", message: "process and resource names must be distinct" });
+    for (const e of f.edges) {
+      if (!f.processes.includes(e.process)) ctx.addIssue({ code: "custom", path: ["edges"], message: `unknown process ${e.process}` });
+      if (!f.resources.includes(e.resource)) ctx.addIssue({ code: "custom", path: ["edges"], message: `unknown resource ${e.resource}` });
+    }
+    if (f.focus && !all.includes(f.focus)) ctx.addIssue({ code: "custom", message: `focus "${f.focus}" is not a node (${all.join(", ")})` });
+  });
+
 /** One figure per question, drawn by the stage above (or beside) any kind's answer area. */
-export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure]);
+export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, ResourceGraphFigure]);
 export type FigureSpec = z.infer<typeof FigureSpec>;
 
 /** The pins a focus may name (`figure.focus`, `stage.figureFocus`). A latch figure has no focus state yet. */
@@ -171,6 +198,8 @@ export function figurePins(figure: FigureSpec): string[] {
       return [...flipFlopInputs(figure.ff), "Clk", "Q", "Q′"];
     case "sequential":
       return [...figure.flipFlops.map((f) => f.name), "gates"];
+    case "resource-graph":
+      return [...figure.processes, ...figure.resources];
     default:
       return [];
   }
