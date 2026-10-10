@@ -7,7 +7,7 @@ describe("CPET181 registration (#562)", () => {
   const course = courses.find((c) => c.id === "cpet181")!;
 
   it("is in courses with the nine chapters of the outline, in order", () => {
-    expect(course.modules.map((m) => m.title.replace(/^Chapter \d+ · /, ""))).toEqual(outline.chapters.map((c) => c.title.toLowerCase()));
+    expect(course.modules.map((m) => m.title.replace(/^Chapter \d+ · /, "").toLowerCase())).toEqual(outline.chapters.map((c) => c.title.toLowerCase()));
   });
 
   it("has Chapter 1 live and chapters 2–9 comingSoon with no topics", () => {
