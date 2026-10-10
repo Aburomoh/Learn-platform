@@ -9,4 +9,5 @@ export { PageFrame, type PageFrameProps } from "./PageFrame";
 export { TopicNext } from "./TopicNext";
 export { ChapterIndex, CourseTopics, chapterStatus, chapterTitle, topicStatus } from "./CourseTopics";
 export { HomeNext, pickCourse, remainingCue } from "./HomeNext";
+export { CourseOutline } from "./CourseOutline";
 export { CourseTutor } from "./CourseTutor";

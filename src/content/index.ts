@@ -4,10 +4,19 @@
  */
 import { CourseSchema, type Course, type Topic, type Activity, type Module, type CourseInput } from "./schema";
 import { ecet111 } from "./ecet111/course";
+import { cpet181 } from "./cpet181";
+import type { CourseOutline } from "./outline";
 
 const sources: CourseInput[] = [ecet111];
 
 export const courses: Course[] = sources.map((c) => CourseSchema.parse(c));
+
+/** Courses announced but without topics yet (no routes into topics, no progress). */
+export const outlines: CourseOutline[] = [cpet181];
+
+export function getOutline(courseId: string): CourseOutline | undefined {
+  return outlines.find((c) => c.id === courseId);
+}
 
 export function getCourse(courseId: string): Course | undefined {
   return courses.find((c) => c.id === courseId);
@@ -55,4 +64,5 @@ export function listTopicParams(): { course: string; topic: string }[] {
     .filter((p, i, arr) => arr.findIndex((q) => q.course === p.course && q.topic === p.topic) === i);
 }
 
+export type { CourseOutline, OutlineChapter } from "./outline";
 export type { Course, Module, Topic, Activity } from "./schema";
