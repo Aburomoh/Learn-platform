@@ -4,6 +4,7 @@ import { BooleanParseError, parseBool } from "@/content/boolean";
 import { adderPins, flipFlopInputs } from "./blocks";
 import { circuitFromExpression } from "./circuit/circuit";
 import { codeNames } from "./device";
+import { MEMORY_TABLE_PINS, translate } from "./memoryTable";
 
 const bit = z.union([z.literal(0), z.literal(1)]);
 
@@ -156,8 +157,47 @@ const GatesFigure = z
     }
   });
 
+/**
+ * A page map table or a segment map table (CPET181 Ch3, #605) with a logical address to translate.
+ * Content gives the table (page → frame, or segment → size and base) and the address; the page or
+ * segment number, the displacement, the frame or base and the physical address are computed
+ * (`translate`) and drawn only in the result state. Without `address` the table alone is drawn.
+ */
+const MemoryTableFigure = z
+  .object({
+    type: z.literal("memory-table"),
+    table: z.enum(["page", "segment"]),
+    /** Page size, pages only (lines or bytes, as the slide counts). */
+    size: z.number().int().positive().optional(),
+    rows: z
+      .array(z.object({ id: z.number().int().min(0), name: z.string().min(1).max(24).optional(), size: z.number().int().positive().optional(), at: z.number().int().min(0) }))
+      .min(1)
+      .max(8),
+    /** Paging: one logical address. Segmentation: the segment number and the displacement. */
+    address: z.union([z.number().int().min(0), z.object({ part: z.number().int().min(0), offset: z.number().int().min(0) })]).optional(),
+    /** Label for sizes and addresses: "lines", "bytes". */
+    unit: z.string().min(1).max(8).optional(),
+    /** The part with the halo: the table row, the number strip, the displacement strip or the physical strip. */
+    focus: z.enum(MEMORY_TABLE_PINS).optional(),
+  })
+  .superRefine((f, ctx) => {
+    const ids = f.rows.map((r) => r.id);
+    if (new Set(ids).size !== ids.length) ctx.addIssue({ code: "custom", message: "page or segment numbers must be distinct" });
+    if (f.table === "page" && !f.size) ctx.addIssue({ code: "custom", path: ["size"], message: "a page table needs the page size" });
+    if (f.table === "segment" && f.rows.some((r) => r.size === undefined)) ctx.addIssue({ code: "custom", path: ["rows"], message: "a segment table gives each segment's size" });
+    if (f.table === "segment" && typeof f.address === "number") ctx.addIssue({ code: "custom", path: ["address"], message: "a segment address is { part, offset }" });
+    if (f.address !== undefined) {
+      const t = translate(f);
+      if (!t) ctx.addIssue({ code: "custom", path: ["address"], message: "the address falls outside the table" });
+      else if (f.table === "segment") {
+        const row = f.rows.find((r) => r.id === t.part)!;
+        if (t.displacement >= (row.size ?? 0)) ctx.addIssue({ code: "custom", path: ["address"], message: `displacement ${t.displacement} is beyond segment ${t.part} (${row.size})` });
+      }
+    }
+  });
+
 /** One figure per question, drawn by the stage above (or beside) any kind's answer area. */
-export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure]);
+export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, MemoryTableFigure]);
 export type FigureSpec = z.infer<typeof FigureSpec>;
 
 /** The pins a focus may name (`figure.focus`, `stage.figureFocus`). A latch figure has no focus state yet. */
@@ -171,6 +211,8 @@ export function figurePins(figure: FigureSpec): string[] {
       return [...flipFlopInputs(figure.ff), "Clk", "Q", "Q′"];
     case "sequential":
       return [...figure.flipFlops.map((f) => f.name), "gates"];
+    case "memory-table":
+      return [...MEMORY_TABLE_PINS];
     default:
       return [];
   }
