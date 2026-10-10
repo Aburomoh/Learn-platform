@@ -33,6 +33,11 @@ export function decimalPattern(signed: boolean, decimals: number): RegExp {
   return new RegExp(`^${signed ? "-?" : ""}[0-9]*${decimals > 0 ? `(\\.[0-9]{0,${decimals}})?` : ""}$`);
 }
 
+/** A signed or decimal entry is complete once it has a digit after any sign and after any point ("-" and "9." are not answers). */
+export function completeNumber(text: string): boolean {
+  return /^-?[0-9]+(\.[0-9]+)?$/.test(text);
+}
+
 /** Base-aware text entry. Rejects characters outside the base as the student types. */
 export function NumericInput({
   id,
@@ -59,13 +64,14 @@ export function NumericInput({
       }
     : plain;
   const stateClass = state === "correct" ? styles.correct : state === "incorrect" ? styles.incorrect : "";
+  const ready = text.trim() !== "" && (!extended || completeNumber(text.trim()));
 
   return (
     <form
       className={styles.root}
       onSubmit={(e) => {
         e.preventDefault();
-        if (text.trim() && !disabled) onAnswer(text.trim());
+        if (ready && !disabled) onAnswer(text.trim());
       }}
     >
       <label htmlFor={inputId} className={styles.prompt}>
@@ -93,7 +99,7 @@ export function NumericInput({
           }}
           {...focusTarget("numeric-input")}
         />
-        <button type="submit" className="btn btn-primary" disabled={disabled || !text.trim()}>
+        <button type="submit" className="btn btn-primary" disabled={disabled || !ready}>
           {submitLabel}
         </button>
       </div>

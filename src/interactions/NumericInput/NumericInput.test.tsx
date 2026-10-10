@@ -59,6 +59,19 @@ describe("NumericInput", () => {
     expect(input).toHaveAttribute("inputmode", "decimal");
   });
 
+  it("signed or decimal: a lone minus or a trailing point is not submitted, on Enter or by the button (#574)", async () => {
+    const onAnswer = vi.fn();
+    render(<NumericInput id="n" prompt="Reg?" base={10} signed decimals={2} onAnswer={onAnswer} />);
+    const user = userEvent.setup();
+    const input = screen.getByLabelText("Reg?");
+    await user.type(input, "-{Enter}");
+    expect(screen.getByRole("button", { name: "Check" })).toBeDisabled();
+    await user.type(input, "9.{Enter}");
+    expect(onAnswer).not.toHaveBeenCalled();
+    await user.type(input, "5{Enter}");
+    expect(onAnswer).toHaveBeenCalledWith("-9.5");
+  });
+
   it("ignores signed and decimals outside base 10", async () => {
     render(<NumericInput id="n" prompt="Bin?" base={2} signed decimals={2} onAnswer={() => {}} />);
     const input = screen.getByLabelText("Bin?");

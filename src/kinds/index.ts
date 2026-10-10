@@ -10,6 +10,7 @@ import { derivation, type DerivationAnswer } from "./derivation/logic";
 import { expression, type ExpressionAnswer } from "./expression/logic";
 import { columnAddition, type ColumnAdditionAnswer } from "./column-addition/logic";
 import { kmap, type KmapAnswer } from "./kmap/logic";
+import { memoryMap, type MemoryMapAnswer } from "./memory-map/logic";
 import { multipleChoice, type MultipleChoiceAnswer } from "./multiple-choice/logic";
 import { numeric, type NumericAnswer } from "./numeric/logic";
 import { placeValue, type PlaceValueAnswer } from "./place-value/logic";
@@ -27,6 +28,7 @@ export const kinds = {
   expression: expression,
   "column-addition": columnAddition,
   kmap,
+  "memory-map": memoryMap,
   "multiple-choice": multipleChoice,
   numeric,
   "place-value": placeValue,
@@ -40,7 +42,7 @@ export const kinds = {
 export type RegisteredKind = keyof typeof kinds;
 
 /** The student's answer, one shape per kind. */
-export type KindAnswer = DerivationAnswer | ExpressionAnswer | BaseToDecimalAnswer | BitGroupingAnswer | CircuitAnswer | ColumnAdditionAnswer | KmapAnswer | MultipleChoiceAnswer | NumericAnswer | PlaceValueAnswer | RepeatedDivisionAnswer | DeviceAnswer | TimingAnswer | StateDiagramAnswer | TruthTableAnswer;
+export type KindAnswer = DerivationAnswer | ExpressionAnswer | BaseToDecimalAnswer | BitGroupingAnswer | CircuitAnswer | ColumnAdditionAnswer | KmapAnswer | MemoryMapAnswer | MultipleChoiceAnswer | NumericAnswer | PlaceValueAnswer | RepeatedDivisionAnswer | DeviceAnswer | TimingAnswer | StateDiagramAnswer | TruthTableAnswer;
 
 export function isRegisteredKind(kind: string): kind is RegisteredKind {
   return Object.hasOwn(kinds, kind);
