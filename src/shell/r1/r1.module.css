@@ -736,6 +736,17 @@
   margin: 0;
 }
 
+/* on a phone the row's text takes the full width and the action sits under it (#593) */
+@media (max-width: 640px) {
+  .practiceRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .practiceText {
+    flex: none;
+  }
+}
+
 .statusMuted {
   font-weight: 400;
   color: var(--text-muted);
