@@ -4,15 +4,15 @@
  */
 import { CourseSchema, type Course, type Topic, type Activity, type Module, type CourseInput } from "./schema";
 import { ecet111 } from "./ecet111/course";
-import { cpet181 } from "./cpet181";
+import { cpet181Course } from "./cpet181/course";
 import type { CourseOutline } from "./outline";
 
-const sources: CourseInput[] = [ecet111];
+const sources: CourseInput[] = [ecet111, cpet181Course];
 
 export const courses: Course[] = sources.map((c) => CourseSchema.parse(c));
 
 /** Courses announced but without topics yet (no routes into topics, no progress). */
-export const outlines: CourseOutline[] = [cpet181];
+export const outlines: CourseOutline[] = [];
 
 export function getOutline(courseId: string): CourseOutline | undefined {
   return outlines.find((c) => c.id === courseId);
