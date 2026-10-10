@@ -32,7 +32,7 @@ export const product = {
   tagline: "Interactive course companion",
   /** Public origin for metadata; change here when the domain moves. */
   origin: "https://learn.aburomoh.com",
-  owner: { displayName: "Dr. Mohannad Abu-Romoh", shortName: "Dr. Mohannad" },
+  owner: { displayName: "Mr. Mohanad", shortName: "Mr. Mohanad" },
   brand: {
     /** The mark beside the name in the top bar (a file under /public). */
     markSrc: "/brand/mark.svg",

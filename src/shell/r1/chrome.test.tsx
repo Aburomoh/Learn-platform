@@ -119,22 +119,22 @@ describe("TopicRow", () => {
 
 describe("TutorCard", () => {
   it("builds the monogram from the name", () => {
-    expect(monogram("Dr. Mohannad")).toBe("DM");
+    expect(monogram("Mr. Mohanad")).toBe("MM");
     expect(monogram("Ada")).toBe("A");
-    expect(monogram("Dr. Mohannad Abu-Romoh")).toBe("DM");
+    expect(monogram("Mr. Mohanad Abu-Romoh")).toBe("MM");
   });
 
   it("shows the monogram disc, the name and the line it is given", () => {
-    render(<TutorCard name="Dr. Mohannad" message="We'll do this one step at a time." />);
+    render(<TutorCard name="Mr. Mohanad" message="We'll do this one step at a time." />);
     const card = screen.getByRole("complementary", { name: "Tutor" });
-    expect(card.querySelector("[data-monogram]")).toHaveTextContent("DM");
-    expect(card).toHaveTextContent("Dr. Mohannad");
+    expect(card.querySelector("[data-monogram]")).toHaveTextContent("MM");
+    expect(card).toHaveTextContent("Mr. Mohanad");
     expect(card).toHaveTextContent("We'll do this one step at a time.");
     expect(card.querySelector("img")).toBeNull();
   });
 
   it("uses the pose art from config when it exists, and never invents a message", () => {
-    render(<TutorCard name="Dr. Mohannad" size="lg" portrait={product.brand.tutorPortrait} />);
+    render(<TutorCard name="Mr. Mohanad" size="lg" portrait={product.brand.tutorPortrait} />);
     const card = screen.getByRole("complementary", { name: "Tutor" });
     // the waist-up pose from 900 px (rails, home card), the head crop below
     expect(card.querySelector("source")).toHaveAttribute("media", "(min-width: 900px)");
@@ -145,9 +145,9 @@ describe("TutorCard", () => {
   });
 
   it("shows the welcome pose when asked, and fetches nothing while the pose is unknown", () => {
-    const { rerender } = render(<TutorCard name="Dr. Mohannad" portrait={product.brand.tutorPortrait} pose={null} />);
+    const { rerender } = render(<TutorCard name="Mr. Mohanad" portrait={product.brand.tutorPortrait} pose={null} />);
     expect(document.querySelector("img, source")).toBeNull();
-    rerender(<TutorCard name="Dr. Mohannad" portrait={product.brand.tutorPortrait} pose="welcome" />);
+    rerender(<TutorCard name="Mr. Mohanad" portrait={product.brand.tutorPortrait} pose="welcome" />);
     expect(document.querySelector("img")).toHaveAttribute("src", "/tutor/welcome.webp");
     expect(document.querySelector("source")).toHaveAttribute("srcset", "/tutor/welcome-waist.webp");
   });
