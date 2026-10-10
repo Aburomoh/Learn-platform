@@ -68,6 +68,21 @@ Variant ids are an activity-level number set: a shared id means shared numbers, 
 at the same index in every question that has it. A finished question passes its set on to the
 following questions (#141).
 
+## Calculator and skip (owner, 2026-10-10, #576)
+**Calculator.** A student without a calculator is never blocked.
+- **Offer it** on any step whose arithmetic the slides do not assess as a skill (for example the sum of place-value terms, 5 × 64, or a decimal total).
+- **Never offer it** when the arithmetic *is* the skill: a binary addition column and its carry, a ÷2 or ÷16 quotient and remainder, a complement bit flip, a two's-complement +1.
+- It opens from a small "Calculator" button beside the input, pre-loaded with the expression built from the student's own entries or the givens; the student presses "=". It never fills the answer box: the student still types the result, and that typed value is what is graded.
+- It shows no expected answer before an attempt and does not change step-as-goal: one step, one calculation, then the next step appears.
+- No recall or mental-arithmetic questions ("What is 2⁷?" with options): give such values as known terms (`[N] × 8²`) or put them behind the calculator.
+
+**Hidden skip.** A discreet escape for strong students, not a primary action.
+- It lives in the activity's "More" (⋯) menu as "Skip to the challenge"; never a button on the stage, never suggested by the tutor.
+- Available only after the student has completed at least one practice in that topic (first-try correct, no Explain Slowly).
+- One confirmation: "Skip the remaining practice in this topic? You can come back any time."
+- It jumps to the topic's next challenge; skipped practices are recorded as `skipped` (never `completed`), shown as unfinished on the course map, and do not count toward topic completion or mastery.
+- If the challenge is then failed, the tutor offers (does not force) a return to the skipped practice.
+
 ## Pedagogy veto
 The Pedagogy Engineer may file `PEDAGOGY VETO — TASK-###` (advisory to the owner; format in
 `agents/pedagogy_engineer.md`, issue template `.github/ISSUE_TEMPLATE/pedagogy-veto.yml`).
