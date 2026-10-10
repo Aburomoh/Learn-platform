@@ -64,20 +64,37 @@ Sequential: one instruction at a time. Concurrent: several in parallel (one job,
 | Mode | Steps | Order | Verified |
 |---|---|---|---|
 | Sequential (s.22) | 7 | F−G → T1; D+E → T2; T2**T1 → T1; 4/T1 → T2; 3*B → T1; T1*C → T1; T1+T2 → A | 7 operators ✓ |
-| Concurrent (s.23) | 4 | Step 1 (3 processors): 3*B → T1, D+E → T2, F−G → T3. Step 2: T1*C → T4, T2**T3 → T5. Step 3: 4/T5 → T1. Step 4: T4+T1 → A | Longest chain F−G → ** → / → + = 4 ✓ |
+| Concurrent (s.23) | 4 | Step 1 (3 processors under earliest-step scheduling; 2 suffice, see Ambiguities): 3*B → T1, D+E → T2, F−G → T3. Step 2: T1*C → T4, T2**T3 → T5. Step 3: 4/T5 → T1. Step 4: T4+T1 → A | Longest chain F−G → ** → / → + = 4 ✓ |
 
 **s.24** exercise (no answer on the slide): A = 3 * B + (C + 4) / (D + E) ** (F − G)
 
 | Mode | Verified answer |
 |---|---|
 | Sequential | 7 steps (3*B, C+4, D+E, F−G, **, /, +) |
-| Concurrent | 4 steps with 4 processors: (1) 3*B, C+4, D+E, F−G; (2) (D+E)**(F−G); (3) (C+4)/that; (4) 3*B + that |
+| Concurrent | 4 steps. Earliest-step scheduling uses 4 processors: (1) 3*B, C+4, D+E, F−G; (2) (D+E)**(F−G); (3) (C+4)/that; (4) 3*B + that. Two processors also finish in 4 steps: (1) D+E, F−G; (2) **, C+4; (3) /, 3*B; (4) + (C+4 must be ready before the division) |
 
 Method rule: an operation may run in a step only when both its operands are ready; precedence fixes
-which operations exist. Steps = length of the longest chain; processors = widest step.
+which operations exist. Steps = length of the longest chain; processors = widest step **under earliest-step scheduling** (every
+operation runs as soon as its operands are ready). Ask for the processor count only with that rule stated.
+
+## High-value comparisons and definitions (#588)
+Inventory for match/distinguish activities (#586): every contrast, definition set or list of
+distinguishing characteristics in the deck, in our own words. CORE = students are expected to know it;
+CONTEXT = shown, not expected.
+
+| ID | Ref | Concepts compared | Distinguishing attributes | Level |
+|---|---|---|---|---|
+| C6-1 | s.6–13 | Master/slave vs loosely coupled vs symmetric | One master runs the OS and schedules centrally vs complete computers each with its own OS, job stays put vs equal processors, decentralised scheduling, job may move. Simple, poor reliability vs one failure does not stop others, failures hard to detect vs most reliable and balanced, hardest to build (quizzed T/F, MCQ) | CORE |
+| C6-2 | s.12, s.14–15 | Race condition vs successful synchronization vs critical region | Several processors use one resource at once vs lock, use, release, then admit the waiting process vs code section that must finish without interleaving | CORE |
+| C6-3 | s.14 | Starvation vs deadlock as synchronization failures | Named as the two results of bad synchronization (defined in Ch5) (quizzed MCQ) | CORE |
+| C6-4 | s.16–20 | Producers/consumers vs readers/writers | One fills a buffer, one empties it; delay producer when full, consumer when empty; semaphores count full and empty slots vs shared file; many readers if no writer, one writer only when no reader and no writer | CORE |
+| C6-5 | s.20 | The four readers/writers cases | Only reading + reading is allowed; any pair with a writer is not | CORE |
+| C6-6 | s.21–23 | Sequential vs concurrent programming | One operation per step (7 steps) vs independent operations in parallel on several processors (4 steps) | CORE |
+| C6-7 | s.2–4 | Benefits vs challenges of parallel processing | Reliability, faster processing vs connecting the processors, orchestrating them | CORE |
 
 ## Ambiguities
 | Where | Note |
 |---|---|
 | s.23 | Re-uses T1 for the quotient in step 3 after T1 (3*B) was consumed in step 2; temporaries may be reused once free |
 | s.16–19 | Semaphore counts are named but never operated on; keep exercises at the rule level |
+| s.23–24 | Processor count is not unique: 4 steps need only 2 processors if off-chain operations are delayed. Processors = widest step under earliest-step scheduling (s.23: 3, s.24: 4); the minimum for 4 steps is 2 in both |

@@ -60,7 +60,8 @@ Reflective metal layer read by laser; one long spiral track (not concentric); co
 
 | | CD | DVD | Blu-ray |
 |---|---|---|---|
-| Capacity (s.24) | Up to 700 MB | 4.7–17 GB (about 15 × a CD) | Up to 128 GB |
+| Capacity (s.24) | Up to 700 MB | 4.7–17 GB | Up to 128 GB |
+| Cost (s.24) | Very cheap | Not given (the cell holds a capacity remark; see owner note) | Higher than DVD |
 | Laser | Optical | Optical | Blue-violet, tighter tracks |
 | Typical use | General data | Multimedia | HD audio/video |
 | Varieties | CD-ROM, CD-R, CD-RW | read-only, recordable, rewritable | BD-ROM, BD-R, BD-RE |
@@ -91,8 +92,28 @@ HDD vs SSD (s.28):
 | Very high capacity | Yes | No |
 | Write/rewrite lifetime | Longer | Shorter |
 
+## High-value comparisons and definitions (#588)
+Inventory for match/distinguish activities (#586): every contrast, definition set or list of
+distinguishing characteristics in the deck, in our own words. CORE = students are expected to know it;
+CONTEXT = shown, not expected.
+
+| ID | Ref | Concepts compared | Distinguishing attributes | Level |
+|---|---|---|---|---|
+| C7-1 | s.2 | Process-level vs job-level deallocation | Temporary, after each I/O command vs permanent, when the job ends | CORE |
+| C7-2 | s.3–6 | Dedicated vs shared vs virtual devices | One job for its whole run (tape, printer) vs interleaved requests (disk) vs dedicated device made shareable by spooling (quizzed T/F, MCQ) | CORE |
+| C7-3 | s.7–8 | Sequential vs direct-access media | Tape, found by position vs disk, optical, flash (DASD) reached at a chosen place (quizzed MCQ) | CORE |
+| C7-4 | s.11–12 | IRG vs IBG | Gap between single records vs gap between blocks of records | CORE |
+| C7-5 | s.13 | Blocking advantages vs disadvantages | Fewer I/O operations, less tape wasted vs blocking/deblocking overhead, buffer wasted when one record is needed | CORE |
+| C7-6 | s.14, s.16 | Tape vs disk | Cheap, compact, good for backup, variable access time vs direct access, larger, faster, dearer, needs a clean environment, poor for sequential use | CORE |
+| C7-7 | s.18–20 | Fixed-head vs movable-head disk | One head per track, faster, costly, less capacity (spacecraft) vs heads move together on one arm (PCs) | CORE |
+| C7-8 | s.16, s.22 | Magnetic vs optical disk tracks | Concentric tracks vs one long spiral read by laser | CORE |
+| C7-9 | s.24 | CD vs DVD vs Blu-ray | Up to 700 MB vs 4.7–17 GB vs up to 128 GB; optical vs optical, both sides vs blue-violet laser, tighter tracks; general data vs multimedia vs HD video (quizzed AR Q3) | CORE |
+| C7-10 | s.25 | CD-ROM vs CD-R vs CD-RW | Read only vs write once vs rewrite many times | CORE |
+| C7-11 | s.26–27 | SSD vs flash memory | Internal drive of floating-gate cells, no moving parts vs portable removable EEPROM erased by a strong field | CORE |
+| C7-12 | s.28 | HDD vs SSD | Slower, more power, heavier, noisy, moving parts vs the opposite; HDD cheaper per GB, higher capacity, longer write life (quizzed AR Q3) | CORE |
+
 ## Ambiguities
 | Where | Note |
 |---|---|
-| s.24 | Two cells of the CD/DVD/Blu-ray table — see owner note |
+| s.24 | Two cells of the CD/DVD/Blu-ray table — see owner note. The DVD Cost cell's "15 times a CD" remark is an unverified slide value (4.7 GB ÷ 700 MB ≈ 6.7×, 17 GB ÷ 700 MB ≈ 24×); do not teach or assess it |
 | s.23 vs s.24 | Blu-ray 25 GB (photo, single layer) vs up to 128 GB (table) |

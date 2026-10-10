@@ -61,6 +61,21 @@ A job never runs because the resources it needs never become free to it. Example
 blocking new jobs until starving ones are served. Quiz 2 T/F: starvation is indefinite, not a short
 normal delay; priority scheduling can starve low-priority jobs (links to Ch4).
 
+## High-value comparisons and definitions (#588)
+Inventory for match/distinguish activities (#586): every contrast, definition set or list of
+distinguishing characteristics in the deck, in our own words. CORE = students are expected to know it;
+CONTEXT = shown, not expected.
+
+| ID | Ref | Concepts compared | Distinguishing attributes | Level |
+|---|---|---|---|---|
+| C5-1 | s.3, s.21 | Deadlock vs starvation | System-wide tangle: two or more held jobs each wait for a resource another holds vs one job postponed indefinitely while others proceed | CORE |
+| C5-2 | s.6–14 | The seven deadlock cases | Files (each holds one file, wants the other); database records (each locks one record, asks for the other); one type of dedicated device (two tape drives); multiple devices (a circle of tape drive, printer, plotter); spooling; disk sharing and network (named only) | CORE |
+| C5-3 | s.8–10 | Deadlock vs race | Locking held in a circle blocks everyone vs no locking, so the last writer wins and an update is lost | CORE |
+| C5-4 | s.7, s.13 | Allocated vs requested edge | Solid arrow resource → process vs dashed arrow process → resource | CORE |
+| C5-5 | s.15–19 | Mutual exclusion vs hold and wait vs no preemption vs circular wait | One user per dedicated resource; holding one while waiting for another; resource not taken back until released; processes waiting in a circle. All four needed, removing one prevents deadlock (quizzed MCQ) | CORE |
+| C5-6 | s.20 | The three recovery methods | Kill all active jobs and restart vs kill only the deadlocked jobs and ask for resubmission vs kill deadlocked jobs one at a time until it clears (faster CPU is not one) | CORE |
+| C5-7 | s.22 | Aging vs blocking new jobs | Track how long each job waits vs hold back new jobs until the starving job is served | CORE |
+
 ## Ambiguities
 | Where | Note |
 |---|---|
