@@ -118,7 +118,7 @@ const sumHints: HintInput[] = [
   { rung: 9, text: "{values} = {value}." },
 ];
 
-function placeVariant(id: string, base: Base, number: string, k: number): VariantInput {
+function placeVariant(id: string, base: Base, number: string): VariantInput {
   const spec = { kind: "base-to-decimal" as const, base, number };
   const ds = placeDigits(spec);
   const fraction = number.includes(".");
@@ -128,12 +128,6 @@ function placeVariant(id: string, base: Base, number: string, k: number): Varian
   const values = ds.map((d) => exactTerm(d.value, base, d.power)).join(" + ");
   const value = exactValue(spec);
   const zeroAt = ds.findIndex((d) => d.power === 0);
-  // predictions before the terms and the sum (Pedagogy on #353); the slip is powers counted from 1
-  const lead = ds[0]; // never 0 in these sets
-  const whole = ds.filter((d) => d.power >= 0);
-  const wholeSum = whole.reduce((acc, d) => acc + d.value * base ** d.power, 0);
-  const wholeSlip = whole.reduce((acc, d) => acc + d.value * base ** (d.power + 1), 0);
-  const pair = (right: string, slip: string) => (k % 2 ? [slip, right] : [right, slip]);
 
   const misconceptions: VariantInput["misconceptions"] = [{ id: "pv.reversed", title: "Weights counted from the wrong end", nudgeKey: "pv.weights-reversed", detect: { type: "weights-reversed" } }];
   if (fraction) misconceptions.push({ id: "pv.negative", title: "Powers after the point", nudgeKey: "pv.negative-powers", detect: { type: "negative-powers-wrong" } });
@@ -147,6 +141,8 @@ function placeVariant(id: string, base: Base, number: string, k: number): Varian
     spec,
     hints: weightHints,
     hintsByStep: { weights: weightHints, terms: termHints(hex), sum: sumHints },
+    // the sum of the terms is arithmetic the slides do not assess as a skill (#578): pre-load it
+    calculator: { sum: "{values}" },
     misconceptions,
     explanation: [
       {
@@ -156,30 +152,8 @@ function placeVariant(id: string, base: Base, number: string, k: number): Varian
         ask: firstAsk,
       },
       { id: "s2", say: `Counting down from left to right, the weights are ${weights}.`, stage: { revealed: 1 } },
-      {
-        id: "s3",
-        say: `Each term is the digit times its weight: ${terms}.`,
-        stage: { revealed: 1 },
-        ask: {
-          prompt: `What is ${lead.value} × ${base}^${lead.power}?`,
-          options: pair(exactTerm(lead.value, base, lead.power), exactTerm(lead.value, base, lead.power + 1)),
-          correctIndex: k % 2,
-          afterCorrect: `Yes. The terms are ${values}.`,
-          afterWrong: `${base}^${lead.power} is ${exactTerm(1, base, lead.power)}, so it is ${exactTerm(lead.value, base, lead.power)}. The terms are ${values}.`,
-        },
-      },
-      {
-        id: "s4",
-        say: `The terms are ${values}. Now add them.`,
-        stage: { revealed: 2 },
-        ask: {
-          prompt: "What is the whole-number part of the sum?",
-          options: pair(String(wholeSum), String(wholeSlip)).reverse(),
-          correctIndex: 1 - (k % 2),
-          afterCorrect: "Yes. Then add the fractions.",
-          afterWrong: `The whole-number terms add to ${wholeSum}. Then add the fractions.`,
-        },
-      },
+      { id: "s3", say: `Each term is the digit times its weight: ${terms}. The terms are ${values}.`, stage: { revealed: 1 } },
+      { id: "s4", say: `Now add the terms: ${values}.`, stage: { revealed: 2 } },
       { id: "s5", say: `(${number})_${base} = (${value})_10.`, stage: { revealed: 3 } },
     ],
     reactions: { stepNext: "Good. Now the next line.", correct: "Right: every weight, term and the sum.", correctAfterHints: "Right. Every line is done." },
@@ -188,10 +162,10 @@ function placeVariant(id: string, base: Base, number: string, k: number): Varian
 
 /** Three sets per question, the pack's fresh numbers (ch1 §1–3, §7); binary has a fourth. */
 const BINARY = ["110.011", "111.001", "100.110", "110.101"];
-const OCTAL = ["263.540", "317.420", "106.320"]; // not 106.350: its 5/64 term has six decimals (Pedagogy on #353)
+const OCTAL = ["263.5", "317.4", "106.3"]; // one fractional digit at most: 8^2 to 8^-1 (owner limit, #580)
 const HEX = ["2C5", "3E1", "1B7"];
 
-const variants = (prefix: string, base: Base, numbers: string[]) => numbers.map((n, i) => placeVariant(`${prefix}-${i + 1}`, base, n, i));
+const variants = (prefix: string, base: Base, numbers: string[]) => numbers.map((n, i) => placeVariant(`${prefix}-${i + 1}`, base, n));
 
 export const placeValueTopic: TopicInput = {
   id: "place-value",

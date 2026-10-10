@@ -354,7 +354,7 @@ describe("content registry", () => {
     const sums = walks.map((q) => q.variants.map((v) => (v.spec.kind === "base-to-decimal" ? exactValue(v.spec) : "")));
     expect(sums).toEqual([
       ["6.375", "7.125", "4.75", "6.625"],
-      ["179.6875", "207.53125", "70.40625"],
+      ["179.625", "207.5", "70.375"],
       ["709", "993", "439"],
     ]);
     for (const q of walks)
@@ -751,9 +751,9 @@ describe("content registry", () => {
     const checks = (q: typeof octCheck) => q.variants.map(({ spec }) => (spec.kind === "numeric" ? spec.answer : ""));
     expect(checks(octCheck)).toEqual(["233", "122", "389", "118"]);
     expect(checks(hexCheck)).toEqual(["726", "489", "948"]);
-    expect(hex16.variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["B6E3", "E95C", "9F2B"]);
+    expect(hex16.variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["B6E", "E95", "9F2"]);
     const point = getActivity(COURSE, "digit-replacement", "binary-point")!.activity;
-    expect(point.questions[0].variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["326.4", "161.6", "135.54"]);
+    expect(point.questions[0].variants.map(({ spec }) => (spec.kind === "bit-grouping" ? spec.answer : ""))).toEqual(["326.4", "161.6", "33.4"]);
   });
 
   it("three JK flip-flops (#316): table, diagram and the s.52 trace as in the pack (ch5-partii §5)", () => {

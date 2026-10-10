@@ -101,6 +101,12 @@ export const VariantSchema = z.object({
   /** Values for `{name}` slots in templates (hints, steps, messages). */
   vars: z.record(z.string(), z.union([z.string(), z.number()])).default({}),
   hints: z.array(HintSchema).min(1),
+  /**
+   * Calculator call sites (PEDAGOGY "Calculator and skip", #578): the expression pre-loaded in the
+   * step's calculator, by step tag ("*" for a single-answer kind). A template over the step's vars; a
+   * content test evaluates it and requires it to equal the step's answer, so the student only presses =.
+   */
+  calculator: z.record(z.string().min(1), template).optional(),
   /** Per-step ladders keyed by `stepTag` (ADR-0007 §3); `hints` is the fallback. Use `hintsForStep`. */
   hintsByStep: z.record(z.string(), z.array(HintSchema).min(1)).optional(),
   explanation: z.array(ExplanationStepSchema).min(2),
