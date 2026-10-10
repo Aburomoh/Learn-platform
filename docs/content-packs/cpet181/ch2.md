@@ -136,6 +136,23 @@ more efficient and why (key: best-fit, all jobs placed, less internal fragmentat
 compaction map with boundary values and the relocation register of two jobs (key gives magnitudes in K,
 no sign; see owner note).
 
+## High-value comparisons and definitions (#588)
+Inventory for match/distinguish activities (#586): every contrast, definition set or list of
+distinguishing characteristics in the deck, in our own words. CORE = students are expected to know it;
+CONTEXT = shown, not expected.
+
+| ID | Ref | Concepts compared | Distinguishing attributes | Level |
+|---|---|---|---|---|
+| C2-1 | s.5–6 | Contiguous vs non-contiguous allocation | One consecutive run vs scattered pieces; faster vs slower; easy control, low overhead vs harder, more overhead; fixed/dynamic partitions vs paging/segmentation; array vs linked list (fragmentation row: see owner note) | CORE |
+| C2-2 | s.7–37 | Single-user vs fixed vs dynamic vs relocatable dynamic | One job owns all memory, no multiprogramming; partitions set at start-up, internal fragmentation; partitions sized per job, external fragmentation; dynamic plus compaction to merge the holes | CORE |
+| C2-3 | s.10–15 | Fixed vs dynamic partitions | Size set at start-up and static vs exactly the requested size at load time; waste inside partitions vs holes between jobs | CORE |
+| C2-4 | s.16 | Internal vs external fragmentation | Unused space inside an allocated block vs free pieces between busy blocks, none large enough | CORE |
+| C2-5 | s.17–18 | First-fit vs best-fit | First large-enough block from the top, faster, wastes more vs smallest large-enough block, slower, least waste | CORE |
+| C2-6 | s.23–24 | Deallocation, fixed vs dynamic | Just mark the block free vs merge with free neighbours in the free list | CORE |
+| C2-7 | s.25–30 | Deallocation cases 1, 2, 3 | One free neighbour: extend that entry; free on both sides: one entry from the lowest address, the other becomes null; no free neighbour: fill a null entry | CORE |
+| C2-8 | s.32 | Addresses vs data values in compaction | Addresses are adjusted by the move; data values are left unchanged | CORE |
+| C2-9 | s.35 | Bounds vs relocation register | Highest address the program may use vs amount added to every address (0 if the job did not move) | CORE |
+
 ## Ambiguities
 | Where | Note |
 |---|---|

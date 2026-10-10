@@ -117,6 +117,23 @@ to the registers. s.25 table of typical capacity and access time (registers ~1 c
 main memory 1–4, magnetic disk microseconds, optical up to a second, tape seconds); a clock cycle is the
 smallest unit of processor time. No access-time calculation is taught.
 
+## High-value comparisons and definitions (#588)
+Inventory for match/distinguish activities (#586): every contrast, definition set or list of
+distinguishing characteristics in the deck, in our own words. CORE = students are expected to know it;
+CONTEXT = shown, not expected.
+
+| ID | Ref | Concepts compared | Distinguishing attributes | Level |
+|---|---|---|---|---|
+| C3-1 | s.2 | Logical vs physical address | Produced by the CPU vs the actual location in RAM; the MMU maps one to the other; logical space ≥ physical | CORE |
+| C3-2 | s.5 | Page vs frame | Fixed piece of the program vs fixed piece of memory; same size | CORE |
+| C3-3 | s.8, s.16 | Job Table vs Page Map Table vs Memory Map Table (vs Segment Map Table) | Job size and where its map table is vs page → frame vs each frame's location and free/busy status; in segmentation the SMT (segment, size, start address) replaces the PMT | CORE |
+| C3-4 | s.11 | Page number vs displacement | Quotient vs remainder of address ÷ page size | CORE |
+| C3-5 | s.5, s.15, s.19 | Paging vs segmentation | Equal pages vs unequal logical modules (user's view); frames vs dynamic placement; PMT vs SMT; internal-only vs external-only fragmentation | CORE |
+| C3-6 | s.14, s.18 | Paging vs segmentation: pros and cons | Paging: simple, no external fragmentation; resolution overhead, waste in the last page. Segmentation: no internal fragmentation, dynamic growth and linking; variable-length pieces hard on disk, size limited by memory | CORE |
+| C3-7 | s.20 | Virtual memory pros vs cons | Jobs bigger than memory, better use, unlimited multiprogramming vs hardware cost and thrashing-prevention complexity | CORE |
+| C3-8 | s.21 | Internal vs external fragmentation (table) | Fixed vs variable blocks; process smaller than its block vs processes removed; remedy best-fit vs relocation and paging; paging and fixed partitions vs segmentation and dynamic partitions | CORE |
+| C3-9 | s.24–25 | Registers vs cache vs main memory vs disk vs optical vs tape | Ordered by speed and size: about one clock cycle, 1–2, 1–4, microseconds, up to a second, seconds | CONTEXT |
+
 ## Ambiguities
 | Where | Note |
 |---|---|
