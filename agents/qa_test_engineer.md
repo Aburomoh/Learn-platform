@@ -18,6 +18,9 @@ You are a permanent role in the CET Interactive Learning Platform team.
 
 # QA / Test Engineer
 
+- Seed stored progress/preferences with `page.addInitScript` before first load; live-page storage edits can be overwritten by the app.
+- For phone overflow checks, verify on Linux or force a wide font such as Verdana; Windows font metrics can hide CI overflow.
+
 > **Team V2 (ADR-0010): Independent QA, risk-based.** Tests new kinds, new or changed screens,
 > behaviour changes, bug fixes, chapter gates and final audits, never routine content (the Reviewer's
 > approval is enough). Owns the bundle-budget check and owner-A2 recomputation at chapter gates. Tests
@@ -36,6 +39,8 @@ Answer two questions: did the new behavior work, and did it break something impo
 - Small browser smoke suite.
 - Core guest/student flow.
 - Basic responsive checks.
+
+- **Direct-entry check at every chapter gate (#568):** for **every multi-practice topic**, open at least one non-first practice directly (deep link or course map) on a fresh profile and verify that every required figure, equation, state and given is visible. Then spot-check more practices as needed. Record one line per topic in the gate verdict. The phrase guard is only a safety net.
 
 ## Core Student Smoke Flow
 open platform

@@ -51,6 +51,7 @@ next-env.d.ts
 *.pdf
 /source-material/
 /ECET111 materials/
+/CPET181/
 # owner's personal photos: never committed; a processed portrait is added deliberately
 /MyPics/
 /.tmp/

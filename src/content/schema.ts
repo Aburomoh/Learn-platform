@@ -163,11 +163,16 @@ export const TopicSchema = z.object({
   activities: z.array(ActivitySchema).min(1),
 });
 
-export const ModuleSchema = z.object({
-  id,
-  title: z.string(),
-  topics: z.array(TopicSchema).min(1),
-});
+export const ModuleSchema = z
+  .object({
+    id,
+    title: z.string(),
+    /** A planned chapter with no topics yet; shown as "coming soon". Every other chapter has at least one topic. */
+    comingSoon: z.boolean().optional(),
+    topics: z.array(TopicSchema),
+  })
+  .refine((m) => m.comingSoon === true || m.topics.length > 0, { message: "a chapter needs a topic, or comingSoon: true", path: ["topics"] })
+  .refine((m) => !m.comingSoon || m.topics.length === 0, { message: "a comingSoon chapter has no topics", path: ["topics"] });
 
 export const CourseSchema = z.object({
   id,

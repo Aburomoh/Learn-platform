@@ -790,6 +790,14 @@
   outline-offset: 2px;
 }
 
+.outlineHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 64px;
+  padding: var(--space-4) var(--space-5);
+}
+
 .chapterNum {
   flex: none;
   display: grid;

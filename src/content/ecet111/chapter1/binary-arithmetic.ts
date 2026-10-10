@@ -257,16 +257,18 @@ interface SubtractionSet {
   id: string;
   a: number;
   b: number;
+  /** Bits in A and B; 4 unless the set says otherwise (the longer subtractions use 8). */
+  width?: number;
 }
 
 /** Bit strings for A − B at a fixed width: B, its complements, A + 2's complement, and the result. */
-function subtractionBits({ a, b }: SubtractionSet, width = 4) {
+function subtractionBits({ a, b, width: w }: SubtractionSet, width = w ?? 4) {
   const A = a.toString(2).padStart(width, "0");
   const B = b.toString(2).padStart(width, "0");
   const twos = additionResult(complementBits(B), "1".padStart(width, "0"), false);
   const sum = additionResult(A, twos);
   const result = sum.slice(1);
-  // No end carry: negative, and the size is the 2's complement of the four sum bits (#41).
+  // No end carry: negative, and the size is the 2's complement of the sum bits (#41).
   const magnitude = additionResult(complementBits(result), "1".padStart(width, "0"), false);
   return { A, B, twos, sum, result, endCarry: sum[0], magnitude };
 }
@@ -274,13 +276,13 @@ function subtractionBits({ a, b }: SubtractionSet, width = 4) {
 const endCarryHints: HintInput[] = [
   { rung: 2, text: "Not yet. Look at the leftmost bit of the sum: the end carry." },
   { rung: 3, text: "In A − B by 2's complement, an end carry of 1 means positive: discard it. No end carry means negative." },
-  { rung: 6, text: "A negative result is stored as a 2's complement: complement the four sum bits again to read its size." },
+  { rung: 6, text: "A negative result is stored as a 2's complement: complement the sum bits again to read its size." },
   { rung: 9, text: "Read the end carry: 1 means positive (discard it); 0 means negative (re-complement the sum bits)." },
 ];
 
 const resultHints: HintInput[] = [
   { rung: 2, text: "Not yet. Leave out the end carry, then read the remaining bits." },
-  { rung: 3, text: "The weights are 8, 4, 2, 1 from the left of the four bits." },
+  { rung: 3, text: "The weights double from the right: 1, 2, 4, 8, … Add the weights of the 1s." },
   { rung: 9, text: "{resultBits} = {resultValue}, and {a} − {b} = {resultValue}." },
 ];
 
@@ -336,8 +338,8 @@ function endCarryVariant(set: SubtractionSet, k = 0): VariantInput {
         id: "s2",
         say: `Here the end carry is ${s.endCarry}.`,
         ask: positive
-          ? { prompt: "An end carry of 1 means the result is…", options: ["Positive: discard the carry", "Negative"], correctIndex: 0, afterCorrect: "Yes. Discard it and keep the other four bits.", afterWrong: "An end carry of 1 means positive. Discard it and keep the other four bits." }
-          : { prompt: "No end carry (0) means the result is…", options: ["Positive", "Negative: re-complement for its size"], correctIndex: 1, afterCorrect: "Yes. The four bits are the 2's complement of the answer, so we complement them again.", afterWrong: "No end carry means negative. The four bits are the 2's complement of the answer, so we complement them again." },
+          ? { prompt: "An end carry of 1 means the result is…", options: ["Positive: discard the carry", "Negative"], correctIndex: 0, afterCorrect: "Yes. Discard it and keep the other bits.", afterWrong: "An end carry of 1 means positive. Discard it and keep the other bits." }
+          : { prompt: "No end carry (0) means the result is…", options: ["Positive", "Negative: re-complement for its size"], correctIndex: 1, afterCorrect: "Yes. The remaining bits are the 2's complement of the answer, so we complement them again.", afterWrong: "No end carry means negative. The remaining bits are the 2's complement of the answer, so we complement them again." },
       },
     ],
   };
@@ -359,7 +361,7 @@ function resultVariant(set: SubtractionSet): VariantInput {
     ],
     reactions: { correct: done, correctAfterHints: done },
     explanation: [
-      { id: "s1", say: `Without the end carry the bits are ${s.result}. The weights are 8, 4, 2, 1.` },
+      { id: "s1", say: `Without the end carry the bits are ${s.result}. The weights double from the right: 1, 2, 4, 8, …` },
       {
         id: "s2",
         say: `Look at ${s.result}.`,
@@ -410,7 +412,7 @@ function setLead(set: SubtractionSet): string {
   return `${set.a} − ${set.b}, with A = ${s.A} and B = ${s.B}.`;
 }
 
-/** Negative result: the size is the 2's complement of the four sum bits. */
+/** Negative result: the size is the 2's complement of the sum bits. */
 function magnitudeVariant(set: SubtractionSet): VariantInput {
   const s = subtractionBits(set);
   const size = parseInt(s.magnitude, 2);
@@ -418,11 +420,11 @@ function magnitudeVariant(set: SubtractionSet): VariantInput {
   return {
     id: set.id,
     prompt: `The result is negative and its size is ${s.magnitude}. What is ${s.magnitude} in decimal?`,
-    spec: { kind: "numeric", base: 10, answer: String(size), context: { type: "addition", operands: { a: complementBits(s.result), b: "0001", endCarry: "drop" } } },
+    spec: { kind: "numeric", base: 10, answer: String(size), context: { type: "addition", operands: { a: complementBits(s.result), b: "1".padStart(s.result.length, "0"), endCarry: "drop" } } },
     vars: subtractionVars(set),
     hints: [
       { rung: 2, text: "Not yet. Read the re-complemented bits, not the sum bits." },
-      { rung: 3, text: "The weights are 8, 4, 2, 1 from the left of the four bits." },
+      { rung: 3, text: "The weights double from the right: 1, 2, 4, 8, … Add the weights of the 1s." },
       { rung: 9, text: `${s.magnitude} = ${size}, so ${set.a} − ${set.b} = −${size}.` },
     ],
     misconceptions: [
@@ -431,7 +433,7 @@ function magnitudeVariant(set: SubtractionSet): VariantInput {
     ],
     reactions: { correct: done, correctAfterHints: done },
     explanation: [
-      { id: "s1", say: `Re-complementing ${s.result} gave ${s.magnitude}. The weights are 8, 4, 2, 1.` },
+      { id: "s1", say: `Re-complementing ${s.result} gave ${s.magnitude}. The weights double from the right: 1, 2, 4, 8, …` },
       {
         id: "s2",
         say: `Look at ${s.magnitude}.`,
@@ -497,6 +499,87 @@ const subtractionExerciseNegative: TopicInput["activities"][number] = {
   ],
 };
 
+/* ---------- Longer sums and 8-bit subtraction (#580 a, epic #576): the same methods, wider numbers ---------- */
+
+/**
+ * Four 8-bit sums: a carry that runs across several columns, an end carry (291), no end carry (161),
+ * and the longest chain, 255 + 1, which carries through every column.
+ */
+const LONG_SUMS: [string, string][] = [
+  ["01101011", "00110110"], // 107 + 54 = 161: carries in the middle, no end carry
+  ["10110110", "01101101"], // 182 + 109 = 291: end carry
+  ["01010101", "00101011"], // 85 + 43 = 128: one carry rippling through six columns
+  ["11111111", "00000001"], // 255 + 1 = 256: every column carries, end carry
+];
+
+const longAdditionActivity: TopicInput["activities"][number] = {
+  id: "binary-addition-8bit",
+  title: "Longer binary sums",
+  summary: "The same column method on 8-bit numbers: carries that run across several columns, and an end carry.",
+  authority: "DEMO",
+  minutes: 12,
+  questions: [
+    {
+      id: "ba8.q.add",
+      label: "Column by column",
+      conceptId: "ba.columns",
+      objectiveId: "ba.obj.columns",
+      variants: LONG_SUMS.map(([a, b]) => additionVariant(a, b, `Add ${a} + ${b} one column at a time, starting from the right. Write the bit under the line and the carry above the next column.`)),
+    },
+    { id: "ba8.q.check-sum", label: "The sum", conceptId: "ba.check", objectiveId: "ba.obj.check", variants: LONG_SUMS.map(([a, b]) => checkVariant(a, b, "sum")) },
+  ],
+};
+
+/** 8-bit subtractions by 2's complement: three positive results, then three negative ones. */
+const LONG_POSITIVE: SubtractionSet[] = [
+  { id: "w200-75", a: 200, b: 75, width: 8 },
+  { id: "w150-38", a: 150, b: 38, width: 8 },
+  { id: "w99-41", a: 99, b: 41, width: 8 },
+];
+const LONG_NEGATIVE: SubtractionSet[] = [
+  { id: "w45-120", a: 45, b: 120, width: 8 },
+  { id: "w17-96", a: 17, b: 96, width: 8 },
+  { id: "w60-180", a: 60, b: 180, width: 8 },
+];
+
+const longSubtractionPositive: TopicInput["activities"][number] = {
+  id: "subtraction-8bit-positive",
+  title: "8-bit subtraction: a positive result",
+  summary: "Subtract by adding the 2's complement on 8-bit numbers: the end carry is 1, so discard it.",
+  authority: "DEMO",
+  minutes: 14,
+  questions: [
+    ...complementSteps(LONG_POSITIVE, "sb8p"),
+    { id: "sb8p.q.result", label: "Result", conceptId: "ba.subtraction", objectiveId: "ba.obj.subtract", variants: LONG_POSITIVE.map(resultVariant) },
+  ],
+};
+
+const longSubtractionNegative: TopicInput["activities"][number] = {
+  id: "subtraction-8bit-negative",
+  title: "8-bit subtraction: a negative result",
+  summary: "A smaller number minus a larger one on 8 bits: no end carry, so re-complement to find the size.",
+  authority: "DEMO",
+  minutes: 16,
+  questions: [
+    ...complementSteps(LONG_NEGATIVE, "sb8n"),
+    {
+      id: "sb8n.q.re-ones",
+      label: "Re-complement: flip",
+      conceptId: "ba.subtraction",
+      objectiveId: "ba.obj.negative",
+      variants: LONG_NEGATIVE.map((s) => inSubtraction(onesVariant(subtractionBits(s).result), s, `The result is negative. Find its size from the sum bits ${subtractionBits(s).result}.`)),
+    },
+    {
+      id: "sb8n.q.re-plus-one",
+      label: "Re-complement: add 1",
+      conceptId: "ba.subtraction",
+      objectiveId: "ba.obj.negative",
+      variants: LONG_NEGATIVE.map((s) => inSubtraction(plusOneVariant(subtractionBits(s).result), s, "Finish the re-complement.")),
+    },
+    { id: "sb8n.q.size", label: "Result", conceptId: "ba.subtraction", objectiveId: "ba.obj.negative", variants: LONG_NEGATIVE.map(magnitudeVariant) },
+  ],
+};
+
 /* ---------- topic ---------- */
 
 const SLIDE: [string, string] = ["1101", "0111"];
@@ -553,5 +636,8 @@ export const binaryArithmeticTopic: TopicInput = {
     subtractionActivity,
     subtractionExercisePositive,
     subtractionExerciseNegative,
+    longAdditionActivity,
+    longSubtractionPositive,
+    longSubtractionNegative,
   ],
 };

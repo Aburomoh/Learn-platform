@@ -1,9 +1,11 @@
 # Vercel CLI does not read .gitignore once this file exists; list private paths here too.
+# Anchor root-only folders with a leading slash: Vercel matches unanchored names case-insensitively at any depth (CPET181 hid src/content/cpet181, #563).
 *.pptx
 *.ppt
 *.pdf
 source-material
 ECET111 materials
+/CPET181/
 MyPics
 .tmp
 .env*

@@ -22,6 +22,7 @@ describe("kind registry (ADR-0008)", () => {
       derivation: () => import("./derivation/ui"),
       expression: () => import("./expression/ui"),
       kmap: () => import("./kmap/ui"),
+      "memory-map": () => import("./memory-map/ui"),
       "column-addition": () => import("./column-addition/ui"),
       "multiple-choice": () => import("./multiple-choice/ui"),
       numeric: () => import("./numeric/ui"),

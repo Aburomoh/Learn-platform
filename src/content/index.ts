@@ -4,8 +4,9 @@
  */
 import { CourseSchema, type Course, type Topic, type Activity, type Module, type CourseInput } from "./schema";
 import { ecet111 } from "./ecet111/course";
+import { cpet181Course } from "./cpet181/course";
 
-const sources: CourseInput[] = [ecet111];
+const sources: CourseInput[] = [ecet111, cpet181Course];
 
 export const courses: Course[] = sources.map((c) => CourseSchema.parse(c));
 
