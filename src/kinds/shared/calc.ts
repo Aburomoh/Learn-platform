@@ -30,6 +30,7 @@ function tokenise(text: string): Token[] {
     } else if (/[0-9.]/.test(c)) {
       const m = /^[0-9]*\.?[0-9]+|^[0-9]+\.?/.exec(text.slice(i))!;
       if (!m || m[0] === ".") throw new CalcError(`Bad number at ${i + 1}`);
+      if (m[0].endsWith(".")) throw new CalcError("Finish the number after the point");
       out.push({ type: "num", value: Number(m[0]) });
       i += m[0].length;
     } else if ("+-*/^()".includes(c)) {

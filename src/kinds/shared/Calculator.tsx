@@ -22,7 +22,12 @@ export interface CalculatorProps {
  * expression; the student presses "=" and reads the result (or edits the expression first). It
  * never fills an answer box itself. Keyboard: Tab to the field, Enter or the "=" button.
  */
-export function Calculator({ expression, open = false, onResult, label = "Calculator" }: CalculatorProps) {
+export function Calculator(props: CalculatorProps) {
+  // a new expression (next step or variant) starts the panel afresh: no stale field or result
+  return <CalculatorPanel key={props.expression} {...props} />;
+}
+
+function CalculatorPanel({ expression, open = false, onResult, label = "Calculator" }: CalculatorProps) {
   const [text, setText] = useState(expression);
   const [result, setResult] = useState<{ ok: true; text: string } | { ok: false; text: string } | null>(null);
   const fieldId = useId();

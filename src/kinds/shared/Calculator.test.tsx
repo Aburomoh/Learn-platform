@@ -22,7 +22,8 @@ describe("calc: content notation and arithmetic", () => {
   });
 
   it("rejects anything that is not arithmetic", () => {
-    for (const bad of ["2 +", "abc", "2 ** 2", "(2 + 3", "1 / 0", "2 3", "."]) expect(() => evaluateExpression(bad), bad).toThrow(CalcError);
+    for (const bad of ["2 +", "abc", "2 ** 2", "(2 + 3", "1 / 0", "2 3", ".", "12."]) expect(() => evaluateExpression(bad), bad).toThrow(CalcError);
+    expect(() => evaluateExpression("12.")).toThrow("Finish the number after the point");
   });
 
   it("formats results the way a student writes them", () => {
@@ -47,6 +48,18 @@ describe("Calculator component (#579)", () => {
     await user.click(screen.getByRole("button", { name: "Equals" }));
     expect(screen.getByText("= 208")).toBeInTheDocument();
     expect(onResult).toHaveBeenCalledWith(208, "208");
+  });
+
+  it("a new expression (next step) resets the field and the result (#584 review)", async () => {
+    const { rerender } = render(<Calculator expression="2 + 3" open />);
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: "Equals" }));
+    expect(screen.getByText("= 5")).toBeInTheDocument();
+    rerender(<Calculator expression="4 × 5" open />);
+    expect(screen.getByRole("textbox", { name: "Expression" })).toHaveValue("4 × 5");
+    expect(screen.queryByText("= 5")).toBeNull();
+    await user.type(screen.getByRole("textbox", { name: "Expression" }), "{Enter}");
+    expect(screen.getByText("= 20")).toBeInTheDocument();
   });
 
   it("the student may edit the expression; Enter also computes; Reset restores the step's expression; errors are plain", async () => {
