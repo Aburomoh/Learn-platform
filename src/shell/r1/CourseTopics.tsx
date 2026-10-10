@@ -79,6 +79,14 @@ export function chapterStatus(
   chapter: Module,
   progress: Pick<OfferingProgress, "activities">,
 ): { state: ChapterState; text: string; done: number; total: number } {
+  // a chapter without topics yet (CPET181 C2–C9, #562): never "Completed" (0 of 0)
+  if (chapter.comingSoon || chapter.topics.length === 0)
+    return {
+      state: "new",
+      text: "Not started · Coming soon",
+      done: 0,
+      total: 0,
+    };
   const statuses = chapter.topics.map((t) => topicStatus(t, progress));
   const done = statuses.filter((t) => t.completed).length;
   const total = statuses.length;
@@ -164,40 +172,46 @@ export function CourseTopics({ course }: { course: Course }) {
                 </span>
                 <span className={styles.chapterBar} aria-hidden="true">
                   <i
-                    style={{ width: `${(100 * status.done) / status.total}%` }}
+                    style={{
+                      width: `${status.total ? (100 * status.done) / status.total : 0}%`,
+                    }}
                   />
                 </span>
               </summary>
-              <ol className={styles.chapterTopics}>
-                {chapter.topics.map((topic) => {
-                  const isNext = topic.id === next.topic.id;
-                  const topicState = topicStatus(topic, progress);
-                  const preview = rowPreview(topic.preview);
-                  return (
-                    <TopicRow
-                      key={topic.id}
-                      title={topic.title}
-                      href={topicHref(course, topic)}
-                      route={topic.summary}
-                      status={topicState.text}
-                      statusMuted={!topicState.started}
-                      completed={topicState.completed}
-                      visual={
-                        preview ? (
-                          <PreviewBoard preview={preview} size="sm" bare />
-                        ) : undefined
-                      }
-                      reserveVisual
-                      action={
-                        isNext
-                          ? next.primary
-                          : quietAction(topicRowAction(course, topic, progress))
-                      }
-                      emphasis={isNext ? "primary" : "quiet"}
-                    />
-                  );
-                })}
-              </ol>
+              {chapter.topics.length > 0 && (
+                <ol className={styles.chapterTopics}>
+                  {chapter.topics.map((topic) => {
+                    const isNext = topic.id === next.topic.id;
+                    const topicState = topicStatus(topic, progress);
+                    const preview = rowPreview(topic.preview);
+                    return (
+                      <TopicRow
+                        key={topic.id}
+                        title={topic.title}
+                        href={topicHref(course, topic)}
+                        route={topic.summary}
+                        status={topicState.text}
+                        statusMuted={!topicState.started}
+                        completed={topicState.completed}
+                        visual={
+                          preview ? (
+                            <PreviewBoard preview={preview} size="sm" bare />
+                          ) : undefined
+                        }
+                        reserveVisual
+                        action={
+                          isNext
+                            ? next.primary
+                            : quietAction(
+                                topicRowAction(course, topic, progress),
+                              )
+                        }
+                        emphasis={isNext ? "primary" : "quiet"}
+                      />
+                    );
+                  })}
+                </ol>
+              )}
             </details>
           </section>
         );
