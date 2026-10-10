@@ -38,7 +38,7 @@ Nothing else is edited: the schema, grader, step helpers and stage pick the kind
 `bit-grouping`, `circuit-predict`, `column-addition`, `memory-map` (CPET181 Ch2), `multiple-choice`, `numeric` (with its
 contexts, including the bit row), `place-value`, `repeated-division`.
 
-`shared/` holds what several kinds use: `Prompt`, the worked contexts above a numeric or
+`shared/` holds what several kinds use: `Prompt`, the built-in `Calculator` (#579: pre-loaded expression, press =, never fills an answer), the worked contexts above a numeric or
 multiple-choice question (`ContextView`, `BitGroups`, `contextSpec.ts`), and their text styles.
 `shared/figures/` is the figure layer (ADR-0009): the drawings several kinds and the stage use
 (`DeviceFigure`, `LatchFigure`), their one style sheet, `figureSpec.ts` (the `figure` field of a
