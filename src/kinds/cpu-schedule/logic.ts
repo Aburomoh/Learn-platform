@@ -1,4 +1,4 @@
-import { schedule, type Policy, type Schedule } from "@/content/os";
+import { schedule, type Policy, type Schedule, type Segment } from "@/content/os";
 import type { KindLogic } from "../types";
 import type { CpuScheduleSpec } from "./spec";
 
@@ -73,6 +73,24 @@ export function truth(spec: CpuScheduleSpec): Schedule {
 
 export const round2 = (v: number) => Math.round(v * 100) / 100;
 
+const sameSegments = (a: Segment[], b: Segment[]) => a.length === b.length && a.every((s, i) => s.job === b[i].job && Math.abs(s.start - b[i].start) < 1e-9 && Math.abs(s.end - b[i].end) < 1e-9);
+
+/**
+ * Identify mode (#595 review): every (policy, quantum) that draws the same chart as the spec's.
+ * FCFS = SJN when no two jobs ever wait together, SJN = SRT without a shorter arrival, RR = FCFS
+ * when every burst fits the quantum, and several quanta can give one RR chart. A spec is only
+ * askable when this list has a single entry; the schema rejects the rest (option b: one clear answer).
+ */
+export function equivalentPolicies(spec: CpuScheduleSpec): { policy: Policy; quantum?: number }[] {
+  const target = truth(spec).segments;
+  const out: { policy: Policy; quantum?: number }[] = [];
+  const policies: Policy[] = ["fcfs", "sjn", "srt", ...(spec.jobs.every((j) => j.priority !== undefined) ? (["priority"] as Policy[]) : [])];
+  for (const policy of policies) if (sameSegments(schedule(spec.jobs, policy).segments, target)) out.push({ policy });
+  const maxBurst = Math.max(...spec.jobs.map((j) => j.cpu));
+  for (let q = 1; q <= maxBurst; q++) if (sameSegments(schedule(spec.jobs, "rr", { quantum: q }).segments, target)) out.push({ policy: "rr", quantum: q });
+  return out;
+}
+
 /** CPU time left for each job after the first `n` segments. */
 export function remainingAfter(spec: CpuScheduleSpec, n: number): Record<string, number> {
   const left: Record<string, number> = Object.fromEntries(spec.jobs.map((j) => [j.id, j.cpu]));
@@ -135,7 +153,6 @@ export const cpuSchedule: KindLogic<CpuScheduleSpec, CpuScheduleAnswer> = {
       const ready = g.ready;
       // ran a job that has not arrived (or is finished), or idled while a job was ready
       if (picked === "idle" ? ready.length > 0 : !ready.includes(picked)) return done(false, normalized, "arrival-ignored");
-      const p = byId[picked];
       let slip: string | undefined;
       if (spec.policy === "sjn" || spec.policy === "srt") {
         const earliest = ready.reduce((a, b) => (byId[b].arrival < byId[a].arrival ? b : a));
@@ -149,7 +166,7 @@ export const cpuSchedule: KindLogic<CpuScheduleSpec, CpuScheduleAnswer> = {
         if (picked === reversed) slip = "priority-reversed";
       } else if (spec.policy === "rr") {
         slip = "rr-queue-order";
-      } else if (spec.policy === "fcfs" && p.arrival > byId[want]?.arrival) slip = undefined;
+      }
       return done(false, normalized, slip);
     }
 
@@ -198,7 +215,9 @@ export const cpuSchedule: KindLogic<CpuScheduleSpec, CpuScheduleAnswer> = {
       const all = goals(spec);
       const g = all[i];
       const t = truth(spec);
-      const base = { stepNumber: i + 1, stepCount: all.length, policyName: POLICY_NAME[spec.policy], policyShort: POLICY_SHORT[spec.policy], quantum: spec.quantum ?? "", jobCount: spec.jobs.length, segmentCount: t.segments.length, unit: spec.unit };
+      // identify mode: nothing that names the answer (policy, quantum) reaches a hint template
+      const identify = spec.mode === "identify";
+      const base = { stepNumber: i + 1, stepCount: all.length, policyName: identify ? "" : POLICY_NAME[spec.policy], policyShort: identify ? "" : POLICY_SHORT[spec.policy], quantum: identify ? "" : (spec.quantum ?? ""), jobCount: spec.jobs.length, segmentCount: t.segments.length, unit: spec.unit };
       switch (g.tag) {
         case "job":
           return { ...base, segmentNumber: g.segment + 1, time: g.time, readyList: g.ready.join(", "), jobId: g.job ?? "idle" };

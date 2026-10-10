@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { VariantSchema, type Variant } from "@/content/schema";
-import { cpuSchedule, goals, type CpuScheduleAnswer } from "./logic";
+import { cpuSchedule, equivalentPolicies, goals, type CpuScheduleAnswer } from "./logic";
 import type { CpuScheduleSpec } from "./spec";
 
 const base = {
@@ -113,8 +113,24 @@ describe("cpu-schedule: preemptive and priority policies", () => {
     expect(grade(v, 0, { policy: "fcfs" })).toMatchObject({ correct: false });
     expect(grade(v, 1, { value: 4 })).toMatchObject({ correct: true, partial: false });
     expect(grade(v, 1, { value: 3 })).toMatchObject({ correct: false });
-    const sjnId = variant({ policy: "sjn", mode: "identify", jobs: J([["A", 0, 7], ["B", 2, 4]]) });
+    const sjnId = variant({ policy: "sjn", mode: "identify", jobs: J([["A", 0, 6], ["B", 1, 3], ["C", 2, 1], ["D", 3, 4]]) }); // s.21
     expect(goals(sjnId.spec as CpuScheduleSpec).map((x) => x.tag)).toEqual(["policy"]);
+  });
+
+  it("identify mode rejects a chart that several policies or quanta draw (#595 review)", () => {
+    // s.17: three jobs all at 0, FCFS order = table order = ... SJN would reorder, but with A(0,15) first FCFS ≠ SJN;
+    // a set where nobody ever waits together: FCFS = SJN = SRT = RR for any quantum ≥ burst
+    const quiet: [string, number, number][] = [["A", 0, 2], ["B", 5, 3], ["C", 10, 1]];
+    expect(() => variant({ policy: "fcfs", mode: "identify", jobs: J(quiet) })).toThrow(/ambiguous chart/);
+    expect(equivalentPolicies({ kind: "cpu-schedule", policy: "fcfs", jobs: J(quiet), phases: ["timeline"], mode: "identify", unit: "ms" }).map((e) => e.quantum ?? e.policy)).toEqual(["fcfs", "sjn", "srt", 3]);
+    // s.33: RR q = 7 with every burst ≤ 7 is the FCFS chart
+    expect(() => variant({ policy: "rr", quantum: 7, mode: "identify", jobs: J([["A", 0, 7], ["B", 2, 4], ["C", 4, 3], ["D", 6, 5]]) })).toThrow(/ambiguous chart: FCFS/);
+    // s.31 (q = 4) and s.25 (SRT) are unique
+    expect(() => variant({ policy: "rr", quantum: 4, mode: "identify", jobs: J([["A", 0, 7], ["B", 2, 4], ["C", 4, 3], ["D", 6, 5]]) })).not.toThrow();
+    expect(() => variant({ policy: "srt", mode: "identify", jobs: J([["A", 0, 2], ["B", 1, 4], ["C", 2, 1], ["D", 4, 2]]) })).not.toThrow();
+    // identify mode exposes no policy-naming vars
+    const v = variant({ policy: "rr", quantum: 4, mode: "identify", jobs: J([["A", 0, 7], ["B", 2, 4], ["C", 4, 3], ["D", 6, 5]]) });
+    expect(cpuSchedule.steps!.vars(v.spec as CpuScheduleSpec, 0)).toMatchObject({ policyName: "", policyShort: "", quantum: "" });
   });
 
   it("phases can stop at the timeline, or skip it", () => {

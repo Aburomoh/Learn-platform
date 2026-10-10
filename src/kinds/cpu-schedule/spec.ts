@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { equivalentPolicies } from "./logic";
 
 export const Policy = z.enum(["fcfs", "sjn", "srt", "priority", "rr"]);
 export const Phase = z.enum(["timeline", "finish", "turnaround", "average"]);
@@ -36,6 +37,11 @@ export const CpuScheduleSpec = z
     const idx = s.phases.map((p) => order.indexOf(p));
     if (idx.some((v, i) => i > 0 && v <= idx[i - 1])) ctx.addIssue({ code: "custom", path: ["phases"], message: "phases must be timeline, finish, turnaround, average in that order" });
     if (s.phases.includes("average") && !s.phases.includes("turnaround")) ctx.addIssue({ code: "custom", path: ["phases"], message: "the average needs the turnaround column" });
+    // identify mode needs one clear answer: no other policy (or RR quantum) draws the same chart
+    if (s.mode === "identify" && (s.policy !== "rr" || s.quantum) && (s.policy !== "priority" || s.jobs.every((j) => j.priority !== undefined))) {
+      const same = equivalentPolicies({ ...s, phases: s.phases ?? ["timeline"], mode: "identify", unit: s.unit ?? "ms" });
+      if (same.length !== 1) ctx.addIssue({ code: "custom", path: ["mode"], message: `ambiguous chart: ${same.map((e) => (e.quantum ? `RR q=${e.quantum}` : e.policy.toUpperCase())).join(", ") || "no policy"} draw it` });
+    }
   });
 
 export type CpuScheduleSpec = z.infer<typeof CpuScheduleSpec>;
