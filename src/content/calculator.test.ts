@@ -4,6 +4,7 @@ import { stepCount, stepTag, stepVars } from "./steps";
 import { fill } from "./template";
 import { evaluateExpression } from "@/kinds/shared/calc";
 import { exactValue } from "@/kinds/base-to-decimal/logic";
+import { goals as scheduleGoals } from "@/kinds/cpu-schedule/logic";
 
 /**
  * Calculator call sites (#578): each pre-loaded expression must evaluate to the step's answer, so the
@@ -30,10 +31,15 @@ describe("calculator expressions", () => {
                     expect(i, `${where}: no step tagged ${tag}`).toBeDefined();
                     vars = { ...v.vars, ...stepVars(v.spec, i!) };
                     if (v.spec.kind === "base-to-decimal" && tag === "sum") answer = exactValue(v.spec);
+                    if (v.spec.kind === "cpu-schedule" && tag === "average") {
+                      const g = scheduleGoals(v.spec).find((x) => x.tag === "average");
+                      answer = g && g.tag === "average" ? String(g.value) : undefined;
+                    }
                   }
                   const got = evaluateExpression(fill(template, vars));
                   expect(answer, `${where}: ${tag} has no single numeric answer to compare`).toBeDefined();
-                  expect(got, `${where}: ${tag}`).toBeCloseTo(Number(answer), 9);
+                  // the average is asked to two decimals; the expression gives the unrounded value
+                  expect(got, `${where}: ${tag}`).toBeCloseTo(Number(answer), v.spec.kind === "cpu-schedule" ? 2 : 9);
                   checked++;
                 }
               }
