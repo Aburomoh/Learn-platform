@@ -98,6 +98,12 @@ describe("chapters (#198 §9, #232)", () => {
     expect(chapterStatus(ch1, { activities: done(ch1.topics) })).toMatchObject({ state: "done", text: "Completed" });
   });
 
+  it("a comingSoon chapter (no topics) is Not started · Coming soon, never Completed (#562)", () => {
+    const soon = { ...ch1, id: "soon", topics: [], comingSoon: true };
+    expect(chapterStatus(soon, none)).toEqual({ state: "new", text: "Not started · Coming soon", done: 0, total: 0 });
+    expect(chapterStatus(soon, { activities: done(ch1.topics) })).toMatchObject({ state: "new" });
+  });
+
   it("the number has its own tile, so the title drops the 'Chapter n ·' prefix", () => {
     expect(chapterTitle({ ...ch1, title: "Chapter 1 · Digital Systems and Binary Numbers" })).toBe("Digital Systems and Binary Numbers");
     expect(chapterTitle({ ...ch1, title: "Sequential circuits" })).toBe("Sequential circuits");
