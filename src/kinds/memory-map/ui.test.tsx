@@ -143,7 +143,10 @@ describe("memory-map kind in the stage (#561)", () => {
     await screen.findByText(/Relocation register of P3 \(bytes\)/);
     expect([...document.querySelectorAll("[data-column$='-after'] [data-block]")].map((b) => b.textContent)).toEqual(["P1 12", "P3 20", "free 58"]);
     const field = screen.getByRole("textbox", { name: /Relocation register of P3/ });
-    await user.type(field, "−28672"); // U+2212 is accepted
+    await user.type(field, "−{Enter}"); // a lone minus is not an attempt (#574)
+    expect(screen.queryByText("Not correct yet.")).toBeNull();
+    expect(screen.getByRole("button", { name: "Check register" })).toBeDisabled();
+    await user.type(field, "28672"); // U+2212 is accepted
     await user.click(screen.getByRole("button", { name: "Check register" }));
     expect(await screen.findByText("Correct.")).toBeInTheDocument();
     expect(screen.getByText(/P3: -28 KB × 1024 = -28672/)).toBeInTheDocument();

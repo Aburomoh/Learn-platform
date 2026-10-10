@@ -54,6 +54,12 @@ export function blockHeights(
 
 const waste = (r: Region) => r.size - r.jobSize;
 
+/** A field's text as a number; an incomplete entry ("-", "9.") is no attempt (#574). */
+function answerNumber(text: string, submit: (n: number) => void) {
+  const n = Number(text);
+  if (Number.isFinite(n)) submit(n);
+}
+
 /**
  * The slide's memory column (Ch2): OS at the top, blocks in address order, addresses at each
  * boundary. Free blocks are hatched, busy ones solid; in a fixed partition the job fills its share
@@ -714,7 +720,7 @@ export function MemoryMap({
               disabled={!editing}
               submittedText={submitted?.value?.toString()}
               submitLabel="Check total"
-              onAnswer={(text) => onCheck({ value: Number(text) })}
+              onAnswer={(text) => answerNumber(text, (value) => onCheck({ value }))}
             />
           )}
           {!finished && onCheck && g.tag === "move" && (
@@ -726,7 +732,7 @@ export function MemoryMap({
               disabled={!editing}
               submittedText={submitted?.start?.toString()}
               submitLabel="Check address"
-              onAnswer={(text) => onCheck({ start: Number(text) })}
+              onAnswer={(text) => answerNumber(text, (start) => onCheck({ start }))}
             />
           )}
           {!finished && onCheck && g.tag === "register" && (
@@ -740,7 +746,7 @@ export function MemoryMap({
                 disabled={!editing}
                 submittedText={submitted?.value?.toString()}
                 submitLabel="Check register"
-                onAnswer={(text) => onCheck({ value: Number(text) })}
+                onAnswer={(text) => answerNumber(text, (value) => onCheck({ value }))}
               />
               <p className={styles.note}>
                 {g.job.id} moved from {g.relocation.oldStart} to{" "}

@@ -122,9 +122,9 @@ export function goals(spec: MemoryMapSpec): Goal[] {
       const touches = (r: Region | undefined) => (r && r.job === null ? r : null);
       const below = scheme === "fixed" ? null : touches(regions[i - 1]);
       const above = scheme === "fixed" ? null : touches(regions[i + 1]);
-      const start = below ? below.start : released.start;
-      const size = released.size + (below?.size ?? 0) + (above?.size ?? 0);
-      out.push({ tag: "release", event, before: regions, after, job: jobOf(spec, e.release), blockIndex: i, released, result: { start, size }, below, above });
+      // the free block that now covers the released address, as the truth module merged it
+      const merged = after.find((r) => r.job === null && r.start <= released.start && released.start < r.start + r.size)!;
+      out.push({ tag: "release", event, before: regions, after, job: jobOf(spec, e.release), blockIndex: i, released, result: { start: merged.start, size: merged.size }, below, above });
       regions = after;
     } else {
       const res = compact(regions, { unitBytes: UNIT_BYTES });
