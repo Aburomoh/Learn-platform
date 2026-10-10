@@ -10,10 +10,12 @@ describe("CPET181 registration (#562)", () => {
     expect(course.modules.map((m) => m.title.replace(/^Chapter \d+ · /, "").toLowerCase())).toEqual(outline.chapters.map((c) => c.title.toLowerCase()));
   });
 
-  it("has Chapter 1 live and chapters 2–9 comingSoon with no topics", () => {
-    expect(course.modules[0].comingSoon).toBeUndefined();
-    expect(course.modules[0].topics.length).toBeGreaterThan(0);
-    for (const m of course.modules.slice(1)) {
+  it("has Chapters 1 and 2 live and chapters 3–9 comingSoon with no topics", () => {
+    for (const m of course.modules.slice(0, 2)) {
+      expect(m.comingSoon, m.id).toBeUndefined();
+      expect(m.topics.length, m.id).toBeGreaterThan(0);
+    }
+    for (const m of course.modules.slice(2)) {
       expect(m.comingSoon, m.id).toBe(true);
       expect(m.topics, m.id).toHaveLength(0);
     }
