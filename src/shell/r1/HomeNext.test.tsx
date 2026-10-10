@@ -45,7 +45,7 @@ describe("HomeNext", () => {
     render(<HomeNext courses={courses} />);
     expect(screen.getByRole("heading", { level: 1, name: "Start here" })).toBeInTheDocument();
     expect(screen.getByText(product.tagline)).toBeInTheDocument();
-    expect(screen.getByText(new RegExp(product.owner.displayName))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(`Practice for ${product.owner.displayName}'s courses`))).toBeInTheDocument();
     const button = document.querySelector("[data-primary-action]")!;
     expect(document.querySelectorAll("[data-primary-action]")).toHaveLength(1);
     expect(button).toHaveTextContent("Start practice");
