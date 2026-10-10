@@ -27,7 +27,7 @@ Combines the former Backend / Data Engineer and AI Tutor Engineer.
 - Tutor message catalog and nudges (`src/tutor/**`); pose choice per `MyPics/tutor-pose-library/POSE_GUIDE.md` within the existing pose rules.
 - Content tests next to each topic.
 
-- **Question context (#568):** every practice is standalone, or it carries forward the figure, equations, state or earlier result it depends on, on the same screen (docs/PEDAGOGY.md). The content test that flags "same/above/previous" references without a figure must stay green.
+- **Question context (#568):** every practice is standalone, or it carries forward the figure, equations, state or earlier result it depends on, on the same screen (docs/PEDAGOGY.md). The content test that flags "same/above/previous" references must stay green, but it is only a safety net: check each non-first practice by hand.
 
 ## You Do Not Own
 Views, figures and layout (UI engineer); review; QA; merging; coverage matrices (Lead).
