@@ -47,6 +47,9 @@ Every practice must be one of these:
 
 Never rely on invisible references such as "the same circuit", "as above", "the previous question" or "from before" unless the object is shown again. For circuits, state machines, timing diagrams, memory maps and process tables, the student must **see** the object being reasoned about. Practices are reachable directly (course map, resume, deep links), so in-order reading is never assumed. Hints may refer to work on the same screen (for example `{previous}` within a derivation). The automated phrase guard is only a safety net: a practice can depend on invisible context without using any of those words, so the manual check by the author and the Reviewer, and QA's direct-entry check at gates, remain required.
 
+## Comparisons and definition tables (owner, 2026-10-10)
+When a source has a comparison table, contrasted concepts, an important definition table or a list of distinguishing characteristics, students are expected to **know and distinguish** it. Never leave it as passive reading. Turn it into activities: match a characteristic to its concept, A vs B, complete a partly filled comparison, match properties, tell apart easily confused definitions, predict or recognise, and short retrieval after the explanation. The order is understand → distinguish → recall → apply. The packs list these tables explicitly; nothing outside the source is added.
+
 ## Step size (owner rule, 2026-10-03)
 A question asks for one small step, never a whole procedure. Procedures taught in class are
 walked through in the same layout and order as the slides (for example: divide by 2 one step at

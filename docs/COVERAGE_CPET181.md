@@ -23,6 +23,8 @@ Teaching order (syllabus Fall 2025): C1, C2, C3, C8, C5, midterm, C4, C6, C7, C9
 - Fall 2025 as the authoritative syllabus;
 - figure fidelity to slides and Pedagogy chapter sign-off against slides (requested by the Lead per chapter; not a cloud gate).
 
+**Owner priority (2026-10-10):** the deepest treatment and most practice go to **C2 dynamic allocation** (first-fit, best-fit, allocation problems, deallocation, compaction and the relocation register) and **C4 CPU scheduling** (FCFS, SJN, SRT, Priority, RR: how each picks the next job, preemptive vs non-preemptive, Gantt construction, finish and turnaround, RR quantum behaviour, comparing algorithms, recognising an algorithm from its behaviour). Waiting time is named but not computed in the source, so it is not assessed. Comparison and definition tables in every chapter become activities (docs/PEDAGOGY.md).
+
 ## C1 Introduction (gate #529)
 | Topic | Source | Class | Covered | Interaction | Status |
 |---|---|---|---|---|---|
