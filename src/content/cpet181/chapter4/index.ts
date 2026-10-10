@@ -5,9 +5,10 @@
  */
 import type { ModuleInput } from "../../schema";
 import { fcfsSjnTopic, srtTopic, priorityTopic, roundRobinTopic, compareTopic } from "./schedule";
+import { schedulingConceptsTopic } from "./concepts";
 
 export const chapter4: ModuleInput = {
   id: "chapter-4",
   title: "Chapter 4 · Processor management",
-  topics: [fcfsSjnTopic, srtTopic, priorityTopic, roundRobinTopic, compareTopic],
+  topics: [schedulingConceptsTopic, fcfsSjnTopic, srtTopic, priorityTopic, roundRobinTopic, compareTopic],
 };
