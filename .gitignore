@@ -55,3 +55,6 @@ next-env.d.ts
 # owner's personal photos: never committed; a processed portrait is added deliberately
 /MyPics/
 /.tmp/
+
+# owner logo handoff (local only, #591)
+public/CET_Learn_Logo_Handoff.zip

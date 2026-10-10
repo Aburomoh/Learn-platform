@@ -15,8 +15,13 @@ describe("TopBar", () => {
     render(<TopBar />);
     const home = screen.getByRole("link", { name: `${product.name} home` });
     expect(home).toHaveTextContent(product.name);
-    expect(home.querySelector("img")).toHaveAttribute("src", product.brand.markSrc);
-    expect(home.querySelector("img")).toHaveAttribute("alt", "");
+    // the lockup and the icon mark both from config, decorative (the link's aria-label names home); CSS shows one (#591)
+    const imgs = home.querySelectorAll("img");
+    expect(imgs).toHaveLength(2);
+    expect(imgs[0]).toHaveAttribute("src", product.brand.logo.lockup);
+    expect(imgs[0]).toHaveAttribute("srcset", `${product.brand.logo.lockup2x} 2x`);
+    expect(imgs[1]).toHaveAttribute("src", product.brand.logo.icon);
+    for (const img of imgs) expect(img).toHaveAttribute("alt", "");
     expect(screen.getByRole("button", { name: "Profile and settings" })).toBeInTheDocument();
     expect(screen.queryByRole("navigation")).toBeNull(); // no breadcrumb trail
   });
