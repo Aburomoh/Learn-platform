@@ -85,7 +85,7 @@ const jobOf = (spec: MemoryMapSpec, id: string): MemJob => spec.jobs.find((j) =>
 /** Memory as the question begins: the blocks above the OS, address order. */
 export function initialRegions(spec: MemoryMapSpec): Region[] {
   let at = spec.os;
-  const blocks = spec.layout ?? spec.partitions.map((size) => ({ size, job: undefined }));
+  const blocks = spec.layout ?? (spec.partitions ?? []).map((size) => ({ size, job: undefined }));
   return blocks.map((b) => {
     const r: Region = { start: at, size: b.size, job: b.job ?? null, jobSize: b.job ? jobOf(spec, b.job).size : 0 };
     at += b.size;
@@ -147,7 +147,7 @@ export const memoryMap: KindLogic<MemoryMapSpec, MemoryMapAnswer> = {
     const g = all[answer.step];
     if (!g) throw new Error(`No memory-map step ${answer.step}`);
     const find = (type: string) => variant.misconceptions.find((m) => m.detect.type === type)?.id;
-    const partial = answer.step < all.length - 1 || undefined;
+    const partial = answer.step < all.length - 1;
     const done = (correct: boolean, normalized: string, slip?: string) => (correct ? { correct, normalized, partial } : { correct, normalized, misconceptionId: slip ? find(slip) : undefined });
 
     if (g.tag === "place") {
@@ -197,13 +197,7 @@ export const memoryMap: KindLogic<MemoryMapSpec, MemoryMapAnswer> = {
       if (merged && start === rel.start && size === rel.size) slip = "no-merge";
       else if (g.below && g.above && ((start === g.below.start && size === g.below.size + rel.size) || (start === rel.start && size === rel.size + g.above.size))) slip = "partial-merge";
       else if (g.below && start === rel.start && size === g.result.size) slip = "merge-wrong-start";
-      else {
-        const busyBelow = g.before[g.blockIndex - 1];
-        const busyAbove = g.before[g.blockIndex + 1];
-        const intoBelow = busyBelow && busyBelow.job !== null && start === busyBelow.start && size === busyBelow.size + rel.size + (g.above?.size ?? 0);
-        const intoAbove = busyAbove && busyAbove.job !== null && start === g.result.start && size === g.result.size + busyAbove.size;
-        if (intoBelow || intoAbove) slip = "merged-busy";
-      }
+      else if (start !== undefined && size !== undefined && g.before.some((r) => r.job !== null && r.start >= start && r.start + r.size <= start + size)) slip = "merged-busy";
       // the first wrong field only is marked: start (0) or size (1)
       return { ...done(false, normalized, slip), wrongCells: { first: start === g.result.start ? 1 : 0, count: (start === g.result.start ? 0 : 1) + (size === g.result.size ? 0 : 1) } };
     }

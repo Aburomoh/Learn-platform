@@ -28,7 +28,7 @@ export const MemoryMapSpec = z
     /** OS block at the bottom address (0). */
     os: z.number().int().min(0),
     /** Fixed: partition sizes in address order. Dynamic: the free block(s) above the OS, usually one. */
-    partitions: z.array(z.number().int().positive()).min(1).max(8),
+    partitions: z.array(z.number().int().positive()).min(1).max(8).optional(),
     /**
      * Memory as the question begins, when some jobs are already in it (a release or compaction
      * example, Ch2 s.25–37): blocks in address order, each free or holding one of `jobs`. Replaces
@@ -44,6 +44,7 @@ export const MemoryMapSpec = z
   .superRefine((s, ctx) => {
     const ids = s.jobs.map((j) => j.id);
     if (new Set(ids).size !== ids.length) ctx.addIssue({ code: "custom", message: "job ids must be distinct" });
+    if ((s.partitions === undefined) === (s.layout === undefined)) ctx.addIssue({ code: "custom", message: "give either partitions or layout" });
     const placed = new Set<string>();
     for (const b of s.layout ?? []) {
       if (b.job === undefined) continue;

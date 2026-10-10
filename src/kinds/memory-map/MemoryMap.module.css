@@ -38,10 +38,23 @@
   grid-template-columns: 1fr 1fr;
   column-gap: var(--space-3);
   justify-items: stretch;
+  align-items: start;
 }
 
 .pair .column {
   grid-template-columns: 36px minmax(0, 1fr);
+}
+
+.half {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  min-width: 0;
+}
+
+.pair .half {
+  justify-items: stretch;
+  align-content: start;
 }
 
 .pairTitle {
@@ -205,6 +218,12 @@
   color: var(--text-muted);
 }
 
+/* the Waits chip, last radio of the column's group */
+.tail {
+  grid-column: 2;
+  margin-top: var(--space-2);
+}
+
 .side {
   display: grid;
   gap: var(--space-3);
@@ -364,6 +383,13 @@
   .lists {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+/* a wide table scrolls inside its box, never the page */
+.tableBox {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .list {
