@@ -31,6 +31,11 @@ export const kindUI = {
     Explain: dynamic(() => import("./kmap/ui").then((m) => m.Explain)),
     Preload: dynamic(() => import("./kmap/ui").then((m) => m.Preload)),
   },
+  "memory-map": {
+    Practice: dynamic(() => import("./memory-map/ui").then((m) => m.Practice)),
+    Explain: dynamic(() => import("./memory-map/ui").then((m) => m.Explain)),
+    Preload: dynamic(() => import("./memory-map/ui").then((m) => m.Preload)),
+  },
   derivation: {
     Practice: dynamic(() => import("./derivation/ui").then((m) => m.Practice)),
     Explain: dynamic(() => import("./derivation/ui").then((m) => m.Explain)),

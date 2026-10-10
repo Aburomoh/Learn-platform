@@ -1,0 +1,429 @@
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  gap: var(--space-3);
+}
+
+/* column left, queue + table + controls right from 900 px; stacked below (spec §2.3) */
+.layout {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.layout > * {
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: 300px minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* the sunken well holding the memory column (and the Waits chip) */
+.well {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunk);
+}
+
+/* compaction: before and after side by side, half width each on phones (spec §2.7) */
+.pair {
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--space-3);
+  justify-items: stretch;
+}
+
+.pair .column {
+  grid-template-columns: 36px minmax(0, 1fr);
+}
+
+.pairTitle {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* addresses on the left edge, blocks on the right; each address sits on its boundary */
+.column {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 0 var(--space-2);
+  width: 100%;
+  max-width: 320px;
+}
+
+.addr {
+  align-self: start;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.column > .addr:first-child {
+  transform: none;
+}
+
+.block {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-height: var(--touch-min);
+  padding: 0 var(--space-2);
+  border: 2px solid var(--text);
+  border-top-width: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: center;
+  color: var(--text);
+}
+
+.column .block:first-of-type,
+.addr:first-child + .block {
+  border-top-width: 2px;
+}
+
+.os {
+  background: var(--surface-2);
+  color: var(--text-muted);
+}
+
+.busy {
+  background: var(--surface-2);
+  font-weight: 700;
+}
+
+/* free: a light diagonal hatch (shape, not colour alone) */
+.free {
+  background: repeating-linear-gradient(135deg, var(--surface) 0 6px, var(--surface-2) 6px 7px);
+  color: var(--text-muted);
+}
+
+/* a fixed partition: the job fills its share from the top, the leftover stays hatched */
+.partition {
+  background: repeating-linear-gradient(135deg, var(--surface) 0 6px, var(--surface-2) 6px 7px);
+}
+
+.fill {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: -1;
+  background: var(--surface-2);
+}
+
+.text {
+  position: relative;
+}
+
+.sub {
+  position: absolute;
+  left: 6px;
+  bottom: 2px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.fits {
+  position: absolute;
+  right: 6px;
+  top: 4px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+/* answer on it: a free block is a radio */
+.pickable {
+  cursor: pointer;
+}
+
+.pickable input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.pickable:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+.picked {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+  background: var(--focus-halo);
+  color: var(--text);
+}
+
+/* now: the halo behind the block the step is about */
+.halo {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  background: var(--focus-halo);
+  color: var(--text);
+}
+
+.releasing {
+  outline: 2px dashed var(--accent);
+  outline-offset: -4px;
+  background: var(--focus-halo);
+  color: var(--text);
+}
+
+.wrong {
+  outline: 2px solid var(--error);
+  outline-offset: -2px;
+  background: var(--error-bg);
+}
+
+.wrong .text::after {
+  content: " ✕";
+  color: var(--error);
+}
+
+/* compaction "after" column: not yet placed */
+.pending {
+  border-style: dashed;
+  background: var(--surface);
+  color: var(--text-muted);
+}
+
+.side {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+
+/* the job queue in arrival order */
+.queue {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.job {
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.job[data-status="placed"] {
+  opacity: 0.6;
+}
+
+.job[data-status="waits"] {
+  border-style: dashed;
+  color: var(--text-muted);
+}
+
+.job[data-status="now"] {
+  border: 2px solid var(--accent);
+  background: var(--focus-halo);
+}
+
+.job[data-status="later"] {
+  opacity: var(--pending-opacity);
+}
+
+@media (max-width: 640px) {
+  .queue {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: var(--space-1);
+  }
+  .job {
+    white-space: nowrap;
+  }
+}
+
+.form {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.num {
+  width: 80px;
+  height: var(--touch-min);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: var(--text-md);
+  text-align: center;
+  color: var(--text);
+}
+
+.num:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.unit {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.note {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* the Waits chip under the column (same group as the blocks) */
+.chip {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 56px;
+  height: var(--touch-min);
+  padding: 0 var(--space-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  font-size: var(--text-base);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.chipOn {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--surface);
+  box-shadow: inset 0 0 0 3px var(--surface);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.chipWrong {
+  border-color: var(--error);
+  background: var(--error-bg);
+  color: var(--text);
+  box-shadow: none;
+}
+
+/* bookkeeping tables as on the slides */
+.lists {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  .lists {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.list {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.list caption {
+  caption-side: top;
+  padding-bottom: var(--space-1);
+  font-weight: 700;
+  text-align: left;
+}
+
+.list th,
+.list td {
+  height: 36px;
+  padding: 0 var(--space-2);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.list th {
+  font-weight: 700;
+}
+
+.list tr[data-changed] td {
+  background: var(--highlight-soft);
+}
+
+.muted {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.unknown {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.cellInput {
+  width: 64px;
+  height: var(--touch-min);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: var(--text-base);
+  text-align: center;
+  color: var(--text);
+}
+
+.cellInput:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.wrongCell,
+.wrongCell .cellInput {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
