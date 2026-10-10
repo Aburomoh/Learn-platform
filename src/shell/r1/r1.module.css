@@ -345,9 +345,37 @@
   white-space: nowrap;
 }
 
+/* the icon mark beside the text name: phones and the dark theme (#591) */
 .mark {
-  width: 24px;
-  height: 24px;
+  width: auto;
+  height: 28px;
+}
+
+/* the horizontal lockup: light theme from 640 px; the guide's clear space is the link's own padding */
+.lockup {
+  display: none;
+  width: auto;
+  height: 48px;
+}
+
+@media (min-width: 640px) {
+  :root:not([data-theme="dark"]) .lockup,
+  :root[data-theme="system"] .lockup {
+    display: block;
+  }
+  :root:not([data-theme="dark"]) .mark,
+  :root:not([data-theme="dark"]) .brandName {
+    display: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root[data-theme="system"] .lockup {
+      display: none;
+    }
+    :root[data-theme="system"] .mark,
+    :root[data-theme="system"] .brandName {
+      display: inline-block;
+    }
+  }
 }
 
 .back {
