@@ -58,21 +58,22 @@ describe("hidden skip rules (#579, PEDAGOGY)", () => {
 });
 
 describe("SkipMenu", () => {
-  it("is a ⋯ disclosure: closed note when not allowed; entry → confirmation → skip; Escape closes", async () => {
+  it("renders nothing while locked (no ⋯, no unlock hint); once allowed: ⋯ → entry → confirmation → skip; Escape closes", async () => {
     const onSkip = vi.fn();
-    const { rerender } = render(<SkipMenu allowed={false} targetLabel="the next topic" onSkip={onSkip} />);
+    const { rerender, container } = render(<SkipMenu allowed={false} targetLabel="the next topic" onSkip={onSkip} />);
     const user = userEvent.setup();
+    expect(container).toBeEmptyDOMElement();
+    expect(screen.queryByText(/skip/i)).toBeNull();
+
+    rerender(<SkipMenu allowed targetLabel="the next topic" onSkip={onSkip} />);
     const button = screen.getByRole("button", { name: "More" });
     expect(button).toHaveAttribute("aria-haspopup", "true");
     expect(button).toHaveAttribute("aria-expanded", "false");
     await user.click(button);
-    expect(screen.getByText(/opens once you finish one practice/)).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Skip to the challenge" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Skip to the challenge" })).toBeInTheDocument();
     await user.keyboard("{Escape}");
     expect(button).toHaveAttribute("aria-expanded", "false");
     expect(button).toHaveFocus();
-
-    rerender(<SkipMenu allowed targetLabel="the next topic" onSkip={onSkip} />);
     await user.click(button);
     await user.click(screen.getByRole("button", { name: "Skip to the challenge" }));
     expect(screen.getByText(/Skip the remaining practice in this topic\? You can come back any time/)).toBeInTheDocument();

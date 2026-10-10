@@ -15,7 +15,8 @@ export interface SkipMenuProps {
  * The activity's "More" (⋯) menu with its single entry, "Skip to the challenge" (#579, PEDAGOGY
  * "Hidden skip"): a quiet disclosure in the stage header, never a primary action and never
  * suggested by the tutor. One confirmation inside the panel. Escape or a click outside closes it
- * and focus returns to the button. When the skip is not open yet, the panel says what unlocks it.
+ * and focus returns to the button. While the skip is locked nothing is rendered at all: no ⋯, no
+ * hint about how to unlock it (Lead on #601; the owner wants it hard to find).
  */
 export function SkipMenu({ allowed, targetLabel, onSkip }: SkipMenuProps) {
   const [open, setOpen] = useState(false);
@@ -25,7 +26,7 @@ export function SkipMenu({ allowed, targetLabel, onSkip }: SkipMenuProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || !allowed) return;
     const outside = (e: Event) => {
       if (!rootRef.current?.contains(e.target as Node)) close();
     };
@@ -37,6 +38,8 @@ export function SkipMenu({ allowed, targetLabel, onSkip }: SkipMenuProps) {
     setOpen(false);
     setConfirming(false);
   }
+
+  if (!allowed) return null;
 
   return (
     <div
@@ -54,9 +57,7 @@ export function SkipMenu({ allowed, targetLabel, onSkip }: SkipMenuProps) {
       </button>
       {open && (
         <div id={panelId} className={styles.morePanel}>
-          {!allowed ? (
-            <p className={styles.moreNote}>Skipping ahead opens once you finish one practice in this topic on your own, first try.</p>
-          ) : !confirming ? (
+          {!confirming ? (
             <button type="button" className="btn btn-quiet" onClick={() => setConfirming(true)}>
               Skip to the challenge
             </button>
