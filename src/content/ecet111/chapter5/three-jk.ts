@@ -21,14 +21,24 @@ const INPUT_EQS: [string, string][] = [["JA", "x'"], ["KA", "B"], ["JB", "Ax"], 
 /** State equations (s.39): JQ′ + K′Q with the inputs put in. */
 const NEXT = ["x'A' + AB'", "xAB' + BC'", "AC' + x'C"];
 const OUTPUT: [string, string] = ["y", "x + B'"];
-
 const show = (t: string) => t.replace(/'/g, "′");
+/** The circuit, restated in every prompt so each practice stands alone (#568). */
+const CIRCUIT = `Three JK flip-flops A, B, C with input x: ${INPUT_EQS.map(([l, e]) => `${l} = ${show(e)}`).join(", ")}; ${OUTPUT[0]} = ${show(OUTPUT[1])}.`;
+/** The circuit's block figure (ADR-0009): one flip-flop per state variable with its J and K. */
+const FIGURE = (output: boolean): VariantInput["figure"] => ({
+  type: "sequential",
+  input: "x",
+  ...(output ? { output: OUTPUT[0] } : {}),
+  flipFlops: VARS.slice(0, 3).map((name) => ({ name, ff: "jk" as const, equations: INPUT_EQS.filter(([l]) => l.endsWith(name)).map(([l, e]) => `${l} = ${e}`) })),
+});
+
 
 /* ---------- 1. the 16-row table, one column at a time (analysis order: inputs, next state, output) ---------- */
 
 const tableVariant: VariantInput = {
   id: "t3jk",
-  prompt: `Three JK flip-flops: ${INPUT_EQS.map(([l, e]) => `${l} = ${show(e)}`).join(", ")}; ${OUTPUT[0]} = ${show(OUTPUT[1])}. Fill the state table one column at a time: the flip-flop inputs, then the next state, then y.`,
+  prompt: `${CIRCUIT} Fill the state table one column at a time: the flip-flop inputs, then the next state, then y.`,
+  figure: FIGURE(true),
   spec: {
     kind: "truth-table",
     inputs: VARS,
@@ -66,7 +76,8 @@ const tableVariant: VariantInput = {
 
 const diagramVariant: VariantInput = {
   id: "d3jk",
-  prompt: "The same circuit's state diagram is drawn from its table, one arrow per row. Label each arrow x/y, in table order.",
+  prompt: `${CIRCUIT} Its state diagram is drawn from its table, one arrow per row. Label each arrow x/y, in table order.`,
+  figure: FIGURE(true),
   spec: { kind: "state-diagram", stateVars: ["A", "B", "C"], input: "x", next: NEXT, output: { name: OUTPUT[0], expr: OUTPUT[1] }, mode: "label", positions: RING },
   hints: [
     { rung: 2, text: "Not yet. Find the table row for this arrow: present state {from}, going to {to}." },
@@ -102,7 +113,8 @@ const TRACES: { id: string; x: Bit[] }[] = [
 function traceVariant({ id, x }: (typeof TRACES)[number], k: number): VariantInput {
   return {
     id,
-    prompt: "The same circuit, positive-edge triggered, starting at A B C = 0 0 0. At each rising edge give A, B and C just after it.",
+    prompt: `${CIRCUIT} Positive-edge triggered, starting at A B C = 0 0 0. At each rising edge give A, B and C just after it.`,
+    figure: FIGURE(false),
     spec: {
       kind: "timing",
       edge: "rising",

@@ -1027,6 +1027,10 @@ describe("authored truth is internally consistent", () => {
     for (const { path, variant } of allVariants()) expect(variant.prompt, path).not.toMatch(/\bs\.\d/);
   });
 
+  it("every practice stands alone: no prompt points back to an earlier circuit or design (#568)", () => {
+    for (const { path, variant } of allVariants()) expect(variant.prompt, path).not.toMatch(/the same (circuit|design|diagram|table|map|figure)/i);
+  });
+
   it("no student text shows a raw base subscript once split into notation (#465)", () => {
     const raw = /_(2|8|10|16)(?![0-9A-Za-z])/;
     let checked = 0;
