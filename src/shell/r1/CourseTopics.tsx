@@ -30,6 +30,7 @@ export function topicStatus(
   if (records.every(({ r }) => r?.status === "completed"))
     return { text: "Completed", completed: true, started: true };
   if (records.some(({ r }) => r && r.status !== "new")) {
+    const skipped = records.some(({ r }) => r?.status === "skipped");
     const done = records.reduce(
       (n, { a, r }) =>
         n +
@@ -39,7 +40,7 @@ export function topicStatus(
       0,
     );
     return {
-      text: `${done} of ${total} challenges done`,
+      text: `${done} of ${total} challenges done${skipped ? " · skipped ahead" : ""}`,
       completed: false,
       started: true,
     };
