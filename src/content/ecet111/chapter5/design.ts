@@ -187,9 +187,15 @@ function problemColumn(which: 0 | 1 | 2 | "Y"): Cell[] {
 const P_ONES = (cells: Cell[]) => P_ROWS.filter((m) => cells[m] === 1);
 const P_XS = (cells: Cell[]) => P_ROWS.filter((m) => cells[m] === "X");
 
+/** The state diagram, written as its arrows: "000 −0/1→ 000" is present state, X/Y, next state. Stated in the prompt so the practice stands alone (#568). */
+const bits3 = (n: number) => n.toString(2).padStart(3, "0");
+const DIAGRAM_TEXT = Object.entries(PROBLEM)
+  .flatMap(([from, [n0, y0, n1, y1]]) => [`${bits3(Number(from))} −0/${y0}→ ${bits3(n0)}`, `${bits3(Number(from))} −1/${y1}→ ${bits3(n1)}`])
+  .join(", ");
+
 const problemTable: VariantInput = {
   id: "p3",
-  prompt: "Chapter 5 design problem: flip-flops A, B, C, input X, output Y, from the state diagram. Fill the state table: next A, B, C, then Y. The unused states 101 and 111 are X.",
+  prompt: `Chapter 5 design problem: flip-flops A, B, C, input X, output Y. The state diagram has these arrows (present state −X/Y→ next state): ${DIAGRAM_TEXT}. Fill the state table: next A, B, C, then Y. The unused states 101 and 111 are X.`,
   spec: {
     kind: "truth-table",
     inputs: P_VARS,
@@ -200,7 +206,7 @@ const problemTable: VariantInput = {
     ],
   },
   hints: [
-    { rung: 2, text: "Not yet. For each row, find its present state on the diagram and follow the arrow for this X." },
+    { rung: 2, text: "Not yet. For each row, find its present state in the list of arrows and follow the arrow for this X." },
     { rung: 3, text: "The arrow's label is X/Y: its X picks the arrow, its Y is the output." },
     { rung: 4, text: "States 101 and 111 never occur: every entry on their rows is X." },
     { rung: 9, text: "{columnLabel} reads {columnValues}, top to bottom." },
@@ -233,11 +239,11 @@ const D_EQS = ([0, 1, 2] as const).map((ff) => {
 
 const problemTrace: VariantInput = {
   id: "pt",
-  prompt: "The same design, positive-edge triggered, starting at A B C = 0 0 0. At each rising edge give A, B and C just after it.",
+  prompt: `Three D flip-flops A, B, C with input X: ${D_EQS.map((e, i) => `D${"ABC"[i]} = ${e.replace(/'/g, "′")}`).join(", ")}. Positive-edge triggered, starting at A B C = 0 0 0. At each rising edge give A, B and C just after it.`,
   spec: { kind: "timing", edge: "rising", inputs: [{ name: "X", levels: PROBLEM_X.flatMap((v) => [v, v]) }], machine: { stateVars: ["A", "B", "C"], next: D_EQS, initial: [0, 0, 0] } },
   hints: [
     { rung: 2, text: "Not yet. Look only at edge {edgeNumber}: what was X just before it?" },
-    { rung: 3, text: "Follow the state diagram: from the state before the edge, take the arrow for this X." },
+    { rung: 3, text: "Use the equations: from the state before the edge and this X, work out DA, DB and DC; they are the state after the edge." },
     { rung: 5, text: "The input at this edge: {inputsAtEdge}.", focus: "inputs-at-edge", highlight: "inputs-at-edge" },
     { rung: 9, text: "Before the edge {stateBefore}; after it {stateAfter}." },
   ],
@@ -247,7 +253,7 @@ const problemTrace: VariantInput = {
     { id: "tm.wrong-edge", title: "Read X at the other edge", nudgeKey: "tm.wrong-edge", detect: { type: "wrong-edge" } },
   ],
   explanation: [
-    { id: "s1", say: "Each rising edge follows one arrow of the state diagram, starting from 000.", stage: { revealed: 0 } },
+    { id: "s1", say: "Each rising edge loads DA, DB and DC into A, B and C, starting from 000.", stage: { revealed: 0 } },
     { id: "s2", say: "X = 0 at the first edge: 000 stays at 000.", stage: { revealed: 1 } },
   ],
 };
