@@ -20,6 +20,8 @@ export interface Row {
   apply: string;
   /** Rung 3: a pointer that does not give the answer away. */
   hint: string;
+  /** A figure drawn above the options (ADR-0009); it must not show the answer. */
+  figure?: VariantInput["figure"];
 }
 
 const LETTERS = ["a", "b", "c", "d", "e"];
@@ -33,6 +35,7 @@ function variant(row: Row, k: number, shift: number): VariantInput {
   return {
     id: `v${k + 1}`,
     prompt: row.prompt,
+    ...(row.figure ? { figure: row.figure } : {}),
     spec: { kind: "multiple-choice", options: options.map((text, i) => ({ id: LETTERS[i], text })), correctOptionId: LETTERS[at] },
     hints: [
       { rung: 2, text: "Not yet. Read the question again and test the options one at a time." },
