@@ -17,29 +17,46 @@ const [topic, nextTopic] = (() => {
 })();
 
 describe("skip to next question (#579, #623, PEDAGOGY)", () => {
+  const none = (a: { questions: unknown[] }) => a.questions.map(() => false);
+
   it("opens only after one practice in the topic is completed first-try without Explain Slowly (gate unchanged)", () => {
     const [first] = topic.activities;
     let p = startActivity(emptyProgress(course.offeringId), first.id, 1);
-    expect(skipOffer(course, topic, first, p, 0).allowed).toBe(false);
+    expect(skipOffer(course, topic, first, p, 0, none(first)).allowed).toBe(false);
     p = completeActivity(p, first.id, false, 2); // hints were used
-    expect(skipOffer(course, topic, first, p, 0).allowed).toBe(false);
+    expect(skipOffer(course, topic, first, p, 0, none(first)).allowed).toBe(false);
     p = completeActivity(p, first.id, true, 3);
-    expect(skipOffer(course, topic, first, p, 0).allowed).toBe(true);
-    expect(skipOffer(course, topic, first, markExplained(p, first.id, 4), 0).allowed).toBe(false);
+    expect(skipOffer(course, topic, first, p, 0, none(first)).allowed).toBe(true);
+    expect(skipOffer(course, topic, first, markExplained(p, first.id, 4), 0, none(first)).allowed).toBe(false);
   });
 
   it("goes to the next question; from the last question to the next practice; from the last practice to the next topic", () => {
     const p = emptyProgress(course.offeringId);
     const [first, second] = topic.activities;
     const last = topic.activities[topic.activities.length - 1];
-    expect(skipOffer(course, topic, first, p, 0)).toMatchObject({ kind: "question", targetLabel: "the next question" });
-    expect(skipOffer(course, topic, first, p, 0).href).toBeUndefined();
-    const fromLastQuestion = skipOffer(course, topic, first, p, first.questions.length - 1);
+    expect(skipOffer(course, topic, first, p, 0, none(first))).toMatchObject({ kind: "question", targetLabel: "the next question" });
+    expect(skipOffer(course, topic, first, p, 0, none(first)).href).toBeUndefined();
+    const fromLastQuestion = skipOffer(course, topic, first, p, first.questions.length - 1, none(first));
     expect(fromLastQuestion).toMatchObject({ kind: "practice", href: `/courses/${course.id}/${topic.id}/${second.id}/` });
     expect(fromLastQuestion.targetLabel).toContain(second.title);
-    const fromLastPractice = skipOffer(course, topic, last, p, last.questions.length - 1);
+    const fromLastPractice = skipOffer(course, topic, last, p, last.questions.length - 1, none(last));
     expect(fromLastPractice).toMatchObject({ kind: "topic", href: `/courses/${course.id}/${nextTopic.id}/` });
     expect(fromLastPractice.targetLabel).toContain(nextTopic.title);
+  });
+
+  it("after a wrap-around (challenge 1 skipped, the rest done) the offer leaves the practice: never a dead Skip", () => {
+    const p = emptyProgress(course.offeringId);
+    const [first, second] = topic.activities;
+    const completed = first.questions.map((_, i) => i > 0); // back on challenge 1, everything after it finished
+    const offer = skipOffer(course, topic, first, p, 0, completed);
+    expect(offer.kind).toBe("practice");
+    expect(offer.href).toBe(`/courses/${course.id}/${topic.id}/${second.id}/`);
+    // the reducer agrees: nothing after this one to open
+    const reducer = createRunnerReducer(first);
+    const s = { ...reducer(initialRunnerState(first), { type: "OPEN" }), completed };
+    expect(reducer(s, { type: "SKIP_QUESTION" })).toBe(s);
+    // with an unfinished question later on, the offer stays in the practice
+    expect(skipOffer(course, topic, first, p, 0, first.questions.map((_, i) => i === 1)).kind).toBe("question");
   });
 
   it("records the skipped question only: the practice stays unfinished, reads as skipped ahead, resumes at the skipped question; done later, it is no longer skipped", () => {

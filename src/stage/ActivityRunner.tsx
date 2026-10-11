@@ -177,7 +177,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
 
   // The hidden skip (#579, #623): from the ⋯ menu only; the question is recorded as skipped and the
   // runner moves to the next one, or the page leaves for the next practice or topic.
-  const skip = skipOffer(course, topic, activity, progress, state.qIndex);
+  const skip = skipOffer(course, topic, activity, progress, state.qIndex, state.completed);
   const doSkip = () => {
     // written to the store and to storage before the page changes (a React-batched update would be lost)
     getProgressStore(offeringId).set((p) => skipQuestion(p, activity.id, question.id));

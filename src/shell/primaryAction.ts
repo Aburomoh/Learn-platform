@@ -112,16 +112,19 @@ export interface SkipOffer {
 }
 
 /**
- * Skip to next question (owner, #623): from a question to the next one of the practice; from the
- * last question to the next practice's first; from the last practice of a topic to the next topic.
- * Only the skipped question is recorded (`skipQuestion`); the practice is never completed by a skip.
+ * Skip to next question (owner, #623): from a question to the next unfinished one of the practice
+ * (`completed` is the runner's per-question state, so after a wrap-around with nothing left after
+ * this question the skip leaves the practice instead); from there to the next practice's first
+ * question; from the last practice of a topic to the next topic. Only the skipped question is
+ * recorded (`skipQuestion`); the practice is never completed by a skip.
  */
-export function skipOffer(course: Course, topic: Topic, activity: Activity, progress: Progress, qIndex: number): SkipOffer {
+export function skipOffer(course: Course, topic: Topic, activity: Activity, progress: Progress, qIndex: number, completed: readonly boolean[]): SkipOffer {
   const allowed = topic.activities.some((a) => {
     const r = progress.activities[a.id];
     return r?.status === "completed" && r.independent && !r.explained;
   });
-  if (qIndex < activity.questions.length - 1) return { allowed, kind: "question", targetLabel: "the next question" };
+  const nextUnfinished = activity.questions.findIndex((_, i) => i > qIndex && !completed[i]);
+  if (nextUnfinished >= 0) return { allowed, kind: "question", targetLabel: "the next question" };
   const i = topic.activities.findIndex((a) => a.id === activity.id);
   const nextPractice = i >= 0 ? topic.activities[i + 1] : undefined;
   if (nextPractice) return { allowed, kind: "practice", href: practiceHref(course, topic, nextPractice), targetLabel: `the next practice, ${nextPractice.title}` };
