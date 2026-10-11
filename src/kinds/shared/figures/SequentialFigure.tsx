@@ -32,6 +32,7 @@ const FF_H = 56;
 const PITCH = 84;
 const BUS_X = 196;
 const TAP_X = 276; // where a Q line branches into its feedback
+/** Never drawn below this scale: 15-unit text stays at or above 12 px. The min-height keeps the phone height cap (`.figure .svg`) from shrinking a tall figure further (#654). */
 export const MIN_SCALE = 0.8;
 
 /**
@@ -72,7 +73,7 @@ export function SequentialFigure({ flipFlops, input, output, focus, marks = fals
 
   return (
     <div className={styles.well}>
-      <svg viewBox={marks ? `0 -26 ${width} ${height + 26}` : `0 0 ${width} ${height}`} className={`${styles.svg} ${styles.center}`} style={{ maxWidth: Math.round(width * 1.25), minWidth: Math.round(width * MIN_SCALE) }} role="img" aria-label={summary} {...focusTarget("circuit")}>
+      <svg viewBox={marks ? `0 -26 ${width} ${height + 26}` : `0 0 ${width} ${height}`} className={`${styles.svg} ${styles.center}`} style={{ maxWidth: Math.round(width * 1.25), minWidth: Math.round(width * MIN_SCALE), minHeight: Math.round((height + (marks ? 26 : 0)) * MIN_SCALE) }} role="img" aria-label={summary} {...focusTarget("circuit")}>
         {marks && <Marks xs={[BLOCK_X + BLOCK_W / 2, FF_X + FF_W / 2, 322]} y={-12} />}
         {/* feedback: each Q around the outside, back into the gate block */}
         {flipFlops.map((f, i) => {
