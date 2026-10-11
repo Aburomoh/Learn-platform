@@ -213,6 +213,13 @@ export const analysisStateActivity: Activity = {
 
 /* ---------- stage 3 (#314): the state table, one column at a time, groups in the analysis order ---------- */
 
+/** The flip-flop rule a hint may state, by the first letter of its input labels (#618: a hint never points at a table that is not shown). */
+const NEXT_RULE: Record<string, string> = {
+  D: "a D flip-flop's next state is its D input",
+  T: "T = 1 flips the state, T = 0 keeps it",
+  J: "J K = 0 0 keeps the state, 1 0 sets it, 0 1 resets it, 1 1 flips it",
+};
+
 function tableVariant(c: Circuit): VariantInput {
   const columns = [
     ...c.inputs.map(([label, expr]) => ({ id: label.toLowerCase(), label, expr, group: "Flip-flop inputs" })),
@@ -229,7 +236,7 @@ function tableVariant(c: Circuit): VariantInput {
     hints: [
       { rung: 2, text: "Not yet. Work out {columnLabel} on each row from that row's A, B and x." },
       { rung: 3, text: "Use the column's equation, {columnExpr}, one row at a time." },
-      { rung: 4, text: "For the next state, use the flip-flop inputs you already have on the same row and the flip-flop's table." },
+      { rung: 4, text: `For the next state, use the flip-flop inputs you already have on the same row: ${NEXT_RULE[c.inputs[0][0][0]] ?? "apply the flip-flop's rule"}.` },
       { rung: 9, text: "{columnLabel} reads {columnValues}, top to bottom." },
     ],
     misconceptions: [
