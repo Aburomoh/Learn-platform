@@ -736,10 +736,10 @@ describe("content registry", () => {
   it("timing diagrams (#298): the slides' worked diagrams reproduce, and every set is valid", () => {
     const x = getActivity(COURSE, "timing", "timing-diagrams")!.activity;
     const q = (v: (typeof x.questions)[number]["variants"][number]) => (v.spec.kind === "timing" ? statesAfterEdges(v.spec).map((s) => s.join("")).join(" ") : "");
-    const [rising, falling] = x.questions;
-    expect(q(rising.variants[0])).toBe("0 1 0 1 1"); // s.17–20
-    expect(q(rising.variants[1])).toBe("0 1 0 1 1 0 0"); // s.32–33
-    for (const v of [...rising.variants, ...falling.variants]) expect(q(v).length, v.id).toBeGreaterThan(0);
+    const [sr, d, ...rest] = x.questions;
+    expect(q(sr.variants[0])).toBe("0 1 0 1 1"); // s.17–20
+    expect(q(d.variants[0])).toBe("0 1 0 1 1 0 0"); // s.32–33
+    for (const v of [...sr.variants, ...d.variants, ...rest.flatMap((r) => r.variants)]) expect(q(v).length, v.id).toBeGreaterThan(0);
   });
 
   it("digit replacement (#214): bits and checks from the pack (s.21, s.20 owner S4, s.27–28, s.29–30, s.22)", () => {
