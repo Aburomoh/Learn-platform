@@ -261,7 +261,7 @@ const MemoryTableFigure = z
  * context). Content gives the columns as the slide prints them; `output` columns follow the inputs
  * behind a rule. Nothing is computed, highlighted or revealed. An optional flip-flop symbol sits beside it.
  */
-const tableCell = z.union([bit, z.literal("X"), z.string().min(1).max(6)]);
+const tableCell = z.union([bit, z.literal("X"), z.string().min(1).max(14)]);
 const TableFigure = z
   .object({
     type: z.literal("table"),

@@ -27,6 +27,9 @@ describe("table figure: a given table, read-only (#617)", () => {
     expect(ok({ ...jk, columns: [jk.columns[3], jk.columns[0]] })).toBe(false); // an input after an output
     expect(ok({ ...jk, columns: [jk.columns[0]] })).toBe(false); // one column is a list, not a table
     expect(ok({ type: "table", title: "SR excitation table", columns: [{ header: "Q", values: [0, 0, 1, 1] }, { header: "Q(t+1)", values: [0, 1, 0, 1] }, { header: "S", values: [0, 1, 0, "X"], role: "output" }, { header: "R", values: ["X", 0, 1, 0], role: "output" }] })).toBe(true);
+    // word cells for case and comparison tables (Ch6 readers/writers, Ch7 devices): up to 14 characters
+    expect(ok({ type: "table", title: "Readers and writers", columns: [{ header: "Process 1", values: ["Writing", "Reading", "Reading", "Writing"] }, { header: "Process 2", values: ["Reading", "Reading", "Writing", "Writing"] }, { header: "Allowed?", values: ["No", "Yes", "No", "No"], role: "output" }] })).toBe(true);
+    expect(ok({ type: "table", title: "t", columns: [{ header: "a", values: ["a sentence that is far too long", "b"] }, { header: "b", values: [0, 1] }] })).toBe(false);
     expect(figurePins(figure(jk))).toEqual([]);
     expect(FigureSpec.parse({ ...jk, revealedRows: [1] })).not.toHaveProperty("revealedRows");
   });
