@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "description": "Interactive course companion for CET courses (Learning Shell, Learning Stage, Interaction Engine, rule-based Tutor).",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/build-l10n.mjs",
@@ -37,12 +39,15 @@
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
     "jsdom": "^28.1.0",
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4",
     "typescript": "^5",
     "vitest": "^5.0.3"
   }

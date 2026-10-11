@@ -1107,6 +1107,66 @@
   gap: var(--space-7);
 }
 
+/* ---- ShareCard (#657): the QR code on a light tile, caption and address; secondary, calm ---- */
+.share {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: center;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-1, var(--shadow-2));
+}
+
+/* always dark modules on a light tile, in dark mode too, with the quiet zone inside the SVG */
+.shareTile {
+  width: 134px; /* the symbol itself 124 px on phones (owner: at least about 120) */
+  flex: none;
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+  background: #fff;
+  border: 1px solid var(--border);
+}
+
+.shareQr {
+  display: block;
+  width: 100%;
+  height: auto;
+  fill: #111;
+}
+
+.shareText {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.shareTitle {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+
+.shareLead {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.shareLink {
+  justify-self: start;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 640px) {
+  .shareTile {
+    width: 156px;
+  }
+}
+
 .panel {
   display: grid;
   gap: var(--space-5);
