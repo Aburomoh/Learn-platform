@@ -22,13 +22,27 @@ describe("CPET 181 Chapter 2 Pedagogy gate fixes (#637)", () => {
     }
   });
 
+  it("C2-2: the four schemes are told apart in one item, in the pack's order (#642)", () => {
+    const q = find("memory-schemes", "memory-schemes", "mt.q.four-schemes");
+    expect(q.variants.map((v) => correct(v).text)).toEqual(["Single-user contiguous", "Fixed partitions", "Dynamic partitions", "Relocatable dynamic partitions"]);
+    for (const v of q.variants) expect(correct(v).texts, v.id).toHaveLength(4);
+  });
+
+  it("the s.34 item says what the slide shows: the instruction text is unchanged, the register is added (53248 − 12288 = 40960)", () => {
+    expect(53248 - 12288).toBe(40960);
+    const v = find("relocatable-partitions", "compaction-terms", "rl.q.addresses").variants[3];
+    expect(v.prompt).toContain("Load 4, 53248");
+    expect(v.explanation.map((e) => e.say).join(" ")).toContain("The instruction still reads Load 4, 53248");
+    expect(v.explanation.map((e) => e.say).join(" ")).toContain("40960");
+  });
+
   it("bounds against relocation register, and addresses against data values, have their own items next to compaction", () => {
     expect(find("relocatable-partitions", "compaction-terms", "rl.q.registers").variants.map((v) => correct(v).text)).toEqual(["Bounds register", "Relocation register", "Relocation register", "Bounds register"]);
     expect(find("relocatable-partitions", "compaction-terms", "rl.q.addresses").variants.map((v) => correct(v).text)).toEqual([
       "The addresses in the program",
       "The data values",
       "It stays 37",
-      "The address the instruction refers to",
+      "The address it refers to, through the relocation register (53248 becomes 40960)",
     ]);
   });
 
@@ -84,6 +98,7 @@ describe("CPET 181 Chapter 2 Pedagogy gate fixes (#637)", () => {
       ["memory-schemes", "partition-kinds", "mt.q.deallocation"],
       ["relocatable-partitions", "compaction-terms", "rl.q.registers"],
       ["relocatable-partitions", "compaction-terms", "rl.q.addresses"],
+      ["memory-schemes", "memory-schemes", "mt.q.four-schemes"],
       ["fixed-partitions", "fixed-partitions", "fx.q.efficient"],
     ]) {
       const q = find(topic, activity, id);

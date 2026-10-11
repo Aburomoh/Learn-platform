@@ -357,7 +357,7 @@ const addressesQuestion = mcq("rl.q.addresses", "Addresses or data", "rl.compact
   addrRow("Compaction moves a job. Which of these does the move adjust?", ADDRESS_KINDS[0], [ADDRESS_KINDS[1]], "Every address in the program is adjusted by the move.", "Which of the two says where something is?"),
   addrRow("Compaction moves a job. Which of these is left unchanged?", ADDRESS_KINDS[1], [ADDRESS_KINDS[0]], "Data values are left unchanged by the move.", "Which of the two is just a number to be used?"),
   addrRow("The value 37 is stored in a byte of a job, and compaction moves the job. What happens to the 37?", "It stays 37", ["It is increased by the relocation amount", "It becomes 0"], "A data value is not an address, so the move does not change it.", "Is 37 saying where something is, or what it is?"),
-  addrRow("An instruction of a job refers to the address 53248, and compaction moves the job up in memory. What has to be adjusted?", "The address the instruction refers to", ["The data stored at that address", "Nothing at all"], "An address inside a program is adjusted by the move; what is stored there is not.", "Which one is an address?"),
+  addrRow("An instruction of a job reads “Load 4, 53248”, and the 37 it loads sits at that address. Compaction moves the job up, so its relocation register is −12288 (bytes). What does the move adjust?", "The address it refers to, through the relocation register (53248 becomes 40960)", ["The data stored there (the 37)", "The relocation register stays 0"], "The instruction still reads Load 4, 53248; the relocation register (−12288) is added, so it reaches 40960, where the 37 now is.", "Which one is an address, and which is just a value?"),
 ]);
 
 /* ---------- topics ---------- */

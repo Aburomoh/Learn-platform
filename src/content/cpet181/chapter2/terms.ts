@@ -80,6 +80,16 @@ const fitQuestion = mcq("mt.q.fit", "First-fit or best-fit", "mt.fit", "mt.obj.f
   fit("Which method wastes the least space but is slower?", "Best-fit", ["First-fit"], "Best-fit has to compare the blocks, so it is slower, but it wastes least."),
 ]);
 
+const FOUR = "Single-user contiguous: one job owns all of memory, so there is no multiprogramming. Fixed partitions: partitions set at start-up, with internal fragmentation. Dynamic partitions: partitions sized per job, with external fragmentation (holes between jobs). Relocatable dynamic partitions: dynamic partitions plus compaction to merge the holes.";
+const FOUR_NAMES = ["Single-user contiguous", "Fixed partitions", "Dynamic partitions", "Relocatable dynamic partitions"];
+const four = (prompt: string, correct: string, apply: string, hint: string): Row => ({ prompt, correct, wrong: FOUR_NAMES.filter((n) => n !== correct), rule: FOUR, apply, hint });
+const fourQuestion = mcq("mt.q.four-schemes", "Which scheme", "mt.schemes", "mt.obj.four-schemes", [
+  four("One job owns all of memory, so there is no multiprogramming. Which scheme is this?", "Single-user contiguous", "One job owning all of memory is the single-user scheme.", "How many jobs are in memory at a time?"),
+  four("Memory is cut into partitions at start-up, and each job wastes the part of its partition that it does not use. Which scheme is this?", "Fixed partitions", "Partitions set at start-up with waste inside them: fixed partitions.", "Are the partitions set before or after the jobs arrive?"),
+  four("Each job gets a partition of exactly the size it needs, and free holes build up between the jobs. Which scheme is this?", "Dynamic partitions", "Partitions sized per job, with holes between jobs: dynamic partitions.", "Is the waste inside a partition or between them?"),
+  four("Dynamic partitions are used, and the jobs are moved together so that the holes merge into one free block. Which scheme is this?", "Relocatable dynamic partitions", "Dynamic partitions plus compaction are relocatable dynamic partitions.", "What is added to dynamic partitions to remove the holes?"),
+]);
+
 const PARTITIONS = "Fixed partitions: the sizes are set at start-up and stay static, so a job takes a whole partition and the waste is inside it (internal fragmentation). Dynamic partitions: each job gets exactly the size it asks for, at load time, and the waste is the holes left between jobs (external fragmentation).";
 const SCHEMES = ["Fixed partitions", "Dynamic partitions"];
 const other = (name: string) => SCHEMES.filter((s) => s !== name);
@@ -115,6 +125,7 @@ export const memorySchemesTopic: TopicInput = {
     { id: "mt.obj.single", conceptId: "mt.schemes", text: "State how the single-user scheme works and its drawbacks." },
     { id: "mt.obj.fragmentation", conceptId: "mt.fragmentation", text: "Tell internal from external fragmentation." },
     { id: "mt.obj.fit", conceptId: "mt.fit", text: "Tell first-fit from best-fit." },
+    { id: "mt.obj.four-schemes", conceptId: "mt.schemes", text: "Tell the single-user, fixed, dynamic and relocatable dynamic schemes apart." },
     { id: "mt.obj.partitions", conceptId: "mt.partitions", text: "Tell fixed partitions from dynamic partitions." },
     { id: "mt.obj.deallocation", conceptId: "mt.partitions", text: "Tell how a block is freed under fixed and under dynamic partitions." },
   ],
@@ -125,7 +136,7 @@ export const memorySchemesTopic: TopicInput = {
       summary: "Contiguous or not, the single-user scheme, which fragmentation, first-fit or best-fit.",
       authority: "DEMO",
       minutes: 10,
-      questions: [contiguousQuestion, singleQuestion, fragQuestion, fitQuestion],
+      questions: [contiguousQuestion, singleQuestion, fragQuestion, fitQuestion, fourQuestion],
     },
     {
       id: "partition-kinds",
