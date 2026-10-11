@@ -156,8 +156,40 @@ const GatesFigure = z
     }
   });
 
+/**
+ * A physical record organisation (CPET181 Ch8 s.7–9, #605): the sequential, direct or indexed
+ * sequential file as a picture. `records` are the keys in file order; `key` lights the search path
+ * to one record (sequential: the sweep from the start; direct: key → address → slot; indexed: the
+ * index entry, then the block, then the record). Nothing is graded on the drawing.
+ */
+const recordKey = z.string().min(1).max(6);
+const FileLayoutFigure = z
+  .object({
+    type: z.literal("file-layout"),
+    layout: z.enum(["sequential", "direct", "indexed"]),
+    records: z.array(recordKey).min(2).max(12),
+    key: recordKey.optional(),
+    /** Indexed: records per block (default 3). */
+    blockSize: z.number().int().min(2).max(6).optional(),
+    /** Direct: slots in the relative file (default: one per record). */
+    slots: z.number().int().min(2).max(12).optional(),
+    /** The part with the halo: file, hash, index, blocks. */
+    focus: z.enum(["file", "hash", "index", "blocks"]).optional(),
+    caption: z.string().min(1).max(200).optional(),
+  })
+  .superRefine((f, ctx) => {
+    if (new Set(f.records).size !== f.records.length) ctx.addIssue({ code: "custom", path: ["records"], message: "record keys must be distinct" });
+    if (f.key !== undefined && f.layout !== "direct" && !f.records.includes(f.key)) ctx.addIssue({ code: "custom", path: ["key"], message: `${f.key} is not in the file` });
+    if (f.layout === "indexed") {
+      const numeric = f.records.every((k) => Number.isFinite(Number(k)));
+      const sorted = numeric ? [...f.records].map(Number).every((v, i, a) => i === 0 || a[i - 1] < v) : [...f.records].every((k, i, a) => i === 0 || a[i - 1] < k);
+      if (!sorted) ctx.addIssue({ code: "custom", path: ["records"], message: "an indexed sequential file is ordered by key" });
+    }
+    if (f.layout === "direct" && f.slots !== undefined && f.slots < f.records.length) ctx.addIssue({ code: "custom", path: ["slots"], message: "fewer slots than records" });
+  });
+
 /** One figure per question, drawn by the stage above (or beside) any kind's answer area. */
-export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure]);
+export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, FileLayoutFigure]);
 export type FigureSpec = z.infer<typeof FigureSpec>;
 
 /** The pins a focus may name (`figure.focus`, `stage.figureFocus`). A latch figure has no focus state yet. */
@@ -171,6 +203,8 @@ export function figurePins(figure: FigureSpec): string[] {
       return [...flipFlopInputs(figure.ff), "Clk", "Q", "Q′"];
     case "sequential":
       return [...figure.flipFlops.map((f) => f.name), "gates"];
+    case "file-layout":
+      return figure.layout === "sequential" ? ["file"] : figure.layout === "direct" ? ["hash", "file"] : ["index", "blocks"];
     default:
       return [];
   }
