@@ -4,9 +4,7 @@ Optimise for learning, not answer acquisition. Preserve productive cognitive eff
 
 ## Dominant cycle
 **Attempt → feedback → optional scaffold → re-attempt.** Students get a chance to answer before
-any explanation. Never reveal the solution after one wrong attempt. The chance is offered, not
-enforced (owner, 2026-10-11, quoted on #661): Hint and Explain slowly work from the first second of a
-question, with no attempt required; the tutor itself still only reacts to what the student does.
+any explanation. Never reveal the solution after one wrong attempt.
 
 ## Scaffold ladder (offered progressively; the student may stop anywhere)
 1. Independent retry

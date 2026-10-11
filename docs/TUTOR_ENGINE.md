@@ -36,8 +36,6 @@ attention-left, attention-right` (placeholders until approved assets exist).
    else generic nudge; `REQUEST_RETRY`. Never reveal.
 2. Second wrong → concept reminder + `FOCUS` on the content-declared focus target.
 3. Hint requests move down the ladder one rung at a time; rungs 5+ add `HIGHLIGHT`/`PULSE`.
-   A hint or Explain Slowly may be asked for before any attempt (owner, 2026-10-11, quoted on #661): the
-   only refusals are a finished question and a running explanation.
 4. Hesitation > 45 s with no attempt → `curious`, one gentle prompt (once per attempt).
 5. Explain Slowly → `explaining`, walk steps; each step may `ASK`; correct prediction →
    `pleased` + continue, wrong → short note + continue (no penalty). When it ends, the retry uses

@@ -51,14 +51,9 @@ export const initialTutorState: TutorState = {
   expression: "neutral",
 };
 
-/**
- * Hints and Explain Slowly can be asked for at any time while the question is open (owner,
- * 2026-10-11, quoted on #661): no attempt or hesitation is required first. Only a finished question or a
- * running explanation says no. (`attempts` and `hesitationPrompted` still drive the tutor's own
- * reactions.)
- */
+/** Pedagogy gate: scaffolds open after an attempt or after visible hesitation. */
 export function canRequestScaffold(s: TutorState): boolean {
-  return s.stage !== "complete" && s.stage !== "explaining";
+  return s.stage !== "complete" && s.stage !== "explaining" && (s.attempts > 0 || s.hesitationPrompted);
 }
 
 export function nextHint(s: TutorState, ctx: ActivityContext): Hint | undefined {
