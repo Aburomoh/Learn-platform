@@ -16,6 +16,26 @@ describe("Chapter 5 flip-flop figures (#454)", () => {
   });
 
   it("every table and equation shows its flip-flop", () => {
-    for (const q of [...questions("flip-flop-tables"), ...questions("flip-flop-equations")]) for (const v of q.variants) expect(v.figure?.type, `${q.id}/${v.id}`).toBe("flip-flop");
+    for (const q of [...questions("flip-flop-tables"), ...questions("flip-flop-equations")]) {
+      for (const v of q.variants) {
+        // the equation questions name "this table" (#618), so the table is drawn, with the symbol beside it
+        if (q.id.startsWith("ff.q.eq-")) {
+          expect(v.figure?.type, `${q.id}/${v.id}`).toBe("table");
+          if (v.figure?.type === "table") expect(v.figure.symbol?.ff, `${q.id}/${v.id}`).toBe(q.id.replace("ff.q.eq-", ""));
+        } else expect(v.figure?.type, `${q.id}/${v.id}`).toBe("flip-flop");
+      }
+    }
+  });
+
+  it("the table drawn in an equation question is the characteristic table: the 1-rows are the minterms the answer needs", () => {
+    for (const q of questions("flip-flop-equations").filter((x) => x.id.startsWith("ff.q.eq-"))) {
+      for (const v of q.variants) {
+        if (v.figure?.type !== "table" || v.spec.kind !== "expression") throw new Error(`${q.id}/${v.id}: table figure and expression spec expected`);
+        const out = v.figure.columns.find((c) => c.role === "output")!;
+        const ones = out.values.map((x, r) => (x === 1 ? r : -1)).filter((r) => r >= 0);
+        expect(ones, `${q.id}/${v.id}`).toEqual(v.spec.minterms);
+        expect(v.prompt).toMatch(/^From this /);
+      }
+    }
   });
 });

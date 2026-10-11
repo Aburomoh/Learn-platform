@@ -1028,7 +1028,16 @@ describe("authored truth is internally consistent", () => {
   });
 
   it("every practice stands alone: no prompt points back to an earlier circuit or design (#568)", () => {
-    for (const { path, variant } of allVariants()) expect(variant.prompt, path).not.toMatch(/the same (circuit|design|diagram|table|map|figure)/i);
+    for (const { path, variant } of allVariants()) expect(variant.prompt, path).not.toMatch(/\bthe same (circuit|design|diagram|table|map|figure)/i);
+  });
+
+  it("a prompt that names \"the <X> table\" shows a table: a table figure, a table kind, or a memory-table figure (#618)", () => {
+    // a safety net, not the rule (PEDAGOGY, question context): every prompt is written to show what it names
+    const names = /\b(?:the|this|that)\s+(?:[\w'′()+-]+\s+){0,3}?table\b/i;
+    const showsTable = (v: { spec: { kind: string }; figure?: { type: string } }) => ["table", "memory-table"].includes(v.figure?.type ?? "") || ["truth-table", "state-diagram"].includes(v.spec.kind);
+    for (const { path, variant } of allVariants()) {
+      if (names.test(variant.prompt)) expect(showsTable(variant), `${path}: ${variant.prompt.slice(0, 100)}`).toBe(true);
+    }
   });
 
   it("no student text shows a raw base subscript once split into notation (#465)", () => {

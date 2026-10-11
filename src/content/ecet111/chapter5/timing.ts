@@ -87,7 +87,7 @@ function timingVariant(set: TimingSet, k: number): VariantInput {
       { id: "s1", say: `Circle the ${set.edge} edges first: only they change Q. Between them, Q holds.`, stage: { revealed: 0 } },
       {
         id: "s2",
-        say: "At each active edge, read the inputs just before it and apply the table to the Q you have.",
+        say: "At each active edge, read the inputs just before it and apply the flip-flop's rule to the Q you have.",
         stage: { revealed: 0 },
         ask: { prompt: "Does Q change on the falling edges?", options: k % 2 ? ["Yes", "No"] : ["No", "Yes"], correctIndex: (set.edge === "rising") === (k % 2 === 0) ? 0 : 1, afterCorrect: "Right.", afterWrong: set.edge === "rising" ? "No: this flip-flop acts on rising edges only." : "Yes: this one acts on falling edges." },
       },
@@ -111,7 +111,7 @@ const timingActivity: Activity = {
 export const timingTopic: TopicInput = {
   id: "timing",
   title: "Timing diagrams",
-  summary: "Draw Q under a clock: at each active edge read the inputs just before it, apply the flip-flop's table, and hold Q until the next active edge.",
+  summary: "Draw Q under a clock: at each active edge read the inputs just before it, apply the flip-flop's rule, and hold Q until the next active edge.",
   preview: "edge ↑ → read inputs → Q",
   concepts: [{ id: "tm.timing", title: "Timing diagram", summary: "Q changes only at active edges (rising or falling), from the inputs just before the edge; it holds in between." }],
   objectives: [{ id: "tm.obj.timing", conceptId: "tm.timing", text: "Give Q after each active clock edge for SR, JK, D and T flip-flops, rising and falling." }],
