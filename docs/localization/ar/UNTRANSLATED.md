@@ -1,0 +1,298 @@
+# Untranslated supportive strings on main (drift report)
+
+Information for the owner, **not a blocker**: strings that were written, or changed, after the Phase 1 inventory (`source-texts.json`, #634) and therefore have no Arabic in `source-texts.ar.json`. In the app they fall back to English until they are translated. Nothing here was translated or edited.
+
+Method: the supportive text (hints, scaffold steps, answer feedback; the same fields as the inventory) was read from the loaded course objects on main and compared with the `english` of every entry of the Arabic package. A string counts as translated when the identical English text is in the package. Question prompts and answer options are not part of the inventory and are not listed.
+
+## Totals
+
+- Distinct supportive strings now on main: **3750**
+- Without Arabic: **236** (312 placements)
+- Catalog keys (`src/tutor/messages/en.ts`) not in the package: **0**
+- Component text (strings hard-coded in `src/**` components) was not re-scanned; the Phase 1 `AUDIT.md` list stands.
+
+| Course and type | Untranslated strings |
+|---|---|
+| cpet181 explanation | 95 |
+| cpet181 hint | 141 |
+
+## By topic
+
+| Topic | Strings |
+|---|---|
+| cpet181 / topologies | 47 |
+| cpet181 / switching-security | 37 |
+| cpet181 / memory-schemes | 36 |
+| cpet181 / network-types | 35 |
+| cpet181 / relocatable-partitions | 25 |
+| cpet181 / network-basics | 21 |
+| cpet181 / scheduling-concepts | 19 |
+| cpet181 / fixed-partitions | 8 |
+| cpet181 / compare-algorithms | 8 |
+
+## The strings
+
+Each entry: the id the inventory would give it, the number of placements, and the English text. Template slots (`{name}`) are shown as they are in the source.
+
+### cpet181 / compare-algorithms
+
+- `cpet181.compare-algorithms.compare.cm.q.best.cmp-1.hints[1]` (3×, hint): Find the average turnaround of each algorithm on these jobs, then take the smallest.
+- `cpet181.compare-algorithms.compare.cm.q.best.cmp-1.hints[2]` (1×, hint): Shortest Remaining Time. The averages are FCFS 8.25, SJN 7.75 and SRT 6.25, so Shortest Remaining Time is best for this set.
+- `cpet181.compare-algorithms.compare.cm.q.best.cmp-1.explanation[0].say` (3×, explanation): The best algorithm for a job set is the one with the smallest average turnaround time: on the same jobs the order in which they run changes how long each one takes from arrival to finish.
+- `cpet181.compare-algorithms.compare.cm.q.best.cmp-1.explanation[1].say` (1×, explanation): The averages are FCFS 8.25, SJN 7.75 and SRT 6.25, so Shortest Remaining Time is best for this set.
+- `cpet181.compare-algorithms.compare.cm.q.best.cmp-2.hints[2]` (1×, hint): Shortest Remaining Time. The averages are FCFS 4.25, SJN 3.5 and SRT 3.25, so Shortest Remaining Time is best for this set.
+- `cpet181.compare-algorithms.compare.cm.q.best.cmp-2.explanation[1].say` (1×, explanation): The averages are FCFS 4.25, SJN 3.5 and SRT 3.25, so Shortest Remaining Time is best for this set.
+- `cpet181.compare-algorithms.compare.cm.q.best.cmp-3.hints[2]` (1×, hint): Shortest Remaining Time. The averages are FCFS 8.75, SJN 7 and SRT 6.5, so Shortest Remaining Time is best for this set.
+- `cpet181.compare-algorithms.compare.cm.q.best.cmp-3.explanation[1].say` (1×, explanation): The averages are FCFS 8.75, SJN 7 and SRT 6.5, so Shortest Remaining Time is best for this set.
+
+### cpet181 / fixed-partitions
+
+- `cpet181.fixed-partitions.fixed-partitions.fx.q.efficient.b21.hints[1]` (3×, hint): Place the jobs both ways and compare how many are placed and how much is wasted inside the partitions.
+- `cpet181.fixed-partitions.fixed-partitions.fx.q.efficient.b21.hints[2]` (1×, hint): Best-fit: it places 4 of the 4 jobs, while first-fit leaves J3 waiting. First-fit places 3 jobs and wastes 50 K; best-fit places 4 and wastes 45 K, so best-fit is more efficient.
+- `cpet181.fixed-partitions.fixed-partitions.fx.q.efficient.b21.explanation[0].say` (3×, explanation): A method is more efficient when it places more of the jobs and, for the same jobs, wastes less memory inside the partitions. First-fit is faster to run but can waste memory; best-fit wastes the least.
+- `cpet181.fixed-partitions.fixed-partitions.fx.q.efficient.b21.explanation[1].say` (1×, explanation): First-fit places 3 jobs and wastes 50 K; best-fit places 4 and wastes 45 K, so best-fit is more efficient.
+- `cpet181.fixed-partitions.fixed-partitions.fx.q.efficient.b22.hints[2]` (1×, hint): Best-fit: it places 4 of the 4 jobs, while first-fit leaves J4 waiting. First-fit places 3 jobs and wastes 34 K; best-fit places 4 and wastes 22 K, so best-fit is more efficient.
+- `cpet181.fixed-partitions.fixed-partitions.fx.q.efficient.b22.explanation[1].say` (1×, explanation): First-fit places 3 jobs and wastes 34 K; best-fit places 4 and wastes 22 K, so best-fit is more efficient.
+- `cpet181.fixed-partitions.fixed-partitions.fx.q.efficient.b-new.hints[2]` (1×, hint): Best-fit: it places 4 of the 4 jobs, while first-fit leaves J4 waiting. First-fit places 3 jobs and wastes 47 K; best-fit places 4 and wastes 17 K, so best-fit is more efficient.
+- `cpet181.fixed-partitions.fixed-partitions.fx.q.efficient.b-new.explanation[1].say` (1×, explanation): First-fit places 3 jobs and wastes 47 K; best-fit places 4 and wastes 17 K, so best-fit is more efficient.
+
+### cpet181 / memory-schemes
+
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v1.hints[1]` (1×, hint): How many jobs are in memory at a time?
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v1.hints[2]` (1×, hint): Single-user contiguous. One job owning all of memory is the single-user scheme.
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v1.explanation[0].say` (4×, explanation): Single-user contiguous: one job owns all of memory, so there is no multiprogramming. Fixed partitions: partitions set at start-up, with internal fragmentation. Dynamic partitions: partitions sized per job, with external fragmentation (holes between jobs). Relocatable dynamic partitions: dynamic partitions plus compaction to merge the holes.
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v1.explanation[1].say` (1×, explanation): One job owning all of memory is the single-user scheme.
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v2.hints[1]` (1×, hint): Are the partitions set before or after the jobs arrive?
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v2.hints[2]` (1×, hint): Fixed partitions. Partitions set at start-up with waste inside them: fixed partitions.
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v2.explanation[1].say` (1×, explanation): Partitions set at start-up with waste inside them: fixed partitions.
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v3.hints[1]` (1×, hint): Is the waste inside a partition or between them?
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v3.hints[2]` (1×, hint): Dynamic partitions. Partitions sized per job, with holes between jobs: dynamic partitions.
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v3.explanation[1].say` (1×, explanation): Partitions sized per job, with holes between jobs: dynamic partitions.
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v4.hints[1]` (1×, hint): What is added to dynamic partitions to remove the holes?
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v4.hints[2]` (1×, hint): Relocatable dynamic partitions. Dynamic partitions plus compaction are relocatable dynamic partitions.
+- `cpet181.memory-schemes.memory-schemes.mt.q.four-schemes.v4.explanation[1].say` (1×, explanation): Dynamic partitions plus compaction are relocatable dynamic partitions.
+- `cpet181.memory-schemes.partition-kinds.mt.q.partitions.v1.hints[1]` (2×, hint): Are the sizes decided before or after the jobs arrive?
+- `cpet181.memory-schemes.partition-kinds.mt.q.partitions.v1.hints[2]` (1×, hint): Fixed partitions. Sizes set at start-up and static: fixed partitions.
+- `cpet181.memory-schemes.partition-kinds.mt.q.partitions.v1.explanation[0].say` (4×, explanation): Fixed partitions: the sizes are set at start-up and stay static, so a job takes a whole partition and the waste is inside it (internal fragmentation). Dynamic partitions: each job gets exactly the size it asks for, at load time, and the waste is the holes left between jobs (external fragmentation).
+- `cpet181.memory-schemes.partition-kinds.mt.q.partitions.v1.explanation[1].say` (1×, explanation): Sizes set at start-up and static: fixed partitions.
+- `cpet181.memory-schemes.partition-kinds.mt.q.partitions.v2.hints[2]` (1×, hint): Dynamic partitions. A size fitted to each job at load time: dynamic partitions.
+- `cpet181.memory-schemes.partition-kinds.mt.q.partitions.v2.explanation[1].say` (1×, explanation): A size fitted to each job at load time: dynamic partitions.
+- `cpet181.memory-schemes.partition-kinds.mt.q.partitions.v3.hints[1]` (2×, hint): Is the waste inside a block or between blocks?
+- `cpet181.memory-schemes.partition-kinds.mt.q.partitions.v3.hints[2]` (1×, hint): Fixed partitions. Waste inside the partitions is internal fragmentation, which fixed partitions have.
+- `cpet181.memory-schemes.partition-kinds.mt.q.partitions.v3.explanation[1].say` (1×, explanation): Waste inside the partitions is internal fragmentation, which fixed partitions have.
+- `cpet181.memory-schemes.partition-kinds.mt.q.partitions.v4.hints[2]` (1×, hint): Dynamic partitions. Holes between jobs are external fragmentation, which dynamic partitions have.
+- `cpet181.memory-schemes.partition-kinds.mt.q.partitions.v4.explanation[1].say` (1×, explanation): Holes between jobs are external fragmentation, which dynamic partitions have.
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v1.hints[1]` (2×, hint): Is there anything to merge?
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v1.hints[2]` (1×, hint): Fixed partitions. Marking the block free is all that fixed partitions need.
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v1.explanation[0].say` (4×, explanation): Fixed partitions: deallocation just marks the block free (for example 0 = free, 1 = busy). Dynamic partitions: the released block is merged with any free neighbours in the free list, which is kept in address order with beginning address, block size and status.
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v1.explanation[1].say` (1×, explanation): Marking the block free is all that fixed partitions need.
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v2.hints[2]` (1×, hint): Dynamic partitions. Merging with free neighbours is the dynamic deallocation.
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v2.explanation[1].say` (1×, explanation): Merging with free neighbours is the dynamic deallocation.
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v3.hints[1]` (1×, hint): Which scheme has blocks that never change size?
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v3.hints[2]` (1×, hint): Fixed partitions. The partitions never change, so a flag per block is enough.
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v3.explanation[1].say` (1×, explanation): The partitions never change, so a flag per block is enough.
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v4.hints[1]` (1×, hint): Which scheme has holes of different sizes?
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v4.hints[2]` (1×, hint): Dynamic partitions. Free blocks of different sizes have to be listed and merged.
+- `cpet181.memory-schemes.partition-kinds.mt.q.deallocation.v4.explanation[1].say` (1×, explanation): Free blocks of different sizes have to be listed and merged.
+
+### cpet181 / network-basics
+
+- `cpet181.network-basics.terms.nw.q.terms.v1.hints[1]` (1×, hint): It names a place, not a machine.
+- `cpet181.network-basics.terms.nw.q.terms.v1.hints[2]` (1×, hint): Site. A location with computers is a site.
+- `cpet181.network-basics.terms.nw.q.terms.v1.explanation[0].say` (7×, explanation): A network is loosely coupled processors linked by cable, wireless or both, to share hardware and software while controlling user access. A site is a location with one or more computers; a host is a computer at a site whose services others use remotely; a node is the name that identifies a computer to the others. A processor calls its own resources local and the others remote. A client requests data or services from the server host and waits for the reply.
+- `cpet181.network-basics.terms.nw.q.terms.v1.explanation[1].say` (1×, explanation): A location with computers is a site.
+- `cpet181.network-basics.terms.nw.q.terms.v2.hints[1]` (1×, hint): It serves the others.
+- `cpet181.network-basics.terms.nw.q.terms.v2.hints[2]` (1×, hint): Host. A computer offering its services to others is a host.
+- `cpet181.network-basics.terms.nw.q.terms.v2.explanation[1].say` (1×, explanation): A computer offering its services to others is a host.
+- `cpet181.network-basics.terms.nw.q.terms.v3.hints[1]` (1×, hint): It is a name, not a place or a service.
+- `cpet181.network-basics.terms.nw.q.terms.v3.hints[2]` (1×, hint): Node. The identifying name of a computer is its node.
+- `cpet181.network-basics.terms.nw.q.terms.v3.explanation[1].say` (1×, explanation): The identifying name of a computer is its node.
+- `cpet181.network-basics.client-server.nw.q.client-server.v1.hints[1]` (2×, hint): Whose resources are they?
+- `cpet181.network-basics.client-server.nw.q.client-server.v1.hints[2]` (1×, hint): Local. A processor's own resources are local.
+- `cpet181.network-basics.client-server.nw.q.client-server.v1.explanation[1].say` (1×, explanation): A processor's own resources are local.
+- `cpet181.network-basics.client-server.nw.q.client-server.v2.hints[2]` (1×, hint): Remote. The other processors' resources are remote.
+- `cpet181.network-basics.client-server.nw.q.client-server.v2.explanation[1].say` (1×, explanation): The other processors' resources are remote.
+- `cpet181.network-basics.client-server.nw.q.client-server.v3.hints[1]` (1×, hint): It asks; it does not serve.
+- `cpet181.network-basics.client-server.nw.q.client-server.v3.hints[2]` (1×, hint): The client. A client requests and waits.
+- `cpet181.network-basics.client-server.nw.q.client-server.v3.explanation[1].say` (1×, explanation): A client requests and waits.
+- `cpet181.network-basics.client-server.nw.q.client-server.v4.hints[1]` (1×, hint): It answers the requests.
+- `cpet181.network-basics.client-server.nw.q.client-server.v4.hints[2]` (1×, hint): The server host. The server host provides the services.
+- `cpet181.network-basics.client-server.nw.q.client-server.v4.explanation[1].say` (1×, explanation): The server host provides the services.
+
+### cpet181 / network-types
+
+- `cpet181.network-types.types.nt.q.types.v1.hints[1]` (1×, hint): How large is the area?
+- `cpet181.network-types.types.nt.q.types.v1.hints[2]` (1×, hint): LAN. A building or campus network of one organization is a LAN.
+- `cpet181.network-types.types.nt.q.types.v1.explanation[0].say` (4×, explanation): A LAN covers a building or campus, belongs to one organization and runs at 100 Mbps to over 40 Gbps (an office network). A MAN covers blocks to a city, up to about 100 km, with one operator and many users, usually a logical ring (city Wi-Fi, cable TV). A WAN covers a country or the world over common carriers' lines and is usually slower than a LAN (the Internet).
+- `cpet181.network-types.types.nt.q.types.v1.explanation[1].say` (1×, explanation): A building or campus network of one organization is a LAN.
+- `cpet181.network-types.types.nt.q.types.v2.hints[1]` (1×, hint): It is between a building and a country.
+- `cpet181.network-types.types.nt.q.types.v2.hints[2]` (1×, hint): MAN. A city-wide network is a MAN.
+- `cpet181.network-types.types.nt.q.types.v2.explanation[1].say` (1×, explanation): A city-wide network is a MAN.
+- `cpet181.network-types.types.nt.q.types.v3.hints[1]` (1×, hint): It is the largest.
+- `cpet181.network-types.types.nt.q.types.v3.hints[2]` (1×, hint): WAN. A country-wide or world-wide network over carriers' lines is a WAN.
+- `cpet181.network-types.types.nt.q.types.v3.explanation[1].say` (1×, explanation): A country-wide or world-wide network over carriers' lines is a WAN.
+- `cpet181.network-types.types.nt.q.types.v4.hints[1]` (1×, hint): It covers the world.
+- `cpet181.network-types.types.nt.q.types.v4.hints[2]` (1×, hint): WAN. The Internet is a WAN.
+- `cpet181.network-types.types.nt.q.types.v4.explanation[1].say` (1×, explanation): The Internet is a WAN.
+- `cpet181.network-types.bridge-gateway.nt.q.bridge-gateway.v1.hints[1]` (2×, hint): Does anything need translating?
+- `cpet181.network-types.bridge-gateway.nt.q.bridge-gateway.v1.hints[2]` (1×, hint): A bridge. Same protocol: a bridge.
+- `cpet181.network-types.bridge-gateway.nt.q.bridge-gateway.v1.explanation[0].say` (3×, explanation): A bridge joins networks that use the same protocol. A gateway joins networks that use different protocols, translating between them.
+- `cpet181.network-types.bridge-gateway.nt.q.bridge-gateway.v1.explanation[1].say` (1×, explanation): Same protocol: a bridge.
+- `cpet181.network-types.bridge-gateway.nt.q.bridge-gateway.v2.hints[2]` (1×, hint): A gateway. Different protocols, translating: a gateway.
+- `cpet181.network-types.bridge-gateway.nt.q.bridge-gateway.v2.explanation[1].say` (1×, explanation): Different protocols, translating: a gateway.
+- `cpet181.network-types.bridge-gateway.nt.q.bridge-gateway.v3.hints[1]` (1×, hint): One of them joins networks that already agree.
+- `cpet181.network-types.bridge-gateway.nt.q.bridge-gateway.v3.hints[2]` (1×, hint): A gateway. A gateway translates.
+- `cpet181.network-types.bridge-gateway.nt.q.bridge-gateway.v3.explanation[1].say` (1×, explanation): A gateway translates.
+- `cpet181.network-types.wireless.wl.q.standards.v1.hints[1]` (1×, hint): It is the slowest of the three.
+- `cpet181.network-types.wireless.wl.q.standards.v1.hints[2]` (1×, hint): 802.11b. 11 Mbps is 802.11b.
+- `cpet181.network-types.wireless.wl.q.standards.v1.explanation[0].say` (4×, explanation): 802.11a runs at 54 Mbps on 5 GHz with an indoor range of 25–75 ft. 802.11b runs at 11 Mbps on 2.4 GHz with 100–150 ft. 802.11g runs at 54 Mbps on 2.4 GHz with 100–150 ft. WiMax (802.16) is wireless broadband over up to about 10 miles.
+- `cpet181.network-types.wireless.wl.q.standards.v1.explanation[1].say` (1×, explanation): 11 Mbps is 802.11b.
+- `cpet181.network-types.wireless.wl.q.standards.v2.hints[1]` (1×, hint): The other two share another frequency.
+- `cpet181.network-types.wireless.wl.q.standards.v2.hints[2]` (1×, hint): 802.11a. 5 GHz is 802.11a.
+- `cpet181.network-types.wireless.wl.q.standards.v2.explanation[1].say` (1×, explanation): 5 GHz is 802.11a.
+- `cpet181.network-types.wireless.wl.q.standards.v3.hints[1]` (1×, hint): Two standards run at 54 Mbps; they differ in frequency.
+- `cpet181.network-types.wireless.wl.q.standards.v3.hints[2]` (1×, hint): 802.11g. 54 Mbps on 2.4 GHz is 802.11g.
+- `cpet181.network-types.wireless.wl.q.standards.v3.explanation[1].say` (1×, explanation): 54 Mbps on 2.4 GHz is 802.11g.
+- `cpet181.network-types.wireless.wl.q.standards.v4.hints[1]` (1×, hint): The other two reach 100–150 ft.
+- `cpet181.network-types.wireless.wl.q.standards.v4.hints[2]` (1×, hint): 802.11a. 802.11a reaches 25–75 ft indoors.
+- `cpet181.network-types.wireless.wl.q.standards.v4.explanation[1].say` (1×, explanation): 802.11a reaches 25–75 ft indoors.
+
+### cpet181 / relocatable-partitions
+
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v1.hints[1]` (2×, hint): One register limits; the other shifts.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v1.hints[2]` (1×, hint): Bounds register. The highest address allowed is the bounds register.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v1.explanation[0].say` (4×, explanation): The bounds register holds the highest address the program may use. The relocation register holds the amount added to every address of the job (0 if the job did not move).
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v1.explanation[1].say` (1×, explanation): The highest address allowed is the bounds register.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v2.hints[2]` (1×, hint): Relocation register. The amount added to every address is the relocation register.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v2.explanation[1].say` (1×, explanation): The amount added to every address is the relocation register.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v3.hints[1]` (1×, hint): Which register is about moving?
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v3.hints[2]` (1×, hint): Relocation register. Nothing is added to its addresses, so its relocation register is 0.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v3.explanation[1].say` (1×, explanation): Nothing is added to its addresses, so its relocation register is 0.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v4.hints[1]` (1×, hint): Which register is about the limit?
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v4.hints[2]` (1×, hint): Bounds register. The bounds register sets the highest address the program may use.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.registers.v4.explanation[1].say` (1×, explanation): The bounds register sets the highest address the program may use.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v1.hints[1]` (1×, hint): Which of the two says where something is?
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v1.hints[2]` (1×, hint): The addresses in the program. Every address in the program is adjusted by the move.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v1.explanation[0].say` (4×, explanation): When compaction moves a job, every address in its program is adjusted by the move. Data values are not addresses and are left unchanged.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v1.explanation[1].say` (1×, explanation): Every address in the program is adjusted by the move.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v2.hints[1]` (1×, hint): Which of the two is just a number to be used?
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v2.hints[2]` (1×, hint): The data values. Data values are left unchanged by the move.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v2.explanation[1].say` (1×, explanation): Data values are left unchanged by the move.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v3.hints[1]` (1×, hint): Is 37 saying where something is, or what it is?
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v3.hints[2]` (1×, hint): It stays 37. A data value is not an address, so the move does not change it.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v3.explanation[1].say` (1×, explanation): A data value is not an address, so the move does not change it.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v4.hints[1]` (1×, hint): Which one is an address, and which is just a value?
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v4.hints[2]` (1×, hint): The address it refers to, through the relocation register (53248 becomes 40960). The instruction still reads Load 4, 53248; the relocation register (−12288) is added, so it reaches 40960, where the 37 now is.
+- `cpet181.relocatable-partitions.compaction-terms.rl.q.addresses.v4.explanation[1].say` (1×, explanation): The instruction still reads Load 4, 53248; the relocation register (−12288) is added, so it reaches 40960, where the 37 now is.
+
+### cpet181 / scheduling-concepts
+
+- `cpet181.scheduling-concepts.policies.sc.q.suits-batch.v1.hints[1]` (1×, hint): Which algorithm takes the jobs strictly in arrival order?
+- `cpet181.scheduling-concepts.policies.sc.q.suits-batch.v1.hints[2]` (1×, hint): First Come First Served. A FIFO queue for batch work is First Come First Served.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-batch.v1.explanation[0].say` (6×, explanation): As taught: First Come First Served suits batch work and runs a FIFO queue; Shortest Job Next and Shortest Remaining Time suit batch work but not interactive work, and need the CPU time to be known; Priority suits priorities assigned by the administrator or the OS; Round Robin suits interactive systems with a quantum of 100 ms to 2 s; multiple-level queues combine schemes for groups of jobs such as CPU-bound against I/O-bound, or batch against interactive.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-batch.v1.explanation[1].say` (1×, explanation): A FIFO queue for batch work is First Come First Served.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-batch.v2.hints[1]` (1×, hint): It picks the shortest job and never interrupts it.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-batch.v2.hints[2]` (1×, hint): Shortest Job Next. Shortest Job Next suits batch work and needs the CPU time known; it is not preemptive.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-batch.v2.explanation[1].say` (1×, explanation): Shortest Job Next suits batch work and needs the CPU time known; it is not preemptive.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-batch.v3.hints[1]` (1×, hint): A newly arrived short job can take the processor away.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-batch.v3.hints[2]` (1×, hint): Shortest Remaining Time. Shortest Remaining Time is the preemptive one of the two shortest-first algorithms, for batch work.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-batch.v3.explanation[1].say` (1×, explanation): Shortest Remaining Time is the preemptive one of the two shortest-first algorithms, for batch work.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-other.v1.hints[1]` (1×, hint): The jobs carry a number given from outside.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-other.v1.hints[2]` (1×, hint): Priority. Priority suits jobs with assigned priorities and runs the smallest number first.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-other.v1.explanation[1].say` (1×, explanation): Priority suits jobs with assigned priorities and runs the smallest number first.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-other.v2.hints[1]` (1×, hint): Each job gets a time slice in turn.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-other.v2.hints[2]` (1×, hint): Round Robin. Round Robin shares the CPU in turn and suits interactive use.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-other.v2.explanation[1].say` (1×, explanation): Round Robin shares the CPU in turn and suits interactive use.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-other.v3.hints[1]` (1×, hint): It is not one algorithm: it groups the jobs first.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-other.v3.hints[2]` (1×, hint): Multiple-level queues. Separate queues for groups of jobs, each with its own scheme, are multiple-level queues.
+- `cpet181.scheduling-concepts.policies.sc.q.suits-other.v3.explanation[1].say` (1×, explanation): Separate queues for groups of jobs, each with its own scheme, are multiple-level queues.
+
+### cpet181 / switching-security
+
+- `cpet181.switching-security.switching.sw.q.switching.v1.hints[1]` (1×, hint): Is the path set up before sending?
+- `cpet181.switching-security.switching.sw.q.switching.v1.hints[2]` (1×, hint): Circuit switching. A dedicated path set up first is circuit switching.
+- `cpet181.switching-security.switching.sw.q.switching.v1.explanation[0].say` (4×, explanation): Circuit switching sets up a dedicated path before sending (as the telephone does): real time, with a set-up delay first, for low-volume networks, with reduced line efficiency and easily overloaded, and preferred for voice. Packet switching is store and forward: the message is cut into equal packets and reassembled at the destination; in batches, for high-volume networks, with high line efficiency because the line is shared, flexible, reliable, with message priorities, and not good for voice.
+- `cpet181.switching-security.switching.sw.q.switching.v1.explanation[1].say` (1×, explanation): A dedicated path set up first is circuit switching.
+- `cpet181.switching-security.switching.sw.q.switching.v2.hints[1]` (1×, hint): Is the message sent whole or in pieces?
+- `cpet181.switching-security.switching.sw.q.switching.v2.hints[2]` (1×, hint): Packet switching. Equal packets reassembled at the destination: packet switching.
+- `cpet181.switching-security.switching.sw.q.switching.v2.explanation[1].say` (1×, explanation): Equal packets reassembled at the destination: packet switching.
+- `cpet181.switching-security.switching.sw.q.switching.v3.hints[1]` (1×, hint): Which one works in real time?
+- `cpet181.switching-security.switching.sw.q.switching.v3.hints[2]` (1×, hint): Circuit switching. Voice needs a real-time path: circuit switching.
+- `cpet181.switching-security.switching.sw.q.switching.v3.explanation[1].say` (1×, explanation): Voice needs a real-time path: circuit switching.
+- `cpet181.switching-security.switching.sw.q.switching.v4.hints[1]` (1×, hint): In which one is the line dedicated to one transmission?
+- `cpet181.switching-security.switching.sw.q.switching.v4.hints[2]` (1×, hint): Packet switching. A shared line is used efficiently in packet switching.
+- `cpet181.switching-security.switching.sw.q.switching.v4.explanation[1].say` (1×, explanation): A shared line is used efficiently in packet switching.
+- `cpet181.switching-security.protection.sc.q.protection.v1.hints[1]` (1×, hint): Which one deals with viruses?
+- `cpet181.switching-security.protection.sc.q.protection.v1.hints[2]` (1×, hint): Antivirus. Preventing and diagnosing malware is antivirus.
+- `cpet181.switching-security.protection.sc.q.protection.v1.explanation[0].say` (4×, explanation): Antivirus software prevents and diagnoses malware and is kept up to date. A firewall logs and controls access, hides the internal network, checks for viruses and authenticates. Encryption protects sensitive traffic. Password management means complex, memorable passwords that are changed often.
+- `cpet181.switching-security.protection.sc.q.protection.v1.explanation[1].say` (1×, explanation): Preventing and diagnosing malware is antivirus.
+- `cpet181.switching-security.protection.sc.q.protection.v2.hints[1]` (1×, hint): It sits between the network and the outside.
+- `cpet181.switching-security.protection.sc.q.protection.v2.hints[2]` (1×, hint): Firewall. Controlling and logging access and hiding the network is a firewall.
+- `cpet181.switching-security.protection.sc.q.protection.v2.explanation[1].say` (1×, explanation): Controlling and logging access and hiding the network is a firewall.
+- `cpet181.switching-security.protection.sc.q.protection.v3.hints[1]` (1×, hint): It changes the data itself.
+- `cpet181.switching-security.protection.sc.q.protection.v3.hints[2]` (1×, hint): Encryption. Protecting sensitive traffic is encryption.
+- `cpet181.switching-security.protection.sc.q.protection.v3.explanation[1].say` (1×, explanation): Protecting sensitive traffic is encryption.
+- `cpet181.switching-security.protection.sc.q.protection.v4.hints[1]` (1×, hint): It is about how people choose passwords.
+- `cpet181.switching-security.protection.sc.q.protection.v4.hints[2]` (1×, hint): Password management. Complex, memorable, often changed: password management.
+- `cpet181.switching-security.protection.sc.q.protection.v4.explanation[1].say` (1×, explanation): Complex, memorable, often changed: password management.
+- `cpet181.switching-security.ethics.sc.q.ethics.v1.hints[1]` (3×, hint): Which one is about behaviour, not about a technique?
+- `cpet181.switching-security.ethics.sc.q.ethics.v1.hints[2]` (1×, hint): Piracy. Piracy is one of the named issues.
+- `cpet181.switching-security.ethics.sc.q.ethics.v1.explanation[0].say` (4×, explanation): The ethics section names the standards of IEEE and ACM, respect for privacy and proprietary information, and the issues of piracy, plagiarism, eavesdropping, cracking or hacking, and unauthorized access.
+- `cpet181.switching-security.ethics.sc.q.ethics.v1.explanation[1].say` (1×, explanation): Piracy is one of the named issues.
+- `cpet181.switching-security.ethics.sc.q.ethics.v2.hints[2]` (1×, hint): Unauthorized access. Unauthorized access is one of the named issues.
+- `cpet181.switching-security.ethics.sc.q.ethics.v2.explanation[1].say` (1×, explanation): Unauthorized access is one of the named issues.
+- `cpet181.switching-security.ethics.sc.q.ethics.v3.hints[2]` (1×, hint): Eavesdropping. Eavesdropping is one of the named issues.
+- `cpet181.switching-security.ethics.sc.q.ethics.v3.explanation[1].say` (1×, explanation): Eavesdropping is one of the named issues.
+- `cpet181.switching-security.ethics.sc.q.ethics.v4.hints[1]` (1×, hint): Both are professional computing societies.
+- `cpet181.switching-security.ethics.sc.q.ethics.v4.hints[2]` (1×, hint): IEEE and ACM. The standards named are those of IEEE and ACM.
+- `cpet181.switching-security.ethics.sc.q.ethics.v4.explanation[1].say` (1×, explanation): The standards named are those of IEEE and ACM.
+
+### cpet181 / topologies
+
+- `cpet181.topologies.shape.tp.q.shape.v1.hints[1]` (1×, hint): Is there one centre that every site joins?
+- `cpet181.topologies.shape.tp.q.shape.v1.hints[2]` (1×, hint): Star. Every site links only to the centre: a star.
+- `cpet181.topologies.shape.tp.q.shape.v1.explanation[0].say` (12×, explanation): Star: all traffic through a central controller. Ring: a closed loop, packets passing one way from node to node. Bus: all sites on one line. Tree: busses joined by branching cable, with no loops. Hybrid: a mix of the others.
+- `cpet181.topologies.shape.tp.q.shape.v1.explanation[1].say` (1×, explanation): Every site links only to the centre: a star.
+- `cpet181.topologies.shape.tp.q.shape.v2.hints[1]` (1×, hint): Follow the links from one site: where do you end up?
+- `cpet181.topologies.shape.tp.q.shape.v2.hints[2]` (1×, hint): Ring. The sites are joined in a closed loop: a ring.
+- `cpet181.topologies.shape.tp.q.shape.v2.explanation[1].say` (1×, explanation): The sites are joined in a closed loop: a ring.
+- `cpet181.topologies.shape.tp.q.shape.v3.hints[1]` (1×, hint): Is there a single line that every site shares?
+- `cpet181.topologies.shape.tp.q.shape.v3.hints[2]` (1×, hint): Bus. All the sites hang off one shared line: a bus.
+- `cpet181.topologies.shape.tp.q.shape.v3.explanation[1].say` (1×, explanation): All the sites hang off one shared line: a bus.
+- `cpet181.topologies.shape.tp.q.shape.v4.hints[1]` (1×, hint): Do any of the links make a loop?
+- `cpet181.topologies.shape.tp.q.shape.v4.hints[2]` (1×, hint): Tree. Branches that never close a loop: a tree.
+- `cpet181.topologies.shape.tp.q.shape.v4.explanation[1].say` (1×, explanation): Branches that never close a loop: a tree.
+- `cpet181.topologies.shape.tp.q.mixed.v1.hints[1]` (4×, hint): Is it one shape, or more than one?
+- `cpet181.topologies.shape.tp.q.mixed.v1.hints[2]` (1×, hint): Hybrid. A hub joined by one cable to a closed loop mixes shapes: a hybrid.
+- `cpet181.topologies.shape.tp.q.mixed.v1.explanation[1].say` (1×, explanation): A hub joined by one cable to a closed loop mixes shapes: a hybrid.
+- `cpet181.topologies.shape.tp.q.mixed.v2.hints[2]` (1×, hint): Star. One centre that every site joins, and nothing mixed in: a star.
+- `cpet181.topologies.shape.tp.q.mixed.v2.explanation[1].say` (1×, explanation): One centre that every site joins, and nothing mixed in: a star.
+- `cpet181.topologies.shape.tp.q.mixed.v3.hints[2]` (1×, hint): Bus. One shared line with every site on it, and nothing mixed in: a bus.
+- `cpet181.topologies.shape.tp.q.mixed.v3.explanation[1].say` (1×, explanation): One shared line with every site on it, and nothing mixed in: a bus.
+- `cpet181.topologies.shape.tp.q.mixed.v4.hints[2]` (1×, hint): Ring. A single closed loop and nothing else: a ring.
+- `cpet181.topologies.shape.tp.q.mixed.v4.explanation[1].say` (1×, explanation): A single closed loop and nothing else: a ring.
+- `cpet181.topologies.traits.tp.q.traits.v1.hints[1]` (1×, hint): What happens if the centre fails?
+- `cpet181.topologies.traits.tp.q.traits.v1.hints[2]` (1×, hint): Star. A central controller carrying all traffic is a star.
+- `cpet181.topologies.traits.tp.q.traits.v1.explanation[1].say` (1×, explanation): A central controller carrying all traffic is a star.
+- `cpet181.topologies.traits.tp.q.traits.v2.hints[1]` (1×, hint): The packets go round.
+- `cpet181.topologies.traits.tp.q.traits.v2.hints[2]` (1×, hint): Ring. A one-way loop where every node must work is a ring.
+- `cpet181.topologies.traits.tp.q.traits.v2.explanation[1].say` (1×, explanation): A one-way loop where every node must work is a ring.
+- `cpet181.topologies.traits.tp.q.traits.v3.hints[1]` (1×, hint): How many lines are there?
+- `cpet181.topologies.traits.tp.q.traits.v3.hints[2]` (1×, hint): Bus. One shared line, one sender at a time: a bus.
+- `cpet181.topologies.traits.tp.q.traits.v3.explanation[1].say` (1×, explanation): One shared line, one sender at a time: a bus.
+- `cpet181.topologies.traits.tp.q.traits.v4.hints[1]` (1×, hint): There are no loops.
+- `cpet181.topologies.traits.tp.q.traits.v4.hints[2]` (1×, hint): Tree. Branching busses with no loops: a tree.
+- `cpet181.topologies.traits.tp.q.traits.v4.explanation[1].say` (1×, explanation): Branching busses with no loops: a tree.
+- `cpet181.topologies.factors.tp.q.factors.v1.hints[1]` (1×, hint): It is about the messages.
+- `cpet181.topologies.factors.tp.q.factors.v1.hints[2]` (1×, hint): Communication cost. Message cost and time is the communication cost.
+- `cpet181.topologies.factors.tp.q.factors.v1.explanation[0].say` (4×, explanation): Topologies are compared on communication cost (message cost and time), reliability (still connected after a failure), the basic cost of the links, and the difficulty of connecting many sites.
+- `cpet181.topologies.factors.tp.q.factors.v1.explanation[1].say` (1×, explanation): Message cost and time is the communication cost.
+- `cpet181.topologies.factors.tp.q.factors.v2.hints[1]` (1×, hint): It is about what happens when something fails.
+- `cpet181.topologies.factors.tp.q.factors.v2.hints[2]` (1×, hint): Reliability. Staying connected after a failure is reliability.
+- `cpet181.topologies.factors.tp.q.factors.v2.explanation[1].say` (1×, explanation): Staying connected after a failure is reliability.
+- `cpet181.topologies.factors.tp.q.factors.v3.hints[1]` (1×, hint): It is about the cables.
+- `cpet181.topologies.factors.tp.q.factors.v3.hints[2]` (1×, hint): Link cost. The cost of the links is the link cost.
+- `cpet181.topologies.factors.tp.q.factors.v3.explanation[1].say` (1×, explanation): The cost of the links is the link cost.
+- `cpet181.topologies.factors.tp.q.factors.v4.hints[1]` (1×, hint): It is about size.
+- `cpet181.topologies.factors.tp.q.factors.v4.hints[2]` (1×, hint): Difficulty of connecting many sites. That is the difficulty of connecting many sites.
+- `cpet181.topologies.factors.tp.q.factors.v4.explanation[1].say` (1×, explanation): That is the difficulty of connecting many sites.
