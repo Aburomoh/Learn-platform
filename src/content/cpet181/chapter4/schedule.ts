@@ -245,6 +245,8 @@ const COMPARE_SETS = [
   { id: "cmp-1", jobs: jobs([["A", 0, 6], ["B", 1, 3], ["C", 2, 1], ["D", 3, 4]]) },
   { id: "cmp-2", jobs: jobs([["A", 0, 2], ["B", 1, 4], ["C", 2, 1], ["D", 4, 2]]) },
   { id: "cmp-3", jobs: jobs([["A", 0, 5], ["B", 1, 3], ["C", 2, 6], ["D", 4, 1]]) },
+  // s.17 jobs: all arrive at 0, so SJN and SRT give the same chart and the same average (a tie the pack does not leave open: the CPU times differ)
+  { id: "cmp-4", jobs: jobs([["A", 0, 15], ["B", 0, 2], ["C", 0, 1]]) },
 ];
 const compare = (policy: Policy) => COMPARE_SETS.map((s) => scheduleVariant({ id: s.id, policy, jobs: s.jobs, phases: ["finish", "turnaround", "average"] }));
 
@@ -257,17 +259,20 @@ export function averages(setJobs: Job[]): Record<"fcfs" | "sjn" | "srt", number>
   return { fcfs: avg("fcfs"), sjn: avg("sjn"), srt: avg("srt") };
 }
 const BEST_RULE = "The best algorithm for a job set is the one with the smallest average turnaround time: on the same jobs the order in which they run changes how long each one takes from arrival to finish.";
+const TIE = `${NAME.sjn} and ${NAME.srt} (equal, and the smallest)`;
+const ALL_SAME = "All three are the same";
+/** One fixed menu for every set, so the shape of the options never gives the answer away. */
+const BEST_MENU = [NAME.fcfs, NAME.sjn, NAME.srt, TIE, ALL_SAME];
 const bestRow = (s: { id: string; jobs: Job[] }): Row => {
   const a = averages(s.jobs);
   const min = Math.min(a.fcfs, a.sjn, a.srt);
   const winners = BEST_POLICIES.filter((p) => a[p] === min);
-  const names = BEST_POLICIES.map((p) => NAME[p]);
-  const correct = winners.length === 1 ? NAME[winners[0]] : `${winners.map((p) => NAME[p]).join(" and ")} (equal, and the smallest)`;
-  const wrong = winners.length === 1 ? [...names.filter((n) => n !== NAME[winners[0]]), "All three are the same"] : [...names.filter((n) => !winners.some((p) => NAME[p] === n)), "All three are the same"];
+  const correct = winners.length === 3 ? ALL_SAME : winners.length === 1 ? NAME[winners[0]] : winners.join() === "sjn,srt" ? TIE : "";
+  if (!correct) throw new RangeError(`unsupported tie in ${s.id}: ${winners.join()}`);
   return {
     prompt: `Jobs ${s.jobs.map((j) => `${j.id} (arrives ${j.arrival}, CPU ${j.cpu})`).join(", ")}. Which of FCFS, SJN and SRT gives the smallest average turnaround time?`,
     correct,
-    wrong,
+    wrong: BEST_MENU.filter((o) => o !== correct),
     rule: BEST_RULE,
     apply: `The averages are FCFS ${a.fcfs}, SJN ${a.sjn} and SRT ${a.srt}, so ${winners.length === 1 ? `${NAME[winners[0]]} is best` : "the smallest is shared"} for this set.`,
     hint: "Find the average turnaround of each algorithm on these jobs, then take the smallest.",
