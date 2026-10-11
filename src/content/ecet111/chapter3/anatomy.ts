@@ -27,6 +27,22 @@ const CELL_SETS: [string[], number, number][] = [
   [["A", "B", "C", "D"], 2, 3],
 ];
 
+/** The blank map the question is about (#618): the labels of the rows and columns, no minterm numbers. */
+function mapFigure(vars: string[]): NonNullable<VariantInput["figure"]> {
+  const layout = kmapLayout(vars);
+  const rowBits = layout.rowVars.length;
+  const colBits = vars.length - rowBits;
+  const pad = (v: number, b: number) => v.toString(2).padStart(b, "0");
+  return {
+    type: "table",
+    title: `${vars.length}-variable K-map, cells blank`,
+    columns: [
+      { header: `${layout.rowVars.join("")} \\ ${layout.colVars.join("")}`, role: "input", values: layout.rowCodes.map((r) => pad(r, rowBits)) },
+      ...layout.colCodes.map((c) => ({ header: pad(c, colBits), role: "output" as const, values: layout.rowCodes.map(() => "·") })),
+    ],
+  };
+}
+
 function cellVariant([vars, row, col]: [string[], number, number], k: number): VariantInput {
   const layout = kmapLayout(vars);
   const right = layout.grid[row][col];
@@ -43,7 +59,8 @@ function cellVariant([vars, row, col]: [string[], number, number], k: number): V
   const altRow = rowBits === 2 && pad(row, 2) !== rowLabel ? pad(row, 2) : pad(layout.rowCodes[row] ^ 1, rowBits);
   return {
     id: `c${vars.length}${row}${col}`,
-    prompt: `On the ${vars.length}-variable map (rows ${layout.rowVars.join("")}, columns ${layout.colVars.join("")}), which minterm sits in the ${ORDINAL[row]} row, ${ORDINAL[col]} column?`,
+    prompt: `On this ${vars.length}-variable map (rows ${layout.rowVars.join("")}, columns ${layout.colVars.join("")}), which minterm sits in the ${ORDINAL[row]} row, ${ORDINAL[col]} column?`,
+    figure: mapFigure(vars),
     spec: { kind: "multiple-choice", options, correctOptionId: `m${right}` },
     hints: [
       { rung: 2, text: "Not yet. Read the labels on the map, not the position count." },
@@ -74,6 +91,8 @@ const cellsOf = (literal: string, vars: string[]) => {
   return Array.from({ length: 2 ** vars.length }, (_, m) => m).filter((m) => evaluate(e, envFor(vars, m)) === 1);
 };
 
+const rowVarsOf = (vars: string[]) => kmapLayout(vars).rowVars;
+
 function regionVariant([literal, vars]: [string, string[]], k: number): VariantInput {
   const name = literal.replace("'", "′");
   const right = cellsOf(literal, vars);
@@ -82,11 +101,12 @@ function regionVariant([literal, vars]: [string, string[]], k: number): VariantI
   const choices = [right, complement, ...others].map((ms, j) => ({ id: j === 0 ? "right" : j === 1 ? "complement" : `other${j}`, text: ms.map((m) => `m${m}`).join(", ") }));
   return {
     id: `r${literal.replace("'", "n").toLowerCase()}${vars.length}`,
-    prompt: `On the ${vars.length}-variable map, which cells make up ${name}?`,
+    prompt: `On this ${vars.length}-variable map, which cells make up ${name}?`,
+    figure: mapFigure(vars),
     spec: { kind: "multiple-choice", options: rotate(choices, k + 1), correctOptionId: "right" },
     hints: [
       { rung: 2, text: `Not yet. ${name} is every cell where ${literal[0]} = ${literal.endsWith("'") ? 0 : 1}.` },
-      { rung: 3, text: `Find the bar labelled ${literal[0]} beside the map: ${literal.endsWith("'") ? "the cells outside it" : "the cells inside it"}.` },
+      { rung: 3, text: `Read the labels on the map: find the ${rowVarsOf(vars).includes(literal[0]) ? "rows" : "columns"} where the ${literal[0]} bit is ${literal.endsWith("'") ? 0 : 1}.` },
       { rung: 9, text: `${name} = ${choices[0].text}.` },
     ],
     misconceptions: [{ id: "km.region-complement", title: "Took the cells of the complement", nudgeKey: "km.region-complement", detect: { type: "option", optionId: "complement" } }],
@@ -94,8 +114,8 @@ function regionVariant([literal, vars]: [string, string[]], k: number): VariantI
       { id: "s1", say: "One literal covers half the map: every cell where that variable has one value." },
       {
         id: "s2",
-        say: `The bar labelled ${literal[0]} marks where ${literal[0]} = 1.`,
-        ask: { prompt: `Are the cells of ${name} inside the bar?`, options: k % 2 ? ["No", "Yes"] : ["Yes", "No"], correctIndex: !literal.endsWith("'") === (k % 2 === 0) ? 0 : 1, afterCorrect: "Right.", afterWrong: literal.endsWith("'") ? "No: a primed literal is outside the bar." : "Yes: inside the bar." },
+        say: `On the map, ${literal[0]} = 1 in the ${rowVarsOf(vars).includes(literal[0]) ? "rows" : "columns"} whose ${literal[0]} bit is 1.`,
+        ask: { prompt: `Are the cells of ${name} the ones where ${literal[0]} = 1?`, options: k % 2 ? ["No", "Yes"] : ["Yes", "No"], correctIndex: !literal.endsWith("'") === (k % 2 === 0) ? 0 : 1, afterCorrect: "Right.", afterWrong: literal.endsWith("'") ? "No: a primed literal is where the variable is 0." : "Yes: the cells where the variable is 1." },
       },
       { id: "s3", say: `${name} takes ${right.length} cells, half the map.` },
     ],

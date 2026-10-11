@@ -141,9 +141,18 @@ function equationVariant(ff: Exclude<FlipFlop, "SR">): VariantInput {
   const shown = EQUATION[ff].replace(/'/g, "′");
   return {
     id: `e${ff.toLowerCase()}`,
-    prompt: `From the ${ff} table, write Q(t+1) as an expression in ${vars.join(", ")}, as simple as you can.`,
+    prompt: `From this ${ff} table, write Q(t+1) as an expression in ${vars.join(", ")}, as simple as you can.`,
     spec: ff === "JK" ? { kind: "expression", vars, minterms: ones, form: "sop", maxLiterals: 4 } : { kind: "expression", vars, minterms: ones },
-    figure: { type: "flip-flop", ff: symbolOf(ff), focus: "Q" }, // (#454)
+    // the table the prompt names, with the symbol beside it (#617, #618): every row of the characteristic table is given
+    figure: {
+      type: "table",
+      title: `${ff} characteristic table`,
+      columns: [
+        ...vars.map((header, i) => ({ header: header === "Q" ? "Q(t)" : header, role: "input" as const, values: Array.from({ length: 2 ** vars.length }, (_, r) => ((r >> (vars.length - 1 - i)) & 1) as Bit) })),
+        { header: "Q(t+1)", role: "output" as const, values: Array.from({ length: 2 ** vars.length }, (_, r) => ones.includes(r) ? (1 as Bit) : (0 as Bit)) },
+      ],
+      symbol: { ff: symbolOf(ff), edge: "rising" },
+    },
     hints: [
       { rung: 2, text: "Not yet. Look at the rows where Q(t+1) = 1." },
       { rung: 3, text: ff === "JK" ? "Q(t+1) is 1 when J sets a Q that was 0, or when K does not reset a Q that was 1." : ff === "T" ? "Q(t+1) is 1 when exactly one of T and Q is 1." : "Q(t+1) is 1 exactly when D is 1." },

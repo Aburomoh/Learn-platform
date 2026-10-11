@@ -5,6 +5,8 @@ import { adderPins, flipFlopInputs } from "./blocks";
 import { circuitFromExpression } from "./circuit/circuit";
 import { codeNames } from "./device";
 import { MEMORY_TABLE_PINS, translate } from "./memoryTable";
+import { BUFFER_PINS } from "./BufferFigure";
+import { depth, ExpressionParseError, leaves, parseExpression } from "./opTree";
 
 const bit = z.union([z.literal(0), z.literal(1)]);
 
@@ -256,6 +258,46 @@ const MemoryTableFigure = z
   });
 
 /**
+ * The producer, the buffer and the consumer (CPET181 Ch6 s.17–18, #615): `slots` positions,
+ * `filled` of them holding data. A picture only: the state words (full, partly empty, empty) are
+ * never drawn, and there is no result state.
+ */
+const BufferFigure = z
+  .object({
+    type: z.literal("buffer"),
+    slots: z.number().int().min(2).max(10),
+    filled: z.number().int().min(0),
+    producer: z.string().min(1).max(12).optional(),
+    consumer: z.string().min(1).max(12).optional(),
+    focus: z.enum(BUFFER_PINS).optional(),
+    caption: z.string().min(1).max(200).optional(),
+  })
+  .refine((f) => f.filled <= f.slots, { path: ["filled"], message: "filled positions cannot exceed the slots" });
+
+/**
+ * An arithmetic expression as a tree of its operations (CPET181 Ch6 s.21–24, #615): precedence and
+ * parentheses decide the tree; the earliest-step schedule (step numbers) is computed and drawn in the
+ * result state only. The expression is parsed at build; at most 10 leaves and 6 levels so it fits a phone.
+ */
+const OpTreeFigure = z
+  .object({
+    type: z.literal("op-tree"),
+    /** "A = 3 * B * C + 4 / (D + E) ** (F − G)"; the "A =" part is optional. */
+    expression: z.string().min(3).max(80),
+    caption: z.string().min(1).max(200).optional(),
+  })
+  .superRefine((f, ctx) => {
+    try {
+      const { root } = parseExpression(f.expression);
+      if (leaves(root).length > 10) ctx.addIssue({ code: "custom", path: ["expression"], message: "at most 10 operands fit the figure" });
+      if (depth(root) > 6) ctx.addIssue({ code: "custom", path: ["expression"], message: "at most 6 levels fit the figure" });
+    } catch (err) {
+      if (!(err instanceof ExpressionParseError)) throw err;
+      ctx.addIssue({ code: "custom", path: ["expression"], message: err.message });
+    }
+  });
+
+/**
  * A given table, read-only (#617): a characteristic, excitation or state table the question refers
  * to, so a student who opens the question directly sees the table it names (PEDAGOGY, question
  * context). Content gives the columns as the slide prints them; `output` columns follow the inputs
@@ -296,7 +338,7 @@ const TopologyFigure = z.object({
 });
 
 /** One figure per question, drawn by the stage above (or beside) any kind's answer area. */
-export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, MemoryTableFigure, ResourceGraphFigure, FileLayoutFigure, TableFigure, TopologyFigure]);
+export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, MemoryTableFigure, ResourceGraphFigure, FileLayoutFigure, TableFigure, BufferFigure, OpTreeFigure, TopologyFigure]);
 export type FigureSpec = z.infer<typeof FigureSpec>;
 
 /** The pins a focus may name (`figure.focus`, `stage.figureFocus`). A latch figure has no focus state yet. */
@@ -316,6 +358,8 @@ export function figurePins(figure: FigureSpec): string[] {
       return [...figure.processes, ...figure.resources];
     case "memory-table":
       return [...MEMORY_TABLE_PINS];
+    case "buffer":
+      return [...BUFFER_PINS];
     default:
       return [];
   }

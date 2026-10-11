@@ -736,10 +736,10 @@ describe("content registry", () => {
   it("timing diagrams (#298): the slides' worked diagrams reproduce, and every set is valid", () => {
     const x = getActivity(COURSE, "timing", "timing-diagrams")!.activity;
     const q = (v: (typeof x.questions)[number]["variants"][number]) => (v.spec.kind === "timing" ? statesAfterEdges(v.spec).map((s) => s.join("")).join(" ") : "");
-    const [rising, falling] = x.questions;
-    expect(q(rising.variants[0])).toBe("0 1 0 1 1"); // s.17–20
-    expect(q(rising.variants[1])).toBe("0 1 0 1 1 0 0"); // s.32–33
-    for (const v of [...rising.variants, ...falling.variants]) expect(q(v).length, v.id).toBeGreaterThan(0);
+    const [sr, d, ...rest] = x.questions;
+    expect(q(sr.variants[0])).toBe("0 1 0 1 1"); // s.17–20
+    expect(q(d.variants[0])).toBe("0 1 0 1 1 0 0"); // s.32–33
+    for (const v of [...sr.variants, ...d.variants, ...rest.flatMap((r) => r.variants)]) expect(q(v).length, v.id).toBeGreaterThan(0);
   });
 
   it("digit replacement (#214): bits and checks from the pack (s.21, s.20 owner S4, s.27–28, s.29–30, s.22)", () => {
@@ -1028,7 +1028,16 @@ describe("authored truth is internally consistent", () => {
   });
 
   it("every practice stands alone: no prompt points back to an earlier circuit or design (#568)", () => {
-    for (const { path, variant } of allVariants()) expect(variant.prompt, path).not.toMatch(/the same (circuit|design|diagram|table|map|figure)/i);
+    for (const { path, variant } of allVariants()) expect(variant.prompt, path).not.toMatch(/\bthe same (circuit|design|diagram|table|map|figure)/i);
+  });
+
+  it("a prompt that names \"the <X> table\" shows a table: a table figure, a table kind, or a memory-table figure (#618)", () => {
+    // a safety net, not the rule (PEDAGOGY, question context): every prompt is written to show what it names
+    const names = /\b(?:the|this|that)\s+(?:[\w'′()+-]+\s+){0,3}?table\b/i;
+    const showsTable = (v: { spec: { kind: string }; figure?: { type: string } }) => ["table", "memory-table"].includes(v.figure?.type ?? "") || ["truth-table", "state-diagram"].includes(v.spec.kind);
+    for (const { path, variant } of allVariants()) {
+      if (names.test(variant.prompt)) expect(showsTable(variant), `${path}: ${variant.prompt.slice(0, 100)}`).toBe(true);
+    }
   });
 
   it("no student text shows a raw base subscript once split into notation (#465)", () => {
