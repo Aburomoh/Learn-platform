@@ -181,11 +181,11 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
   const doSkip = () => {
     // written to the store and to storage before the page changes (a React-batched update would be lost)
     getProgressStore(offeringId).set((p) => skipQuestion(p, activity.id, question.id));
+    flushPendingWrites();
     if (skip.kind === "question") {
       act({ type: "SKIP_QUESTION" });
       return;
     }
-    flushPendingWrites();
     window.location.assign(skip.href!);
   };
   // After a wrong answer, a quiet way back to a question skipped earlier (offered, never forced):
