@@ -80,11 +80,11 @@ following questions (#141).
 - No recall or mental-arithmetic questions ("What is 2⁷?" with options): give such values as known terms (`[N] × 8²`) or put them behind the calculator.
 
 **Hidden skip.** A discreet escape for strong students, not a primary action.
-- It lives in the activity's "More" (⋯) menu as "Skip to the challenge"; never a button on the stage, never suggested by the tutor.
+- It lives in the activity's "More" (⋯) menu as "Skip to next question" (owner, 2026-10-11, #623); never a button on the stage, never suggested by the tutor.
 - Available only after the student has completed at least one practice in that topic (first-try correct, no Explain Slowly).
-- One confirmation: "Skip the remaining practice in this topic? You can come back any time."
-- It jumps to the topic's next challenge; skipped practices are recorded as `skipped` (never `completed`), shown as unfinished on the course map, and do not count toward topic completion or mastery.
-- If the challenge is then failed, the tutor offers (does not force) a return to the skipped practice.
+- One confirmation: "Skip this question? You can come back any time."
+- It moves to the next question of the practice; from the last question, to the next practice's first question; from the last practice of a topic, to the next topic. Only the skipped question is recorded (never `completed`): the practice stays unfinished on the course map ("skipped ahead") and does not count toward topic completion or mastery until the question is done.
+- If a later question is then failed, the tutor offers (does not force) a return to the skipped question.
 
 ## Pedagogy veto
 The Pedagogy Engineer may file `PEDAGOGY VETO — TASK-###` (advisory to the owner; format in

@@ -6,7 +6,7 @@ import { product } from "../../config/product";
 import { HintReveal } from "@/interactions/HintReveal/HintReveal";
 import { canRequestScaffold } from "@/tutor";
 import { TutorPanel, TutorPosePreload, useFocusEffects } from "@/tutor/ui";
-import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordAttempt, completeActivity, completeQuestion, markExplained, skipActivities, flushPendingWrites } from "@/learner";
+import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordAttempt, completeActivity, completeQuestion, markExplained, skipQuestion, skippedAhead, flushPendingWrites } from "@/learner";
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
@@ -175,16 +175,27 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
     if (stage === "explaining") updateProgress((p) => markExplained(p, activity.id));
   }, [stage, activity.id, updateProgress]);
 
-  // The hidden skip (#579): from the ⋯ menu only; the practices passed over are recorded as skipped.
-  const skip = skipOffer(course, topic, activity, progress);
+  // The hidden skip (#579, #623): from the ⋯ menu only; the question is recorded as skipped and the
+  // runner moves to the next one, or the page leaves for the next practice or topic.
+  const skip = skipOffer(course, topic, activity, progress, state.qIndex, state.completed);
   const doSkip = () => {
     // written to the store and to storage before the page changes (a React-batched update would be lost)
-    getProgressStore(offeringId).set((p) => skipActivities(p, skip.skipped));
+    getProgressStore(offeringId).set((p) => skipQuestion(p, activity.id, question.id));
     flushPendingWrites();
-    window.location.assign(skip.href);
+    if (skip.kind === "question") {
+      act({ type: "SKIP_QUESTION" });
+      return;
+    }
+    window.location.assign(skip.href!);
   };
-  // After a wrong answer, a quiet way back to a practice skipped earlier in this topic (offered, never forced).
-  const skippedBefore = topic.activities.find((a, i) => i < topic.activities.findIndex((x) => x.id === activity.id) && progress.activities[a.id]?.status === "skipped");
+  // After a wrong answer, a quiet way back to a question skipped earlier (offered, never forced):
+  // in this practice first, else the nearest earlier practice skipped ahead in.
+  const skippedHere = (() => {
+    const ids = activityProgress?.skippedQuestions ?? [];
+    const i = activity.questions.findIndex((q, k) => k < state.qIndex && !state.completed[k] && ids.includes(q.id));
+    return i >= 0 ? { index: i, label: activity.questions[i].label ?? `Challenge ${i + 1}` } : undefined;
+  })();
+  const skippedBefore = skippedHere ? undefined : topic.activities.find((a, i) => i < topic.activities.findIndex((x) => x.id === activity.id) && skippedAhead(progress.activities[a.id]));
 
   // One marker per challenge: finished ones done, the one on screen current.
   const steps: ChallengeStep[] = activity.questions.map((q, i) => ({
@@ -246,9 +257,18 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
           onContinue={() => act({ type: "CONTINUE" })}
         />
 
+        {state.last && !state.last.result.correct && skippedHere && stage !== "explaining" && (
+          <p className={styles.returnOffer}>
+            Stuck? You skipped{" "}
+            <button type="button" className={styles.returnLink} onClick={() => act({ type: "GO_TO_QUESTION", index: skippedHere.index })}>
+              {skippedHere.label}
+            </button>
+            ; it leads here. Go back any time.
+          </p>
+        )}
         {state.last && !state.last.result.correct && skippedBefore && stage !== "explaining" && (
           <p className={styles.returnOffer}>
-            Stuck? You skipped <a href={practiceHref(course, topic, skippedBefore)}>{skippedBefore.title}</a>; it covers this. Go back any time.
+            Stuck? You skipped ahead in <a href={practiceHref(course, topic, skippedBefore)}>{skippedBefore.title}</a>; it covers this. Go back any time.
           </p>
         )}
 
