@@ -96,4 +96,23 @@ describe("CPET 181 Chapter 4 scheduling content (#587)", () => {
   it("identify charts are one clear answer each: RR with a quantum, SJN, SRT, Priority", () => {
     expect(specs("compare-algorithms", "identify", "cm.q.identify").map((x) => x.spec.policy)).toEqual(["rr", "sjn", "srt", "priority"]);
   });
+
+  it("concept questions: three or four items each, the answer appears only at the last rung, and the five states and three PCB parts are exactly the pack's", () => {
+    const act = ["processes-and-schedulers", "states-and-pcb", "policies"].flatMap((id) => getActivity(COURSE, "scheduling-concepts", id)!.activity.questions);
+    expect(act.length).toBe(11);
+    for (const q of act) {
+      expect(q.variants.length, q.id).toBeGreaterThanOrEqual(3);
+      expect(q.variants.length, q.id).toBeLessThanOrEqual(4);
+      for (const v of q.variants) {
+        if (v.spec.kind !== "multiple-choice") throw new Error("multiple-choice expected");
+        const { options, correctOptionId } = v.spec;
+        const correct = options.find((o) => o.id === correctOptionId)!.text;
+        const early = v.hints.slice(0, -1).map((h) => h.text).join(" ");
+        expect(early, `${q.id}/${v.id} hint gives the answer away`).not.toContain(correct);
+      }
+    }
+    const states = getActivity(COURSE, "scheduling-concepts", "states-and-pcb")!.activity.questions[0];
+    const all = states.variants.flatMap((v) => (v.spec.kind === "multiple-choice" ? v.spec.options.map((o) => o.text) : []));
+    for (const t of all) for (const name of t.split(" → ")) expect(["HOLD", "READY", "RUNNING", "WAITING", "FINISHED"], t).toContain(name);
+  });
 });
