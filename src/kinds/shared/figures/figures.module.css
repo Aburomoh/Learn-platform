@@ -144,6 +144,13 @@
   font-weight: 700;
 }
 
+/* memory tables (#605): the translated row in the result state */
+.rowOn {
+  fill: var(--success-soft);
+  stroke: var(--signal-high);
+  stroke-width: 1.5;
+}
+
 /* topic card: the numbered discs that match the callouts */
 .mark {
   fill: var(--brand);
