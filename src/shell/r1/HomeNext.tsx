@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 import type { Course } from "@/content/schema";
 import { getProgressStore } from "@/learner";
 import { emptyProgress, type OfferingProgress } from "@/learner/progress";
@@ -46,7 +47,8 @@ export function remainingCue(done: number, total: number, minutes: number): stri
  * Progress lives in this browser, so the content is shown once it has been read; the server
  * renders the first-visit version invisibly.
  */
-export function HomeNext({ courses }: { courses: Course[] }) {
+/** `share`: the landing page's QR card (#657), rendered last, under the course list. */
+export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactNode }) {
   const ready = useHydrated();
   const progressOf = (course: Course) => (ready ? getProgressStore(course.offeringId).get() : emptyProgress(course.offeringId));
   const { course, progress, action } = pickCourse(courses, progressOf);
@@ -129,6 +131,7 @@ export function HomeNext({ courses }: { courses: Course[] }) {
           })}
         </ol>
       </section>
+      {share}
     </div>
   );
 }
