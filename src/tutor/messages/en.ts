@@ -164,6 +164,8 @@ export const en = {
   "vm.quotient-remainder-swap": "That is the other part of the address. The page number is the quotient and the displacement is the remainder.",
   "vm.frame-not-scaled": "A frame number is not an address. Multiply the frame number by the frame size first.",
   "vm.pages-round-up": "The last page is only partly filled, but it still needs a whole page. Round up.",
+  "cc.steps-as-ops": "That counts every operation. Operations that do not depend on each other share a step, so count the longest chain.",
+  "cc.processors-as-steps": "That is the number of steps. Count how many operations run together in the busiest step.",
   "lt.enable-ignored": "Look at En first. While En = 0, can S and R reach the latch?",
   "lg.check-not": "Look at the NOT gate again. It flips its input.",
   "lg.check-and": "Look at the AND gate again. It needs both inputs to be 1.",
