@@ -120,8 +120,8 @@ export function ResourceGraphFigure({ processes, resources, edges, focus, captio
           <text x={42} y={total - 6} className={styles.edgeLabel}>
             allocated
           </text>
-          <path d={`M 118 ${total - 10} H 142`} className={styles.dashed} markerEnd={`url(#${id}-arrow)`} />
-          <text x={148} y={total - 6} className={styles.edgeLabel}>
+          <path d={`M 134 ${total - 10} H 158`} className={styles.dashed} markerEnd={`url(#${id}-arrow)`} />
+          <text x={164} y={total - 6} className={styles.edgeLabel}>
             requested
           </text>
         </g>

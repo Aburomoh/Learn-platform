@@ -155,7 +155,7 @@
 
 /* an arrow's word, kept legible over crossing lines by a stroke in the well's colour */
 .edgeLabel {
-  font-size: 13px;
+  font-size: 15px;
   fill: var(--text-muted);
   paint-order: stroke;
   stroke: var(--surface-sunk);
