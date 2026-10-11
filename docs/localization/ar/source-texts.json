@@ -1175,6 +1175,649 @@
   "slots": []
  },
  {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.concurrent.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Evaluated concurrently, an operation can run in a step once both its operands are ready, so independent operations share a step. The number of steps is the length of the longest chain of operations that depend on each other.",
+  "technical_terms": [
+   "Ready queue / READY",
+   "Operation (expression tree)"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v1#explanation[0].say",
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v2#explanation[0].say",
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v3#explanation[0].say",
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.concurrent.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "The longest chain of dependent operations has 4 operations, so it takes 4 steps.",
+  "technical_terms": [
+   "Operation (expression tree)"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v1#explanation[1].say",
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.concurrent.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Find the longest chain in which each operation needs the result of the one before.",
+  "technical_terms": [
+   "Operation (expression tree)"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids). Hint rung 3.",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v1#hints[1]",
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v2#hints[1]",
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v3#hints[1]",
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.concurrent.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "4. The longest chain of dependent operations has 4 operations, so it takes 4 steps.",
+  "technical_terms": [
+   "Operation (expression tree)"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v1#hints[2]",
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.concurrent.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "The longest chain of dependent operations has 3 operations, so it takes 3 steps.",
+  "technical_terms": [
+   "Operation (expression tree)"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v3#explanation[1].say",
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.concurrent.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "3. The longest chain of dependent operations has 3 operations, so it takes 3 steps.",
+  "technical_terms": [
+   "Operation (expression tree)"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v3#hints[2]",
+   "concurrent-programming/concurrent-steps/cc.q.concurrent/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.processors.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "With earliest-step scheduling every operation runs as soon as its operands are ready. The processors needed are those of the widest step: the most operations that run in the same step.",
+  "technical_terms": [
+   "Processor",
+   "Scheduler / scheduling",
+   "Ready queue / READY",
+   "Operation (expression tree)"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.processors/v1#explanation[0].say",
+   "concurrent-programming/concurrent-steps/cc.q.processors/v2#explanation[0].say",
+   "concurrent-programming/concurrent-steps/cc.q.processors/v3#explanation[0].say",
+   "concurrent-programming/concurrent-steps/cc.q.processors/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.processors.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Run each operation as early as it can: the widest step holds 3 operations, so 3 processors.",
+  "technical_terms": [
+   "Processor",
+   "Operation (expression tree)"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.processors/v1#explanation[1].say",
+   "concurrent-programming/concurrent-steps/cc.q.processors/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.processors.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Schedule each operation as early as possible, then count the operations of the busiest step.",
+  "technical_terms": [
+   "Scheduler / scheduling",
+   "Operation (expression tree)"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids). Hint rung 3.",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.processors/v1#hints[1]",
+   "concurrent-programming/concurrent-steps/cc.q.processors/v2#hints[1]",
+   "concurrent-programming/concurrent-steps/cc.q.processors/v3#hints[1]",
+   "concurrent-programming/concurrent-steps/cc.q.processors/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.processors.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "3. Run each operation as early as it can: the widest step holds 3 operations, so 3 processors.",
+  "technical_terms": [
+   "Processor",
+   "Operation (expression tree)"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.processors/v1#hints[2]",
+   "concurrent-programming/concurrent-steps/cc.q.processors/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.processors.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Run each operation as early as it can: the widest step holds 4 operations, so 4 processors.",
+  "technical_terms": [
+   "Processor",
+   "Operation (expression tree)"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.processors/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.processors.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "4. Run each operation as early as it can: the widest step holds 4 operations, so 4 processors.",
+  "technical_terms": [
+   "Processor",
+   "Operation (expression tree)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.processors/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.processors.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Run each operation as early as it can: the widest step holds 2 operations, so 2 processors.",
+  "technical_terms": [
+   "Processor",
+   "Operation (expression tree)"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.processors/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.concurrent-steps.cc.q.processors.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "2. Run each operation as early as it can: the widest step holds 2 operations, so 2 processors.",
+  "technical_terms": [
+   "Processor",
+   "Operation (expression tree)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/concurrent-steps/cc.q.processors/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.kinds.cc.q.kind.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Sequential programming runs one instruction at a time. Concurrent programming runs several in parallel on several processors for one job, so independent operations take the same step.",
+  "technical_terms": [
+   "Combinational / sequential circuit",
+   "Job",
+   "Processor",
+   "Concurrent / parallel",
+   "Operation (expression tree)",
+   "Sequential / direct / indexed sequential"
+  ],
+  "notes": "Occurs 3 times (first 5 locations in occurrence_ids).",
+  "occurrences": 3,
+  "occurrence_ids": [
+   "concurrent-programming/kinds/cc.q.kind/v1#explanation[0].say",
+   "concurrent-programming/kinds/cc.q.kind/v2#explanation[0].say",
+   "concurrent-programming/kinds/cc.q.kind/v3#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.kinds.cc.q.kind.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "One operation at a time is sequential.",
+  "technical_terms": [
+   "Combinational / sequential circuit",
+   "Operation (expression tree)",
+   "Sequential / direct / indexed sequential"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/kinds/cc.q.kind/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.kinds.cc.q.kind.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "How many operations run in a step?",
+  "technical_terms": [
+   "Operation (expression tree)"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/kinds/cc.q.kind/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.kinds.cc.q.kind.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Sequential. One operation at a time is sequential.",
+  "technical_terms": [
+   "Combinational / sequential circuit",
+   "Operation (expression tree)",
+   "Sequential / direct / indexed sequential"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/kinds/cc.q.kind/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.kinds.cc.q.kind.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Independent operations in parallel is concurrent.",
+  "technical_terms": [
+   "Concurrent / parallel",
+   "Operation (expression tree)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/kinds/cc.q.kind/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.kinds.cc.q.kind.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "How many processors are used?",
+  "technical_terms": [
+   "Processor"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/kinds/cc.q.kind/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.kinds.cc.q.kind.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Concurrent. Independent operations in parallel is concurrent.",
+  "technical_terms": [
+   "Concurrent / parallel",
+   "Operation (expression tree)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/kinds/cc.q.kind/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.kinds.cc.q.kind.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Several operations per step need fewer steps.",
+  "technical_terms": [
+   "Operation (expression tree)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/kinds/cc.q.kind/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.kinds.cc.q.kind.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Which one does several operations at once?",
+  "technical_terms": [
+   "Operation (expression tree)"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/kinds/cc.q.kind/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.kinds.cc.q.kind.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Concurrent. Several operations per step need fewer steps.",
+  "technical_terms": [
+   "Concurrent / parallel",
+   "Operation (expression tree)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/kinds/cc.q.kind/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.sequential-steps.cc.q.sequential.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Evaluated sequentially, each operation takes its own step: parentheses first, then ** before * and /, then + and −.",
+  "technical_terms": [
+   "Operation (expression tree)"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "concurrent-programming/sequential-steps/cc.q.sequential/v1#explanation[0].say",
+   "concurrent-programming/sequential-steps/cc.q.sequential/v2#explanation[0].say",
+   "concurrent-programming/sequential-steps/cc.q.sequential/v3#explanation[0].say",
+   "concurrent-programming/sequential-steps/cc.q.sequential/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.sequential-steps.cc.q.sequential.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "The expression has 7 operations (every + − * / and **), so a sequential evaluation takes 7 steps.",
+  "technical_terms": [
+   "Expression",
+   "Combinational / sequential circuit",
+   "Operation (expression tree)",
+   "Sequential / direct / indexed sequential"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "concurrent-programming/sequential-steps/cc.q.sequential/v1#explanation[1].say",
+   "concurrent-programming/sequential-steps/cc.q.sequential/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.sequential-steps.cc.q.sequential.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Count the operators: each one is a step.",
+  "technical_terms": [],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids). Hint rung 3.",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "concurrent-programming/sequential-steps/cc.q.sequential/v1#hints[1]",
+   "concurrent-programming/sequential-steps/cc.q.sequential/v2#hints[1]",
+   "concurrent-programming/sequential-steps/cc.q.sequential/v3#hints[1]",
+   "concurrent-programming/sequential-steps/cc.q.sequential/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.sequential-steps.cc.q.sequential.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "7. The expression has 7 operations (every + − * / and **), so a sequential evaluation takes 7 steps.",
+  "technical_terms": [
+   "Expression",
+   "Combinational / sequential circuit",
+   "Operation (expression tree)",
+   "Sequential / direct / indexed sequential"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "concurrent-programming/sequential-steps/cc.q.sequential/v1#hints[2]",
+   "concurrent-programming/sequential-steps/cc.q.sequential/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.sequential-steps.cc.q.sequential.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "The expression has 4 operations (every + − * / and **), so a sequential evaluation takes 4 steps.",
+  "technical_terms": [
+   "Expression",
+   "Combinational / sequential circuit",
+   "Operation (expression tree)",
+   "Sequential / direct / indexed sequential"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/sequential-steps/cc.q.sequential/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.sequential-steps.cc.q.sequential.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "4. The expression has 4 operations (every + − * / and **), so a sequential evaluation takes 4 steps.",
+  "technical_terms": [
+   "Expression",
+   "Combinational / sequential circuit",
+   "Operation (expression tree)",
+   "Sequential / direct / indexed sequential"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/sequential-steps/cc.q.sequential/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.sequential-steps.cc.q.sequential.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "The expression has 5 operations (every + − * / and **), so a sequential evaluation takes 5 steps.",
+  "technical_terms": [
+   "Expression",
+   "Combinational / sequential circuit",
+   "Operation (expression tree)",
+   "Sequential / direct / indexed sequential"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/sequential-steps/cc.q.sequential/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.concurrent-programming.sequential-steps.cc.q.sequential.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "5. The expression has 5 operations (every + − * / and **), so a sequential evaluation takes 5 steps.",
+  "technical_terms": [
+   "Expression",
+   "Combinational / sequential circuit",
+   "Operation (expression tree)",
+   "Sequential / direct / indexed sequential"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "concurrent-programming/sequential-steps/cc.q.sequential/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
   "id": "cpet181.deadlock-basics.cases.dl.q.cases.v1.explanation[0].say",
   "course": "cpet181",
   "chapter": "chapter-5: Chapter 5 · Process management",
@@ -2381,6 +3024,749 @@
   "occurrences": 1,
   "occurrence_ids": [
    "deadlock-sketches/circle/dl.q.circular/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The Device Manager deallocates a device at two levels: at the process level, after an I/O command, which is temporary; and at the job level, when the job is finished, which is permanent.",
+  "technical_terms": [
+   "Process",
+   "Job",
+   "Manager (Memory / Processor / Device / File / Network)",
+   "Device",
+   "I/O"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v1#explanation[0].say",
+   "device-manager/deallocation/dm.q.deallocation/v2#explanation[0].say",
+   "device-manager/deallocation/dm.q.deallocation/v3#explanation[0].say",
+   "device-manager/deallocation/dm.q.deallocation/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A temporary release after an I/O command is process-level deallocation.",
+  "technical_terms": [
+   "Process",
+   "I/O",
+   "Release / deallocate"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Is the release temporary or permanent?",
+  "technical_terms": [
+   "Release / deallocate"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Hint rung 3.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v1#hints[1]",
+   "device-manager/deallocation/dm.q.deallocation/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Process level. A temporary release after an I/O command is process-level deallocation.",
+  "technical_terms": [
+   "Process",
+   "I/O",
+   "Release / deallocate"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A permanent release when the job ends is job-level deallocation.",
+  "technical_terms": [
+   "Job",
+   "Release / deallocate"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Job level. A permanent release when the job ends is job-level deallocation.",
+  "technical_terms": [
+   "Job",
+   "Release / deallocate"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Job-level deallocation is permanent.",
+  "technical_terms": [
+   "Job",
+   "Release / deallocate"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "It happens when the job is finished.",
+  "technical_terms": [
+   "Job"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Job level. Job-level deallocation is permanent.",
+  "technical_terms": [
+   "Job",
+   "Release / deallocate"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Process-level deallocation follows an I/O command and is temporary.",
+  "technical_terms": [
+   "Process",
+   "I/O",
+   "Release / deallocate"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "It happens for each process's command, not for the whole job.",
+  "technical_terms": [
+   "Process",
+   "Job"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.deallocation.dm.q.deallocation.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Process level. Process-level deallocation follows an I/O command and is temporary.",
+  "technical_terms": [
+   "Process",
+   "I/O",
+   "Release / deallocate"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/deallocation/dm.q.deallocation/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A dedicated device is used by one job at a time for the whole job (tape drives, printers, plotters), which is wasteful when it sits idle. A shared device serves several processes with interleaved requests (disks), so the Device Manager must control conflicts by policy. A virtual device is a dedicated device made shareable, as a printer is through spooling.",
+  "technical_terms": [
+   "Process",
+   "Job",
+   "Manager (Memory / Processor / Device / File / Network)",
+   "Device",
+   "Spooling",
+   "Dedicated / shared / virtual device",
+   "Tape",
+   "Disk"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v1#explanation[0].say",
+   "device-manager/device-types/dm.q.types/v2#explanation[0].say",
+   "device-manager/device-types/dm.q.types/v3#explanation[0].say",
+   "device-manager/device-types/dm.q.types/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "One job at a time for the whole job is a dedicated device.",
+  "technical_terms": [
+   "Job",
+   "Device",
+   "Dedicated / shared / virtual device"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "How many jobs use it at once?",
+  "technical_terms": [
+   "Job"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Dedicated. One job at a time for the whole job is a dedicated device.",
+  "technical_terms": [
+   "Job",
+   "Device",
+   "Dedicated / shared / virtual device"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Interleaved requests from several processes make a shared device.",
+  "technical_terms": [
+   "Process",
+   "Device",
+   "Dedicated / shared / virtual device"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "How many processes use it at once?",
+  "technical_terms": [
+   "Process"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Shared. Interleaved requests from several processes make a shared device.",
+  "technical_terms": [
+   "Process",
+   "Device",
+   "Dedicated / shared / virtual device"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A dedicated device made shareable by spooling is a virtual device.",
+  "technical_terms": [
+   "Device",
+   "Spooling",
+   "Dedicated / shared / virtual device"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Spooling is what makes it shareable.",
+  "technical_terms": [
+   "Spooling"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Virtual. A dedicated device made shareable by spooling is a virtual device.",
+  "technical_terms": [
+   "Device",
+   "Spooling",
+   "Dedicated / shared / virtual device"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A dedicated device is held by one job for its whole run, even when idle.",
+  "technical_terms": [
+   "Job",
+   "Device",
+   "Dedicated / shared / virtual device"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Who holds it while the job is not using it?",
+  "technical_terms": [
+   "Job"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.device-types.dm.q.types.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Dedicated. A dedicated device is held by one job for its whole run, even when idle.",
+  "technical_terms": [
+   "Job",
+   "Device",
+   "Dedicated / shared / virtual device"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/device-types/dm.q.types/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Magnetic tape is a sequential access medium: records are found by position. Direct access storage devices (DASD) are magnetic disks (floppy, zip, hard disk), optical discs (CD, DVD, Blu-ray) and flash memory: they reach a chosen place directly.",
+  "technical_terms": [
+   "Memory",
+   "Combinational / sequential circuit",
+   "Device",
+   "Field / record / database",
+   "Sequential / direct / indexed sequential",
+   "Tape",
+   "Disk",
+   "Optical disc (CD / DVD / Blu-ray)",
+   "SSD / HDD / flash",
+   "DASD"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v1#explanation[0].say",
+   "device-manager/media/dm.q.media/v2#explanation[0].say",
+   "device-manager/media/dm.q.media/v3#explanation[0].say",
+   "device-manager/media/dm.q.media/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Tape is a sequential access medium.",
+  "technical_terms": [
+   "Combinational / sequential circuit",
+   "Sequential / direct / indexed sequential",
+   "Tape"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Can it jump to a chosen place?",
+  "technical_terms": [],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Hint rung 3.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v1#hints[1]",
+   "device-manager/media/dm.q.media/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Sequential access. Tape is a sequential access medium.",
+  "technical_terms": [
+   "Combinational / sequential circuit",
+   "Sequential / direct / indexed sequential",
+   "Tape"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A magnetic disk is a direct access storage device.",
+  "technical_terms": [
+   "Device",
+   "Sequential / direct / indexed sequential",
+   "Disk"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Direct access (DASD). A magnetic disk is a direct access storage device.",
+  "technical_terms": [
+   "Device",
+   "Sequential / direct / indexed sequential",
+   "Disk",
+   "DASD"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Optical discs are direct access storage devices.",
+  "technical_terms": [
+   "Device",
+   "Sequential / direct / indexed sequential",
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Think about how the laser reaches a place on the disc.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Direct access (DASD). Optical discs are direct access storage devices.",
+  "technical_terms": [
+   "Device",
+   "Sequential / direct / indexed sequential",
+   "Optical disc (CD / DVD / Blu-ray)",
+   "DASD"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Flash memory is a direct access storage device.",
+  "technical_terms": [
+   "Memory",
+   "Device",
+   "Sequential / direct / indexed sequential",
+   "SSD / HDD / flash"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Has it any tape to wind?",
+  "technical_terms": [
+   "Tape"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.device-manager.media.dm.q.media.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "device-manager",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Direct access (DASD). Flash memory is a direct access storage device.",
+  "technical_terms": [
+   "Memory",
+   "Device",
+   "Sequential / direct / indexed sequential",
+   "SSD / HDD / flash",
+   "DASD"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "device-manager/media/dm.q.media/v4#hints[2]"
   ],
   "slots": []
  },
@@ -5645,8 +7031,8 @@
   "source_file": "src/content/cpet181/chapter1/mcq.ts",
   "english": "Not yet. Read the question again and test the options one at a time.",
   "technical_terms": [],
-  "notes": "Occurs 218 times (first 5 locations in occurrence_ids). Hint rung 2.",
-  "occurrences": 218,
+  "notes": "Occurs 297 times (first 5 locations in occurrence_ids). Hint rung 2.",
+  "occurrences": 297,
   "occurrence_ids": [
    "hardware-and-memory/hardware-categories/hw.q.sort/v1#hints[0]",
    "hardware-and-memory/hardware-categories/hw.q.sort/v2#hints[0]",
@@ -7565,6 +8951,1774 @@
   "slots": []
  },
  {
+  "id": "cpet181.magnetic-disks.address.dk.q.address.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A record on a hard disk is addressed by its cylinder number, its surface number and its record number.",
+  "technical_terms": [
+   "Field / record / database",
+   "Disk",
+   "Track / cylinder / surface"
+  ],
+  "notes": "Occurs 3 times (first 5 locations in occurrence_ids).",
+  "occurrences": 3,
+  "occurrence_ids": [
+   "magnetic-disks/address/dk.q.address/v1#explanation[0].say",
+   "magnetic-disks/address/dk.q.address/v2#explanation[0].say",
+   "magnetic-disks/address/dk.q.address/v3#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.address.dk.q.address.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The address is cylinder, surface and record number.",
+  "technical_terms": [
+   "Address",
+   "Field / record / database",
+   "Track / cylinder / surface"
+  ],
+  "notes": "Occurs 3 times (first 5 locations in occurrence_ids).",
+  "occurrences": 3,
+  "occurrence_ids": [
+   "magnetic-disks/address/dk.q.address/v1#explanation[1].say",
+   "magnetic-disks/address/dk.q.address/v2#explanation[1].say",
+   "magnetic-disks/address/dk.q.address/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.address.dk.q.address.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Which of these are disk words rather than memory words?",
+  "technical_terms": [
+   "Memory",
+   "Disk"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/address/dk.q.address/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.address.dk.q.address.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Cylinder number. The address is cylinder, surface and record number.",
+  "technical_terms": [
+   "Address",
+   "Field / record / database",
+   "Track / cylinder / surface"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/address/dk.q.address/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.address.dk.q.address.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A hard disk has several platters, each with two surfaces.",
+  "technical_terms": [
+   "Disk",
+   "Track / cylinder / surface"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/address/dk.q.address/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.address.dk.q.address.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Surface number. The address is cylinder, surface and record number.",
+  "technical_terms": [
+   "Address",
+   "Field / record / database",
+   "Track / cylinder / surface"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/address/dk.q.address/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.address.dk.q.address.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The last part names the record itself.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/address/dk.q.address/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.address.dk.q.address.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Record number. The address is cylinder, surface and record number.",
+  "technical_terms": [
+   "Address",
+   "Field / record / database",
+   "Track / cylinder / surface"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/address/dk.q.address/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.disk-pros-cons.dk.q.disk-pros-cons.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A disk has direct access, is large, faster than tape, less prone to corruption and reusable. Against that it is dearer than tape, needs a clean environment, is less portable and is poor for sequential access.",
+  "technical_terms": [
+   "Combinational / sequential circuit",
+   "Sequential / direct / indexed sequential",
+   "Tape",
+   "Disk"
+  ],
+  "notes": "Occurs 3 times (first 5 locations in occurrence_ids).",
+  "occurrences": 3,
+  "occurrence_ids": [
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v1#explanation[0].say",
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v2#explanation[0].say",
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v3#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.disk-pros-cons.dk.q.disk-pros-cons.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Direct access is the disk's main advantage.",
+  "technical_terms": [
+   "Sequential / direct / indexed sequential",
+   "Disk"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.disk-pros-cons.dk.q.disk-pros-cons.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Compare it with a medium that has to be read in order.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.disk-pros-cons.dk.q.disk-pros-cons.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Direct access to a chosen record. Direct access is the disk's main advantage.",
+  "technical_terms": [
+   "Field / record / database",
+   "Sequential / direct / indexed sequential",
+   "Disk"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.disk-pros-cons.dk.q.disk-pros-cons.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A disk costs more than tape and needs a clean environment.",
+  "technical_terms": [
+   "Tape",
+   "Disk"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.disk-pros-cons.dk.q.disk-pros-cons.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "What does it cost compared with tape?",
+  "technical_terms": [
+   "Tape"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.disk-pros-cons.dk.q.disk-pros-cons.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "It is dearer than tape and needs a clean environment. A disk costs more than tape and needs a clean environment.",
+  "technical_terms": [
+   "Tape",
+   "Disk"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.disk-pros-cons.dk.q.disk-pros-cons.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A disk is poor for sequential access.",
+  "technical_terms": [
+   "Combinational / sequential circuit",
+   "Sequential / direct / indexed sequential",
+   "Disk"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.disk-pros-cons.dk.q.disk-pros-cons.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Which use does it do worse than tape?",
+  "technical_terms": [
+   "Tape"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.disk-pros-cons.dk.q.disk-pros-cons.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Sequential access. A disk is poor for sequential access.",
+  "technical_terms": [
+   "Combinational / sequential circuit",
+   "Sequential / direct / indexed sequential",
+   "Disk"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/disk-pros-cons/dk.q.disk-pros-cons/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A fixed-head disk has one head per track, so it is faster, but costly with less capacity, and is used in spacecraft and aircraft. A movable-head disk has its heads moving together on one access arm, as in PC drives.",
+  "technical_terms": [
+   "Fixed / dynamic partition",
+   "Disk",
+   "Track / cylinder / surface",
+   "Head (read/write)"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v1#explanation[0].say",
+   "magnetic-disks/heads/dk.q.heads/v2#explanation[0].say",
+   "magnetic-disks/heads/dk.q.heads/v3#explanation[0].say",
+   "magnetic-disks/heads/dk.q.heads/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "One head per track is a fixed-head disk.",
+  "technical_terms": [
+   "Fixed / dynamic partition",
+   "Disk",
+   "Track / cylinder / surface",
+   "Head (read/write)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Does any head have to move?",
+  "technical_terms": [
+   "Head (read/write)"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Fixed-head disk. One head per track is a fixed-head disk.",
+  "technical_terms": [
+   "Fixed / dynamic partition",
+   "Disk",
+   "Track / cylinder / surface",
+   "Head (read/write)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Heads moving together on one arm: movable-head.",
+  "technical_terms": [
+   "Head (read/write)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Is there a head for every track?",
+  "technical_terms": [
+   "Track / cylinder / surface",
+   "Head (read/write)"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Movable-head disk. Heads moving together on one arm: movable-head.",
+  "technical_terms": [
+   "Disk",
+   "Head (read/write)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The fixed-head disk is faster but costlier, with less capacity.",
+  "technical_terms": [
+   "Fixed / dynamic partition",
+   "Disk",
+   "Head (read/write)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "More heads cost more.",
+  "technical_terms": [
+   "Head (read/write)"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Fixed-head disk. The fixed-head disk is faster but costlier, with less capacity.",
+  "technical_terms": [
+   "Fixed / dynamic partition",
+   "Disk",
+   "Head (read/write)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "PC drives have movable heads on one arm.",
+  "technical_terms": [
+   "Head (read/write)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The other kind is used in spacecraft and aircraft.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.heads.dk.q.heads.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Movable-head disk. PC drives have movable heads on one arm.",
+  "technical_terms": [
+   "Disk",
+   "Head (read/write)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/heads/dk.q.heads/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.tracks.dk.q.tracks.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A magnetic disk has concentric tracks on its coated platter. An optical disc has one long spiral track read by a laser.",
+  "technical_terms": [
+   "Disk",
+   "Track / cylinder / surface",
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Occurs 3 times (first 5 locations in occurrence_ids).",
+  "occurrences": 3,
+  "occurrence_ids": [
+   "magnetic-disks/tracks/dk.q.tracks/v1#explanation[0].say",
+   "magnetic-disks/tracks/dk.q.tracks/v2#explanation[0].say",
+   "magnetic-disks/tracks/dk.q.tracks/v3#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.tracks.dk.q.tracks.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Concentric tracks belong to a magnetic disk.",
+  "technical_terms": [
+   "Disk",
+   "Track / cylinder / surface"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/tracks/dk.q.tracks/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.tracks.dk.q.tracks.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Are the tracks separate rings or one winding line?",
+  "technical_terms": [
+   "Track / cylinder / surface"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Hint rung 3.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "magnetic-disks/tracks/dk.q.tracks/v1#hints[1]",
+   "magnetic-disks/tracks/dk.q.tracks/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.tracks.dk.q.tracks.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Magnetic disk. Concentric tracks belong to a magnetic disk.",
+  "technical_terms": [
+   "Disk",
+   "Track / cylinder / surface"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/tracks/dk.q.tracks/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.tracks.dk.q.tracks.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "One long spiral track, read by a laser, belongs to an optical disc.",
+  "technical_terms": [
+   "Track / cylinder / surface",
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/tracks/dk.q.tracks/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.tracks.dk.q.tracks.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Optical disc. One long spiral track, read by a laser, belongs to an optical disc.",
+  "technical_terms": [
+   "Track / cylinder / surface",
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/tracks/dk.q.tracks/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.tracks.dk.q.tracks.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "An optical disc has a single spiral track.",
+  "technical_terms": [
+   "Track / cylinder / surface",
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/tracks/dk.q.tracks/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.tracks.dk.q.tracks.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Which one is read by a laser?",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/tracks/dk.q.tracks/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-disks.tracks.dk.q.tracks.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-disks",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Optical disc. An optical disc has a single spiral track.",
+  "technical_terms": [
+   "Track / cylinder / surface",
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-disks/tracks/dk.q.tracks/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Blocking records on tape needs fewer I/O operations and wastes less tape. Its costs are the overhead of blocking and deblocking, and wasted buffer when only one record of a block is needed.",
+  "technical_terms": [
+   "I/O",
+   "Buffer",
+   "Operation (expression tree)",
+   "Field / record / database",
+   "Tape",
+   "Blocking"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v1#explanation[0].say",
+   "magnetic-tape/blocking/tp.q.blocking/v2#explanation[0].say",
+   "magnetic-tape/blocking/tp.q.blocking/v3#explanation[0].say",
+   "magnetic-tape/blocking/tp.q.blocking/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Blocking means fewer I/O operations.",
+  "technical_terms": [
+   "I/O",
+   "Operation (expression tree)",
+   "Blocking"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "One read brings in several records.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Fewer I/O operations. Blocking means fewer I/O operations.",
+  "technical_terms": [
+   "I/O",
+   "Operation (expression tree)",
+   "Blocking"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Fewer gaps are needed, so less tape is wasted.",
+  "technical_terms": [
+   "Tape"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Count the gaps with and without blocks.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Less tape is wasted on gaps. Fewer gaps are needed, so less tape is wasted.",
+  "technical_terms": [
+   "Tape"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Blocking and deblocking cost overhead.",
+  "technical_terms": [
+   "Blocking"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Something extra has to be done to each block.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Overhead for blocking and deblocking. Blocking and deblocking cost overhead.",
+  "technical_terms": [
+   "Blocking"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A whole block is read into the buffer even if one record is wanted.",
+  "technical_terms": [
+   "Buffer",
+   "Field / record / database"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Think of what is read when only one record is needed.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.blocking.tp.q.blocking.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The buffer is wasted when only one record is needed. A whole block is read into the buffer even if one record is wanted.",
+  "technical_terms": [
+   "Buffer",
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/blocking/tp.q.blocking/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.ibg.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "12 records in blocks of 4 make 3 blocks, and 3 blocks have 2 gaps between them.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.ibg/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.ibg.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "First work out how many blocks there are, then count the gaps between them.",
+  "technical_terms": [],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids). Hint rung 3.",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.ibg/v1#hints[1]",
+   "magnetic-tape/count-gaps/tp.q.ibg/v2#hints[1]",
+   "magnetic-tape/count-gaps/tp.q.ibg/v3#hints[1]",
+   "magnetic-tape/count-gaps/tp.q.ibg/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.ibg.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "2. 12 records in blocks of 4 make 3 blocks, and 3 blocks have 2 gaps between them.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.ibg/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.ibg.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "10 records in blocks of 5 make 2 blocks, and 2 blocks have 1 gaps between them.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.ibg/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.ibg.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "1. 10 records in blocks of 5 make 2 blocks, and 2 blocks have 1 gaps between them.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.ibg/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.ibg.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "12 records in blocks of 3 make 4 blocks, and 4 blocks have 3 gaps between them.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.ibg/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.ibg.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "3. 12 records in blocks of 3 make 4 blocks, and 4 blocks have 3 gaps between them.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.ibg/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.ibg.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "9 records in blocks of 3 make 3 blocks, and 3 blocks have 2 gaps between them.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.ibg/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.ibg.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "2. 9 records in blocks of 3 make 3 blocks, and 3 blocks have 2 gaps between them.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.ibg/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.irg.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "10 records have 9 gaps between them: one fewer than the number of records.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.irg/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.irg.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A gap lies between two records. Count the places between neighbours, not the records.",
+  "technical_terms": [
+   "Adjacent / neighbour",
+   "Field / record / database"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids). Hint rung 3.",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.irg/v1#hints[1]",
+   "magnetic-tape/count-gaps/tp.q.irg/v2#hints[1]",
+   "magnetic-tape/count-gaps/tp.q.irg/v3#hints[1]",
+   "magnetic-tape/count-gaps/tp.q.irg/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.irg.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "9. 10 records have 9 gaps between them: one fewer than the number of records.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.irg/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.irg.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "7 records have 6 gaps between them: one fewer than the number of records.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.irg/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.irg.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "6. 7 records have 6 gaps between them: one fewer than the number of records.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.irg/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.irg.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "12 records have 11 gaps between them: one fewer than the number of records.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.irg/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.irg.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "11. 12 records have 11 gaps between them: one fewer than the number of records.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.irg/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.irg.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "5 records have 4 gaps between them: one fewer than the number of records.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.irg/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.count-gaps.tp.q.irg.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "4. 5 records have 4 gaps between them: one fewer than the number of records.",
+  "technical_terms": [
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/count-gaps/tp.q.irg/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.gap-kinds.tp.q.gap-kinds.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "On tape, a ½-inch gap lies between individually stored records (an inter-record gap, IRG) and between blocks of records (an inter-block gap, IBG). n records stored one by one have n − 1 IRGs; n blocks have n − 1 IBGs.",
+  "technical_terms": [
+   "Field / record / database",
+   "Tape",
+   "IRG / IBG"
+  ],
+  "notes": "Occurs 11 times (first 5 locations in occurrence_ids).",
+  "occurrences": 11,
+  "occurrence_ids": [
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v1#explanation[0].say",
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v2#explanation[0].say",
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v3#explanation[0].say",
+   "magnetic-tape/count-gaps/tp.q.irg/v1#explanation[0].say",
+   "magnetic-tape/count-gaps/tp.q.irg/v2#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.gap-kinds.tp.q.gap-kinds.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The gap between single records is the IRG.",
+  "technical_terms": [
+   "Field / record / database",
+   "IRG / IBG"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.gap-kinds.tp.q.gap-kinds.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Look at the first letters of the name.",
+  "technical_terms": [],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Hint rung 3.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v1#hints[1]",
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.gap-kinds.tp.q.gap-kinds.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Inter-record gap (IRG). The gap between single records is the IRG.",
+  "technical_terms": [
+   "Field / record / database",
+   "IRG / IBG"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.gap-kinds.tp.q.gap-kinds.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The gap between blocks of records is the IBG.",
+  "technical_terms": [
+   "Field / record / database",
+   "IRG / IBG"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.gap-kinds.tp.q.gap-kinds.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Inter-block gap (IBG). The gap between blocks of records is the IBG.",
+  "technical_terms": [
+   "Field / record / database",
+   "IRG / IBG"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.gap-kinds.tp.q.gap-kinds.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A gap between blocks is an IBG.",
+  "technical_terms": [
+   "IRG / IBG"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.gap-kinds.tp.q.gap-kinds.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "What does the gap separate: single records or groups?",
+  "technical_terms": [
+   "Grouping (octal/hex)",
+   "Field / record / database"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.gap-kinds.tp.q.gap-kinds.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Inter-block gap (IBG). A gap between blocks is an IBG.",
+  "technical_terms": [
+   "IRG / IBG"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/gap-kinds/tp.q.gap-kinds/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Tape is cheap and compact and good for backup and archives, but its access time varies and it is poor for routine or interactive use. A magnetic disk gives direct access, is larger and faster than tape and reusable, but is dearer, needs a clean environment and is poor for sequential access.",
+  "technical_terms": [
+   "Combinational / sequential circuit",
+   "Batch / interactive / real-time",
+   "Compaction / relocation",
+   "Sequential / direct / indexed sequential",
+   "Tape",
+   "Disk"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v1#explanation[0].say",
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v2#explanation[0].say",
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v3#explanation[0].say",
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Tape is cheap, compact and good for backup.",
+  "technical_terms": [
+   "Compaction / relocation",
+   "Tape"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Which one is the sequential one?",
+  "technical_terms": [
+   "Combinational / sequential circuit",
+   "Sequential / direct / indexed sequential"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Magnetic tape. Tape is cheap, compact and good for backup.",
+  "technical_terms": [
+   "Compaction / relocation",
+   "Tape"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A disk gives direct access and is faster than tape.",
+  "technical_terms": [
+   "Sequential / direct / indexed sequential",
+   "Tape",
+   "Disk"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Which one can jump to a chosen place?",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Magnetic disk. A disk gives direct access and is faster than tape.",
+  "technical_terms": [
+   "Sequential / direct / indexed sequential",
+   "Tape",
+   "Disk"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A disk is dearer than tape and needs a clean environment.",
+  "technical_terms": [
+   "Tape",
+   "Disk"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The cheaper one is the other.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Magnetic disk. A disk is dearer than tape and needs a clean environment.",
+  "technical_terms": [
+   "Tape",
+   "Disk"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Tape has variable access time, poor for routine or interactive use.",
+  "technical_terms": [
+   "Variable",
+   "Batch / interactive / real-time",
+   "Tape"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Which one must be read in order?",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.magnetic-tape.tape-vs-disk.tp.q.tape-disk.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Magnetic tape. Tape has variable access time, poor for routine or interactive use.",
+  "technical_terms": [
+   "Variable",
+   "Batch / interactive / real-time",
+   "Tape"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "magnetic-tape/tape-vs-disk/tp.q.tape-disk/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
   "id": "cpet181.memory-schemes.memory-schemes.mt.q.contiguous.v1.explanation[0].say",
   "course": "cpet181",
   "chapter": "chapter-2: Chapter 2 · Memory management: simple systems",
@@ -8268,6 +11422,1496 @@
   "occurrences": 1,
   "occurrence_ids": [
    "memory-schemes/memory-schemes/mt.q.single/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Most reliable and best balanced, hardest to build: symmetric.",
+  "technical_terms": [
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "It needs the tightest synchronization.",
+  "technical_terms": [
+   "Synchronization"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Symmetric. Most reliable and best balanced, hardest to build: symmetric.",
+  "technical_terms": [
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Independent computers survive each other's failures but are hard to monitor.",
+  "technical_terms": [],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Each processor is a complete computer.",
+  "technical_terms": [
+   "Processor"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Loosely coupled. Independent computers survive each other's failures but are hard to monitor.",
+  "technical_terms": [
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Central scheduling in one master is master/slave.",
+  "technical_terms": [
+   "Scheduler / scheduling",
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "What happens if the master fails?",
+  "technical_terms": [
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Master/slave. Central scheduling in one master is master/slave.",
+  "technical_terms": [
+   "Scheduler / scheduling",
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "A job moving between equal processors needs tight synchronization.",
+  "technical_terms": [
+   "Job",
+   "Processor",
+   "Synchronization"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "The processors are all equal, so a job can go to any of them.",
+  "technical_terms": [
+   "Job",
+   "Processor"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configuration-traits.cf.q.traits.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Symmetric. A job moving between equal processors needs tight synchronization.",
+  "technical_terms": [
+   "Job",
+   "Processor",
+   "Synchronization",
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configuration-traits/cf.q.traits/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configurations.cf.q.configurations.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Master/slave: one master runs the OS, schedules centrally and manages storage; the slaves do the work. It is simple, but no more reliable than one CPU, with poor resource use and more interrupts. Loosely coupled: several complete computers, each with its own OS and resources, a job staying on its processor; one failure does not stop the others, but a failed processor is hard to detect. Symmetric: all processors of one type and equal, with decentralised scheduling; the most reliable and best at balancing load, but hardest to implement, needing tight synchronization, and a job may move between processors.",
+  "technical_terms": [
+   "CPU",
+   "Operating system",
+   "Job",
+   "Processor",
+   "Resource",
+   "Interrupt",
+   "Scheduler / scheduling",
+   "Synchronization",
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "Occurs 7 times (first 5 locations in occurrence_ids).",
+  "occurrences": 7,
+  "occurrence_ids": [
+   "multiprocessing/configurations/cf.q.configurations/v1#explanation[0].say",
+   "multiprocessing/configurations/cf.q.configurations/v2#explanation[0].say",
+   "multiprocessing/configurations/cf.q.configurations/v3#explanation[0].say",
+   "multiprocessing/configuration-traits/cf.q.traits/v1#explanation[0].say",
+   "multiprocessing/configuration-traits/cf.q.traits/v2#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configurations.cf.q.configurations.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "One master running the OS and scheduling centrally is master/slave.",
+  "technical_terms": [
+   "Operating system",
+   "Scheduler / scheduling",
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configurations/cf.q.configurations/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configurations.cf.q.configurations.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "How many processors make the decisions?",
+  "technical_terms": [
+   "Processor"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configurations/cf.q.configurations/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configurations.cf.q.configurations.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Master/slave. One master running the OS and scheduling centrally is master/slave.",
+  "technical_terms": [
+   "Operating system",
+   "Scheduler / scheduling",
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configurations/cf.q.configurations/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configurations.cf.q.configurations.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Complete computers with their own OS are loosely coupled.",
+  "technical_terms": [
+   "Operating system",
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configurations/cf.q.configurations/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configurations.cf.q.configurations.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Each processor is a whole computer.",
+  "technical_terms": [
+   "Processor"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configurations/cf.q.configurations/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configurations.cf.q.configurations.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Loosely coupled. Complete computers with their own OS are loosely coupled.",
+  "technical_terms": [
+   "Operating system",
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configurations/cf.q.configurations/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configurations.cf.q.configurations.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Equal processors with decentralised scheduling are symmetric.",
+  "technical_terms": [
+   "Processor",
+   "Scheduler / scheduling",
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configurations/cf.q.configurations/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configurations.cf.q.configurations.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "No processor is in charge.",
+  "technical_terms": [
+   "Processor"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configurations/cf.q.configurations/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.configurations.cf.q.configurations.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Symmetric. Equal processors with decentralised scheduling are symmetric.",
+  "technical_terms": [
+   "Processor",
+   "Scheduler / scheduling",
+   "Master/slave, loosely coupled, symmetric"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/configurations/cf.q.configurations/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Parallel processing runs two or more instructions at the same time, coordinated and synchronized by the Processor Manager. Its benefits are reliability (the others take over if one fails) and faster processing. Its challenges are connecting the processors and orchestrating them, because synchronization is the key.",
+  "technical_terms": [
+   "Manager (Memory / Processor / Device / File / Network)",
+   "Processor",
+   "Synchronization",
+   "Concurrent / parallel"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v1#explanation[0].say",
+   "multiprocessing/parallel/cf.q.parallel/v2#explanation[0].say",
+   "multiprocessing/parallel/cf.q.parallel/v3#explanation[0].say",
+   "multiprocessing/parallel/cf.q.parallel/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Reliability is a benefit: the others take over.",
+  "technical_terms": [],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "A benefit is something parallel processing gives, not something it costs.",
+  "technical_terms": [
+   "Concurrent / parallel"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Other processors take over if one fails. Reliability is a benefit: the others take over.",
+  "technical_terms": [
+   "Processor"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Synchronizing the processors is the key challenge.",
+  "technical_terms": [
+   "Processor"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "A challenge is something that has to be solved.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Orchestrating the processors so they stay synchronized. Synchronizing the processors is the key challenge.",
+  "technical_terms": [
+   "Processor",
+   "Synchronization"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Connecting the processors is a challenge.",
+  "technical_terms": [
+   "Processor"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Which of these is a difficulty rather than a gain?",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Connecting the processors. Connecting the processors is a challenge.",
+  "technical_terms": [
+   "Processor"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Two or more CPUs execute instructions at the same time.",
+  "technical_terms": [],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "The name says what happens in parallel.",
+  "technical_terms": [
+   "Concurrent / parallel"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "multiprocessing",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Executes two or more instructions at the same time. Two or more CPUs execute instructions at the same time.",
+  "technical_terms": [],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "multiprocessing/parallel/cf.q.parallel/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "CD-ROM is written by the manufacturer and can only be read. CD-R can be read and written once. CD-RW can be read, written and rewritten.",
+  "technical_terms": [
+   "ROM",
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Occurs 3 times (first 5 locations in occurrence_ids).",
+  "occurrences": 3,
+  "occurrence_ids": [
+   "optical-solid-state/cd-types/op.q.cd-types/v1#explanation[0].say",
+   "optical-solid-state/cd-types/op.q.cd-types/v2#explanation[0].say",
+   "optical-solid-state/cd-types/op.q.cd-types/v3#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Read only is the CD-ROM.",
+  "technical_terms": [
+   "ROM",
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/cd-types/op.q.cd-types/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The user cannot write to it at all.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/cd-types/op.q.cd-types/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "CD-ROM. Read only is the CD-ROM.",
+  "technical_terms": [
+   "ROM",
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/cd-types/op.q.cd-types/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Write once is the CD-R.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/cd-types/op.q.cd-types/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "R is for recordable: once.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/cd-types/op.q.cd-types/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "CD-R. Write once is the CD-R.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/cd-types/op.q.cd-types/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Rewritable is the CD-RW.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/cd-types/op.q.cd-types/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "RW means read and write again.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/cd-types/op.q.cd-types/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "CD-RW. Rewritable is the CD-RW.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/cd-types/op.q.cd-types/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A CD holds up to 700 MB, is optical and cheap and used for general data. A DVD holds 4.7–17 GB, is optical and used for multimedia. A Blu-ray disc holds up to 128 GB, uses a blue-violet laser with tighter tracks and is used for HD audio and video.",
+  "technical_terms": [
+   "Track / cylinder / surface",
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v1#explanation[0].say",
+   "optical-solid-state/discs/op.q.discs/v2#explanation[0].say",
+   "optical-solid-state/discs/op.q.discs/v3#explanation[0].say",
+   "optical-solid-state/discs/op.q.discs/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Up to 700 MB is the CD.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "It is the smallest of the three.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "CD. Up to 700 MB is the CD.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "4.7–17 GB for multimedia is the DVD.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "It sits between the other two in capacity.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "DVD. 4.7–17 GB for multimedia is the DVD.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A blue-violet laser and the largest capacity: Blu-ray.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The colour of the laser is in the name.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Blu-ray. A blue-violet laser and the largest capacity: Blu-ray.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "HD audio and video is the Blu-ray's use.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "It is the newest and largest of the three.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.discs.op.q.discs.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Blu-ray. HD audio and video is the Blu-ray's use.",
+  "technical_terms": [
+   "Optical disc (CD / DVD / Blu-ray)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/discs/op.q.discs/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Compared with an HDD, an SSD has faster access, lower power, lighter weight, no noise and no moving parts. The HDD costs less per GB, reaches very high capacity and has a longer write/rewrite lifetime.",
+  "technical_terms": [
+   "Place value / weight",
+   "SSD / HDD / flash"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v1#explanation[0].say",
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v2#explanation[0].say",
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v3#explanation[0].say",
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The SSD has faster access.",
+  "technical_terms": [
+   "SSD / HDD / flash"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Which one has no moving parts to wait for?",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "SSD. The SSD has faster access.",
+  "technical_terms": [
+   "SSD / HDD / flash"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The HDD has moving parts and noise.",
+  "technical_terms": [
+   "SSD / HDD / flash"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Platters spin in one of them.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "HDD. The HDD has moving parts and noise.",
+  "technical_terms": [
+   "SSD / HDD / flash"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The HDD is cheaper per GB and larger.",
+  "technical_terms": [
+   "SSD / HDD / flash"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The faster one is the dearer one.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "HDD. The HDD is cheaper per GB and larger.",
+  "technical_terms": [
+   "SSD / HDD / flash"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "The HDD lasts longer under rewriting.",
+  "technical_terms": [
+   "SSD / HDD / flash"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Charge stored in cells wears them out.",
+  "technical_terms": [
+   "Cell"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.hdd-ssd.ss.q.hdd-ssd.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "HDD. The HDD lasts longer under rewriting.",
+  "technical_terms": [
+   "SSD / HDD / flash"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/hdd-ssd/ss.q.hdd-ssd/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.ssd-flash.ss.q.ssd-flash.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "A solid state drive stores charge in floating-gate transistors and has no moving parts: it is silent, light and uses less power, but may crash without warning and its transfer rate degrades with time. Flash memory is portable, removable, non-volatile EEPROM, written by charge through the floating gate and erased by a strong field.",
+  "technical_terms": [
+   "Memory",
+   "Gate",
+   "State",
+   "Field / record / database",
+   "SSD / HDD / flash"
+  ],
+  "notes": "Occurs 3 times (first 5 locations in occurrence_ids).",
+  "occurrences": 3,
+  "occurrence_ids": [
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v1#explanation[0].say",
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v2#explanation[0].say",
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v3#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.ssd-flash.ss.q.ssd-flash.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Portable removable EEPROM erased by a strong field is flash memory.",
+  "technical_terms": [
+   "Memory",
+   "Field / record / database",
+   "SSD / HDD / flash"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.ssd-flash.ss.q.ssd-flash.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Which one is used as a memory stick?",
+  "technical_terms": [
+   "Memory"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.ssd-flash.ss.q.ssd-flash.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Flash memory. Portable removable EEPROM erased by a strong field is flash memory.",
+  "technical_terms": [
+   "Memory",
+   "Field / record / database",
+   "SSD / HDD / flash"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.ssd-flash.ss.q.ssd-flash.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "An internal drive of floating-gate cells is an SSD.",
+  "technical_terms": [
+   "Gate",
+   "Cell",
+   "SSD / HDD / flash"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.ssd-flash.ss.q.ssd-flash.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Which one replaces a hard disk drive?",
+  "technical_terms": [
+   "Disk"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.ssd-flash.ss.q.ssd-flash.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Solid state drive (SSD). An internal drive of floating-gate cells is an SSD.",
+  "technical_terms": [
+   "Gate",
+   "Cell",
+   "State",
+   "SSD / HDD / flash"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.ssd-flash.ss.q.ssd-flash.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Those are the SSD's drawbacks.",
+  "technical_terms": [
+   "SSD / HDD / flash"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.ssd-flash.ss.q.ssd-flash.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "It is the drive-sized one.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.optical-solid-state.ssd-flash.ss.q.ssd-flash.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "optical-solid-state",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter7/devices.ts",
+  "english": "Solid state drive (SSD). Those are the SSD's drawbacks.",
+  "technical_terms": [
+   "State",
+   "SSD / HDD / flash"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "optical-solid-state/ssd-flash/ss.q.ssd-flash/v3#hints[2]"
   ],
   "slots": []
  },
@@ -10016,8 +14660,8 @@
   "source_file": "src/content/cpet181/chapter8/counting.ts",
   "english": "Not yet. Count again, one at a time.",
   "technical_terms": [],
-  "notes": "Occurs 51 times (first 5 locations in occurrence_ids). Hint rung 2.",
-  "occurrences": 51,
+  "notes": "Occurs 71 times (first 5 locations in occurrence_ids). Hint rung 2.",
+  "occurrences": 71,
   "occurrence_ids": [
    "paged-translation/pages/pg.q.pages/v1#hints[0]",
    "paged-translation/pages/pg.q.pages/v2#hints[0]",
@@ -15931,6 +20575,888 @@
   "slots": []
  },
  {
+  "id": "cpet181.synchronization.classic-problems.sy.q.buffer.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "A buffer is full when every position holds data, empty when none does, and partly empty in between. The producer waits when it is full and the consumer waits when it is empty.",
+  "technical_terms": [
+   "Producer / consumer",
+   "Buffer"
+  ],
+  "notes": "Occurs 3 times (first 5 locations in occurrence_ids).",
+  "occurrences": 3,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.buffer/v1#explanation[0].say",
+   "synchronization/classic-problems/sy.q.buffer/v2#explanation[0].say",
+   "synchronization/classic-problems/sy.q.buffer/v3#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.buffer.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Every position holding data is a full buffer.",
+  "technical_terms": [
+   "Buffer"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.buffer/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.buffer.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "How many positions are free?",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.buffer/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.buffer.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Full. Every position holding data is a full buffer.",
+  "technical_terms": [
+   "Buffer"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.buffer/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.buffer.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Some positions used and some free is partly empty.",
+  "technical_terms": [],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.buffer/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.buffer.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Is it all one or all the other?",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.buffer/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.buffer.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Partly empty. Some positions used and some free is partly empty.",
+  "technical_terms": [],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.buffer/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.buffer.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "No position holding data is an empty buffer.",
+  "technical_terms": [
+   "Buffer"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.buffer/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.buffer.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "How many positions hold data?",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.buffer/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.buffer.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Empty. No position holding data is an empty buffer.",
+  "technical_terms": [
+   "Buffer"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.buffer/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Producers and consumers: a producer fills a buffer and a consumer empties it; the producer is delayed when the buffer is full and the consumer when it is empty. Readers and writers: a shared file or database where many readers may read when no writer is active, and a writer may write only when no reader and no writer is active.",
+  "technical_terms": [
+   "Producer / consumer",
+   "Reader / writer",
+   "Buffer",
+   "Dedicated / shared / virtual device",
+   "File",
+   "Field / record / database"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v1#explanation[0].say",
+   "synchronization/classic-problems/sy.q.cooperation/v2#explanation[0].say",
+   "synchronization/classic-problems/sy.q.cooperation/v3#explanation[0].say",
+   "synchronization/classic-problems/sy.q.cooperation/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Filling and emptying a buffer is producers and consumers.",
+  "technical_terms": [
+   "Producer / consumer",
+   "Buffer"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "What is shared: a buffer or a file?",
+  "technical_terms": [
+   "Buffer",
+   "Dedicated / shared / virtual device",
+   "File"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Hint rung 3.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v1#hints[1]",
+   "synchronization/classic-problems/sy.q.cooperation/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Producers and consumers. Filling and emptying a buffer is producers and consumers.",
+  "technical_terms": [
+   "Producer / consumer",
+   "Buffer"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Readers sharing a file with a writer who needs it alone is readers and writers.",
+  "technical_terms": [
+   "Reader / writer",
+   "File"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Readers and writers. Readers sharing a file with a writer who needs it alone is readers and writers.",
+  "technical_terms": [
+   "Reader / writer",
+   "File"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "A full buffer delays the producer.",
+  "technical_terms": [
+   "Producer / consumer",
+   "Buffer"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Who needs a free position?",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "The producer. A full buffer delays the producer.",
+  "technical_terms": [
+   "Producer / consumer",
+   "Buffer"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "An empty buffer delays the consumer.",
+  "technical_terms": [
+   "Producer / consumer",
+   "Buffer"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Who needs something to take out?",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.classic-problems.sy.q.cooperation.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "The consumer. An empty buffer delays the consumer.",
+  "technical_terms": [
+   "Producer / consumer",
+   "Buffer"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/classic-problems/sy.q.cooperation/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Readers may all read when no writer is active; a writer may write only when no reader and no writer is active. So only reading with reading is allowed; any pair with a writer is not. A race needs at least one writer: readers alone cannot race.",
+  "technical_terms": [
+   "Race (condition)",
+   "Reader / writer"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v1#explanation[0].say",
+   "synchronization/readers-writers/sy.q.rw/v2#explanation[0].say",
+   "synchronization/readers-writers/sy.q.rw/v3#explanation[0].say",
+   "synchronization/readers-writers/sy.q.rw/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Two readers can share the file: allowed.",
+  "technical_terms": [
+   "Reader / writer",
+   "File"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Does anyone change the file?",
+  "technical_terms": [
+   "File"
+  ],
+  "notes": "Occurs 2 times (first 5 locations in occurrence_ids). Hint rung 3.",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v1#hints[1]",
+   "synchronization/readers-writers/sy.q.rw/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Yes. Two readers can share the file: allowed.",
+  "technical_terms": [
+   "Reader / writer",
+   "File"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "A writer needs the file alone: not allowed.",
+  "technical_terms": [
+   "Reader / writer",
+   "File"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "No. A writer needs the file alone: not allowed.",
+  "technical_terms": [
+   "Reader / writer",
+   "File"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "A writer may write only when no reader is active: not allowed.",
+  "technical_terms": [
+   "Reader / writer"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Is a reader active?",
+  "technical_terms": [
+   "Reader / writer"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "No. A writer may write only when no reader is active: not allowed.",
+  "technical_terms": [
+   "Reader / writer"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Only one writer at a time: not allowed.",
+  "technical_terms": [
+   "Reader / writer"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "How many writers may there be?",
+  "technical_terms": [
+   "Reader / writer"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.readers-writers.sy.q.rw.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "No. Only one writer at a time: not allowed.",
+  "technical_terms": [
+   "Reader / writer"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/readers-writers/sy.q.rw/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v1.explanation[0].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "A race condition is several processors using the same resource at the same time. Successful synchronization locks the resource in use, releases it, then lets the waiting process in. A critical region is a part of a program that must finish without interleaving while the others wait to use its resources. Poor synchronization leads to starvation or deadlock.",
+  "technical_terms": [
+   "Process",
+   "Program",
+   "Processor",
+   "Resource",
+   "Release / deallocate",
+   "Deadlock",
+   "Starvation",
+   "Race (condition)",
+   "Lock / locking",
+   "Synchronization",
+   "Critical region"
+  ],
+  "notes": "Occurs 4 times (first 5 locations in occurrence_ids).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v1#explanation[0].say",
+   "synchronization/sync/sy.q.synchronization/v2#explanation[0].say",
+   "synchronization/sync/sy.q.synchronization/v3#explanation[0].say",
+   "synchronization/sync/sy.q.synchronization/v4#explanation[0].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v1.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Simultaneous use of one resource is a race condition.",
+  "technical_terms": [
+   "Resource",
+   "Race (condition)"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v1#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v1.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Is anything locked?",
+  "technical_terms": [
+   "Lock / locking"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v1#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v1.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "A race condition. Simultaneous use of one resource is a race condition.",
+  "technical_terms": [
+   "Resource",
+   "Race (condition)"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v1#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v2.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Lock, use, release, then admit the next is successful synchronization.",
+  "technical_terms": [
+   "Release / deallocate",
+   "Lock / locking",
+   "Synchronization"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v2#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v2.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Something is orderly here: who goes first?",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v2#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v2.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Successful synchronization. Lock, use, release, then admit the next is successful synchronization.",
+  "technical_terms": [
+   "Release / deallocate",
+   "Lock / locking",
+   "Synchronization"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v2#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v3.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "A part that must finish uninterrupted is a critical region.",
+  "technical_terms": [
+   "Critical region"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v3#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v3.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "It is a section of the program.",
+  "technical_terms": [
+   "Program"
+  ],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v3#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v3.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "A critical region. A part that must finish uninterrupted is a critical region.",
+  "technical_terms": [
+   "Critical region"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v3#hints[2]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v4.explanation[1].say",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "explanation",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Bad synchronization leads to starvation or deadlock.",
+  "technical_terms": [
+   "Deadlock",
+   "Starvation",
+   "Synchronization"
+  ],
+  "notes": "",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v4#explanation[1].say"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v4.hints[1]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Chapter 5 named them.",
+  "technical_terms": [],
+  "notes": "Hint rung 3.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v4#hints[1]"
+  ],
+  "slots": []
+ },
+ {
+  "id": "cpet181.synchronization.sync.sy.q.synchronization.v4.hints[2]",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "synchronization",
+  "type": "hint",
+  "source_file": "src/content/cpet181/chapter6/concurrent.ts",
+  "english": "Starvation and deadlock. Bad synchronization leads to starvation or deadlock.",
+  "technical_terms": [
+   "Deadlock",
+   "Starvation",
+   "Synchronization"
+  ],
+  "notes": "Hint rung 9. Authored through a helper or template; source_file is the file that defines the topic.",
+  "occurrences": 1,
+  "occurrence_ids": [
+   "synchronization/sync/sy.q.synchronization/v4#hints[2]"
+  ],
+  "slots": []
+ },
+ {
   "id": "cpet181.virtual-addresses.address-parts.vm.q.parts.v1.explanation[0].say",
   "course": "cpet181",
   "chapter": "chapter-3: Chapter 3 · Memory management: virtual systems",
@@ -16965,6 +22491,42 @@
   "slots": []
  },
  {
+  "id": "tutor.cc.processors-as-steps",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "tutor-nudge",
+  "source_file": "src/tutor/messages/en.ts",
+  "english": "That is the number of steps. Count how many operations run together in the busiest step.",
+  "technical_terms": [
+   "Operation (expression tree)"
+  ],
+  "notes": "Referenced by 2 misconceptions in 1 topic (cpet181).",
+  "occurrences": 2,
+  "occurrence_ids": [
+   "cpet181/concurrent-programming"
+  ],
+  "slots": []
+ },
+ {
+  "id": "tutor.cc.steps-as-ops",
+  "course": "cpet181",
+  "chapter": "chapter-6: Chapter 6 · Concurrent processes",
+  "topic": "concurrent-programming",
+  "type": "tutor-nudge",
+  "source_file": "src/tutor/messages/en.ts",
+  "english": "That counts every operation. Operations that do not depend on each other share a step, so count the longest chain.",
+  "technical_terms": [
+   "Operation (expression tree)"
+  ],
+  "notes": "Referenced by 4 misconceptions in 1 topic (cpet181).",
+  "occurrences": 4,
+  "occurrence_ids": [
+   "cpet181/concurrent-programming"
+  ],
+  "slots": []
+ },
+ {
   "id": "tutor.cs.arrival-ignored",
   "course": "cpet181",
   "chapter": "chapter-4: Chapter 4 · Processor management",
@@ -17503,6 +23065,25 @@
   "occurrences": 6,
   "occurrence_ids": [
    "cpet181/fixed-partitions"
+  ],
+  "slots": []
+ },
+ {
+  "id": "tutor.tp.gaps-one-fewer",
+  "course": "cpet181",
+  "chapter": "chapter-7: Chapter 7 · Device management",
+  "topic": "magnetic-tape",
+  "type": "tutor-nudge",
+  "source_file": "src/tutor/messages/en.ts",
+  "english": "A gap lies between two neighbours, so there is one fewer gap than there are records (or blocks).",
+  "technical_terms": [
+   "Adjacent / neighbour",
+   "Field / record / database"
+  ],
+  "notes": "Referenced by 8 misconceptions in 1 topic (cpet181).",
+  "occurrences": 8,
+  "occurrence_ids": [
+   "cpet181/magnetic-tape"
   ],
   "slots": []
  },

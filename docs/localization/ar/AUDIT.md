@@ -104,7 +104,7 @@ These cannot be translated as sentences with a lookup, because the word order, s
 
 ### 2b. Content built at authoring time
 
-The 3,000+ supportive strings are not hand-written one by one: most are produced by TypeScript template literals that bake the numbers and names of each variant into the sentence before the app runs. The inventory therefore holds **3224 distinct English strings for 10780 placements**; after replacing numbers, bit strings and single capital letters with a placeholder they fall to **2366 distinct sentence patterns**. Translating the patterns once, with slots, would be about 27% less work than translating every string, but it needs the authoring code to emit the pattern and its slot values instead of the finished sentence.
+The 3,000+ supportive strings are not hand-written one by one: most are produced by TypeScript template literals that bake the numbers and names of each variant into the sentence before the app runs. The inventory therefore holds **3514 distinct English strings for 11275 placements**; after replacing numbers, bit strings and single capital letters with a placeholder they fall to **2634 distinct sentence patterns**. Translating the patterns once, with slots, would be about 25% less work than translating every string, but it needs the authoring code to emit the pattern and its slot values instead of the finished sentence.
 
 Largest groups of strings that differ only in a number, bit string or variable letter (top 12):
 
@@ -128,11 +128,11 @@ Largest groups of strings that differ only in a number, bit string or variable l
 | Shape | Strings |
 |---|---|
 | Equation or expression embedded in a sentence | 485 |
-| Ordinal or position words (first, second, third …) | 235 |
-| Number or count agreement (1 row / 2 rows, "s" chosen by value) | 82 |
+| Ordinal or position words (first, second, third …) | 240 |
+| Number or count agreement (1 row / 2 rows, "s" chosen by value) | 108 |
 | Slots next to a noun (word order or agreement may depend on the value) | 85 |
 | Contains a quoted or inline code/value that must stay LTR | 32 |
-| Long strings (over 220 characters) | 23 |
+| Long strings (over 220 characters) | 34 |
 | Uses slots (templates) | 150 |
 
 Specific cases:
@@ -145,12 +145,12 @@ Specific cases:
 
 ## 3. Duplicates and centralization opportunities
 
-- 1007 of the 3224 distinct content strings are used more than once, accounting for 8563 of the 10780 placements (79%). Each is already deduplicated in `source-texts.json` (one entry, with `occurrences`).
+- 1051 of the 3514 distinct content strings are used more than once, accounting for 8812 of the 11275 placements (78%). Each is already deduplicated in `source-texts.json` (one entry, with `occurrences`).
 - The most-used strings are generic ladder text that every kind repeats ("Not yet. …" for rung 2), which should be catalog keys rather than copies in each activity file:
 
 | Placements | Type | String |
 |---|---|---|
-| 218 | hint | Not yet. Read the question again and test the options one at a time. |
+| 297 | hint | Not yet. Read the question again and test the options one at a time. |
 | 112 | feedback | Yes: write 1. |
 | 112 | feedback | The total is 1, which is 1 in binary: write 1. |
 | 92 | hint | Not yet. Add the bits in the {place}s column, plus the carry coming in. |
@@ -166,9 +166,9 @@ Specific cases:
 | 72 | feedback | Yes: 0 flips to 1. |
 | 72 | feedback | It flips: 0 becomes 1. |
 
-- **Near-duplicates** (the same sentence with a different number or letter) are the 293 groups in 2b. They are the biggest centralization opportunity.
+- **Near-duplicates** (the same sentence with a different number or letter) are the 303 groups in 2b. They are the biggest centralization opportunity.
 - **Same wording in two homes:** the tutor catalog holds 226 keys, and the components hold their own copies of some generic lines (for example "Not correct yet.", "Correct.", "Another hint"). Moving the component strings into the catalog would give one place per string.
-- **Navigation text is not in the inventory** (titles and summaries of chapters, topics, concepts, objectives, activities and question labels). Counts, for the owner's scope decision: ecet111 chapter 5, ecet111 topic-title 29, ecet111 topic-summary 29, ecet111 concept 48, ecet111 objective 73, ecet111 activity 57, cpet181 chapter 9, cpet181 topic-title 25, cpet181 topic-summary 25, cpet181 concept 49, cpet181 objective 88, cpet181 activity 54. These are authored as separate short fields in the same content files and are separable if the owner brings them in scope.
+- **Navigation text is not in the inventory** (titles and summaries of chapters, topics, concepts, objectives, activities and question labels). Counts, for the owner's scope decision: ecet111 chapter 5, ecet111 topic-title 29, ecet111 topic-summary 29, ecet111 concept 48, ecet111 objective 73, ecet111 activity 57, cpet181 chapter 9, cpet181 topic-title 32, cpet181 topic-summary 32, cpet181 concept 63, cpet181 objective 115, cpet181 activity 78. These are authored as separate short fields in the same content files and are separable if the owner brings them in scope.
 - **A catalog for Arabic already exists and is empty** (`src/tutor/messages/ar.ts`; keys fall back to English; a test keeps every `{slot}`). It covers only the 226 catalog keys. Strings authored inside content files (hints and explanations) have no catalog key today, so Phase 2 must decide the shape of their ids; the ids in `source-texts.json` are built from course, topic, activity, question, variant and field and are stable while those ids stay stable (variant ids are index-stable by rule #141).
 
 ## 4. Findings that are not strings
