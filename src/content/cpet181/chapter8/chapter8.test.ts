@@ -80,6 +80,13 @@ describe("CPET 181 Chapter 8 file management content (#571)", () => {
     );
   });
 
+  it("the block worked line names the index entry as the block's highest key, first one at or above the key", () => {
+    const steps = question("record-organization", "searching", "ro.q.block").variants.map((v) => v.explanation[1].say);
+    expect(steps[0]).toBe("The index entry of block 1 is 47, the first entry that is 44 or higher (block 0 ends at 25), so record 44 is in block 1.");
+    expect(steps[1]).toBe("The index entry of block 1 is 60, the first entry that is 50 or higher (block 0 ends at 30), so record 50 is in block 1.");
+    expect(steps[2]).toBe("The index entry of block 0 is 14, the first entry that is 14 or higher, so record 14 is in block 0.");
+  });
+
   it("the layout figures do not show the answer: no search key is drawn", () => {
     for (const [activity, id] of [
       ["organizations", "ro.q.identify"],

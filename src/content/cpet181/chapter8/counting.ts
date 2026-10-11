@@ -102,7 +102,7 @@ export const blockOf = count(
       prompt: `This indexed sequential file has blocks of 3 records, numbered as drawn. In which block is record ${key}?`,
       answer: b,
       rule: INDEXED,
-      apply: `The index entry of block ${b} is ≤ ${top}, and the block before it ends below ${key}, so record ${key} is in block ${b}.`,
+      apply: `The index entry of block ${b} is ${top}, the first entry that is ${key} or higher${b > 0 ? ` (block ${b - 1} ends at ${records[b * 3 - 1]})` : ""}, so record ${key} is in block ${b}.`,
       hint: `Find the first index entry that is ${key} or higher.`,
       figure: { type: "file-layout" as const, layout: "indexed" as const, records, blockSize: 3, caption: "An indexed sequential file: blocks and the index above them." },
       wrong: [{ id: "fm.block-one-based", nudgeKey: "fm.block-from-zero", value: b + 1 }],
