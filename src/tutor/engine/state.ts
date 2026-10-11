@@ -53,7 +53,7 @@ export const initialTutorState: TutorState = {
 
 /**
  * Hints and Explain Slowly can be asked for at any time while the question is open (owner,
- * 2026-10-11, #661): no attempt or hesitation is required first. Only a finished question or a
+ * 2026-10-11, quoted on #661): no attempt or hesitation is required first. Only a finished question or a
  * running explanation says no. (`attempts` and `hesitationPrompted` still drive the tutor's own
  * reactions.)
  */

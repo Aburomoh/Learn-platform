@@ -32,7 +32,8 @@ export interface PrimaryAction {
 
 type Progress = Pick<OfferingProgress, "activities">;
 
-export const topicHref = (course: Course, topic: Topic) => `/courses/${course.id}/${topic.id}/`;
+export const courseHref = (course: Course) => `/courses/${course.id}/`;
+export const topicHref = (course: Course, topic: Topic) => `${courseHref(course)}${topic.id}/`;
 export const practiceHref = (course: Course, topic: Topic, activity: Activity) => `${topicHref(course, topic)}${activity.id}/`;
 /** Review restarts at challenge 1 instead of resuming (read by the activity page, #119). */
 export const reviewHref = (course: Course, topic: Topic, activity: Activity) => `${practiceHref(course, topic, activity)}?review=1`;
@@ -127,7 +128,7 @@ export function skipOffer(course: Course, topic: Topic, activity: Activity, qInd
   const topics = topicsOf(course);
   const next = topics[topics.findIndex((t) => t.id === topic.id) + 1];
   if (next) return { allowed: true, kind: "topic", href: topicHref(course, next), targetLabel: `the next topic, ${next.title}` };
-  return { allowed: true, kind: "course", href: `/courses/${course.id}/`, targetLabel: "the course page" };
+  return { allowed: true, kind: "course", href: courseHref(course), targetLabel: "the course page" };
 }
 
 /** A small button on a topic row of the course page: its own Start / Continue / Review. */

@@ -54,7 +54,6 @@ export type RunnerAction =
   | { type: "CONTINUE" }
   | { type: "RETRY_VARIANT" }
   | { type: "NEXT_QUESTION" }
-  /** The hidden skip (#623): the next unfinished question after this one, which stays unfinished. */
   /** Skip to the very next question (#661). */
   | { type: "SKIP_QUESTION" }
   /** Back to a question skipped earlier in this practice (#623). */
