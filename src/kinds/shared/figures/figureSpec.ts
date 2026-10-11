@@ -297,8 +297,36 @@ const OpTreeFigure = z
     }
   });
 
+/**
+ * A given table, read-only (#617): a characteristic, excitation or state table the question refers
+ * to, so a student who opens the question directly sees the table it names (PEDAGOGY, question
+ * context). Content gives the columns as the slide prints them; `output` columns follow the inputs
+ * behind a rule. Nothing is computed, highlighted or revealed. An optional flip-flop symbol sits beside it.
+ */
+const tableCell = z.union([bit, z.literal("X"), z.string().min(1).max(14)]);
+const TableFigure = z
+  .object({
+    type: z.literal("table"),
+    /** The caption and accessible name: "JK characteristic table". */
+    title: z.string().min(1).max(60),
+    columns: z
+      .array(z.object({ header: z.string().min(1).max(12), values: z.array(tableCell).min(2).max(16), role: z.enum(["input", "output"]).default("input") }))
+      .min(2)
+      .max(6),
+    symbol: z.object({ ff: z.enum(["d", "t", "sr", "jk"]), edge: z.enum(["rising", "falling"]).default("rising") }).optional(),
+    caption: z.string().min(1).max(200).optional(),
+  })
+  .superRefine((f, ctx) => {
+    const n = f.columns[0].values.length;
+    if (f.columns.some((c) => c.values.length !== n)) ctx.addIssue({ code: "custom", path: ["columns"], message: "every column has the same number of rows" });
+    const headers = f.columns.map((c) => c.header);
+    if (new Set(headers).size !== headers.length) ctx.addIssue({ code: "custom", path: ["columns"], message: "column headers must be distinct" });
+    const firstOutput = f.columns.findIndex((c) => c.role === "output");
+    if (firstOutput >= 0 && f.columns.slice(firstOutput).some((c) => c.role !== "output")) ctx.addIssue({ code: "custom", path: ["columns"], message: "output columns come after the input columns" });
+  });
+
 /** One figure per question, drawn by the stage above (or beside) any kind's answer area. */
-export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, MemoryTableFigure, ResourceGraphFigure, FileLayoutFigure, BufferFigure, OpTreeFigure]);
+export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, MemoryTableFigure, ResourceGraphFigure, FileLayoutFigure, TableFigure, BufferFigure, OpTreeFigure]);
 export type FigureSpec = z.infer<typeof FigureSpec>;
 
 /** The pins a focus may name (`figure.focus`, `stage.figureFocus`). A latch figure has no focus state yet. */

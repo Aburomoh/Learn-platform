@@ -21,6 +21,7 @@ const ResourceGraphFigure = dynamic(() => import("./ResourceGraphFigure").then((
 const MemoryTableFigure = dynamic(() => import("./MemoryTableFigure").then((m) => m.MemoryTableFigure));
 const BufferFigure = dynamic(() => import("./BufferFigure").then((m) => m.BufferFigure));
 const OpTreeFigure = dynamic(() => import("./OpTreeFigure").then((m) => m.OpTreeFigure));
+const TableFigure = dynamic(() => import("./TableFigure").then((m) => m.TableFigure));
 
 export interface FigureViewProps {
   id: string;
@@ -77,6 +78,8 @@ function draw(id: string, figure: FigureSpec, revealed: boolean, focus: string |
       return <BufferFigure slots={figure.slots} filled={figure.filled} producer={figure.producer} consumer={figure.consumer} focus={focus ?? figure.focus} caption={figure.caption} />;
     case "op-tree":
       return <OpTreeFigure expression={figure.expression} revealed={revealed} caption={figure.caption} />;
+    case "table":
+      return <TableFigure title={figure.title} columns={figure.columns} symbol={figure.symbol} caption={figure.caption} />;
     default: {
       const unhandled: never = figure;
       throw new Error(`No renderer for figure ${JSON.stringify(unhandled)}`);

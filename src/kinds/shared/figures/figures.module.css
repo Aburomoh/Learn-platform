@@ -185,6 +185,30 @@
   font-weight: 700;
 }
 
+/* a given table (#617): the symbol and the table side by side when they fit, stacked on phones */
+.tableFigure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.tableFigure > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tableCaption {
+  caption-side: top;
+  padding: 0 var(--space-1) var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: left;
+}
+
 /* ---- the figure of a question (FigureView): above the answer, and no taller than 220 px on phones ---- */
 .figure {
   min-width: 0;
