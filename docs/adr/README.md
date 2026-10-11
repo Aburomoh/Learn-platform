@@ -26,3 +26,5 @@ Status: Accepted · Date: YYYY-MM-DD · Owner: <role>
 | 0007 | One step contract for multi-step questions |
 | 0008 | One module per interaction kind, loaded on demand |
 | 0009 | Figures on the variant |
+| 0010 | Team V2 and one dispatcher |
+| 0011 | Arabic for supportive text, English for everything else |
