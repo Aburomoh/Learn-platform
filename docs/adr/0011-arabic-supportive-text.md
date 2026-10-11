@@ -1,5 +1,5 @@
 # 0011 — Arabic for supportive text, English for everything else
-Status: Proposed · Date: 2026-10-11 · Owner: UI / Interaction Engineer (owner directive #633, package #649, UI #650)
+Status: Accepted · Date: 2026-10-11 · Owner: UI / Interaction Engineer (owner directive #633, package #649, UI #650)
 
 ## Context
 The owner approved an Arabic translation of the supportive text (3,771 entries, about 0.5 MB raw,
@@ -18,25 +18,33 @@ catalog resolves by key with an empty `ar` map, and the English activity bundle 
 2. **Lookup by the exact English template, before the slots are filled.** One function,
    `translate(english, locale)` in `src/l10n/`, returns the Arabic for an English template or the
    English itself. The map is keyed by the English text (3,749 distinct strings for 3,771 ids: a
-   hint in content is a plain string at run time and carries no inventory id; the build fails if
-   two ids with the same English have different Arabic, so the owner decides, never the code).
-   It is called at the five places supportive text is produced, each **before** `fill()`:
-   tutor messages (`resolveMessage`, so `{slot}` values stay as authored), the hint ladder,
-   answer feedback, explanation steps (`say`) and nudges. Question prompts, options, `Notation`
-   tokens, figure captions and accessible summaries never go through it.
+   hint in content is a plain string at run time and carries no inventory id). When two ids with
+   the same English have different Arabic (four pairs in the approved package: an explanation and a
+   hint, the hint without the glossary brackets) the build keeps the first in inventory order and
+   prints the pair for the owner; the code never edits Arabic. The lookup happens **at render
+   time**: the tutor engine's `SAY` and `REVEAL_HINT` actions carry the unfilled `template` and
+   its `vars` beside the filled English, the runner keeps them, and `<SupportiveText>` (or the
+   tutor bubble) translates the template and fills the slots when it draws. So a language switch,
+   or a map that arrives late, changes the text already on screen. The five sources are tutor
+   messages, the hint ladder, answer feedback, explanation steps (`say`) and nudges. Question
+   prompts, options, `Notation` tokens, figure captions and accessible summaries never go through it.
 3. **Payload, lazy and per course.** A build step (`scripts/build-l10n.mjs`, run by `prebuild`)
-   writes `public/l10n/ar/<course>.json` and `public/l10n/ar/shared.json` (tutor catalog and
-   component text) as compact `{english: arabic}` maps from the approved package. The app
-   `fetch`es the shared map and the current course's map only while `locale === "ar"`, caches
-   them in module memory and re-renders when they arrive. Nothing Arabic is imported by the
-   English bundle, which does not change size. A direct entry with Arabic on shows English for
-   one round trip on the first visit (the files are static and browser-cached afterwards).
+   writes `public/l10n/ar/<course>.<hash>.json` and `shared.<hash>.json` (tutor catalog and
+   component text) as compact `{english: arabic}` maps from the approved package, plus a small
+   `index.json` naming the current files. The name carries a content hash, so corrected Arabic
+   reaches students after a deploy; the index is fetched with `cache: "no-cache"`. The app
+   fetches the shared map and the current course's map only while `locale === "ar"`, caches them
+   in module memory and re-renders when they arrive. Nothing Arabic is imported by the English
+   bundle, which does not change size. The prefs store's server snapshot is English, so the first
+   client render matches the static HTML and the switch to Arabic happens after hydration (no
+   mismatch); a direct entry with Arabic on shows English for one round trip on the first visit.
 4. **Control.** `EN | عربي` as two text buttons in the top bar before the profile button, at every
    width (text, never an icon alone), `aria-pressed` on the active one, the Arabic label itself
    `lang="ar"`. The same choice also appears in Settings beside Appearance.
 5. **Rendering.** Supportive text renders through one `<SupportiveText>` component. When the text
    came back translated it is wrapped `dir="rtl" lang="ar"`; English fallback renders exactly as
-   today. Inside Arabic, each maximal run of Latin letters, digits, operators and notation
+   today. The Arabic is rendered as React text children, never `dangerouslySetInnerHTML` (the maps
+   are data from a file). An Arabic tutor bubble shows at once instead of typing letter by letter. Inside Arabic, each maximal run of Latin letters, digits, operators and notation
    (`A + B`, `Q(t+1)`, `(26)_10`, `T1 → T4`, `110`) is one `<bdi dir="ltr">`, so neither the
    operators nor the digits reorder; `Notation` keeps working inside the run. `dir` is set only on
    text elements, never on a layout container; the page, figures, tables and controls keep their
@@ -48,8 +56,10 @@ catalog resolves by key with an empty `ar` map, and the English activity bundle 
    may carry forms per CLDR class (`one`, `other` in English; `zero … other` in Arabic). Their
    Arabic is not in the package (the translators received the JS literal), so they fall back to
    English and are listed in `UNTRANSLATED.md` for the owner.
-7. **Scope.** Chrome, navigation titles, figure captions and accessible summaries stay English
-   until the owner brings them in scope (AUDIT §3). Missing Arabic always falls back to English.
+7. **Scope and drift.** Chrome, navigation titles, figure captions and accessible summaries stay
+   English until the owner brings them in scope (AUDIT §3). Missing Arabic always falls back to
+   English. A unit test counts the supportive strings on the branch that have no Arabic and fails
+   when `UNTRANSLATED.md` reports a different number, so the report cannot go stale silently.
 
 ## Consequences
 One switch, one lookup, one payload format, one text component. The English experience is

@@ -1,3 +1,4 @@
+import { SupportiveText } from "@/l10n/SupportiveText";
 import { PosePicture } from "./PosePicture";
 import type { PoseKey, TutorPoseTable } from "./poses";
 import styles from "./TutorCard.module.css";
@@ -5,8 +6,9 @@ import styles from "./TutorCard.module.css";
 export interface TutorCardProps {
   /** Display name, e.g. "Mr. Mohanad" (from `product.owner.shortName`). */
   name: string;
-  /** One line from the tutor catalog. The card shows no bubble without it. */
+  /** One line from the tutor catalog (its unfilled template; shown in the learner's language, ADR-0011). The card shows no bubble without it. */
   message?: string;
+  course?: string;
   /**
    * Disc size: sm 40 px, md 56 px (home, course), lg 88 px (topic page). With pose art, from 900 px
    * the card shows the waist-up pose in a 168 × 224 box above the bubble instead.
@@ -35,7 +37,7 @@ export function monogram(name: string): string {
  * crop fills the disc. Only the file for the current width is fetched (`PosePicture`). The image is
  * decorative here: the name is printed beside it.
  */
-export function TutorCard({ name, message, size = "md", portrait, pose = "neutral" }: TutorCardProps) {
+export function TutorCard({ name, message, course, size = "md", portrait, pose = "neutral" }: TutorCardProps) {
   const box = `${styles.avatar} ${styles[size]}`;
   const avatar = portrait ? (
     <span className={`${box} ${styles.art}`} aria-hidden="true">
@@ -53,7 +55,11 @@ export function TutorCard({ name, message, size = "md", portrait, pose = "neutra
       <aside className={`${styles.card} ${styles.column}`} aria-label="Tutor" data-art={art}>
         {avatar}
         <p className={styles.who}>{name}</p>
-        {message && <p className={styles.say}>{message}</p>}
+        {message && (
+          <p className={styles.say}>
+            <SupportiveText template={message} course={course} />
+          </p>
+        )}
       </aside>
     );
   }
@@ -62,7 +68,11 @@ export function TutorCard({ name, message, size = "md", portrait, pose = "neutra
       {avatar}
       <div className={styles.say}>
         <p className={styles.who}>{name}</p>
-        {message && <p>{message}</p>}
+        {message && (
+          <p>
+            <SupportiveText template={message} course={course} />
+          </p>
+        )}
       </div>
     </aside>
   );

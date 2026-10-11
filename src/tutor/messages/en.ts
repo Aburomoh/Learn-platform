@@ -10,6 +10,27 @@ export const en = {
   "page.course.intro": "Take the topics in order. Each challenge is short, and your progress is saved, so you can stop at any point.",
   "page.topic.intro": "We'll do this one step at a time. Try first; I'm here if you need me.",
 
+  // component sentences that used to be built in code (ADR-0011 §6): whole sentences, one per
+  // count form (`.one` / `.other`; Arabic may add `.zero` `.two` `.few` `.many`), `{n}` the count
+  "ui.summary.line": "{activity}: {challenges}, {attempts}, {hints}.",
+  "ui.summary.challenges.one": "{n} challenge",
+  "ui.summary.challenges.other": "{n} challenges",
+  "ui.summary.attempts.one": "{n} attempt",
+  "ui.summary.attempts.other": "{n} attempts",
+  "ui.summary.hints.zero": "no hints needed",
+  "ui.summary.hints.one": "hints used on {n} challenge",
+  "ui.summary.hints.other": "hints used on {n} challenges",
+  "ui.numeric.decimal": "digits 0 to 9",
+  "ui.numeric.decimal.signed": "digits 0 to 9, a leading minus sign",
+  "ui.numeric.decimal.places.one": "digits 0 to 9, and up to {n} decimal place after the point",
+  "ui.numeric.decimal.places.other": "digits 0 to 9, and up to {n} decimal places after the point",
+  "ui.numeric.decimal.signed-places.one": "digits 0 to 9, a leading minus sign, and up to {n} decimal place after the point",
+  "ui.numeric.decimal.signed-places.other": "digits 0 to 9, a leading minus sign, and up to {n} decimal places after the point",
+  "ui.stage.done": "Done. Come back any time to practise again.",
+  "ui.stage.try-first": "Try once first",
+  "ui.stage.correct": "Correct.",
+  "ui.stage.incorrect": "Not correct yet.",
+
   "open": "Give it a try. I will step in only if you want me to.",
   "wrong.first": "Not quite. Look at it once more and try again.",
   "wrong.second": "Still not there. Here is a reminder of the idea.",

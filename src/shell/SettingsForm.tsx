@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { clearLocalData, usePrefs } from "@/learner";
+import { clearLocalData, usePrefs, type Prefs } from "@/learner";
+import { loadArabic, SHARED } from "@/l10n";
 import { applyTheme, DEFAULT_THEME, type Theme } from "./theme";
 import styles from "./Settings.module.css";
 
@@ -24,6 +25,30 @@ export function SettingsForm() {
             <option value="light">Light</option>
             <option value="dark">Dark</option>
             <option value="system">Match device</option>
+          </select>
+        </label>
+      </section>
+
+      <section className={styles.card}>
+        <h2>Language</h2>
+        <p className={styles.lead}>
+          The tutor&apos;s hints, feedback and explanations in English or Arabic. Questions, answers, equations and labels stay in English. The same choice is in
+          the top bar as <span lang="en">EN</span> | <span lang="ar">عربي</span>.
+        </p>
+        <label>
+          Language{" "}
+          <select
+            value={prefs.locale}
+            onChange={(e) => {
+              const locale = e.target.value as Prefs["locale"];
+              setPrefs({ locale });
+              if (locale === "ar") void loadArabic(SHARED);
+            }}
+          >
+            <option value="en">English</option>
+            <option value="ar" lang="ar">
+              عربي
+            </option>
           </select>
         </label>
       </section>

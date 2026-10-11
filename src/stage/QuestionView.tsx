@@ -6,6 +6,8 @@ import type { Answer, GradeResult } from "@/content/grade";
 import { stepTag, stepVars } from "@/content/steps";
 import { fill } from "@/content/template";
 import { Notation } from "@/interactions/shared/Notation";
+import { SupportiveText } from "@/l10n";
+import { resolveMessage } from "@/tutor";
 import { PredictionBeforeReveal, type PredictionResult } from "@/interactions/PredictionBeforeReveal/PredictionBeforeReveal";
 import type { RegisteredKind } from "@/kinds";
 import { Calculator } from "@/kinds/shared/Calculator";
@@ -67,7 +69,7 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
       {calculator && <Calculator key={`${variant.id}-${stepIndex}`} expression={fill(calculator, { ...variant.vars, ...stepVars(variant.spec, stepIndex) })} />}
       {last && (
         <p className={`${styles.feedback} ${last.result.correct ? styles.ok : styles.no}`} role="status">
-          {last.result.correct ? "Correct." : "Not correct yet."}
+          <SupportiveText template={resolveMessage(last.result.correct ? "ui.stage.correct" : "ui.stage.incorrect")} inline />
         </p>
       )}
     </>

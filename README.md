@@ -6,10 +6,6 @@ deterministic (rule-based) tutoring and adaptive scaffolding. Web-first, guest-f
 Owner: Dr. Mohannad Abu-Romoh. Initial deployment target: `learn.aburomoh.com` (configurable in
 `config/product.ts`; no branding is hard-coded in application logic).
 
-**Production (stable URL): https://cet-learn.vercel.app** (owner decision 2026-10-11). It is a production
-domain of the `learn-platform` Vercel project and changes only when the owner approves a release.
-`learn-platform-five.vercel.app` serves the same deployment.
-
 > All academic material currently in the repository is **DEMO / NOT AUTHORITATIVE COURSE CONTENT**.
 
 ## Quick start

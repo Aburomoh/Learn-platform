@@ -5,6 +5,7 @@ import type { Activity, Course, Topic } from "@/content/schema";
 import { product } from "../../config/product";
 import { HintReveal } from "@/interactions/HintReveal/HintReveal";
 import { canRequestScaffold } from "@/tutor";
+import { resolveMessage } from "@/tutor";
 import { TutorPanel, TutorPosePreload, useFocusEffects } from "@/tutor/ui";
 import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordAttempt, completeActivity, completeQuestion, markExplained, skipQuestion, skippedAhead, flushPendingWrites } from "@/learner";
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
@@ -221,7 +222,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
             onRestart={() => act({ type: "RESTART" })}
           />
           <div className={styles.tutor}>
-            <TutorPanel name={product.owner.shortName} expression="pleased" message="Done. Come back any time to practise again." typingSpeed={prefs.typingSpeed} />
+            <TutorPanel name={product.owner.shortName} expression="pleased" message={resolveMessage("ui.stage.done")} course={course.id} typingSpeed={prefs.typingSpeed} />
           </div>
         </div>
       </>
@@ -233,7 +234,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
     <ChallengeSteps steps={steps} />
     <div className={styles.layout}>
       <div className={styles.tutor}>
-        <TutorPanel name={product.owner.shortName} expression={state.expression} message={state.message} messageSeq={state.messageSeq} typingSpeed={prefs.typingSpeed} />
+        <TutorPanel name={product.owner.shortName} expression={state.expression} message={state.message} source={state.messageSource} course={course.id} messageSeq={state.messageSeq} typingSpeed={prefs.typingSpeed} />
       </div>
 
       <div className={styles.stage} ref={stageRef} data-testid="learning-stage" data-stage={stage}>
@@ -276,7 +277,8 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
           <HintReveal
             revealed={state.hints}
             canRequest={scaffoldsOpen && state.tutor.hintLevel < 9}
-            lockedReason={!scaffoldsOpen ? "Try once first" : undefined}
+            lockedReason={!scaffoldsOpen ? resolveMessage("ui.stage.try-first") : undefined}
+            course={course.id}
             onRequest={() => act({ type: "HINT" })}
             onExplainSlowly={scaffoldsOpen ? () => act({ type: "EXPLAIN" }) : undefined}
           />

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Activity } from "@/content/schema";
 import { Notation } from "@/interactions/shared/Notation";
 import { PrimaryAction } from "@/shell/r1";
+import { resolveMessage, resolvePlural } from "@/tutor";
 import type { PrimaryAction as NextAction } from "@/shell/primaryAction";
 import styles from "./Stage.module.css";
 
@@ -28,8 +29,12 @@ export function ActivitySummary({ activity, objectives, attempts, hintsUsed, nex
     <section className={styles.stage} aria-label="Practice complete" data-testid="activity-summary">
       <h2 className={styles.summaryTitle}>Practice complete</h2>
       <p>
-        {activity.title}: {activity.questions.length} challenges, {attempts} {attempts === 1 ? "attempt" : "attempts"},{" "}
-        {hintsUsed === 0 ? "no hints needed" : `hints used on ${hintsUsed} ${hintsUsed === 1 ? "challenge" : "challenges"}`}.
+        {resolveMessage("ui.summary.line", {
+          activity: activity.title,
+          challenges: resolvePlural("ui.summary.challenges", activity.questions.length),
+          attempts: resolvePlural("ui.summary.attempts", attempts),
+          hints: hintsUsed === 0 ? resolveMessage("ui.summary.hints.zero") : resolvePlural("ui.summary.hints", hintsUsed),
+        })}
       </p>
       {objectives.length > 0 && (
         <div>

@@ -22,6 +22,30 @@ export function resolveMessage(key: string, vars: TemplateVars = {}, locale = "e
   return fill(text, vars);
 }
 
+/** The English template of a key, unfilled: the lookup key for its Arabic (ADR-0011 §2). */
+export function messageTemplate(key: string): string {
+  return (en as Record<string, string>)[key] ?? `[missing message: ${key}]`;
+}
+
+/**
+ * Count agreement (ADR-0011 §6): a template family `<key>.<form>` with one form per CLDR plural
+ * class of the locale (`one` and `other` in English; `zero`, `one`, `two`, `few`, `many`, `other` in
+ * Arabic). Picks the form for `n`, falling back to `other`; `n` is also the `{n}` slot.
+ */
+export function pluralKey(key: string, n: number, locale = "en"): string {
+  let form = "other";
+  try {
+    form = new Intl.PluralRules(locale).select(n);
+  } catch {
+    form = n === 1 ? "one" : "other";
+  }
+  return hasMessage(`${key}.${form}`) ? `${key}.${form}` : `${key}.other`;
+}
+
+export function resolvePlural(key: string, n: number, vars: TemplateVars = {}, locale = "en"): string {
+  return resolveMessage(pluralKey(key, n, locale), { n, ...vars }, locale);
+}
+
 export function messageKeys(): string[] {
   return Object.keys(en);
 }

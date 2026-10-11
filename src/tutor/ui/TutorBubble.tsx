@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "./useReducedMotion";
 import { plainNotation, snapToToken } from "@/content/notation";
 import { Notation } from "@/interactions/shared/Notation";
+import { BidiText } from "@/l10n/SupportiveText";
+import l10n from "@/l10n/l10n.module.css";
 import styles from "./TutorBubble.module.css";
 
 export interface TutorBubbleProps {
@@ -14,15 +16,17 @@ export interface TutorBubbleProps {
   /** Called once the full text is visible (typed or skipped). */
   onDone?: () => void;
   placement?: "side" | "below";
+  /** `ar`: the text is Arabic (ADR-0011): shown at once, `dir="rtl" lang="ar"` on the text, English runs isolated. */
+  lang?: "en" | "ar";
 }
 
 /**
  * Speech bubble with a gentle typewriter. Click/tap or press Enter to reveal immediately.
  * Screen readers receive the full text at once via a polite live region, never char by char.
  */
-export function TutorBubble({ text, speed = 45, onDone, placement = "side" }: TutorBubbleProps) {
+export function TutorBubble({ text, speed = 45, onDone, placement = "side", lang = "en" }: TutorBubbleProps) {
   const reduced = useReducedMotion();
-  const instant = reduced || speed <= 0;
+  const instant = reduced || speed <= 0 || lang === "ar";
 
   // Typing progress keyed by the text it belongs to; a new text resets during render.
   const [progress, setProgress] = useState({ text, shown: 0 });
@@ -64,11 +68,17 @@ export function TutorBubble({ text, speed = 45, onDone, placement = "side" }: Tu
       aria-label={complete ? undefined : "Show the whole message"}
       data-complete={complete}
     >
-      <span aria-hidden="true" className={styles.typed} data-tutor-text>
-        <Notation text={text.slice(0, shown)} />
-        {!complete && <span className={styles.caret} />}
-      </span>
-      <span className="sr-only" aria-live="polite" aria-atomic="true">
+      {lang === "ar" ? (
+        <span aria-hidden="true" className={`${styles.typed} ${l10n.ar}`} dir="rtl" lang="ar" data-tutor-text>
+          <BidiText text={text} />
+        </span>
+      ) : (
+        <span aria-hidden="true" className={styles.typed} data-tutor-text>
+          <Notation text={text.slice(0, shown)} />
+          {!complete && <span className={styles.caret} />}
+        </span>
+      )}
+      <span className="sr-only" aria-live="polite" aria-atomic="true" lang={lang === "ar" ? "ar" : undefined} dir={lang === "ar" ? "rtl" : undefined}>
         {plainNotation(text)}
       </span>
     </div>

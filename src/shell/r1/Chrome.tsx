@@ -1,13 +1,15 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { product } from "../../../config/product";
+import { LanguageToggle } from "./LanguageToggle";
 import { PrimaryAction, type ActionLink } from "./PrimaryAction";
 import { ProfileMenu } from "./ProfileMenu";
 import styles from "./r1.module.css";
 
 /**
  * Top bar (R1 redesign §8): the mark and the product name (both from config), an optional quiet
- * "back" link, and the profile button. No breadcrumb trail; the page's eyebrow says where you are.
+ * "back" link, the `EN | عربي` language control (ADR-0011) and the profile button. No breadcrumb
+ * trail; the page's eyebrow says where you are.
  */
 export function TopBar({ back }: { back?: ActionLink }) {
   return (
@@ -30,6 +32,7 @@ export function TopBar({ back }: { back?: ActionLink }) {
           </Link>
         )}
         <span className={styles.spacer} />
+        <LanguageToggle />
         <ProfileMenu />
       </div>
     </header>

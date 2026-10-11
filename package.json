@@ -6,6 +6,7 @@
   "engines": { "node": ">=22" },
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/build-l10n.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

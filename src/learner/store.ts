@@ -147,3 +147,8 @@ export function clearLocalData(): number {
 export function _resetStores(): void {
   progressStores.clear();
 }
+
+/** Test hook: sets preferences at once, as a Settings change would (no debounce wait). */
+export function _setPrefs(patch: Partial<Prefs>): void {
+  prefsStore.set((p) => ({ ...p, ...patch }));
+}

@@ -1,11 +1,16 @@
 "use client";
 
-import { Notation } from "../shared/Notation";
+import type { TemplateVars } from "@/content/template";
+import { SupportiveText } from "@/l10n";
 import styles from "./HintReveal.module.css";
 
 export interface RevealedHint {
   rung: number;
+  /** The filled English. */
   text: string;
+  /** Its unfilled template and slot values, for the learner's language (ADR-0011); absent in old records. */
+  template?: string;
+  vars?: TemplateVars;
 }
 
 export interface HintRevealProps {
@@ -18,6 +23,8 @@ export interface HintRevealProps {
   onRequest: () => void;
   /** Optional Explain Slowly entry point, rendered beside the hint button. */
   onExplainSlowly?: () => void;
+  /** Course id: which Arabic map holds this course's hints. */
+  course?: string;
 }
 
 const RUNG_LABEL: Record<number, string> = {
@@ -32,7 +39,7 @@ const RUNG_LABEL: Record<number, string> = {
 };
 
 /** Ladder-aware hint list. Never shows more than the engine has granted. */
-export function HintReveal({ revealed, canRequest, lockedReason, onRequest, onExplainSlowly }: HintRevealProps) {
+export function HintReveal({ revealed, canRequest, lockedReason, onRequest, onExplainSlowly, course }: HintRevealProps) {
   return (
     <section className={styles.root} aria-label="Hints">
       {revealed.length > 0 && (
@@ -41,7 +48,7 @@ export function HintReveal({ revealed, canRequest, lockedReason, onRequest, onEx
             <li key={h.rung} className={styles.item}>
               <span className={styles.rung}>{RUNG_LABEL[h.rung] ?? `Hint ${h.rung}`}</span>
               <span>
-                <Notation text={h.text} />
+                <SupportiveText template={h.template ?? h.text} vars={h.vars} course={course} />
               </span>
             </li>
           ))}
@@ -58,7 +65,7 @@ export function HintReveal({ revealed, canRequest, lockedReason, onRequest, onEx
         )}
         {!canRequest && lockedReason && (
           <span id="hint-lock" className={styles.lock}>
-            {lockedReason}
+            <SupportiveText template={lockedReason} inline />
           </span>
         )}
       </div>
