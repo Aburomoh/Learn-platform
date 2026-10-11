@@ -193,6 +193,22 @@
   color: var(--text-muted);
 }
 
+/* the way back to a skipped question of this practice: a link in the sentence, not a button (#623) */
+.returnLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--link, var(--accent));
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.returnLink:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .header {
   display: flex;
   flex-wrap: wrap;

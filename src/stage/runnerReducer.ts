@@ -51,6 +51,10 @@ export type RunnerAction =
   | { type: "CONTINUE" }
   | { type: "RETRY_VARIANT" }
   | { type: "NEXT_QUESTION" }
+  /** The hidden skip (#623): the next unfinished question after this one, which stays unfinished. */
+  | { type: "SKIP_QUESTION" }
+  /** Back to a question skipped earlier in this practice (#623). */
+  | { type: "GO_TO_QUESTION"; index: number }
   | { type: "HESITATION"; seconds: number }
   | { type: "RESTART" };
 
@@ -104,6 +108,11 @@ export function followVariant(activity: Activity, s: Pick<RunnerState, "qIndex" 
 
 export function hasAnotherVariant(activity: Activity, s: Pick<RunnerState, "qIndex" | "vIndex">): boolean {
   return activity.questions[s.qIndex].variants.length > 1;
+}
+
+/** Another question of the practice on its due variant, with a fresh tutor; the caller then runs ACTIVITY_OPENED (NEXT_QUESTION, the skip, the way back). */
+function openQuestion(activity: Activity, s: RunnerState, target: number): RunnerState {
+  return { ...s, qIndex: target, vIndex: followVariant(activity, s, target), hints: [], last: undefined, explanation: null, stepIndex: 0, tutor: initialTutorState, interactionKey: s.interactionKey + 1 };
 }
 
 export function initialRunnerState(activity: Activity): RunnerState {
@@ -250,9 +259,17 @@ export function createRunnerReducer(activity: Activity) {
         const qIndex = s.completed.findIndex((c, i) => !c && i > s.qIndex);
         const target = qIndex === -1 ? s.completed.findIndex((c) => !c) : qIndex;
         if (target === -1) return { ...s, done: true };
-        const next: RunnerState = { ...s, qIndex: target, vIndex: followVariant(activity, s, target), hints: [], last: undefined, explanation: null, stepIndex: 0, tutor: initialTutorState, interactionKey: s.interactionKey + 1 };
-        return runTutor(next, { type: "ACTIVITY_OPENED" });
+        return runTutor(openQuestion(activity, s, target), { type: "ACTIVITY_OPENED" });
       }
+
+      case "SKIP_QUESTION": {
+        const target = s.completed.findIndex((c, i) => !c && i > s.qIndex);
+        // nothing after this one: the runner leaves the practice instead (skipOffer)
+        return target === -1 ? s : runTutor(openQuestion(activity, s, target), { type: "ACTIVITY_OPENED" });
+      }
+
+      case "GO_TO_QUESTION":
+        return action.index === s.qIndex || s.completed[action.index] ? s : runTutor(openQuestion(activity, s, action.index), { type: "ACTIVITY_OPENED" });
 
       case "HESITATION":
         return runTutor(s, { type: "HESITATION", seconds: action.seconds });

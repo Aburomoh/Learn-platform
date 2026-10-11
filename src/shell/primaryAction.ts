@@ -101,19 +101,36 @@ export function courseAction(course: Course, progress: Progress): PrimaryAction 
  * last practice at challenge 1; from the last practice to the next topic. The practices passed over
  * are recorded as skipped (never completed).
  */
-export function skipOffer(course: Course, topic: Topic, activity: Activity, progress: Progress): { allowed: boolean; href: string; targetLabel: string; skipped: string[] } {
+export interface SkipOffer {
+  allowed: boolean;
+  /** `question`: the next question of this practice (in the runner, no navigation). `practice`: the next practice's first question. `topic`: the next topic's page. */
+  kind: "question" | "practice" | "topic";
+  /** Where the page goes for `practice` and `topic`. */
+  href?: string;
+  /** What the skip goes to, in words, for the confirmation. */
+  targetLabel: string;
+}
+
+/**
+ * Skip to next question (owner, #623): from a question to the next unfinished one of the practice
+ * (`completed` is the runner's per-question state, so after a wrap-around with nothing left after
+ * this question the skip leaves the practice instead); from there to the next practice's first
+ * question; from the last practice of a topic to the next topic. Only the skipped question is
+ * recorded (`skipQuestion`); the practice is never completed by a skip.
+ */
+export function skipOffer(course: Course, topic: Topic, activity: Activity, progress: Progress, qIndex: number, completed: readonly boolean[]): SkipOffer {
   const allowed = topic.activities.some((a) => {
     const r = progress.activities[a.id];
     return r?.status === "completed" && r.independent && !r.explained;
   });
+  const nextUnfinished = activity.questions.findIndex((_, i) => i > qIndex && !completed[i]);
+  if (nextUnfinished >= 0) return { allowed, kind: "question", targetLabel: "the next question" };
   const i = topic.activities.findIndex((a) => a.id === activity.id);
-  const last = topic.activities[topic.activities.length - 1];
-  if (i >= 0 && i < topic.activities.length - 1) {
-    return { allowed, href: reviewHref(course, topic, last), targetLabel: "the last practice of this topic", skipped: topic.activities.slice(i, -1).map((a) => a.id) };
-  }
+  const nextPractice = i >= 0 ? topic.activities[i + 1] : undefined;
+  if (nextPractice) return { allowed, kind: "practice", href: practiceHref(course, topic, nextPractice), targetLabel: `the next practice, ${nextPractice.title}` };
   const topics = topicsOf(course);
   const next = topics[topics.findIndex((t) => t.id === topic.id) + 1];
-  return { allowed, href: next ? topicHref(course, next) : topicHref(course, topic), targetLabel: next ? `the next topic, ${next.title}` : "this topic's page", skipped: [activity.id] };
+  return { allowed, kind: "topic", href: next ? topicHref(course, next) : topicHref(course, topic), targetLabel: next ? `the next topic, ${next.title}` : "this topic's page" };
 }
 
 /** A small button on a topic row of the course page: its own Start / Continue / Review. */
