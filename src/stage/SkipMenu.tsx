@@ -65,7 +65,15 @@ export function SkipMenu({ allowed, targetLabel, onSkip }: SkipMenuProps) {
             <div className={styles.moreConfirm} role="group" aria-label="Confirm skip">
               <p className={styles.moreNote}>Skip this question? You can come back any time. This goes to {targetLabel}.</p>
               <div className={styles.moreActions}>
-                <button type="button" className="btn" onClick={onSkip}>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => {
+                    // the panel closes itself: an in-practice skip keeps this page (#623)
+                    close();
+                    onSkip();
+                  }}
+                >
                   Skip
                 </button>
                 <button type="button" className="btn btn-quiet" onClick={close}>
