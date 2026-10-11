@@ -61,8 +61,10 @@ catalog resolves by key with an empty `ar` map, and the English activity bundle 
    English and are listed in `UNTRANSLATED.md` for the owner.
 7. **Scope and drift.** Chrome, navigation titles, figure captions and accessible summaries stay
    English until the owner brings them in scope (AUDIT §3). Missing Arabic always falls back to
-   English. A unit test counts the supportive strings on the branch that have no Arabic and fails
-   when `UNTRANSLATED.md` reports a different number, so the report cannot go stale silently.
+   English, and untranslated text is never a gate (owner, #649): `npm run l10n:drift` regenerates
+   `UNTRANSLATED.md` from the loaded content, and a plain test run only prints the count when the
+   report is behind. Tests fail only for what is broken: a malformed package, lost slots,
+   Arabic-Indic digits, or committed maps out of step with the package.
 
 ## Consequences
 One switch, one lookup, one payload format, one text component. The English experience is

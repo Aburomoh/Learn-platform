@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/build-l10n.mjs",
+    "l10n:drift": "node scripts/l10n-drift.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

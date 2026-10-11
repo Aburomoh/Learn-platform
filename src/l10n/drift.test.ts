@@ -1,57 +1,123 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { courses } from "@/content";
 import { en } from "@/tutor/messages/en";
 
 /**
- * Drift guard (ADR-0011 §7, Reviewer on #653): the supportive strings on this branch that have no
- * Arabic are counted here, so `docs/localization/ar/UNTRANSLATED.md` cannot go stale silently. The
- * fields are the inventory's: hints (every ladder), explanation steps, prediction follow-ups,
- * per-variant reactions, and the tutor catalog. Untranslated text is not a blocker (it falls back to
- * English); a stale report is. When this fails, regenerate UNTRANSLATED.md (Content Engineer) or
- * fix the count there.
+ * Drift report (ADR-0011 §7, Lead on #658): the supportive strings on this branch that have no
+ * Arabic. Untranslated text is an English fallback, never a blocker (owner, #649), so this is not
+ * a gate: `npm run l10n:drift` runs this file with L10N_DRIFT_WRITE=1 and regenerates
+ * docs/localization/ar/UNTRANSLATED.md; a plain test run only prints the count when it differs
+ * from the report. The fields are the inventory's: hints (every ladder), explanation steps,
+ * prediction follow-ups, per-variant reactions, and the tutor catalog.
  */
 const DIR = path.resolve(process.cwd(), "docs/localization/ar");
+const REPORT = path.join(DIR, "UNTRANSLATED.md");
 const arabic = JSON.parse(readFileSync(path.join(DIR, "source-texts.ar.json"), "utf8")) as { english: string; arabic?: string }[];
 const translated = new Set(arabic.filter((e) => e.arabic?.trim()).map((e) => e.english));
 
-function supportiveStrings(): Set<string> {
-  const out = new Set<string>();
+interface Placement {
+  id: string;
+  course: string;
+  topic: string;
+  type: "hint" | "explanation" | "feedback";
+  english: string;
+}
+
+export function supportivePlacements(): Placement[] {
+  const out: Placement[] = [];
   for (const course of courses)
     for (const mod of course.modules)
       for (const topic of mod.topics)
         for (const activity of topic.activities)
           for (const q of activity.questions)
             for (const v of q.variants) {
-              for (const h of v.hints) out.add(h.text);
-              for (const ladder of Object.values(v.hintsByStep ?? {})) for (const h of ladder) out.add(h.text);
-              for (const s of v.explanation) {
-                out.add(s.say);
-                if (s.ask?.afterCorrect) out.add(s.ask.afterCorrect);
-                if (s.ask?.afterWrong) out.add(s.ask.afterWrong);
-              }
-              for (const r of Object.values(v.reactions ?? {})) if (typeof r === "string") out.add(r);
+              const base = `${course.id}.${topic.id}.${activity.id}.${q.id}.${v.id}`;
+              const add = (id: string, type: Placement["type"], english: string) => out.push({ id, course: course.id, topic: topic.id, type, english });
+              v.hints.forEach((h, i) => add(`${base}.hints[${i}]`, "hint", h.text));
+              for (const [tag, ladder] of Object.entries(v.hintsByStep ?? {})) ladder.forEach((h, i) => add(`${base}.hintsByStep.${tag}[${i}]`, "hint", h.text));
+              v.explanation.forEach((s, i) => {
+                add(`${base}.explanation[${i}].say`, "explanation", s.say);
+                if (s.ask?.afterCorrect) add(`${base}.explanation[${i}].ask.afterCorrect`, "feedback", s.ask.afterCorrect);
+                if (s.ask?.afterWrong) add(`${base}.explanation[${i}].ask.afterWrong`, "feedback", s.ask.afterWrong);
+              });
+              for (const [k, r] of Object.entries(v.reactions ?? {})) if (typeof r === "string") add(`${base}.reactions.${k}`, "feedback", r);
             }
   return out;
 }
 
-describe("Arabic coverage of the supportive text on this branch", () => {
-  it("UNTRANSLATED.md reports the current count of supportive strings without Arabic", () => {
-    const strings = supportiveStrings();
-    const missing = [...strings].filter((s) => !translated.has(s));
-    const report = readFileSync(path.join(DIR, "UNTRANSLATED.md"), "utf8");
-    const documented = Number(/Without Arabic: \*\*(\d+)\*\*/.exec(report)?.[1]);
-    const message = `${missing.length} supportive strings have no Arabic (UNTRANSLATED.md says ${documented}). ${
-      missing.length > documented ? "New or changed supportive text since the report: " : "The report is ahead of the content: "
-    }${missing.slice(0, 5).map((s) => JSON.stringify(s.slice(0, 60))).join(", ")}`;
-    expect(missing.length, message).toBe(documented);
-  });
+export function driftReport(): { markdown: string; distinct: number; missing: number; placements: number; catalogMissing: string[] } {
+  const all = supportivePlacements();
+  const distinct = new Set(all.map((p) => p.english));
+  const missing = all.filter((p) => !translated.has(p.english));
+  const firstOf = new Map<string, Placement & { count: number }>();
+  for (const p of missing) {
+    const f = firstOf.get(p.english);
+    if (f) f.count += 1;
+    else firstOf.set(p.english, { ...p, count: 1 });
+  }
+  const strings = [...firstOf.values()];
+  const catalogMissing = Object.entries(en)
+    .filter(([k, text]) => !k.startsWith("ui.") && !translated.has(text))
+    .map(([k]) => k);
+  const uiMissing = Object.entries(en).filter(([k, text]) => k.startsWith("ui.") && !translated.has(text)).length;
+  const count = (key: (p: Placement) => string) => {
+    const m = new Map<string, number>();
+    for (const s of strings) m.set(key(s), (m.get(key(s)) ?? 0) + 1);
+    return [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  };
+  const lines = [
+    "# Untranslated supportive strings on main (drift report)",
+    "",
+    "Information for the owner, **not a blocker**: supportive strings with no Arabic in `source-texts.ar.json` (written or changed after the Phase 1 inventory). In the app they fall back to English until they are translated. Nothing here was translated or edited.",
+    "",
+    "Generated by `npm run l10n:drift` (ADR-0011 §7): the supportive text (hints, scaffold steps, prediction follow-ups, reactions; the inventory's fields) is read from the loaded course objects and compared with the `english` of every package entry. A string counts as translated when the identical English text is in the package. Question prompts and answer options are not part of the inventory and are not listed.",
+    "",
+    "## Totals",
+    "",
+    `- Distinct supportive strings now on main: **${distinct.size}**`,
+    `- Without Arabic: **${strings.length}** (${missing.length} placements)`,
+    `- Catalog keys (\`src/tutor/messages/en.ts\`) not in the package: **${catalogMissing.length}**${catalogMissing.length ? ` (${catalogMissing.join(", ")})` : ""}`,
+    `- Component templates added by #650 (\`ui.*\` keys, English fallback until translated): **${uiMissing}**`,
+    "- Component text (strings hard-coded in `src/**` components) was not re-scanned; the Phase 1 `AUDIT.md` list stands.",
+    "",
+    "| Course and type | Untranslated strings |",
+    "|---|---|",
+    ...count((p) => `${p.course} ${p.type}`).map(([k, n]) => `| ${k} | ${n} |`),
+    "",
+    "## By topic",
+    "",
+    "| Topic | Strings |",
+    "|---|---|",
+    ...count((p) => `${p.course} / ${p.topic}`).map(([k, n]) => `| ${k} | ${n} |`),
+    "",
+    "## The strings",
+    "",
+    "One line per distinct string: its first id, how many placements use it, its type, and the English.",
+  ];
+  const byTopic = new Map<string, (Placement & { count: number })[]>();
+  for (const s of strings) {
+    const k = `${s.course} / ${s.topic}`;
+    (byTopic.get(k) ?? byTopic.set(k, []).get(k)!).push(s);
+  }
+  for (const [k, list] of [...byTopic].sort((a, b) => a[0].localeCompare(b[0]))) {
+    lines.push("", `### ${k}`, "");
+    for (const s of list) lines.push(`- \`${s.id}\` (${s.count}×, ${s.type}): ${s.english}`);
+  }
+  return { markdown: lines.join("\n") + "\n", distinct: distinct.size, missing: strings.length, placements: missing.length, catalogMissing };
+}
 
-  it("every tutor catalog key has Arabic", () => {
-    const missing = Object.entries(en).filter(([, text]) => !translated.has(text)).map(([k]) => k);
-    // the templates added by #650 (component sentences) are the known exceptions until the owner translates them
-    const added = missing.filter((k) => !k.startsWith("ui."));
-    expect(added).toEqual([]);
+describe("Arabic coverage of the supportive text on this branch (report, not a gate)", () => {
+  it("counts the strings without Arabic and, with L10N_DRIFT_WRITE=1, regenerates UNTRANSLATED.md", () => {
+    const r = driftReport();
+    expect(r.distinct).toBeGreaterThan(3000);
+    if (process.env.L10N_DRIFT_WRITE) {
+      writeFileSync(REPORT, r.markdown);
+      console.log(`l10n:drift: ${r.missing} strings (${r.placements} placements) without Arabic; UNTRANSLATED.md regenerated.`);
+      return;
+    }
+    const documented = Number(/Without Arabic: \*\*(\d+)\*\*/.exec(readFileSync(REPORT, "utf8"))?.[1]);
+    if (documented !== r.missing) console.warn(`l10n drift: ${r.missing} supportive strings have no Arabic, UNTRANSLATED.md says ${documented}. Run \`npm run l10n:drift\` to refresh the report (information for the owner, not a blocker).`);
   });
 });
