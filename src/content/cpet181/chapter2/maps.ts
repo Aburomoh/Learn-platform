@@ -9,6 +9,8 @@
  */
 import type { z } from "zod";
 import type { TopicSchema, VariantSchema } from "../../schema";
+import { allocate } from "@/content/os/allocate";
+import { mcq, type Row } from "../chapter1/mcq";
 
 type TopicInput = z.input<typeof TopicSchema>;
 type VariantInput = z.input<typeof VariantSchema>;
@@ -281,6 +283,83 @@ const compactVariant = (s: CompactSet): VariantInput =>
     misconceptions: [NUDGES.gap, NUDGES.sign, NUDGES.unit],
   });
 
+/* ---------- which method is more efficient, and why (Quiz 1 Q2's last step; Pedagogy gate on #530) ---------- */
+
+/** Efficiency as the pack's Q1 Q2 reads it: more jobs placed, then less memory wasted inside the partitions. */
+export function efficiency(s: { partitions: number[]; jobs: JobInput[] }) {
+  const run = (fit: Fit) => {
+    const a = allocate(s.partitions.map((size) => ({ size })), s.jobs, fit, "fixed");
+    return { placed: a.placements.length, waiting: a.waiting.map((w) => w.job), waste: a.summary.internalFragmentation };
+  };
+  const first = run("first");
+  const best = run("best");
+  const winner: "first" | "best" | "same" =
+    first.placed !== best.placed ? (first.placed > best.placed ? "first" : "best") : first.waste !== best.waste ? (first.waste < best.waste ? "first" : "best") : "same";
+  return { first, best, winner };
+}
+
+const EFFICIENCY_RULE = "A method is more efficient when it places more of the jobs and, for the same jobs, wastes less memory inside the partitions. First-fit is faster to run but can waste memory; best-fit wastes the least.";
+const NAME: Record<Fit, string> = { first: "First-fit", best: "Best-fit" };
+const otherFit = (f: Fit): Fit => (f === "first" ? "best" : "first");
+const efficiencyRow = (s: FixedSet): Row => {
+  const e = efficiency(s);
+  const list = (ids: string[]) => ids.join(" and ");
+  const reason = (w: Fit) => {
+    const mine = e[w];
+    const other = e[otherFit(w)];
+    return mine.placed !== other.placed
+      ? `${NAME[w]}: it places ${mine.placed} of the ${s.jobs.length} jobs, while ${NAME[otherFit(w)].toLowerCase()} leaves ${list(other.waiting)} waiting`
+      : `${NAME[w]}: it places the same jobs but wastes less inside the partitions (${mine.waste} K against ${other.waste} K)`;
+  };
+  const same = `Neither: both place ${e.first.placed} jobs and waste ${e.first.waste} K`;
+  const correct = e.winner === "same" ? same : reason(e.winner);
+  const wrong =
+    e.winner === "same"
+      ? [`${NAME.first}: it is faster, so it is more efficient`, `${NAME.best}: it wastes the least, so it is more efficient`]
+      : [`${NAME[otherFit(e.winner)]}: it is the faster method, so it uses memory better`, same];
+  return {
+    prompt: `Fixed partitions of ${s.partitions.join(", ")} K, and jobs of ${s.jobs.map((j) => j.size).join(", ")} K to place in that order. Which method is more efficient for these jobs, first-fit or best-fit, and why?`,
+    correct,
+    wrong,
+    rule: EFFICIENCY_RULE,
+    apply:
+      e.winner === "same"
+        ? `First-fit and best-fit give the same result here: ${e.first.placed} jobs placed, ${e.first.waste} K wasted inside the partitions.`
+        : `First-fit places ${e.first.placed} jobs and wastes ${e.first.waste} K; best-fit places ${e.best.placed} and wastes ${e.best.waste} K, so ${NAME[e.winner].toLowerCase()} is more efficient.`,
+    hint: "Place the jobs both ways and compare how many are placed and how much is wasted inside the partitions.",
+  };
+};
+const efficiencyQuestion = (() => {
+  const base = mcq("fx.q.efficient", "Which is more efficient", "fx.place", "fx.obj.efficient", FIXED_BEST.map(efficiencyRow));
+  // the same number sets as fx.q.best, so the same variant ids at the same positions (#141)
+  base.variants.forEach((v, i) => {
+    v.id = FIXED_BEST[i].id;
+  });
+  return base;
+})();
+
+/* ---------- bounds and relocation registers; addresses and data values (C2-8, C2-9) ---------- */
+
+const REGISTERS = "The bounds register holds the highest address the program may use. The relocation register holds the amount added to every address of the job (0 if the job did not move).";
+const REG_NAMES = ["Bounds register", "Relocation register"];
+const regRow = (prompt: string, correct: string, apply: string, hint: string): Row => ({ prompt, correct, wrong: REG_NAMES.filter((r) => r !== correct), rule: REGISTERS, apply, hint });
+const registersQuestion = mcq("rl.q.registers", "Bounds or relocation", "rl.compact", "rl.obj.registers-kinds", [
+  regRow("Which register holds the highest address the program may use?", "Bounds register", "The highest address allowed is the bounds register.", "One register limits; the other shifts."),
+  regRow("Which register holds the amount added to every address of the job?", "Relocation register", "The amount added to every address is the relocation register.", "One register limits; the other shifts."),
+  regRow("A job did not move during compaction. Which register is 0 for it?", "Relocation register", "Nothing is added to its addresses, so its relocation register is 0.", "Which register is about moving?"),
+  regRow("Which register stops a program from using an address above its own memory?", "Bounds register", "The bounds register sets the highest address the program may use.", "Which register is about the limit?"),
+]);
+
+const ADDRESSES = "When compaction moves a job, every address in its program is adjusted by the move. Data values are not addresses and are left unchanged.";
+const ADDRESS_KINDS = ["The addresses in the program", "The data values"];
+const addrRow = (prompt: string, correct: string, wrong: string[], apply: string, hint: string): Row => ({ prompt, correct, wrong, rule: ADDRESSES, apply, hint });
+const addressesQuestion = mcq("rl.q.addresses", "Addresses or data", "rl.compact", "rl.obj.addresses", [
+  addrRow("Compaction moves a job. Which of these does the move adjust?", ADDRESS_KINDS[0], [ADDRESS_KINDS[1]], "Every address in the program is adjusted by the move.", "Which of the two says where something is?"),
+  addrRow("Compaction moves a job. Which of these is left unchanged?", ADDRESS_KINDS[1], [ADDRESS_KINDS[0]], "Data values are left unchanged by the move.", "Which of the two is just a number to be used?"),
+  addrRow("The value 37 is stored in a byte of a job, and compaction moves the job. What happens to the 37?", "It stays 37", ["It is increased by the relocation amount", "It becomes 0"], "A data value is not an address, so the move does not change it.", "Is 37 saying where something is, or what it is?"),
+  addrRow("An instruction of a job reads “Load 4, 53248”, and the 37 it loads sits at that address. Compaction moves the job up, so its relocation register is −12288 (bytes). What does the move adjust?", "The address it refers to, through the relocation register (53248 becomes 40960)", ["The data stored there (the 37)", "The relocation register stays 0"], "The instruction still reads Load 4, 53248; the relocation register (−12288) is added, so it reaches 40960, where the 37 now is.", "Which one is an address, and which is just a value?"),
+]);
+
 /* ---------- topics ---------- */
 
 const q = (id: string, label: string, conceptId: string, objectiveId: string, variants: VariantInput[]) => ({ id, label, conceptId, objectiveId, variants });
@@ -293,6 +372,7 @@ export const fixedPartitionsTopic: TopicInput = {
   objectives: [
     { id: "fx.obj.first", conceptId: "fx.place", text: "Place jobs into fixed partitions by first-fit, and find the internal fragmentation." },
     { id: "fx.obj.best", conceptId: "fx.place", text: "Place jobs into fixed partitions by best-fit, and find the internal fragmentation." },
+    { id: "fx.obj.efficient", conceptId: "fx.place", text: "Say which method is more efficient for a set of jobs, and why." },
   ],
   activities: [
     {
@@ -304,6 +384,7 @@ export const fixedPartitionsTopic: TopicInput = {
       questions: [
         q("fx.q.first", "First-fit", "fx.place", "fx.obj.first", FIXED_FIRST.map((s) => fixedVariant(s, "first"))),
         q("fx.q.best", "Best-fit", "fx.place", "fx.obj.best", FIXED_BEST.map((s) => fixedVariant(s, "best"))),
+        efficiencyQuestion,
       ],
     },
   ],
@@ -357,8 +438,18 @@ export const relocatablePartitionsTopic: TopicInput = {
   objectives: [
     { id: "rl.obj.compact", conceptId: "rl.compact", text: "Give each job's new address after compaction." },
     { id: "rl.obj.register", conceptId: "rl.compact", text: "Give each moved job's relocation register." },
+    { id: "rl.obj.registers-kinds", conceptId: "rl.compact", text: "Tell the bounds register from the relocation register." },
+    { id: "rl.obj.addresses", conceptId: "rl.compact", text: "Say that compaction adjusts addresses and leaves data values unchanged." },
   ],
   activities: [
+    {
+      id: "compaction-terms",
+      title: "Registers, addresses and data",
+      summary: "Bounds against relocation register, and what a move changes, before compacting a map.",
+      authority: "DEMO",
+      minutes: 6,
+      questions: [registersQuestion, addressesQuestion],
+    },
     {
       id: "compaction",
       title: "Compaction",
