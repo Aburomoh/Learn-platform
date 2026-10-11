@@ -40,15 +40,15 @@ async function fillColumn(page: Page, header: string, bits: string) {
   await page.getByRole("button", { name: "Check column" }).click();
 }
 
-test("timing: SR flip-flop on rising edges, then D on falling edges, Q placed edge by edge", async ({ page }) => {
-  await openQuestion(page, "timing/timing-diagrams", "Rising edges");
+test("timing: SR flip-flop, then D, each on rising edges, Q placed edge by edge", async ({ page }) => {
+  await openQuestion(page, "timing/timing-diagrams", "SR flip-flop");
   await placeQ(page, "0 1 0 1 1");
   await expect(correct(page)).toBeVisible();
   await noPageOverflow(page);
 
   await page.getByRole("button", { name: "Next challenge" }).click();
-  await expect(page.getByText(/^Challenge 2 of \d+ · Falling edges$/)).toBeVisible();
-  await placeQ(page, "1 1 0 1 0");
+  await expect(page.getByText(/^Challenge 2 of \d+ · D flip-flop$/)).toBeVisible();
+  await placeQ(page, "0 1 0 1 1 0 0");
   await expect(correct(page)).toBeVisible();
   await noPageOverflow(page);
 });
