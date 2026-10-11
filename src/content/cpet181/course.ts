@@ -1,5 +1,5 @@
 /**
- * CPET 181 as a learning course (#562). Chapters 1, 2, 4 and 8 have topics (chapter1/, chapter2/, chapter4/, chapter8/); the other five chapters
+ * CPET 181 as a learning course (#562). Chapters 1, 2, 3, 4 and 8 have topics (chapter1/ … chapter8/); the other four chapters
  * are `comingSoon` modules built from the chapter list in ./index.ts, and each gets its topics when
  * its content lands (add them to that chapter's registry and drop `comingSoon`).
  */
@@ -7,11 +7,12 @@ import type { CourseInput, ModuleInput } from "../schema";
 import { cpet181 as outline } from "./index";
 import { chapter1 } from "./chapter1";
 import { chapter2 } from "./chapter2";
+import { chapter3 } from "./chapter3";
 import { chapter4 } from "./chapter4";
 import { chapter8 } from "./chapter8";
 
 /** Chapters with topics, by chapter number; every other chapter is `comingSoon`. */
-const live: Record<number, ModuleInput> = { 1: chapter1, 2: chapter2, 4: chapter4, 8: chapter8 };
+const live: Record<number, ModuleInput> = { 1: chapter1, 2: chapter2, 3: chapter3, 4: chapter4, 8: chapter8 };
 
 const modules: ModuleInput[] = outline.chapters.map((c, i) => {
   const n = i + 1;

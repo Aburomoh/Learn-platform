@@ -20,6 +20,9 @@ export interface Count {
   /** Rung 3: a pointer that does not give the answer away. */
   hint: string;
   figure?: VariantInput["figure"];
+  /** Calculator expression (a template over `vars`), pre-loaded from the givens only (#577). */
+  calculator?: string;
+  vars?: Record<string, string | number>;
   /** Common wrong numbers, each with the tutor nudge for it. */
   wrong?: { id: string; nudgeKey: string; value: number }[];
 }
@@ -29,6 +32,8 @@ function variant(c: Count, k: number): VariantInput {
     id: `v${k + 1}`,
     prompt: c.prompt,
     ...(c.figure ? { figure: c.figure } : {}),
+    ...(c.vars ? { vars: c.vars } : {}),
+    ...(c.calculator ? { calculator: { "*": c.calculator } } : {}),
     spec: { kind: "numeric", base: 10, answer: String(c.answer) },
     hints: [
       { rung: 2, text: "Not yet. Count again, one at a time." },
