@@ -8,7 +8,6 @@ const ACTIVITIES: [string, string][] = [
   ["topologies", "shape"],
   ["topologies", "traits"],
   ["topologies", "factors"],
-  ["topologies", "hybrid"],
   ["network-types", "types"],
   ["network-types", "bridge-gateway"],
   ["network-types", "wireless"],
@@ -26,16 +25,30 @@ const correct = (v: ReturnType<typeof find>["variants"][number]) => {
 
 describe("CPET 181 Chapter 9 networks and security content (#635)", () => {
   it("the topology figures match the answers: star, ring, bus, tree and hybrid", () => {
-    const named = [...find("tp.q.shape").variants, find("tp.q.hybrid").variants[0]];
+    const named = [...find("tp.q.shape").variants, ...find("tp.q.mixed").variants];
     for (const v of named) {
       if (v.figure?.type !== "topology") throw new Error(`${v.id}: topology figure expected`);
       expect(correct(v).toLowerCase(), v.id).toBe(v.figure.topology);
     }
     expect(find("tp.q.shape").variants.map((v) => (v.figure?.type === "topology" ? v.figure.topology : ""))).toEqual(["star", "ring", "bus", "tree"]);
+    expect(find("tp.q.mixed").variants.map((v) => (v.figure?.type === "topology" ? v.figure.topology : ""))).toEqual(["hybrid", "star", "bus", "ring"]);
+  });
+
+  it("a retry is a different problem: the answers of the sketch questions differ from item to item, and no label or title names a topology (Pedagogy gate)", () => {
+    for (const id of ["tp.q.shape", "tp.q.mixed", "tp.q.traits"]) {
+      const answers = find(id).variants.map(correct);
+      expect(new Set(answers).size, id).toBe(answers.length);
+    }
+    for (const [topic, activity] of ACTIVITIES.filter(([t]) => t === "topologies")) {
+      const a = getActivity(COURSE, topic, activity)!.activity;
+      const texts = [a.title, a.summary ?? "", ...a.questions.map((q) => q.label)].join(" ").toLowerCase();
+      if (activity === "factors") continue;
+      for (const name of ["star", "ring", "bus", "tree", "hybrid"]) expect(texts, `${activity}: ${name}`).not.toContain(name);
+    }
   });
 
   it("the sketches carry no name of the topology in the prompt or the caption", () => {
-    for (const v of [...find("tp.q.shape").variants, find("tp.q.hybrid").variants[0]]) {
+    for (const v of [...find("tp.q.shape").variants, ...find("tp.q.mixed").variants]) {
       const text = `${v.prompt} ${v.figure?.type === "topology" ? v.figure.caption : ""}`.toLowerCase();
       for (const name of ["star", "ring", "bus", "tree", "hybrid"]) expect(text, `${v.id}: ${name}`).not.toContain(name);
     }
