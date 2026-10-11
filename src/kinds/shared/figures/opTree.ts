@@ -18,11 +18,18 @@ function tokens(text: string): Token[] {
   let i = 0;
   while (i < s.length) {
     const c = s[i];
-    if (c === " " || c === "\t") i++;
-    else if (s.startsWith("**", i)) (out.push({ t: "op", v: "**" }), (i += 2));
-    else if (c === "+" || c === "-" || c === "*" || c === "/") (out.push({ t: "op", v: c }), i++);
-    else if (c === "(" || c === ")" || c === "=") (out.push({ t: c, v: c } as Token), i++);
-    else {
+    if (c === " " || c === "\t") {
+      i++;
+    } else if (s.startsWith("**", i)) {
+      out.push({ t: "op", v: "**" });
+      i += 2;
+    } else if (c === "+" || c === "-" || c === "*" || c === "/") {
+      out.push({ t: "op", v: c });
+      i++;
+    } else if (c === "(" || c === ")" || c === "=") {
+      out.push({ t: c, v: c } as Token);
+      i++;
+    } else {
       const m = /^([A-Za-z_][A-Za-z0-9_]*|[0-9]+(?:\.[0-9]+)?)/.exec(s.slice(i));
       if (!m) throw new ExpressionParseError(`Unexpected "${c}" in "${text}"`);
       out.push({ t: "leaf", v: m[1] });
