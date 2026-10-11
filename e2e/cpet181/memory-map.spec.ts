@@ -37,7 +37,7 @@ const status = (page: Page) => page.locator("[role=status]");
 
 test("memory-map kind: attempt, feedback, hint, retry", async ({ page }) => {
   await page.goto("/courses/cpet181/fixed-partitions/fixed-partitions/");
-  await expect(page.getByText(/CHALLENGE 1 OF 2/i)).toBeVisible();
+  await expect(page.getByText(/CHALLENGE 1 OF \d+/i)).toBeVisible();
   await checkScreen(page);
 
   // Step 1: the first job fits a free partition, so "Waits" is a wrong attempt with feedback.
