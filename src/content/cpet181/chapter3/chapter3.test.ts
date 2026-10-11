@@ -82,6 +82,7 @@ describe("CPET 181 Chapter 3 virtual memory content (#611)", () => {
     ]) {
       for (const q of getActivity(COURSE, topic, activity)!.activity.questions) {
         expect(q.variants.length, q.id).toBeGreaterThanOrEqual(3);
+        expect(q.variants.length, q.id).toBeLessThanOrEqual(4);
         for (const v of q.variants) {
           const early = v.hints.slice(0, -1).map((h) => h.text).join(" ");
           if (v.spec.kind === "multiple-choice") {

@@ -119,7 +119,6 @@ export const LOCATE: Locate[] = [
   { size: 512, frames: [5, 3], address: 25 },
   { size: 512, frames: [5, 3, 7], address: 1100 },
   { size: 1024, frames: [4, 9, 2, 6], address: 3500 },
-  { size: 256, frames: [8, 2, 5], address: 600 },
 ];
 export const split = (l: Locate) => ({ page: Math.floor(l.address / l.size), disp: l.address % l.size });
 export const frameOf = (l: Locate) => l.frames[split(l).page];
