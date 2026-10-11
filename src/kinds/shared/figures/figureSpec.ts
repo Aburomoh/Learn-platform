@@ -325,8 +325,29 @@ const TableFigure = z
     if (firstOutput >= 0 && f.columns.slice(firstOutput).some((c) => c.role !== "output")) ctx.addIssue({ code: "custom", path: ["columns"], message: "output columns come after the input columns" });
   });
 
+/**
+ * A stretch of magnetic tape (CPET181 Ch7 s.11–12, #615): `records` cells with a gap between
+ * records (IRG) or, with `block`, between blocks of that many records (IBG). The gap count is
+ * computed and numbered in the result state only.
+ */
+const TapeFigure = z
+  .object({
+    type: z.literal("tape"),
+    records: z.number().int().min(2).max(12),
+    block: z.number().int().min(2).max(12).optional(),
+    caption: z.string().min(1).max(200).optional(),
+  })
+  .refine((f) => f.block === undefined || f.block <= f.records, { path: ["block"], message: "a block cannot hold more records than the tape" });
+
+/** A platter with concentric tracks or one spiral track (CPET181 Ch7 s.16, s.22, #615): a picture only. */
+const TracksFigure = z.object({
+  type: z.literal("tracks"),
+  tracks: z.enum(["concentric", "spiral"]),
+  caption: z.string().min(1).max(200).optional(),
+});
+
 /** One figure per question, drawn by the stage above (or beside) any kind's answer area. */
-export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, MemoryTableFigure, ResourceGraphFigure, FileLayoutFigure, TableFigure, BufferFigure, OpTreeFigure]);
+export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, MemoryTableFigure, ResourceGraphFigure, FileLayoutFigure, TableFigure, BufferFigure, OpTreeFigure, TapeFigure, TracksFigure]);
 export type FigureSpec = z.infer<typeof FigureSpec>;
 
 /** The pins a focus may name (`figure.focus`, `stage.figureFocus`). A latch figure has no focus state yet. */
