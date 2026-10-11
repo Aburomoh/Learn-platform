@@ -24,6 +24,7 @@ const TracksFigure = dynamic(() => import("./TracksFigure").then((m) => m.Tracks
 const BufferFigure = dynamic(() => import("./BufferFigure").then((m) => m.BufferFigure));
 const OpTreeFigure = dynamic(() => import("./OpTreeFigure").then((m) => m.OpTreeFigure));
 const TableFigure = dynamic(() => import("./TableFigure").then((m) => m.TableFigure));
+const TopologyFigure = dynamic(() => import("./TopologyFigure").then((m) => m.TopologyFigure));
 
 export interface FigureViewProps {
   id: string;
@@ -82,6 +83,8 @@ function draw(id: string, figure: FigureSpec, revealed: boolean, focus: string |
       return <OpTreeFigure expression={figure.expression} revealed={revealed} caption={figure.caption} />;
     case "table":
       return <TableFigure title={figure.title} columns={figure.columns} symbol={figure.symbol} caption={figure.caption} />;
+    case "topology":
+      return <TopologyFigure topology={figure.topology} nodes={figure.nodes} caption={figure.caption} />;
     case "tape":
       return <TapeFigure records={figure.records} block={figure.block} revealed={revealed} caption={figure.caption} />;
     case "tracks":

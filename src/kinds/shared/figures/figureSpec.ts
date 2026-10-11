@@ -326,6 +326,18 @@ const TableFigure = z
   });
 
 /**
+ * A network topology sketch (CPET181 Ch9 s.7–12, #615): star, ring, bus, tree or hybrid with
+ * unlabelled sites. A picture only; the accessible name describes the shape without naming it.
+ */
+const TopologyFigure = z.object({
+  type: z.literal("topology"),
+  topology: z.enum(["star", "ring", "bus", "tree", "hybrid"]),
+  /** Sites drawn (default 6; the hybrid sketch is fixed). */
+  nodes: z.number().int().min(4).max(8).optional(),
+  caption: z.string().min(1).max(200).optional(),
+});
+
+/**
  * A stretch of magnetic tape (CPET181 Ch7 s.11–12, #615): `records` cells with a gap between
  * records (IRG) or, with `block`, between blocks of that many records (IBG). The gap count is
  * computed and numbered in the result state only.
@@ -347,7 +359,7 @@ const TracksFigure = z.object({
 });
 
 /** One figure per question, drawn by the stage above (or beside) any kind's answer area. */
-export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, MemoryTableFigure, ResourceGraphFigure, FileLayoutFigure, TableFigure, BufferFigure, OpTreeFigure, TapeFigure, TracksFigure]);
+export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, MemoryTableFigure, ResourceGraphFigure, FileLayoutFigure, TableFigure, BufferFigure, OpTreeFigure, TapeFigure, TracksFigure, TopologyFigure]);
 export type FigureSpec = z.infer<typeof FigureSpec>;
 
 /** The pins a focus may name (`figure.focus`, `stage.figureFocus`). A latch figure has no focus state yet. */
