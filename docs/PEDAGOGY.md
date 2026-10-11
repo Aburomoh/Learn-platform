@@ -81,9 +81,9 @@ following questions (#141).
 
 **Hidden skip.** A discreet escape for strong students, not a primary action.
 - It lives in the activity's "More" (⋯) menu as "Skip to next question" (owner, 2026-10-11, #623); never a button on the stage, never suggested by the tutor.
-- Available only after the student has completed at least one practice in that topic (first-try correct, no Explain Slowly).
+- Available on every question of every practice, from the first visit (owner, 2026-10-11, #661): there is no gate. (The earlier rule, one practice completed first-try without Explain Slowly, is withdrawn.)
 - One confirmation: "Skip this question? You can come back any time."
-- It moves to the next question of the practice; from the last question, to the next practice's first question; from the last practice of a topic, to the next topic. Only the skipped question is recorded (never `completed`): the practice stays unfinished on the course map ("skipped ahead") and does not count toward topic completion or mastery until the question is done.
+- It moves to the very next question of the practice (done or not); from the last question, to the next practice's first question; from the last practice of a topic, to the next topic; from the course's last question, to the course page. Only the skipped question is recorded (never `completed`): the practice stays unfinished on the course map ("skipped ahead") and does not count toward topic completion or mastery until the question is done.
 - If a later question is then failed, the tutor offers (does not force) a return to the skipped question.
 
 ## Pedagogy veto

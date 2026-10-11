@@ -171,14 +171,14 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
   const scaffoldsOpen = canRequestScaffold(state.tutor);
   const activityProgress = progress.activities[activity.id];
 
-  // Explain Slowly opened: remembered locally, it closes the skip gate for this practice (#579).
+  // Explain Slowly opened: remembered on the practice record (#579); it no longer gates anything since #661.
   useEffect(() => {
     if (stage === "explaining") updateProgress((p) => markExplained(p, activity.id));
   }, [stage, activity.id, updateProgress]);
 
-  // The hidden skip (#579, #623): from the ⋯ menu only; the question is recorded as skipped and the
-  // runner moves to the next one, or the page leaves for the next practice or topic.
-  const skip = skipOffer(course, topic, activity, progress, state.qIndex, state.completed);
+  // The quiet skip (#579, #623, #661): on every question, from the ⋯ menu only; the question is recorded
+  // as skipped and the runner moves to the very next one, or the page leaves for the next practice, topic or course page.
+  const skip = skipOffer(course, topic, activity, state.qIndex);
   const doSkip = () => {
     // written to the store and to storage before the page changes (a React-batched update would be lost)
     getProgressStore(offeringId).set((p) => skipQuestion(p, activity.id, question.id));
