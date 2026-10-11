@@ -10,8 +10,8 @@ describe("CPET181 registration (#562)", () => {
     expect(course.modules.map((m) => m.title.replace(/^Chapter \d+ · /, "").toLowerCase())).toEqual(outline.chapters.map((c) => c.title.toLowerCase()));
   });
 
-  it("has Chapters 1 to 6, 8 and 9 live and the other one comingSoon with no topics", () => {
-    const live = [0, 1, 2, 3, 4, 5, 7, 8];
+  it("has all nine chapters live", () => {
+    const live = [0, 1, 2, 3, 4, 5, 6, 7, 8];
     for (const i of live) {
       const m = course.modules[i];
       expect(m.comingSoon, m.id).toBeUndefined();
