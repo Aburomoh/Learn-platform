@@ -10,6 +10,8 @@
  */
 import type { z } from "zod";
 import type { TopicSchema, VariantSchema } from "../../schema";
+import { schedule } from "@/content/os/schedule";
+import { mcq, type Row } from "../chapter1/mcq";
 
 type TopicInput = z.input<typeof TopicSchema>;
 type VariantInput = z.input<typeof VariantSchema>;
@@ -246,6 +248,40 @@ const COMPARE_SETS = [
 ];
 const compare = (policy: Policy) => COMPARE_SETS.map((s) => scheduleVariant({ id: s.id, policy, jobs: s.jobs, phases: ["finish", "turnaround", "average"] }));
 
+/* ---------- which is best: the objective's last step (Pedagogy gate on #532) ---------- */
+
+const BEST_POLICIES = ["fcfs", "sjn", "srt"] as const;
+/** The average turnaround of one job set under FCFS, SJN and SRT, from the truth module, to two decimals. */
+export function averages(setJobs: Job[]): Record<"fcfs" | "sjn" | "srt", number> {
+  const avg = (p: Policy) => Math.round(schedule(setJobs, p).avgTurnaround * 100) / 100;
+  return { fcfs: avg("fcfs"), sjn: avg("sjn"), srt: avg("srt") };
+}
+const BEST_RULE = "The best algorithm for a job set is the one with the smallest average turnaround time: on the same jobs the order in which they run changes how long each one takes from arrival to finish.";
+const bestRow = (s: { id: string; jobs: Job[] }): Row => {
+  const a = averages(s.jobs);
+  const min = Math.min(a.fcfs, a.sjn, a.srt);
+  const winners = BEST_POLICIES.filter((p) => a[p] === min);
+  const names = BEST_POLICIES.map((p) => NAME[p]);
+  const correct = winners.length === 1 ? NAME[winners[0]] : `${winners.map((p) => NAME[p]).join(" and ")} (equal, and the smallest)`;
+  const wrong = winners.length === 1 ? [...names.filter((n) => n !== NAME[winners[0]]), "All three are the same"] : [...names.filter((n) => !winners.some((p) => NAME[p] === n)), "All three are the same"];
+  return {
+    prompt: `Jobs ${s.jobs.map((j) => `${j.id} (arrives ${j.arrival}, CPU ${j.cpu})`).join(", ")}. Which of FCFS, SJN and SRT gives the smallest average turnaround time?`,
+    correct,
+    wrong,
+    rule: BEST_RULE,
+    apply: `The averages are FCFS ${a.fcfs}, SJN ${a.sjn} and SRT ${a.srt}, so ${winners.length === 1 ? `${NAME[winners[0]]} is best` : "the smallest is shared"} for this set.`,
+    hint: "Find the average turnaround of each algorithm on these jobs, then take the smallest.",
+  };
+};
+const bestQuestion = (() => {
+  const base = mcq("cm.q.best", "Which is best", "cm.compare", "cm.obj.compare", COMPARE_SETS.map(bestRow));
+  // the same job sets as the three average questions: same ids at the same positions (#141)
+  base.variants.forEach((v, i) => {
+    v.id = COMPARE_SETS[i].id;
+  });
+  return base;
+})();
+
 const IDENTIFY: ScheduleCase[] = [
   { id: "idn-rr", policy: "rr", quantum: 3, mode: "identify", phases: ["timeline"], jobs: RR_JOBS_31 },
   { id: "idn-sjn", policy: "sjn", mode: "identify", phases: ["timeline"], jobs: jobs([["A", 0, 6], ["B", 1, 3], ["C", 2, 1], ["D", 3, 4]]) },
@@ -276,6 +312,7 @@ export const compareTopic: TopicInput = {
         q("cm.q.fcfs", "FCFS average", "cm.compare", "cm.obj.compare", compare("fcfs")),
         q("cm.q.sjn", "SJN average", "cm.compare", "cm.obj.compare", compare("sjn")),
         q("cm.q.srt", "SRT average", "cm.compare", "cm.obj.compare", compare("srt")),
+        bestQuestion,
       ],
     },
     {

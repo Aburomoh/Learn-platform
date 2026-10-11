@@ -99,6 +99,29 @@ const quantum = mcq("sc.q.quantum", "Too large or too small", "sc.policy", "sc.o
   row("Which algorithm suits interactive systems, with a quantum of roughly 100 ms to 2 s?", "Round Robin", ["Shortest Job Next", "First Come First Served"], QUANTUM, "Round Robin shares the CPU in turn, which suits interactive use.", "Only one of these has a time slice."),
 ]);
 
+/* ---------- what each algorithm suits (C4-10; pack §9) ---------- */
+
+const SUITS = "As taught: First Come First Served suits batch work and runs a FIFO queue; Shortest Job Next and Shortest Remaining Time suit batch work but not interactive work, and need the CPU time to be known; Priority suits priorities assigned by the administrator or the OS; Round Robin suits interactive systems with a quantum of 100 ms to 2 s; multiple-level queues combine schemes for groups of jobs such as CPU-bound against I/O-bound, or batch against interactive.";
+const ALGORITHMS = ["First Come First Served", "Shortest Job Next", "Shortest Remaining Time", "Priority", "Round Robin", "Multiple-level queues"];
+const suitRow = (prompt: string, correct: string, apply: string, hint: string, pool: string[]): Row => ({
+  prompt,
+  correct,
+  wrong: pool.filter((n) => n !== correct).slice(0, 3),
+  rule: SUITS,
+  apply,
+  hint,
+});
+const suitsBatch = mcq("sc.q.suits-batch", "What suits batch work", "sc.policy", "sc.obj.suits", [
+  suitRow("Which algorithm suits batch work, runs the jobs from a first-in first-out queue and is not preemptive?", "First Come First Served", "A FIFO queue for batch work is First Come First Served.", "Which algorithm takes the jobs strictly in arrival order?", ALGORITHMS),
+  suitRow("Which algorithm suits batch work but not interactive work, is not preemptive and needs each job's CPU time to be known?", "Shortest Job Next", "Shortest Job Next suits batch work and needs the CPU time known; it is not preemptive.", "It picks the shortest job and never interrupts it.", ALGORITHMS),
+  suitRow("Which algorithm suits batch work but not interactive work, and is preemptive?", "Shortest Remaining Time", "Shortest Remaining Time is the preemptive one of the two shortest-first algorithms, for batch work.", "A newly arrived short job can take the processor away.", ALGORITHMS),
+]);
+const suitsOther = mcq("sc.q.suits-other", "What each one suits", "sc.policy", "sc.obj.suits", [
+  suitRow("Which algorithm suits jobs whose priorities are assigned by the administrator or the OS, and is not preemptive?", "Priority", "Priority suits jobs with assigned priorities and runs the smallest number first.", "The jobs carry a number given from outside.", ALGORITHMS),
+  suitRow("Which algorithm suits interactive systems, is preemptive, and uses a time quantum of 100 ms to 2 s?", "Round Robin", "Round Robin shares the CPU in turn and suits interactive use.", "Each job gets a time slice in turn.", ALGORITHMS),
+  suitRow("Which approach combines schemes, with separate queues for groups of jobs such as CPU-bound against I/O-bound, or batch against interactive?", "Multiple-level queues", "Separate queues for groups of jobs, each with its own scheme, are multiple-level queues.", "It is not one algorithm: it groups the jobs first.", ALGORITHMS),
+]);
+
 export const schedulingConceptsTopic: TopicInput = {
   id: "scheduling-concepts",
   title: "Processes, schedulers and policies",
@@ -120,6 +143,7 @@ export const schedulingConceptsTopic: TopicInput = {
     { id: "sc.obj.sjn-srt", conceptId: "sc.policy", text: "Tell Shortest Job Next from Shortest Remaining Time." },
     { id: "sc.obj.fcfs", conceptId: "sc.policy", text: "Give the advantage and disadvantage of First Come First Served." },
     { id: "sc.obj.quantum", conceptId: "sc.policy", text: "Say what a too-large and a too-small Round Robin quantum do." },
+    { id: "sc.obj.suits", conceptId: "sc.policy", text: "Say which algorithm suits batch work, assigned priorities or interactive use, and what multiple-level queues combine." },
   ],
   activities: [
     {
@@ -144,7 +168,7 @@ export const schedulingConceptsTopic: TopicInput = {
       summary: "What a policy maximises and minimises, and what tells the algorithms apart.",
       authority: "DEMO",
       minutes: 10,
-      questions: [criteria, preemption, sjnSrt, fcfs, quantum],
+      questions: [criteria, preemption, sjnSrt, fcfs, quantum, suitsBatch, suitsOther],
     },
   ],
 };

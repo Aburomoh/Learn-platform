@@ -99,7 +99,7 @@ describe("CPET 181 Chapter 4 scheduling content (#587)", () => {
 
   it("concept questions: three or four items each, the answer appears only at the last rung, and the five states and three PCB parts are exactly the pack's", () => {
     const act = ["processes-and-schedulers", "states-and-pcb", "policies"].flatMap((id) => getActivity(COURSE, "scheduling-concepts", id)!.activity.questions);
-    expect(act.length).toBe(11);
+    expect(act.length).toBe(13);
     for (const q of act) {
       expect(q.variants.length, q.id).toBeGreaterThanOrEqual(3);
       expect(q.variants.length, q.id).toBeLessThanOrEqual(4);
@@ -114,5 +114,32 @@ describe("CPET 181 Chapter 4 scheduling content (#587)", () => {
     const states = getActivity(COURSE, "scheduling-concepts", "states-and-pcb")!.activity.questions[0];
     const all = states.variants.flatMap((v) => (v.spec.kind === "multiple-choice" ? v.spec.options.map((o) => o.text) : []));
     for (const t of all) for (const name of t.split(" → ")) expect(["HOLD", "READY", "RUNNING", "WAITING", "FINISHED"], t).toContain(name);
+  });
+
+  it("the compare activity ends in which is best: the smallest average of FCFS, SJN and SRT, from the kind's own goals", () => {
+    const best = getActivity(COURSE, "compare-algorithms", "compare")!.activity.questions.find((x) => x.id === "cm.q.best")!;
+    const names = ["First Come First Served", "Shortest Job Next", "Shortest Remaining Time"];
+    expect(best.variants.map((v) => v.id)).toEqual(["cmp-1", "cmp-2", "cmp-3"]); // the same sets as the average questions (#141)
+    for (const v of best.variants) {
+      const avgs = ["cm.q.fcfs", "cm.q.sjn", "cm.q.srt"].map((id) => average(byId("compare-algorithms", "compare", id, v.id)));
+      const min = Math.min(...avgs);
+      const winners = names.filter((_, i) => avgs[i] === min);
+      if (v.spec.kind !== "multiple-choice") throw new Error("multiple-choice expected");
+      const { options, correctOptionId } = v.spec;
+      const correct = options.find((o) => o.id === correctOptionId)!.text;
+      expect(correct, v.id).toBe(winners.length === 1 ? winners[0] : `${winners.join(" and ")} (equal, and the smallest)`);
+      expect(v.hints.slice(0, -1).map((h) => h.text).join(" "), v.id).not.toContain(correct);
+    }
+  });
+
+  it("what each algorithm suits is the pack's §9 row: batch, assigned priorities, interactive, grouped queues", () => {
+    const answers = (id: string) =>
+      getActivity(COURSE, "scheduling-concepts", "policies")!.activity.questions.find((x) => x.id === id)!.variants.map((v) => {
+        if (v.spec.kind !== "multiple-choice") throw new Error("multiple-choice expected");
+        const { options, correctOptionId } = v.spec;
+        return options.find((o) => o.id === correctOptionId)!.text;
+      });
+    expect(answers("sc.q.suits-batch")).toEqual(["First Come First Served", "Shortest Job Next", "Shortest Remaining Time"]);
+    expect(answers("sc.q.suits-other")).toEqual(["Priority", "Round Robin", "Multiple-level queues"]);
   });
 });
