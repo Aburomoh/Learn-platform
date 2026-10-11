@@ -144,9 +144,23 @@
   font-weight: 700;
 }
 
-/* file organisations (#605): arrowheads, the record on the search path, arrow words */
+/* resource sketches and file organisations (#605): dashed request arrows, arrowheads, arrow words */
+.dashed {
+  stroke-dasharray: 6 5;
+}
+
 .arrowHead {
   fill: var(--text-muted);
+}
+
+/* an arrow's word, kept legible over crossing lines by a stroke in the well's colour */
+.edgeLabel {
+  font-size: 13px;
+  fill: var(--text-muted);
+  paint-order: stroke;
+  stroke: var(--surface-sunk);
+  stroke-width: 4;
+  stroke-linejoin: round;
 }
 
 .focus .arrowHead {
@@ -158,15 +172,6 @@
   fill: var(--success-soft);
   stroke: var(--signal-high);
   stroke-width: 1.5;
-}
-
-.edgeLabel {
-  font-size: 13px;
-  fill: var(--text-muted);
-  paint-order: stroke;
-  stroke: var(--surface-sunk);
-  stroke-width: 4;
-  stroke-linejoin: round;
 }
 
 /* topic card: the numbered discs that match the callouts */
