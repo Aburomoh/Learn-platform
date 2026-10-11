@@ -399,6 +399,69 @@
   flex: 1;
 }
 
+/* ---- LanguageToggle (ADR-0011): EN | عربي, text at every width, never an icon alone ---- */
+.lang {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+
+.langChoice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.langChoice[lang="ar"] {
+  font-family: var(--font-arabic);
+  font-size: var(--text-base);
+}
+
+.langChoice:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.langChoice[aria-pressed="true"] {
+  color: var(--text);
+  font-weight: 650;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+  text-decoration-color: var(--accent);
+}
+
+.langSep {
+  color: var(--border);
+  user-select: none;
+}
+
+/* phones: the bar keeps the back label readable beside the language control */
+@media (max-width: 640px) {
+  .barInner {
+    gap: var(--space-2);
+  }
+  .back {
+    flex: 1 1 auto;
+  }
+  .langChoice {
+    min-width: 36px;
+    padding: 0 var(--space-1);
+  }
+}
+
 /* ---- ProfileMenu ---- */
 .profile {
   position: relative;

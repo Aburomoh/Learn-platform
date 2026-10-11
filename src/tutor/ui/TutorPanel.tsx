@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { fill, type TemplateVars } from "@/content/template";
+import { useArabic } from "@/l10n/arabic";
+import { isArabic } from "@/l10n/bidi";
 import type { Expression } from "../engine/actions";
 import { product } from "../../../config/product";
 import { TutorAvatar } from "./TutorAvatar";
@@ -10,7 +13,11 @@ import styles from "./TutorPanel.module.css";
 export interface TutorPanelProps {
   name: string;
   expression: Expression;
+  /** The filled English message. */
   message: string;
+  /** Its unfilled template and slot values: with Arabic on, the bubble shows the Arabic for the template (ADR-0011). */
+  source?: { template: string; vars: TemplateVars };
+  course?: string;
   /** Changes whenever the tutor speaks, even if the text repeats. Defaults to the text itself. */
   messageSeq?: number;
   typingSpeed?: number;
@@ -29,8 +36,13 @@ const SCROLL_KEYS = new Set(["PageDown", "PageUp", "Home", "End"]);
  * elsewhere, or a page scroll — and can be reopened by tapping it or with the toggle; Escape
  * collapses it.
  */
-export function TutorPanel({ name, expression, message, messageSeq, typingSpeed, onMessageDone }: TutorPanelProps) {
+export function TutorPanel({ name, expression, message, source, course, messageSeq, typingSpeed, onMessageDone }: TutorPanelProps) {
   const bubbleId = useId();
+  const { translate } = useArabic(course);
+  const template = source?.template ?? message;
+  const arabic = translate(template);
+  const lang = arabic !== template && isArabic(arabic) ? "ar" : "en";
+  const shownMessage = lang === "ar" ? fill(arabic, source?.vars ?? {}) : message;
   const panelRef = useRef<HTMLElement>(null);
   const key = messageSeq ?? message;
   // The collapsed/expanded choice belongs to one message; a new message starts open again.
@@ -103,7 +115,7 @@ export function TutorPanel({ name, expression, message, messageSeq, typingSpeed,
       <TutorAvatar expression={expression} name={name} portrait={product.brand.tutorPortrait} />
       {message ? (
         <div id={bubbleId} className={styles.message}>
-          <TutorBubble text={message} speed={typingSpeed} onDone={onMessageDone} placement="side" />
+          <TutorBubble text={shownMessage} speed={typingSpeed} onDone={onMessageDone} placement="side" lang={lang} />
         </div>
       ) : (
         <div className={styles.quiet} aria-hidden="true" />

@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import type { InteractionBaseProps } from "../shared/types";
 import { focusTarget } from "../shared/types";
 import { Notation } from "../shared/Notation";
+import { resolveMessage, resolvePlural } from "@/tutor/messages";
 import styles from "./NumericInput.module.css";
 
 export type NumberBase = 2 | 8 | 10 | 16;
@@ -60,7 +61,11 @@ export function NumericInput({
     ? {
         ...plain,
         pattern: decimalPattern(signed, decimals),
-        hint: `digits 0 to 9${signed ? ", a leading minus sign" : ""}${decimals > 0 ? `, and up to ${decimals} decimal place${decimals === 1 ? "" : "s"} after the point` : ""}`,
+        // one whole sentence per shape (ADR-0011 §6), never fragments joined in code
+        hint:
+          decimals > 0
+            ? resolvePlural(signed ? "ui.numeric.decimal.signed-places" : "ui.numeric.decimal.places", decimals)
+            : resolveMessage(signed ? "ui.numeric.decimal.signed" : "ui.numeric.decimal"),
       }
     : plain;
   const stateClass = state === "correct" ? styles.correct : state === "incorrect" ? styles.incorrect : "";

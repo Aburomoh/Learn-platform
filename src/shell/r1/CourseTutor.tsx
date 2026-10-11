@@ -27,6 +27,7 @@ export function CourseTutor({ course, messageKey = "page.course.intro", size }: 
     <TutorCard
       name={product.owner.shortName}
       message={resolveMessage(messageKey)}
+      course={course.id}
       size={size}
       portrait={product.brand.tutorPortrait}
       pose={ready ? (started ? "neutral" : "welcome") : null}

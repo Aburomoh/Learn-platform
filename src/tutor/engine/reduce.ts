@@ -7,7 +7,7 @@ import { fill } from "@/content/template";
 import type { LearningEvent } from "./events";
 import type { Expression, TutorAction } from "./actions";
 import { canRequestScaffold, HESITATION_SECONDS, initialTutorState, nextHint, type ActivityContext, type TutorState } from "./state";
-import { hasMessage, resolveMessage } from "../messages";
+import { hasMessage, messageTemplate, resolveMessage } from "../messages";
 
 export interface ReduceResult {
   state: TutorState;
@@ -16,9 +16,11 @@ export interface ReduceResult {
 
 export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityContext): ReduceResult {
   const out: TutorAction[] = [];
-  const say = (key: string, extra: Record<string, string | number> = {}) =>
-    out.push({ type: "SAY", messageKey: key, text: resolveMessage(key, { ...ctx.vars, ...extra }, ctx.locale) });
-  const sayText = (key: string, text: string) => out.push({ type: "SAY", messageKey: key, text: fill(text, ctx.vars) });
+  const say = (key: string, extra: Record<string, string | number> = {}) => {
+    const vars = { ...ctx.vars, ...extra };
+    out.push({ type: "SAY", messageKey: key, text: resolveMessage(key, vars, ctx.locale), template: messageTemplate(key), vars });
+  };
+  const sayText = (key: string, text: string) => out.push({ type: "SAY", messageKey: key, text: fill(text, ctx.vars), template: text, vars: ctx.vars });
   const express = (expression: Expression) => out.push({ type: "CHANGE_EXPRESSION", expression });
   let s: TutorState = { ...state };
 
@@ -63,7 +65,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         express("thinking");
         say("wrong.second");
         const reminder = ctx.hints.find((h) => h.rung === 3) ?? nextHint(s, ctx);
-        if (reminder && reminder.rung > s.hintLevel) grant(s, reminder.rung, out, fill(reminder.text, ctx.vars));
+        if (reminder && reminder.rung > s.hintLevel) grant(s, reminder.rung, out, reminder.text, ctx);
         const focus = ctx.hints.find((h) => h.focus)?.focus;
         if (focus) out.push({ type: "FOCUS", target: fill(focus, ctx.vars) });
         out.push({ type: "REQUEST_RETRY" });
@@ -77,7 +79,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       else say(genericWrongKey(ctx, event, "wrong.again"), event.vars);
       const h = nextHint(s, ctx);
       if (h) {
-        grant(s, h.rung, out, fill(h.text, ctx.vars));
+        grant(s, h.rung, out, h.text, ctx);
         pointAt(h, out, ctx);
       }
       out.push({ type: "REQUEST_RETRY" });
@@ -109,7 +111,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       }
       s.expression = h.rung >= 6 ? "explaining" : h.rung === 4 ? "thinking" : "neutral";
       express(s.expression);
-      grant(s, h.rung, out, fill(h.text, ctx.vars));
+      grant(s, h.rung, out, h.text, ctx);
       pointAt(h, out, ctx);
       break;
     }
@@ -244,11 +246,12 @@ function misconceptionKey(ctx: ActivityContext, id: string): string | undefined 
   return key;
 }
 
-function grant(s: TutorState, rung: number, out: TutorAction[], text: string) {
+function grant(s: TutorState, rung: number, out: TutorAction[], template: string, ctx: ActivityContext) {
   s.hintLevel = rung;
   s.grantedRungs = [...s.grantedRungs, rung];
-  out.push({ type: "REVEAL_HINT", rung, text });
-  out.push({ type: "SAY", messageKey: `hint.rung-${rung}`, text });
+  const text = fill(template, ctx.vars);
+  out.push({ type: "REVEAL_HINT", rung, text, template, vars: ctx.vars });
+  out.push({ type: "SAY", messageKey: `hint.rung-${rung}`, text, template, vars: ctx.vars });
 }
 
 /** Pointer targets may name the current step's element, e.g. "gate-{gateId}"; filled here. */
@@ -265,6 +268,6 @@ function advance(s: TutorState, ctx: ActivityContext, out: TutorAction[]) {
   const step = ctx.explanation[s.explanationStep];
   if (!step) return;
   out.push({ type: "ADVANCE_EXPLANATION", step: s.explanationStep });
-  out.push({ type: "SAY", messageKey: `explain.step-${step.id}`, text: fill(step.say, ctx.vars) });
+  out.push({ type: "SAY", messageKey: `explain.step-${step.id}`, text: fill(step.say, ctx.vars), template: step.say, vars: ctx.vars });
   if (step.ask) out.push({ type: "ASK", stepId: step.id });
 }

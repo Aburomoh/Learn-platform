@@ -176,7 +176,8 @@ test("octal and hex by grouping, one goal at a time, finish the activity", async
       await page.setViewportSize({ width: 320, height: 700 });
       const widths = await page.evaluate(() => ({
         page: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-        cells: document.querySelectorAll("button[aria-pressed]").length + 1,
+        // the bit cells only: the top bar's EN | عربي buttons are pressed too (ADR-0011)
+        cells: document.querySelectorAll("[data-testid=\"learning-stage\"] button[aria-pressed]").length + 1,
       }));
       expect(widths.cells).toBe(8);
       expect(widths.page).toBeLessThanOrEqual(0);

@@ -8,6 +8,7 @@ import { grade, type Answer, type GradeResult } from "@/content/grade";
 import { fill } from "@/content/template";
 import { hintsForStep, stepTag, stepVars as specStepVars } from "@/content/steps";
 import { reduce, initialTutorState, contextFromVariant, type TutorState, type TutorAction, type Expression, type LearningEvent } from "@/tutor";
+import type { TemplateVars } from "@/content/template";
 import type { RevealedHint } from "@/interactions/HintReveal/HintReveal";
 import type { PredictionResult } from "@/interactions/PredictionBeforeReveal/PredictionBeforeReveal";
 
@@ -21,6 +22,8 @@ export interface RunnerState {
   tutor: TutorState;
   expression: Expression;
   message: string;
+  /** The English template and slot values behind `message`, so the UI can show it in the learner's language (ADR-0011). */
+  messageSource?: { template: string; vars: TemplateVars };
   hints: RevealedHint[];
   /** Non-null while Explain Slowly is running. */
   explanation: { step: number; prediction?: PredictionResult } | null;
@@ -164,13 +167,14 @@ export function createRunnerReducer(activity: Activity) {
       switch (a.type) {
         case "SAY":
           next.message = a.text;
+          next.messageSource = { template: a.template, vars: a.vars };
           next.messageSeq += 1;
           break;
         case "CHANGE_EXPRESSION":
           next.expression = a.expression;
           break;
         case "REVEAL_HINT":
-          if (!next.hints.some((h) => h.rung === a.rung)) next.hints = [...next.hints, { rung: a.rung, text: a.text }];
+          if (!next.hints.some((h) => h.rung === a.rung)) next.hints = [...next.hints, { rung: a.rung, text: a.text, template: a.template, vars: a.vars }];
           break;
         case "ADVANCE_EXPLANATION":
           next.explanation = { step: a.step };

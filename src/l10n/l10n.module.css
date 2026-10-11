@@ -1,0 +1,21 @@
+/*
+ * Arabic supportive text (ADR-0011 §5). Direction and language sit on the text element only:
+ * no layout container is ever mirrored. System Arabic faces, no webfont; the 12 px floor holds
+ * because every text size token is already 13 px or more.
+ */
+.ar {
+  display: block;
+  unicode-bidi: isolate;
+  font-family: var(--font-arabic);
+  line-height: 1.7;
+}
+
+/* English terms, equations, numbers and signals inside Arabic keep their own order and face */
+.ar bdi {
+  unicode-bidi: isolate;
+  font-family: var(--font-sans);
+}
+
+.inline {
+  display: inline;
+}
