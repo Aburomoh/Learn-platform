@@ -38,17 +38,17 @@ Teaching order (syllabus Fall 2025): C1, C2, C3, C8, C5, midterm, C4, C6, C7, C9
 | Types of operating systems | pack | TBD | MISSING | — | — |
 
 ## C2 Memory: simple systems (gate #530)
-Interaction: memory-map (new) for fit, deallocation and compaction rows.
+Interaction: memory-map (new) for fit, deallocation and compaction rows. Content: `src/content/cpet181/chapter2/` (#582, gate fixes #637/#640). Covered = content on main; the chapter is COMPLETE only after gate #530 passes.
 | Topic | Source | Class | Covered | Interaction | Status |
 |---|---|---|---|---|---|
-| Memory allocation terms | pack | TBD | MISSING | — | — |
-| Single-user contiguous scheme | pack | TBD | MISSING | — | — |
-| Fixed partitions | pack | TBD | MISSING | — | — |
-| Dynamic partitions | pack | TBD | MISSING | — | — |
-| Internal and external fragmentation | pack | TBD | MISSING | — | — |
-| First-fit and best-fit allocation | pack | TBD | MISSING | — | — |
-| Deallocation, cases 1–3 (merging free blocks) | pack | TBD | MISSING | — | — |
-| Relocatable dynamic partitions and compaction | pack | TBD | MISSING | — | — |
+| Memory allocation terms (contiguous vs non-contiguous, C2-1) | pack | CORE | COMPLETE | multiple-choice `mt.q.contiguous` | on main (#582) |
+| Single-user contiguous scheme; the four schemes told apart (C2-2) | pack | CORE | COMPLETE | multiple-choice `mt.q.single`, `mt.q.four-schemes` | on main (#582, #640) |
+| Fixed partitions; fixed vs dynamic (C2-3) | pack | CORE | COMPLETE | memory-map `fx.q.first`, `fx.q.best`; multiple-choice `mt.q.partitions` | on main (#582, #640) |
+| Dynamic partitions | pack | CORE | COMPLETE | memory-map `dy.q.first`, `dy.q.best` | on main (#582) |
+| Internal and external fragmentation (C2-4) | pack | CORE | COMPLETE | multiple-choice `mt.q.fragmentation`; waste and free-space goals in the maps | on main (#582) |
+| First-fit and best-fit allocation (C2-5); which is more efficient (Quiz 1 Q2) | pack | CORE | COMPLETE | multiple-choice `mt.q.fit`, `fx.q.efficient`; memory-map placements | on main (#582, #640) |
+| Deallocation, fixed vs dynamic (C2-6); cases 1–3 (C2-7) | pack | CORE | COMPLETE | multiple-choice `mt.q.deallocation`; memory-map `dy.q.case1`–`case3` | on main (#582, #640) |
+| Relocatable dynamic partitions and compaction; bounds vs relocation register (C2-9); addresses vs data values (C2-8) | pack | CORE | COMPLETE | memory-map `rl.q.compact`; multiple-choice `rl.q.registers`, `rl.q.addresses` | on main (#582, #640) |
 
 ## C3 Memory: virtual systems (gate #531)
 Interaction: numeric/derivation + page/segment table figure.
@@ -66,22 +66,24 @@ Interaction: numeric/derivation + page/segment table figure.
 | Internal vs external fragmentation (revisited) | pack | TBD | MISSING | — | — |
 
 ## C4 Processor management (gate #532)
-Interaction: cpu-schedule (new) for the algorithm rows.
+Interaction: cpu-schedule (new) for the algorithm rows. Content: `src/content/cpet181/chapter4/` (#587 and #603, gate fixes #638/#643, #645). Covered = content on main; the chapter is COMPLETE only after gate #532 passes.
 | Topic | Source | Class | Covered | Interaction | Status |
 |---|---|---|---|---|---|
-| Program, process, CPU context | pack | TBD | MISSING | — | — |
-| Interrupts and context switch | pack | TBD | MISSING | — | — |
-| Job vs process scheduling | pack | TBD | MISSING | — | — |
-| Job and process states | pack | TBD | MISSING | — | — |
-| Process control block (PCB) | pack | TBD | MISSING | — | — |
-| Scheduling policy criteria (throughput, response, turnaround, wait) | pack | TBD | MISSING | — | — |
-| Turnaround and average turnaround | pack | CORE | MISSING | — | — |
-| FCFS | pack | TBD | MISSING | — | — |
-| SJN | pack | TBD | MISSING | — | — |
-| SRT | pack | TBD | MISSING | — | — |
-| Priority | pack | TBD | MISSING | — | — |
-| Round Robin and quantum trade-off | pack | TBD | MISSING | — | — |
-| Multiple-level queues | pack | CONTEXT | MISSING | — | — |
+| Program, process, CPU context | pack | CORE | COMPLETE | multiple-choice `sc.q.program`, `sc.q.bound` | on main (#603) |
+| Interrupts and context switch | pack | CORE | COMPLETE | multiple-choice `sc.q.interrupt` | on main (#603) |
+| Job vs process scheduling | pack | CORE | COMPLETE | multiple-choice `sc.q.schedulers` | on main (#603) |
+| Job and process states | pack | CORE | COMPLETE | multiple-choice `sc.q.states` | on main (#603) |
+| Process control block (PCB) | pack | CORE | COMPLETE | multiple-choice `sc.q.pcb` | on main (#603) |
+| Scheduling policy criteria (throughput, response, turnaround, wait) | pack | CORE | COMPLETE | multiple-choice `sc.q.criteria`, `sc.q.preemptive` | on main (#603); waiting time named, not computed |
+| Turnaround and average turnaround | pack | CORE | COMPLETE | cpu-schedule finish, turnaround and average steps (calculator on the average) | on main (#599) |
+| FCFS | pack | CORE | COMPLETE | cpu-schedule `fs.q.fcfs`; multiple-choice `sc.q.fcfs` | on main (#599, #603) |
+| SJN | pack | CORE | COMPLETE | cpu-schedule `fs.q.sjn`; multiple-choice `sc.q.sjn-srt` | on main (#599, #603) |
+| SRT | pack | CORE | COMPLETE | cpu-schedule `st.q.srt` | on main (#599) |
+| Priority | pack | CORE | COMPLETE | cpu-schedule `pr.q.priority` | on main (#599) |
+| Round Robin and quantum trade-off | pack | CORE | COMPLETE | cpu-schedule `rr.q.build`, `rr.q.quantum`; multiple-choice `sc.q.quantum` | on main (#599, #603) |
+| Comparing algorithms: averages, which is best, recognising an algorithm | pack | CORE | COMPLETE | cpu-schedule `cm.q.*`, `cm.q.identify`; multiple-choice `cm.q.best` | on main (#599, #643, #645) |
+| What each algorithm suits (C4-10) | pack §9 | CORE | COMPLETE | multiple-choice `sc.q.suits-batch`, `sc.q.suits-other` | on main (#643) |
+| Multiple-level queues | pack §9 / §15 | CORE for the §9 row (what they combine, for which groups: asked once in `sc.q.suits-other`); CONTEXT for the methods (the slide lists none and has no example) | COMPLETE (§9 row); N/A (methods) | multiple-choice `sc.q.suits-other` | Lead decision on #643 |
 
 ## C5 Process management (gate #533)
 Source: pack C, PR #547 (not merged). Provisional rows.
