@@ -19,6 +19,8 @@ const LatchFigure = dynamic(() => import("./LatchFigure").then((m) => m.LatchFig
 const FileLayoutFigure = dynamic(() => import("./FileLayoutFigure").then((m) => m.FileLayoutFigure));
 const ResourceGraphFigure = dynamic(() => import("./ResourceGraphFigure").then((m) => m.ResourceGraphFigure));
 const MemoryTableFigure = dynamic(() => import("./MemoryTableFigure").then((m) => m.MemoryTableFigure));
+const BufferFigure = dynamic(() => import("./BufferFigure").then((m) => m.BufferFigure));
+const OpTreeFigure = dynamic(() => import("./OpTreeFigure").then((m) => m.OpTreeFigure));
 
 export interface FigureViewProps {
   id: string;
@@ -71,6 +73,10 @@ function draw(id: string, figure: FigureSpec, revealed: boolean, focus: string |
       return <ResourceGraphFigure processes={figure.processes} resources={figure.resources} edges={figure.edges} focus={focus ?? figure.focus} caption={figure.caption} />;
     case "memory-table":
       return <MemoryTableFigure table={figure.table} size={figure.size} rows={figure.rows} address={figure.address} unit={figure.unit} revealed={revealed} focus={focus ?? figure.focus} />;
+    case "buffer":
+      return <BufferFigure slots={figure.slots} filled={figure.filled} producer={figure.producer} consumer={figure.consumer} focus={focus ?? figure.focus} caption={figure.caption} />;
+    case "op-tree":
+      return <OpTreeFigure expression={figure.expression} revealed={revealed} caption={figure.caption} />;
     default: {
       const unhandled: never = figure;
       throw new Error(`No renderer for figure ${JSON.stringify(unhandled)}`);
