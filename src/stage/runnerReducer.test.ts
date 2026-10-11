@@ -172,9 +172,11 @@ describe("runner reducer: walked division", () => {
     expect(explaining.tutor.stage).toBe("explaining");
   });
 
-  it("hesitation unlocks hints before the first attempt", () => {
+  it("a hint works before the first attempt (owner, #661); hesitation adds nothing to that", () => {
+    const first = run([{ type: "OPEN" }, { type: "HINT" }]);
+    expect(first.hints).toHaveLength(1);
     const s = run([{ type: "OPEN" }, { type: "HINT" }, { type: "HESITATION", seconds: 60 }, { type: "HINT" }]);
-    expect(s.hints).toHaveLength(1);
+    expect(s.hints).toHaveLength(2);
   });
 });
 

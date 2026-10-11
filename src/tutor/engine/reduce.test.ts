@@ -75,16 +75,18 @@ describe("tutor engine: core rules", () => {
     expect(actions).toContainEqual({ type: "PULSE", target: "slot-32" });
   });
 
-  it("gate: no hint or explanation before the first attempt (unless hesitating)", () => {
+  it("no gate (owner, #661): a hint and Explain Slowly work before any attempt; a finished question still says no", () => {
+    expect(canRequestScaffold(initialTutorState)).toBe(true);
     const h = run([{ type: "HINT_REQUESTED" }]);
-    expect(h.state.hintLevel).toBe(0);
-    expect(says(h.actions).at(-1)?.messageKey).toBe("hint.try-first");
+    expect(h.state.hintLevel).toBe(2);
+    expect(says(h.actions).some((s) => s.messageKey === "hint.try-first")).toBe(false);
     const e = run([{ type: "EXPLAIN_SLOWLY_REQUESTED" }]);
-    expect(e.state.stage).toBe("await_answer");
-    expect(canRequestScaffold(initialTutorState)).toBe(false);
+    expect(e.state.stage).toBe("explaining");
+    expect(canRequestScaffold({ ...initialTutorState, stage: "complete" })).toBe(false);
+    expect(canRequestScaffold({ ...initialTutorState, stage: "explaining" })).toBe(false);
   });
 
-  it("rule 4: hesitation over 45 s prompts once, then unlocks scaffolds", () => {
+  it("rule 4: hesitation over 45 s prompts once (scaffolds are open regardless)", () => {
     const { state, actions } = run([
       { type: "HESITATION", seconds: 20 },
       { type: "HESITATION", seconds: 50 },

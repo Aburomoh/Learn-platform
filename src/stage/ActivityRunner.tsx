@@ -277,7 +277,6 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
           <HintReveal
             revealed={state.hints}
             canRequest={scaffoldsOpen && state.tutor.hintLevel < 9}
-            lockedReason={!scaffoldsOpen ? resolveMessage("ui.stage.try-first") : undefined}
             course={course.id}
             onRequest={() => act({ type: "HINT" })}
             onExplainSlowly={scaffoldsOpen ? () => act({ type: "EXPLAIN" }) : undefined}
