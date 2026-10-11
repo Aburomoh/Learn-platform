@@ -2,7 +2,7 @@
  * Offering-scoped learner progress (docs/LEARNER_MODEL.md). Pure functions over a plain object.
  * No ability labels, ever. Recent evidence outweighs old evidence.
  */
-/** `skipped` (#579): left through the hidden skip; never counts as completed anywhere. */
+/** `skipped` (#579): a practice left through the first hidden skip; kept so stored records still read. Since #623 the skip records the question (`skippedQuestions`), never the practice. */
 export type ActivityStatus = "new" | "started" | "completed" | "skipped";
 
 export interface MasteryEvidence {
@@ -25,6 +25,8 @@ export interface ActivityProgress {
   completedQuestions?: string[];
   /** Explain Slowly was opened in this practice (#579 skip gate). Optional: older stored data has none. Local only. */
   explained?: boolean;
+  /** Question ids left through the hidden skip (#623): unfinished, so the practice never completes until they are done. Local only. */
+  skippedQuestions?: string[];
 }
 
 export interface OfferingProgress {
@@ -91,7 +93,20 @@ export function markExplained(p: OfferingProgress, activityId: string, now = Dat
   return { ...p, activities: { ...p.activities, [activityId]: { ...prev, explained: true, lastAt: now } } };
 }
 
-/** The hidden skip (#579): the practices left behind become `skipped`; a completed one is untouched. */
+/** The hidden skip (#623): the question is recorded as skipped; the practice stays unfinished (never completed by a skip). */
+export function skipQuestion(p: OfferingProgress, activityId: string, questionId: string, now = Date.now()): OfferingProgress {
+  const prev = p.activities[activityId] ?? { status: "started" as const, attempts: 0, hintsUsed: 0, independent: false, lastAt: now };
+  if (prev.completedQuestions?.includes(questionId) || prev.skippedQuestions?.includes(questionId)) return p;
+  const status = prev.status === "completed" ? "completed" : "started";
+  return { ...p, activities: { ...p.activities, [activityId]: { ...prev, status, skippedQuestions: [...(prev.skippedQuestions ?? []), questionId], lastAt: now } } };
+}
+
+/** A practice the student skipped ahead in (#623), or one left by the first skip (#579). */
+export function skippedAhead(a: ActivityProgress | undefined): boolean {
+  return !!a && a.status !== "completed" && (a.status === "skipped" || (a.skippedQuestions?.length ?? 0) > 0);
+}
+
+/** The first hidden skip (#579): the practices left behind become `skipped`; a completed one is untouched. Kept for stored data; no longer written (#623). */
 export function skipActivities(p: OfferingProgress, activityIds: string[], now = Date.now()): OfferingProgress {
   const activities = { ...p.activities };
   for (const id of activityIds) {
@@ -108,7 +123,9 @@ export function completeQuestion(p: OfferingProgress, activityId: string, questi
   const done = prev.completedQuestions ?? [];
   if (done.includes(questionId)) return p;
   const status = prev.status === "completed" ? "completed" : "started";
-  return { ...p, activities: { ...p.activities, [activityId]: { ...prev, status, completedQuestions: [...done, questionId], lastAt: now } } };
+  // a skipped question, once done, is no longer skipped
+  const skippedQuestions = prev.skippedQuestions?.filter((id) => id !== questionId);
+  return { ...p, activities: { ...p.activities, [activityId]: { ...prev, status, completedQuestions: [...done, questionId], ...(skippedQuestions ? { skippedQuestions } : {}), lastAt: now } } };
 }
 
 /**
