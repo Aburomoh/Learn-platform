@@ -20,6 +20,7 @@ const FileLayoutFigure = dynamic(() => import("./FileLayoutFigure").then((m) => 
 const ResourceGraphFigure = dynamic(() => import("./ResourceGraphFigure").then((m) => m.ResourceGraphFigure));
 const MemoryTableFigure = dynamic(() => import("./MemoryTableFigure").then((m) => m.MemoryTableFigure));
 const TableFigure = dynamic(() => import("./TableFigure").then((m) => m.TableFigure));
+const TopologyFigure = dynamic(() => import("./TopologyFigure").then((m) => m.TopologyFigure));
 
 export interface FigureViewProps {
   id: string;
@@ -74,6 +75,8 @@ function draw(id: string, figure: FigureSpec, revealed: boolean, focus: string |
       return <MemoryTableFigure table={figure.table} size={figure.size} rows={figure.rows} address={figure.address} unit={figure.unit} revealed={revealed} focus={focus ?? figure.focus} />;
     case "table":
       return <TableFigure title={figure.title} columns={figure.columns} symbol={figure.symbol} caption={figure.caption} />;
+    case "topology":
+      return <TopologyFigure topology={figure.topology} nodes={figure.nodes} caption={figure.caption} />;
     default: {
       const unhandled: never = figure;
       throw new Error(`No renderer for figure ${JSON.stringify(unhandled)}`);

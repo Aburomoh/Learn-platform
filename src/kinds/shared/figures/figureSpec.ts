@@ -283,8 +283,20 @@ const TableFigure = z
     if (firstOutput >= 0 && f.columns.slice(firstOutput).some((c) => c.role !== "output")) ctx.addIssue({ code: "custom", path: ["columns"], message: "output columns come after the input columns" });
   });
 
+/**
+ * A network topology sketch (CPET181 Ch9 s.7–12, #615): star, ring, bus, tree or hybrid with
+ * unlabelled sites. A picture only; the accessible name describes the shape without naming it.
+ */
+const TopologyFigure = z.object({
+  type: z.literal("topology"),
+  topology: z.enum(["star", "ring", "bus", "tree", "hybrid"]),
+  /** Sites drawn (default 6; the hybrid sketch is fixed). */
+  nodes: z.number().int().min(4).max(8).optional(),
+  caption: z.string().min(1).max(200).optional(),
+});
+
 /** One figure per question, drawn by the stage above (or beside) any kind's answer area. */
-export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, MemoryTableFigure, ResourceGraphFigure, FileLayoutFigure, TableFigure]);
+export const FigureSpec = z.discriminatedUnion("type", [DeviceFigure, LatchFigure, AdderFigure, FlipFlopFigure, SequentialFigure, GatesFigure, MemoryTableFigure, ResourceGraphFigure, FileLayoutFigure, TableFigure, TopologyFigure]);
 export type FigureSpec = z.infer<typeof FigureSpec>;
 
 /** The pins a focus may name (`figure.focus`, `stage.figureFocus`). A latch figure has no focus state yet. */
