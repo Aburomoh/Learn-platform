@@ -72,10 +72,16 @@ export function CpuSchedule({ id, spec, segments, results, goals, done, state = 
   const scroller = useRef<HTMLDivElement>(null);
   const fade = useScrollFade(scroller);
   const [col, setCol] = useState(32);
+  // the well is measured after mount: until then the server and the first client render agree on
+  // full labels at 32 px per unit (a width-dependent choice before hydration gives React #418, QA on #599)
+  const [measured, setMeasured] = useState(false);
   useEffect(() => {
     const box = scroller.current;
     if (!box) return;
-    const update = () => setCol(colFor(box.clientWidth, total));
+    const update = () => {
+      setCol(colFor(box.clientWidth, total));
+      setMeasured(true);
+    };
     update();
     const ro = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(update);
     ro?.observe(box);
@@ -204,19 +210,16 @@ export function CpuSchedule({ id, spec, segments, results, goals, done, state = 
               {segments.slice(0, drawn).map((s, k) => {
                 const w = (s.end - s.start) * col;
                 const label = s.job === null ? "idle" : `${s.job} ${fmt(s.end - s.start)}`;
-                const narrow = w < label.length * 8 + 6;
+                const narrow = measured && w < label.length * 8 + 6;
                 return (
                   <g key={k} className={`${styles.segment} ${s.job === null ? styles.idle : ""}`} data-segment={k + 1} {...focusTarget(`segment-${k + 1}`)}>
+                    {/* the title first and the label as one string: a <title> after text inside <text> hydrates in a different order (React #418, QA on #599) */}
+                    <title>{`${s.job ?? "idle"} from ${fmt(s.start)} to ${fmt(s.end)}${continuesLater(k) ? ", continues later" : ""}`}</title>
                     <rect x={x(s.start)} y={laneTop} width={w} height={LANE} className={styles.box} />
                     {s.job === null && <rect x={x(s.start)} y={laneTop} width={w} height={LANE} fill={`url(#${id}-idle-hatch)`} />}
                     {continuesLater(k) && <line x1={x(s.end)} y1={laneTop} x2={x(s.end)} y2={laneTop + LANE} className={styles.dotted} />}
                     <text x={x(s.start) + w / 2} y={laneTop + LANE / 2 + 5} textAnchor="middle" className={`${styles.label} mono`}>
-                      {narrow ? (s.job ?? "·") : label}
-                      {continuesLater(k) && !narrow ? " ↩" : ""}
-                      <title>
-                        {s.job ?? "idle"} from {fmt(s.start)} to {fmt(s.end)}
-                        {continuesLater(k) ? ", continues later" : ""}
-                      </title>
+                      {narrow ? (s.job ?? "·") : `${label}${continuesLater(k) ? " ↩" : ""}`}
                     </text>
                   </g>
                 );
