@@ -19,6 +19,8 @@ const LatchFigure = dynamic(() => import("./LatchFigure").then((m) => m.LatchFig
 const FileLayoutFigure = dynamic(() => import("./FileLayoutFigure").then((m) => m.FileLayoutFigure));
 const ResourceGraphFigure = dynamic(() => import("./ResourceGraphFigure").then((m) => m.ResourceGraphFigure));
 const MemoryTableFigure = dynamic(() => import("./MemoryTableFigure").then((m) => m.MemoryTableFigure));
+const TapeFigure = dynamic(() => import("./TapeFigure").then((m) => m.TapeFigure));
+const TracksFigure = dynamic(() => import("./TracksFigure").then((m) => m.TracksFigure));
 const TableFigure = dynamic(() => import("./TableFigure").then((m) => m.TableFigure));
 
 export interface FigureViewProps {
@@ -74,6 +76,10 @@ function draw(id: string, figure: FigureSpec, revealed: boolean, focus: string |
       return <MemoryTableFigure table={figure.table} size={figure.size} rows={figure.rows} address={figure.address} unit={figure.unit} revealed={revealed} focus={focus ?? figure.focus} />;
     case "table":
       return <TableFigure title={figure.title} columns={figure.columns} symbol={figure.symbol} caption={figure.caption} />;
+    case "tape":
+      return <TapeFigure records={figure.records} block={figure.block} revealed={revealed} caption={figure.caption} />;
+    case "tracks":
+      return <TracksFigure tracks={figure.tracks} caption={figure.caption} />;
     default: {
       const unhandled: never = figure;
       throw new Error(`No renderer for figure ${JSON.stringify(unhandled)}`);
