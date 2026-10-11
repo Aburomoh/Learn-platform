@@ -19,5 +19,5 @@ export const resumeProgressKey = (offeringId: string) => `${product.storagePrefi
 export function resumeMarkerScript(offeringId: string, activityId: string): string {
   const key = JSON.stringify(resumeProgressKey(offeringId));
   const id = JSON.stringify(activityId);
-  return `try{var a=(JSON.parse(localStorage.getItem(${key})||"{}").activities||{})[${id}];if(a&&a.status==="started"&&(a.completedQuestions||[]).length&&!/[?&]review(=|&|$)/.test(location.search))document.documentElement.setAttribute("${RESUME_ATTR}","")}catch(e){}`;
+  return `try{var a=(JSON.parse(localStorage.getItem(${key})||"{}").activities||{})[${id}];if(a&&(a.status==="started"||a.status==="skipped")&&(a.completedQuestions||[]).length&&!/[?&]review(=|&|$)/.test(location.search))document.documentElement.setAttribute("${RESUME_ATTR}","")}catch(e){}`;
 }

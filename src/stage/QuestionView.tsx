@@ -3,10 +3,12 @@
 import { createElement, type ComponentType } from "react";
 import type { InteractionSpec, Variant } from "@/content/schema";
 import type { Answer, GradeResult } from "@/content/grade";
+import { stepTag, stepVars } from "@/content/steps";
 import { fill } from "@/content/template";
 import { Notation } from "@/interactions/shared/Notation";
 import { PredictionBeforeReveal, type PredictionResult } from "@/interactions/PredictionBeforeReveal/PredictionBeforeReveal";
 import type { RegisteredKind } from "@/kinds";
+import { Calculator } from "@/kinds/shared/Calculator";
 import { FigureView } from "@/kinds/shared/figures/FigureView";
 import type { ExplainProps, PracticeProps } from "@/kinds/types";
 import { kindUI } from "@/kinds/ui";
@@ -55,9 +57,14 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
     );
   }
 
+  // the step's calculator call site (PEDAGOGY "Calculator and skip", #581): the content's expression
+  // template for this step tag ("*" for a single-answer kind), filled with the step's vars; gone once done
+  const tag = stepTag(variant.spec, stepIndex) ?? "*";
+  const calculator = !(locked && state === "correct") ? variant.calculator?.[tag] : undefined;
   const answer = (
     <>
       {createElement(views[variant.spec.kind].Practice, { variant, prompt, state, last, stepIndex, locked, onSubmit })}
+      {calculator && <Calculator key={`${variant.id}-${stepIndex}`} expression={fill(calculator, { ...variant.vars, ...stepVars(variant.spec, stepIndex) })} />}
       {last && (
         <p className={`${styles.feedback} ${last.result.correct ? styles.ok : styles.no}`} role="status">
           {last.result.correct ? "Correct." : "Not correct yet."}

@@ -32,10 +32,16 @@ export const product = {
   tagline: "Interactive course companion",
   /** Public origin for metadata; change here when the domain moves. */
   origin: "https://learn.aburomoh.com",
-  owner: { displayName: "Dr. Mohannad Abu-Romoh", shortName: "Dr. Mohannad" },
+  owner: { displayName: "Mr. Mohanad", shortName: "Mr. Mohanad" },
   brand: {
     /** The mark beside the name in the top bar (a file under /public). */
     markSrc: "/brand/mark.svg",
+    /**
+     * The owner's logo (#591, guide in the handoff): the horizontal lockup for the light header from
+     * 640 px, the icon mark beside the text name on phones and in dark mode (no approved dark lockup yet).
+     * Sized exports from scripts/brand-assets.py; 1x and 2x of the rendered height.
+     */
+    logo: { lockup: "/brand/cet-learn-horizontal-48.webp", lockup2x: "/brand/cet-learn-horizontal-96.webp", icon: "/brand/cet-learn-icon-48.webp", icon2x: "/brand/cet-learn-icon-96.webp" },
     /** Tutor pose table (files under /public/tutor); null shows the monogram disc (courses without art). */
     tutorPortrait: tutorPoses as TutorPoseTable | null,
   },

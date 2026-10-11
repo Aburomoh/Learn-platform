@@ -3,10 +3,10 @@ import type { BaseToDecimalSpec } from "./spec";
 
 /**
  * Step 0: `powers`, the exponent under each digit, left to right (2, 1, 0, −1 …).
- * Step 1: `terms`, each digit × weight as a decimal ("4", "0.5"), left to right.
- * Step 2: `sum`, the decimal value.
+ * Step 1: `digits`, each digit's value as a number in the given term `[N] × base^k` (A = 10 … F = 15), left to right (#597).
+ * Step 2: `sum`, the decimal value (the calculator is pre-loaded with the term values, #581).
  */
-export type BaseToDecimalAnswer = { kind: "base-to-decimal"; step: number; powers?: number[]; terms?: string[]; sum?: string };
+export type BaseToDecimalAnswer = { kind: "base-to-decimal"; step: number; powers?: number[]; digits?: string[]; sum?: string };
 
 const DIGITS = "0123456789ABCDEF";
 
@@ -87,16 +87,13 @@ export const baseToDecimal: KindLogic<BaseToDecimalSpec, BaseToDecimalAnswer> = 
     }
 
     if (answer.step === 1) {
-      const want = ds.map((d) => exactTerm(d.value, spec.base, d.power));
-      const got = (answer.terms ?? []).map(normaliseDecimal);
-      const normalized = `terms:${got.join(",")}`;
+      const want = ds.map((d) => String(d.value));
+      const got = (answer.digits ?? []).map(normaliseDecimal);
+      const normalized = `digits:${got.join(",")}`;
       const wrong = firstWrong(got, want);
       if (!wrong && got.length === want.length) return { correct: true, normalized, partial: true };
-      // a letter digit used as A=1…F=6, or as 0, where every other term is right
-      const letterSlip =
-        spec.base === 16 &&
-        ds.some((d) => d.value >= 10) &&
-        ds.every((d, i) => (d.value >= 10 ? [exactTerm(d.value - 9, 16, d.power), "0"].includes(got[i]) : got[i] === want[i]));
+      // a letter digit written as A=1…F=6, or as 0, where every other digit is right
+      const letterSlip = spec.base === 16 && ds.some((d) => d.value >= 10) && ds.every((d, i) => (d.value >= 10 ? [String(d.value - 9), "0"].includes(got[i]) : got[i] === want[i]));
       return { correct: false, normalized, misconceptionId: letterSlip ? find("hex-letter-as-digit") : undefined, wrongCells: wrong };
     }
 
@@ -119,6 +116,8 @@ export const baseToDecimal: KindLogic<BaseToDecimalSpec, BaseToDecimalAnswer> = 
         base: spec.base,
         digitCount: ds.length,
         terms: ds.map((d) => `(${d.value} × ${spec.base}^${d.power})`).join(" + "),
+        // the digit values alone, left to right (the terms step's answer, #597)
+        digitValues: ds.map((d) => d.value).join(", "),
         values: ds.map((d) => exactTerm(d.value, spec.base, d.power)).join(" + "),
         value: exactValue(spec),
         stepNumber: i + 1,

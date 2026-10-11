@@ -14,10 +14,12 @@ export function TopBar({ back }: { back?: ActionLink }) {
     <header className={styles.bar}>
       <div className={styles.barInner}>
         <Link href="/" className={styles.brandLink} aria-label={`${product.name} home`}>
-          {/* decorative: the name beside it is the label */}
-          {/* eslint-disable-next-line @next/next/no-img-element -- static export, tiny SVG, no optimisation wanted */}
-          <img src={product.brand.markSrc} alt="" width={24} height={24} className={styles.mark} />
-          <span>{product.name}</span>
+          {/* the lockup (light theme, from 640 px) or the icon mark beside the text name (phones, dark theme): CSS picks one (#591) */}
+          {/* eslint-disable-next-line @next/next/no-img-element -- static export, sized lossless WebP, no optimisation wanted */}
+          <img src={product.brand.logo.lockup} srcSet={`${product.brand.logo.lockup2x} 2x`} alt="" width={144} height={48} className={styles.lockup} />
+          {/* eslint-disable-next-line @next/next/no-img-element -- static export, sized lossless WebP, no optimisation wanted */}
+          <img src={product.brand.logo.icon} srcSet={`${product.brand.logo.icon2x} 2x`} alt="" width={31} height={28} className={styles.mark} />
+          <span className={styles.brandName}>{product.name}</span>
         </Link>
         {back && (
           <Link href={back.href} className={styles.back}>

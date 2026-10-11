@@ -30,7 +30,7 @@ export function Practice({ variant, prompt, state, last, stepIndex, locked, onSu
             stepIndex === 0
               ? { kind: "base-to-decimal", step: 0, powers: entries.map((e) => (/^-?\d+$/.test(e) ? Number(e) : Number.NaN)) }
               : stepIndex === 1
-                ? { kind: "base-to-decimal", step: 1, terms: entries }
+                ? { kind: "base-to-decimal", step: 1, digits: entries }
                 : { kind: "base-to-decimal", step: 2, sum: entries[0] },
           )
         }

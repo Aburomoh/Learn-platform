@@ -53,7 +53,9 @@ describe("base-to-decimal kind: three goals", () => {
     expect(baseToDecimal.steps!.count(bin.spec)).toBe(3);
     expect([0, 1, 2].map((i) => baseToDecimal.steps!.tag(bin.spec, i))).toEqual(["weights", "terms", "sum"]);
     expect(baseToDecimal.grade(bin, at(0, { powers: [2, 1, 0, -1, -2, -3] }))).toMatchObject({ correct: true, partial: true });
-    expect(baseToDecimal.grade(bin, at(1, { terms: ["4", "0", "1", ".5", "0", "0.1250"] }))).toMatchObject({ correct: true, partial: true });
+    expect(baseToDecimal.grade(bin, at(1, { digits: ["1", "0", "1", "1", "0", "01"] }))).toMatchObject({ correct: true, partial: true });
+    expect(baseToDecimal.grade(bin, at(1, { digits: ["1", "0", "1", "1", "0", "0"] }))).toMatchObject({ correct: false, wrongCells: { first: 5, count: 1 } });
+    expect(baseToDecimal.steps!.vars(bin.spec, 1)).toMatchObject({ digitValues: "1, 0, 1, 1, 0, 1" });
     expect(baseToDecimal.grade(bin, at(2, { sum: "5.625" }))).toMatchObject({ correct: true });
     expect(baseToDecimal.grade(bin, at(2, { sum: "05.6250" })).correct).toBe(true);
     expect(baseToDecimal.grade(bin, at(2, { sum: "5.62" })).correct).toBe(false);
@@ -66,10 +68,10 @@ describe("base-to-decimal kind: three goals", () => {
   });
 
   it("recognises a hex letter used as a small digit or as 0", () => {
-    expect(baseToDecimal.grade(hex, at(1, { terms: ["256", "160", "3"] })).correct).toBe(true);
-    expect(baseToDecimal.grade(hex, at(1, { terms: ["256", "16", "3"] }))).toMatchObject({ correct: false, misconceptionId: "bd.hex-letter-as-digit", wrongCells: { first: 1, count: 1 } }); // A as 1
-    expect(baseToDecimal.grade(hex, at(1, { terms: ["256", "0", "3"] }))).toMatchObject({ misconceptionId: "bd.hex-letter-as-digit" });
-    expect(baseToDecimal.grade(hex, at(1, { terms: ["256", "100", "3"] })).misconceptionId).toBeUndefined();
+    expect(baseToDecimal.grade(hex, at(1, { digits: ["1", "10", "3"] })).correct).toBe(true);
+    expect(baseToDecimal.grade(hex, at(1, { digits: ["1", "1", "3"] }))).toMatchObject({ correct: false, misconceptionId: "bd.hex-letter-as-digit", wrongCells: { first: 1, count: 1 } }); // A as 1
+    expect(baseToDecimal.grade(hex, at(1, { digits: ["1", "0", "3"] }))).toMatchObject({ misconceptionId: "bd.hex-letter-as-digit" });
+    expect(baseToDecimal.grade(hex, at(1, { digits: ["1", "11", "3"] })).misconceptionId).toBeUndefined();
   });
 
   it("normalises decimals and validates the spec", () => {

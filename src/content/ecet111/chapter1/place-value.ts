@@ -99,13 +99,13 @@ const weightHints: HintInput[] = [
 
 function termHints(hex: boolean): HintInput[] {
   return [
-    { rung: 2, text: "Not yet. Each term is the digit times its weight." },
-    { rung: 3, text: "Work out the power of {base} first, then multiply by the digit." },
-    { rung: 4, text: "A negative power is a fraction: {base}^−1 is 1 ÷ {base}. What is that as a decimal?" },
-    { rung: 5, text: "Start with the leftmost term: its digit times its weight.", focus: "weight-cell-0", highlight: "weight-cell-0" },
-    { rung: 6, text: hex ? "A letter is worth 10 to 15 (A = 10, F = 15). Multiply by that value." : "A digit 0 gives a term of 0. Keep it as 0." },
-    { rung: 8, text: "The terms are {terms}." },
-    { rung: 9, text: "The term values are {values}." },
+    { rung: 2, text: "Not yet. Each box takes the digit that sits under that weight." },
+    { rung: 3, text: "Read {number} from the left: the first digit goes with the highest power, and the digits follow the powers down." },
+    { rung: 4, text: "The digits after the point go with the negative powers: the first one with {base}^−1." },
+    { rung: 5, text: "Start with the leftmost box: the first digit of {number}.", focus: "weight-cell-0", highlight: "weight-cell-0" },
+    { rung: 6, text: hex ? "A letter is entered by its value (A = 10, B = 11, … F = 15)." : "A digit 0 still gets a box: its term is 0 × the weight, so enter 0." },
+    { rung: 8, text: "{number} has {digitCount} digits, one per box, in order, with the point skipped." },
+    { rung: 9, text: "The digits, in order, are {digitValues}." },
   ];
 }
 

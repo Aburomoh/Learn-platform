@@ -42,10 +42,16 @@ test("base-to-decimal: (110.011)_2 by weights, terms and sum", async ({ page }) 
   for (const [i, p] of powers.entries()) await page.getByLabel(`Power under digit ${i + 1} (${digits[i]})`).fill(String(p));
   await page.getByRole("button", { name: "Check weights" }).click();
 
-  const terms = ["4", "2", "0", "0", "0.25", "0.125"];
-  for (const [i, t] of terms.entries()) await page.getByLabel(`Value of ${digits[i]} × 2 to the ${powers[i]}`).fill(t);
-  await page.getByRole("button", { name: "Check terms" }).click();
+  // the given-term layout (#597): [N] × 2^k is printed, the digit's value is typed
+  for (const [i, d] of digits.entries()) await page.getByLabel(`Digit ${i + 1} (${d}) as a number, times 2 to the ${powers[i]}`).fill(d);
+  await page.getByRole("button", { name: "Check digits" }).click();
 
+  // the sum step's calculator is pre-loaded with the term values and never fills the answer box (#594)
+  await page.getByText("Calculator").click();
+  await expect(page.getByRole("textbox", { name: "Expression" })).toHaveValue("4 + 2 + 0 + 0 + 0.25 + 0.125");
+  await page.getByRole("button", { name: "Equals" }).click();
+  await expect(page.getByText("= 6.375")).toBeVisible();
+  await expect(page.getByLabel("Sum in decimal")).toHaveValue("");
   await page.getByLabel("Sum in decimal").fill("6.375");
   await page.getByRole("button", { name: "Check sum" }).click();
   await expect(correct(page)).toBeVisible();

@@ -20,7 +20,7 @@ export interface WeightDiagramProps {
   /** The number as written, with its point: "101.101". */
   number: string;
   digits: WeightDigit[];
-  /** Goals done so far: 0 = weights, 1 = terms, 2 = sum, 3 = finished. */
+  /** Goals done so far: 0 = weights, 1 = terms (the digit values in the given terms, #597), 2 = sum, 3 = finished. */
   stepIndex: number;
   /** The exact value, shown once the sum is done. */
   value: string;
@@ -98,7 +98,7 @@ export function WeightDiagram({
         aria-invalid={pointed === i || undefined}
         value={entries[i]}
         disabled={!editing}
-        inputMode={stepIndex === 0 ? "text" : "decimal"}
+        inputMode={stepIndex === 0 ? "text" : stepIndex === 1 ? "numeric" : "decimal"}
         autoComplete="off"
         spellCheck={false}
         onChange={(e) => set(i, e.target.value)}
@@ -178,28 +178,28 @@ export function WeightDiagram({
               )}
             </span>
           ))}
-          {digits.map((d, i) => (
-            <span
-              key={`t${i}`}
-              className={styles.cell}
-              data-state={rowState(1)}
-              style={{ gridColumn: col(i), gridRow: 3 }}
-            >
-              {rowState(1) === "now" && editing ? (
-                field(
-                  i,
-                  `Value of ${d.digit} × ${base} to the ${d.power}`,
-                  true,
-                )
-              ) : rowState(1) === "done" ? (
-                <span className="mono">{d.term}</span>
-              ) : (
-                ""
-              )}
-            </span>
-          ))}
         </div>
       </div>
+      {/* the terms as the owner writes them (#597): the weight and the + signs given, the digit's value typed */}
+      <p className={styles.terms} data-state={rowState(1)} aria-label="Terms">
+        <span className={styles.rowLabel}>Terms</span>
+        {rowState(1) === "later"
+          ? ""
+          : digits.map((d, i) => (
+              <span key={`t${i}`} className={`${styles.term} mono`} {...focusTarget(`term-${i}`)}>
+                {i > 0 && (
+                  <span className={styles.plus} aria-hidden="true">
+                    +
+                  </span>
+                )}
+                {rowState(1) === "now" && editing ? field(i, `Digit ${i + 1} (${d.digit}) as a number, times ${base} to the ${d.power}`) : <span className={styles.given}>{d.value}</span>}
+                <span className={styles.times}>
+                  × {base}
+                  <sup>{d.power}</sup>
+                </span>
+              </span>
+            ))}
+      </p>
       <p className={styles.sum} data-state={rowState(2)}>
         <span className={styles.rowLabel}>Sum</span>
         {rowState(2) === "now" && editing ? (
@@ -224,7 +224,7 @@ export function WeightDiagram({
             className="btn btn-primary"
             disabled={!editing || !complete}
           >
-            {["Check weights", "Check terms", "Check sum"][stepIndex]}
+            {["Check weights", "Check digits", "Check sum"][stepIndex]}
           </button>
         </div>
       )}

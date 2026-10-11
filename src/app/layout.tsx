@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: { default: product.name, template: `%s · ${product.name}` },
   description: product.tagline,
   metadataBase: new URL(product.origin),
+  manifest: "/site.webmanifest",
 };
 
 export const viewport: Viewport = {

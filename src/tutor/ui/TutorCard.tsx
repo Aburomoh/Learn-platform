@@ -3,7 +3,7 @@ import type { PoseKey, TutorPoseTable } from "./poses";
 import styles from "./TutorCard.module.css";
 
 export interface TutorCardProps {
-  /** Display name, e.g. "Dr. Mohannad" (from `product.owner.shortName`). */
+  /** Display name, e.g. "Mr. Mohanad" (from `product.owner.shortName`). */
   name: string;
   /** One line from the tutor catalog. The card shows no bubble without it. */
   message?: string;
@@ -18,7 +18,7 @@ export interface TutorCardProps {
   pose?: PoseKey | null;
 }
 
-/** "Dr. Mohannad" → "DM": the first letters of up to two words, ignoring a trailing dot. */
+/** "Mr. Mohanad" → "MM": the first letters of up to two words, ignoring a trailing dot. */
 export function monogram(name: string): string {
   return name
     .split(/\s+/)

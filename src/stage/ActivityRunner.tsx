@@ -6,7 +6,7 @@ import { product } from "../../config/product";
 import { HintReveal } from "@/interactions/HintReveal/HintReveal";
 import { canRequestScaffold } from "@/tutor";
 import { TutorPanel, TutorPosePreload, useFocusEffects } from "@/tutor/ui";
-import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordAttempt, completeActivity, completeQuestion } from "@/learner";
+import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordAttempt, completeActivity, completeQuestion, markExplained, skipActivities, flushPendingWrites } from "@/learner";
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
@@ -14,7 +14,8 @@ import { KindPrefetch } from "@/kinds/ui";
 import { useHydrated } from "@/shell/useHydrated";
 import { RESUME_ATTR } from "./resumeMarker";
 import { ChallengeSteps, type ChallengeStep } from "@/shell/r1";
-import { topicAction } from "@/shell/primaryAction";
+import { practiceHref, skipOffer, topicAction } from "@/shell/primaryAction";
+import { SkipMenu } from "./SkipMenu";
 import styles from "./Stage.module.css";
 
 export interface ActivityRunnerProps {
@@ -169,6 +170,22 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
   const scaffoldsOpen = canRequestScaffold(state.tutor);
   const activityProgress = progress.activities[activity.id];
 
+  // Explain Slowly opened: remembered locally, it closes the skip gate for this practice (#579).
+  useEffect(() => {
+    if (stage === "explaining") updateProgress((p) => markExplained(p, activity.id));
+  }, [stage, activity.id, updateProgress]);
+
+  // The hidden skip (#579): from the ⋯ menu only; the practices passed over are recorded as skipped.
+  const skip = skipOffer(course, topic, activity, progress);
+  const doSkip = () => {
+    // written to the store and to storage before the page changes (a React-batched update would be lost)
+    getProgressStore(offeringId).set((p) => skipActivities(p, skip.skipped));
+    flushPendingWrites();
+    window.location.assign(skip.href);
+  };
+  // After a wrong answer, a quiet way back to a practice skipped earlier in this topic (offered, never forced).
+  const skippedBefore = topic.activities.find((a, i) => i < topic.activities.findIndex((x) => x.id === activity.id) && progress.activities[a.id]?.status === "skipped");
+
   // One marker per challenge: finished ones done, the one on screen current.
   const steps: ChallengeStep[] = activity.questions.map((q, i) => ({
     label: q.label ?? `Challenge ${i + 1}`,
@@ -209,10 +226,13 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
       </div>
 
       <div className={styles.stage} ref={stageRef} data-testid="learning-stage" data-stage={stage}>
-        <p className={styles.eyebrow}>
-          Challenge {state.qIndex + 1} of {activity.questions.length}
-          {question.label ? ` · ${question.label}` : ""}
-        </p>
+        <div className={styles.stageHead}>
+          <p className={styles.eyebrow}>
+            Challenge {state.qIndex + 1} of {activity.questions.length}
+            {question.label ? ` · ${question.label}` : ""}
+          </p>
+          <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} onSkip={doSkip} />
+        </div>
 
         <QuestionView
           key={questionViewKey(variant, state)}
@@ -225,6 +245,12 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
           onPredict={(i) => act({ type: "PREDICT", index: i })}
           onContinue={() => act({ type: "CONTINUE" })}
         />
+
+        {state.last && !state.last.result.correct && skippedBefore && stage !== "explaining" && (
+          <p className={styles.returnOffer}>
+            Stuck? You skipped <a href={practiceHref(course, topic, skippedBefore)}>{skippedBefore.title}</a>; it covers this. Go back any time.
+          </p>
+        )}
 
         {stage !== "explaining" && stage !== "complete" && (
           <HintReveal

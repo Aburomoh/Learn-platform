@@ -12,6 +12,7 @@ const v = VariantSchema.parse({
   id: "v-101",
   prompt: "Convert (101.101)_2 to decimal, by place value.",
   spec: { kind: "base-to-decimal", base: 2, number: "101.101" },
+  calculator: { sum: "{values}" },
   hints: [{ rung: 2, text: "Not yet." }],
   explanation: [
     { id: "s1", say: "One." },
@@ -47,8 +48,8 @@ describe("base-to-decimal kind in the stage (#208)", () => {
   it("weights, then terms, then the sum; a wrong weight marks only the first wrong cell", async () => {
     render(<Harness />);
     const user = userEvent.setup();
-    const form = await screen.findByRole("form", { name: "101.101 in base 2, by place value" });
-    expect(form).toBeInTheDocument();
+    const diagram = () => screen.getByRole("form", { name: "101.101 in base 2, by place value" });
+    expect(await screen.findByRole("form", { name: "101.101 in base 2, by place value" })).toBeInTheDocument();
     const fill = async (values: string[], button: string) => {
       const cells = screen.getAllByRole("textbox");
       for (const [i, value] of values.entries()) {
@@ -67,13 +68,23 @@ describe("base-to-decimal kind in the stage (#208)", () => {
     expect(document.querySelectorAll("[aria-hidden='true']").length).toBeGreaterThan(0);
     await fill(["2", "1", "0", "−1", "-2", "-3"], "Check weights");
 
-    await screen.findByRole("button", { name: "Check terms" });
-    expect(screen.getByRole("form")).toHaveTextContent("2-1"); // the weights row is done and shown
-    await fill(["4", "0", "1", "0.5", "0", "0.125"], "Check terms");
+    // the terms step (#597): the weight and the + signs are given, each digit's value is typed
+    await screen.findByRole("button", { name: "Check digits" });
+    expect(diagram()).toHaveTextContent("2-1"); // the weights row is done and shown
+    expect(screen.getByRole("textbox", { name: "Digit 4 (1) as a number, times 2 to the -1" })).toBeInTheDocument();
+    expect(screen.queryByText("Calculator")).toBeNull(); // no call site on this step
+    await fill(["1", "0", "1", "1", "0", "1"], "Check digits");
 
     await screen.findByRole("button", { name: "Check sum" });
+    expect(diagram()).toHaveTextContent("1× 2-1"); // done terms show the digit value in its term
+    // the sum step's calculator, pre-loaded with the term values from content (#594), never filling the box
+    await user.click(screen.getByText("Calculator"));
+    expect(screen.getByRole("textbox", { name: "Expression" })).toHaveValue("4 + 0 + 1 + 0.5 + 0 + 0.125");
+    await user.click(screen.getByRole("button", { name: "Equals" }));
+    expect(screen.getByText("= 5.625")).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Sum in decimal" })).toHaveValue("");
     await fill(["5.625"], "Check sum");
     expect(await screen.findByText("Correct.")).toBeInTheDocument();
-    expect(screen.getByRole("form")).toHaveTextContent("(101.101)2 = (5.625)10");
+    expect(diagram()).toHaveTextContent("(101.101)2 = (5.625)10");
   });
 });

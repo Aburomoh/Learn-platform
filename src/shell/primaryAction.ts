@@ -95,6 +95,27 @@ export function courseAction(course: Course, progress: Progress): PrimaryAction 
   return topicAction(course, topics[topics.length - 1], progress);
 }
 
+/**
+ * The hidden skip (#579, PEDAGOGY "Hidden skip"). Open once one practice of the topic was completed
+ * first-try (`independent`) without Explain Slowly. From an earlier practice it goes to the topic's
+ * last practice at challenge 1; from the last practice to the next topic. The practices passed over
+ * are recorded as skipped (never completed).
+ */
+export function skipOffer(course: Course, topic: Topic, activity: Activity, progress: Progress): { allowed: boolean; href: string; targetLabel: string; skipped: string[] } {
+  const allowed = topic.activities.some((a) => {
+    const r = progress.activities[a.id];
+    return r?.status === "completed" && r.independent && !r.explained;
+  });
+  const i = topic.activities.findIndex((a) => a.id === activity.id);
+  const last = topic.activities[topic.activities.length - 1];
+  if (i >= 0 && i < topic.activities.length - 1) {
+    return { allowed, href: reviewHref(course, topic, last), targetLabel: "the last practice of this topic", skipped: topic.activities.slice(i, -1).map((a) => a.id) };
+  }
+  const topics = topicsOf(course);
+  const next = topics[topics.findIndex((t) => t.id === topic.id) + 1];
+  return { allowed, href: next ? topicHref(course, next) : topicHref(course, topic), targetLabel: next ? `the next topic, ${next.title}` : "this topic's page", skipped: [activity.id] };
+}
+
 /** A small button on a topic row of the course page: its own Start / Continue / Review. */
 export function topicRowAction(course: Course, topic: Topic, progress: Progress): PrimaryAction {
   const action = topicAction(course, topic, progress);

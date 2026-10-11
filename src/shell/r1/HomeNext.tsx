@@ -10,7 +10,6 @@ import { product } from "../../../config/product";
 import { courseAction, type PrimaryAction as NextAction } from "../primaryAction";
 import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
 import { PageHeading } from "./PageHeading";
-import { PreviewBoard } from "./PreviewBoard";
 import { PrimaryAction, effortCue } from "./PrimaryAction";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
@@ -75,8 +74,8 @@ export function HomeNext({ courses }: { courses: Course[] }) {
           <h2 id="next-h" className={styles.h2}>
             {topic.title}
           </h2>
-          {topic.preview && <PreviewBoard preview={topic.preview} size="sm" bare />}
-          {!finishedAll && <ChallengeSteps steps={stepsFrom(activity.questions, done, action.kind === "continue")} />}
+          {/* #593: the worked-example tiles live on the topic page; the challenge dots only once there is progress to show */}
+          {returning && !finishedAll && <ChallengeSteps steps={stepsFrom(activity.questions, done, action.kind === "continue")} />}
           <PrimaryAction
             primary={action.primary}
             secondary={action.secondary}
@@ -108,14 +107,17 @@ export function HomeNext({ courses }: { courses: Course[] }) {
           {courses.map((c) => {
             const topics = c.modules.flatMap((m) => m.topics);
             const p = progressOf(c);
-            const started = topics.filter((t) => t.activities.some((a) => (p.activities[a.id]?.status ?? "new") !== "new")).length;
+            const finished = topics.filter((t) => t.activities.every((a) => p.activities[a.id]?.status === "completed")).length;
+            const started = topics.filter((t) => t.activities.some((a) => (p.activities[a.id]?.status ?? "new") !== "new")).length - finished;
             return (
               <li key={c.id} className={styles.practiceRow}>
                 <div className={styles.practiceText}>
                   <p className={styles.eyebrow}>{c.code}</p>
                   <h3 className={styles.topicTitle}>{c.title}</h3>
+                  <p className={styles.topicRoute}>{c.summary}</p>
                   <p className={`${styles.topicStatus} ${styles.statusMuted}`}>
                     {c.modules.length} chapter{c.modules.length === 1 ? "" : "s"} · {topics.length} topic{topics.length === 1 ? "" : "s"}
+                    {finished > 0 ? ` · ${finished} done` : ""}
                     {started > 0 ? ` · ${started} started` : ""}
                   </p>
                 </div>
