@@ -65,10 +65,13 @@ const factors = mcq("tp.q.factors", "Comparing topologies", "tp.topologies", "tp
   row("How hard it is to add many sites is which factor when comparing topologies?", "Difficulty of connecting many sites", others(FACTOR_NAMES, "Difficulty of connecting many sites"), FACTORS, "That is the difficulty of connecting many sites.", "It is about size."),
 ]);
 
-const hybrid = mcq("tp.q.hybrid", "Hybrid topology", "tp.topologies", "tp.obj.hybrid", [
-  row("The figure shows a hub joined by one cable to a closed loop. Which topology is it?", "Hybrid", tn("Hybrid"), TOPOLOGIES, "A mix of a star-like hub and a loop is a hybrid.", "Is it only one shape?", { type: "topology", topology: "hybrid", caption: FIG }),
-  row("A network mixes a ring and a star to pick the strengths of each. Which topology is it?", "Hybrid", tn("Hybrid"), TOPOLOGIES, "A mix of topologies is a hybrid.", "It is made of more than one."),
-  row("Which topology is a mix of the others, picking each one's strengths?", "Hybrid", tn("Hybrid"), TOPOLOGIES, "The hybrid mixes the other topologies.", "It is not a single shape."),
+const all5 = (name: string) => others(TOPOLOGY_NAMES, name);
+/** A second sketch question with five options, so "Hybrid" is always a live distractor and the answer changes from item to item (Pedagogy gate on #537). */
+const mixed = mcq("tp.q.mixed", "Name the topology", "tp.topologies", "tp.obj.hybrid", [
+  row("The figure shows a network. Which of the five topologies is it?", "Hybrid", all5("Hybrid"), TOPOLOGIES, "A hub joined by one cable to a closed loop mixes shapes: a hybrid.", "Is it one shape, or more than one?", { type: "topology", topology: "hybrid", caption: FIG }),
+  row("The figure shows a network. Which of the five topologies is it?", "Star", all5("Star"), TOPOLOGIES, "One centre that every site joins, and nothing mixed in: a star.", "Is it one shape, or more than one?", { type: "topology", topology: "star", nodes: 8, caption: FIG }),
+  row("The figure shows a network. Which of the five topologies is it?", "Bus", all5("Bus"), TOPOLOGIES, "One shared line with every site on it, and nothing mixed in: a bus.", "Is it one shape, or more than one?", { type: "topology", topology: "bus", nodes: 7, caption: FIG }),
+  row("The figure shows a network. Which of the five topologies is it?", "Ring", all5("Ring"), TOPOLOGIES, "A single closed loop and nothing else: a ring.", "Is it one shape, or more than one?", { type: "topology", topology: "ring", nodes: 8, caption: FIG }),
 ]);
 
 /* ---------- LAN, MAN, WAN; bridge and gateway; wireless ---------- */
@@ -154,13 +157,12 @@ export const topologiesTopic: TopicInput = {
     { id: "tp.obj.shape", conceptId: "tp.topologies", text: "Name the topology a sketch shows." },
     { id: "tp.obj.traits", conceptId: "tp.topologies", text: "Name the topology from its advantages and costs." },
     { id: "tp.obj.factors", conceptId: "tp.topologies", text: "Name the factor on which topologies are compared." },
-    { id: "tp.obj.hybrid", conceptId: "tp.topologies", text: "Say what a hybrid topology is." },
+    { id: "tp.obj.hybrid", conceptId: "tp.topologies", text: "Tell a hybrid (a mix) from the single shapes." },
   ],
   activities: [
-    { id: "shape", title: "Which topology is drawn", summary: "Star, ring, bus or tree from the sketch.", authority: "DEMO", minutes: 6, questions: [shape] },
+    { id: "shape", title: "Which topology is drawn", summary: "Name the topology from the sketch.", authority: "DEMO", minutes: 9, questions: [shape, mixed] },
     { id: "traits", title: "Which topology", summary: "From how it behaves.", authority: "DEMO", minutes: 6, questions: [traits] },
     { id: "factors", title: "Comparing topologies", summary: "The four factors.", authority: "DEMO", minutes: 5, questions: [factors] },
-    { id: "hybrid", title: "Hybrid", summary: "A mix of the others.", authority: "DEMO", minutes: 4, questions: [hybrid] },
   ],
 };
 
