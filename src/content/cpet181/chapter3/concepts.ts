@@ -44,7 +44,7 @@ const SPLIT = "The address divided by the page size gives a quotient, the page n
 const parts = mcq("vm.q.parts", "Page or displacement", "vm.address", "vm.obj.parts", [
   row("The address is divided by the page size. What is the quotient?", "The page number", ["The displacement", "The frame number"], SPLIT, "The quotient is the page number.", "The quotient counts whole pages."),
   row("The address is divided by the page size. What is the remainder?", "The displacement", ["The page number", "The frame number"], SPLIT, "The remainder is the displacement.", "The remainder is what is left inside the page."),
-  row("Which part of an address picks the row of the page map table?", "The page number", ["The displacement", "The page size"], SPLIT, "The page number selects the PMT row.", "The table is indexed by page."),
+  row("Which part of an address picks the row of a page map table?", "The page number", ["The displacement", "The page size"], SPLIT, "The page number selects the PMT row.", "The table is indexed by page."),
   row("Which part of an address says how far into the page the byte is?", "The displacement", ["The page number", "The frame number"], SPLIT, "The displacement says how far into the page the byte is.", "It is added to a start address."),
 ]);
 
@@ -54,8 +54,8 @@ const PS = "Paging cuts a program into equal-size pages, placed in frames, with 
 const pagingVsSegmentation = mcq("vm.q.paging-segmentation", "Paging or segmentation", "vm.compare", "vm.obj.compare", [
   row("A program is cut into pieces of equal size, placed in frames. Which method?", "Paging", ["Segmentation"], PS, "Equal pieces in frames is paging.", "Are the pieces equal or unequal?"),
   row("A program is cut into unequal logical modules, such as a main program and subroutines. Which method?", "Segmentation", ["Paging"], PS, "Unequal logical modules are segments.", "Which method follows the user's view of the program?"),
-  row("An address is a page number plus a displacement, and the table is a PMT. Which method?", "Paging", ["Segmentation"], PS, "Page number + displacement with a PMT is paging.", "Look at the name of the table."),
-  row("An address is a segment number plus a displacement, and the table is an SMT. Which method?", "Segmentation", ["Paging"], PS, "Segment number + displacement with an SMT is segmentation.", "Look at the name of the table."),
+  row("An address is a page number plus a displacement, and its table is a PMT. Which method?", "Paging", ["Segmentation"], PS, "Page number + displacement with a PMT is paging.", "Which table is named in the question?"),
+  row("An address is a segment number plus a displacement, and its table is an SMT. Which method?", "Segmentation", ["Paging"], PS, "Segment number + displacement with an SMT is segmentation.", "Which table is named in the question?"),
 ]);
 
 const PROS = "Paging: efficient use of memory, no external fragmentation and a simple algorithm; but address resolution overhead and internal fragmentation in the last page. Segmentation: no internal fragmentation, and segments can grow and be linked; but variable-length segments are hard to manage on disk and a segment is limited by memory.";

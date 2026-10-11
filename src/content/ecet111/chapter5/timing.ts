@@ -35,17 +35,34 @@ interface TimingSet {
   source?: string;
 }
 
-const RISING: TimingSet[] = [
-  { id: "sr17", ff: "SR", edge: "rising", initialQ: 0, perEdge: [[0, 1, 0, 1, 1], [0, 0, 1, 0, 0]], source: "s.17–20" },
-  { id: "d32", ff: "D", edge: "rising", initialQ: 1, perEdge: [[0, 1, 0, 1, 1, 0, 0]], source: "s.32–33" },
-  { id: "jkr", ff: "JK", edge: "rising", initialQ: 0, perEdge: [[1, 1, 0, 1, 0], [0, 1, 1, 1, 0]] },
-];
-
-const FALLING: TimingSet[] = [
-  { id: "df", ff: "D", edge: "falling", initialQ: 0, perEdge: [[1, 1, 0, 1, 0]] },
-  { id: "tf", ff: "T", edge: "falling", initialQ: 1, perEdge: [[1, 0, 1, 1, 0]] },
-  { id: "jkf", ff: "JK", edge: "falling", initialQ: 1, perEdge: [[0, 1, 1, 0, 1], [1, 1, 0, 0, 0]] },
-];
+/**
+ * One question per flip-flop, in the objective's order (SR, D, JK, T; #622), so a first-try student
+ * meets all four. Edges are mixed across the four (SR and D open on rising edges with the slides'
+ * diagrams, JK and T on falling); every question has three waveforms of the same flip-flop for the
+ * retries. JK sets hold 1 1 toggles and T sets hold T = 1 toggles so those misconceptions can fire.
+ */
+export const SETS: Record<FlipFlop, TimingSet[]> = {
+  SR: [
+    { id: "sr17", ff: "SR", edge: "rising", initialQ: 0, perEdge: [[0, 1, 0, 1, 1], [0, 0, 1, 0, 0]], source: "s.17–20" },
+    { id: "srf", ff: "SR", edge: "falling", initialQ: 1, perEdge: [[0, 0, 1, 0, 1], [1, 0, 0, 1, 0]] },
+    { id: "sr3", ff: "SR", edge: "rising", initialQ: 0, perEdge: [[1, 0, 0, 1, 0], [0, 0, 1, 0, 1]] },
+  ],
+  D: [
+    { id: "d32", ff: "D", edge: "rising", initialQ: 1, perEdge: [[0, 1, 0, 1, 1, 0, 0]], source: "s.32–33" },
+    { id: "df", ff: "D", edge: "falling", initialQ: 0, perEdge: [[1, 1, 0, 1, 0]] },
+    { id: "d3", ff: "D", edge: "rising", initialQ: 1, perEdge: [[0, 1, 1, 0, 1]] },
+  ],
+  JK: [
+    { id: "jkf", ff: "JK", edge: "falling", initialQ: 1, perEdge: [[0, 1, 1, 0, 1], [1, 1, 0, 0, 0]] },
+    { id: "jkr", ff: "JK", edge: "rising", initialQ: 0, perEdge: [[1, 1, 0, 1, 0], [0, 1, 1, 1, 0]] },
+    { id: "jk3", ff: "JK", edge: "falling", initialQ: 1, perEdge: [[0, 1, 1, 0, 1, 1], [1, 1, 0, 1, 1, 0]] },
+  ],
+  T: [
+    { id: "tf", ff: "T", edge: "falling", initialQ: 1, perEdge: [[1, 0, 1, 1, 0]] },
+    { id: "tr", ff: "T", edge: "rising", initialQ: 0, perEdge: [[1, 1, 0, 1, 0, 1]] },
+    { id: "t3", ff: "T", edge: "falling", initialQ: 0, perEdge: [[0, 1, 1, 1, 0]] },
+  ],
+};
 
 const RULE: Record<FlipFlop, string> = {
   SR: "S = 1 sets Q, R = 1 resets it, and 0 0 keeps it.",
@@ -87,7 +104,7 @@ function timingVariant(set: TimingSet, k: number): VariantInput {
       { id: "s1", say: `Circle the ${set.edge} edges first: only they change Q. Between them, Q holds.`, stage: { revealed: 0 } },
       {
         id: "s2",
-        say: "At each active edge, read the inputs just before it and apply the table to the Q you have.",
+        say: "At each active edge, read the inputs just before it and apply the flip-flop's rule to the Q you have.",
         stage: { revealed: 0 },
         ask: { prompt: "Does Q change on the falling edges?", options: k % 2 ? ["Yes", "No"] : ["No", "Yes"], correctIndex: (set.edge === "rising") === (k % 2 === 0) ? 0 : 1, afterCorrect: "Right.", afterWrong: set.edge === "rising" ? "No: this flip-flop acts on rising edges only." : "Yes: this one acts on falling edges." },
       },
@@ -99,19 +116,21 @@ function timingVariant(set: TimingSet, k: number): VariantInput {
 const timingActivity: Activity = {
   id: "timing-diagrams",
   title: "Timing diagrams",
-  summary: "Q after each active edge: rising edges first, then falling.",
+  summary: "Q after each active edge, for SR, D, JK and T, on rising and falling edges.",
   authority: "DEMO",
   minutes: 20,
   questions: [
-    { id: "tm.q.rising", label: "Rising edges", conceptId: "tm.timing", objectiveId: "tm.obj.timing", variants: RISING.map((s, k) => timingVariant(s, k)) },
-    { id: "tm.q.falling", label: "Falling edges", conceptId: "tm.timing", objectiveId: "tm.obj.timing", variants: FALLING.map((s, k) => timingVariant(s, k)) },
+    { id: "tm.q.sr", label: "SR flip-flop", conceptId: "tm.timing", objectiveId: "tm.obj.timing", variants: SETS.SR.map((s, k) => timingVariant(s, k)) },
+    { id: "tm.q.d", label: "D flip-flop", conceptId: "tm.timing", objectiveId: "tm.obj.timing", variants: SETS.D.map((s, k) => timingVariant(s, k)) },
+    { id: "tm.q.jk", label: "JK flip-flop", conceptId: "tm.timing", objectiveId: "tm.obj.timing", variants: SETS.JK.map((s, k) => timingVariant(s, k)) },
+    { id: "tm.q.t", label: "T flip-flop", conceptId: "tm.timing", objectiveId: "tm.obj.timing", variants: SETS.T.map((s, k) => timingVariant(s, k)) },
   ],
 };
 
 export const timingTopic: TopicInput = {
   id: "timing",
   title: "Timing diagrams",
-  summary: "Draw Q under a clock: at each active edge read the inputs just before it, apply the flip-flop's table, and hold Q until the next active edge.",
+  summary: "Draw Q under a clock: at each active edge read the inputs just before it, apply the flip-flop's rule, and hold Q until the next active edge.",
   preview: "edge ↑ → read inputs → Q",
   concepts: [{ id: "tm.timing", title: "Timing diagram", summary: "Q changes only at active edges (rising or falling), from the inputs just before the edge; it holds in between." }],
   objectives: [{ id: "tm.obj.timing", conceptId: "tm.timing", text: "Give Q after each active clock edge for SR, JK, D and T flip-flops, rising and falling." }],

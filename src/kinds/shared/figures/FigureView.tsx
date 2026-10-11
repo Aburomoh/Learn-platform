@@ -21,6 +21,8 @@ const ResourceGraphFigure = dynamic(() => import("./ResourceGraphFigure").then((
 const MemoryTableFigure = dynamic(() => import("./MemoryTableFigure").then((m) => m.MemoryTableFigure));
 const TapeFigure = dynamic(() => import("./TapeFigure").then((m) => m.TapeFigure));
 const TracksFigure = dynamic(() => import("./TracksFigure").then((m) => m.TracksFigure));
+const BufferFigure = dynamic(() => import("./BufferFigure").then((m) => m.BufferFigure));
+const OpTreeFigure = dynamic(() => import("./OpTreeFigure").then((m) => m.OpTreeFigure));
 const TableFigure = dynamic(() => import("./TableFigure").then((m) => m.TableFigure));
 
 export interface FigureViewProps {
@@ -74,6 +76,10 @@ function draw(id: string, figure: FigureSpec, revealed: boolean, focus: string |
       return <ResourceGraphFigure processes={figure.processes} resources={figure.resources} edges={figure.edges} focus={focus ?? figure.focus} caption={figure.caption} />;
     case "memory-table":
       return <MemoryTableFigure table={figure.table} size={figure.size} rows={figure.rows} address={figure.address} unit={figure.unit} revealed={revealed} focus={focus ?? figure.focus} />;
+    case "buffer":
+      return <BufferFigure slots={figure.slots} filled={figure.filled} producer={figure.producer} consumer={figure.consumer} focus={focus ?? figure.focus} caption={figure.caption} />;
+    case "op-tree":
+      return <OpTreeFigure expression={figure.expression} revealed={revealed} caption={figure.caption} />;
     case "table":
       return <TableFigure title={figure.title} columns={figure.columns} symbol={figure.symbol} caption={figure.caption} />;
     case "tape":
