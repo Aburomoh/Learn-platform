@@ -54,7 +54,7 @@ export type RunnerAction =
   | { type: "CONTINUE" }
   | { type: "RETRY_VARIANT" }
   | { type: "NEXT_QUESTION" }
-  /** The hidden skip (#623): the next unfinished question after this one, which stays unfinished. */
+  /** Skip to the very next question (#661). */
   | { type: "SKIP_QUESTION" }
   /** Back to a question skipped earlier in this practice (#623). */
   | { type: "GO_TO_QUESTION"; index: number }
@@ -267,9 +267,9 @@ export function createRunnerReducer(activity: Activity) {
       }
 
       case "SKIP_QUESTION": {
-        const target = s.completed.findIndex((c, i) => !c && i > s.qIndex);
-        // nothing after this one: the runner leaves the practice instead (skipOffer)
-        return target === -1 ? s : runTutor(openQuestion(activity, s, target), { type: "ACTIVITY_OPENED" });
+        // the very next question, done or not (owner, #661); after the last one the runner leaves the practice instead (skipOffer)
+        const target = s.qIndex + 1;
+        return target >= activity.questions.length ? s : runTutor(openQuestion(activity, s, target), { type: "ACTIVITY_OPENED" });
       }
 
       case "GO_TO_QUESTION":

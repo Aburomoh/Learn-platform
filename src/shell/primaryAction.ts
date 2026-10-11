@@ -32,7 +32,8 @@ export interface PrimaryAction {
 
 type Progress = Pick<OfferingProgress, "activities">;
 
-export const topicHref = (course: Course, topic: Topic) => `/courses/${course.id}/${topic.id}/`;
+export const courseHref = (course: Course) => `/courses/${course.id}/`;
+export const topicHref = (course: Course, topic: Topic) => `${courseHref(course)}${topic.id}/`;
 export const practiceHref = (course: Course, topic: Topic, activity: Activity) => `${topicHref(course, topic)}${activity.id}/`;
 /** Review restarts at challenge 1 instead of resuming (read by the activity page, #119). */
 export const reviewHref = (course: Course, topic: Topic, activity: Activity) => `${practiceHref(course, topic, activity)}?review=1`;
@@ -102,35 +103,32 @@ export function courseAction(course: Course, progress: Progress): PrimaryAction 
  * are recorded as skipped (never completed).
  */
 export interface SkipOffer {
+  /** Always true since #661 (owner): the skip is on every question. Kept so the menu can still be told to hide. */
   allowed: boolean;
-  /** `question`: the next question of this practice (in the runner, no navigation). `practice`: the next practice's first question. `topic`: the next topic's page. */
-  kind: "question" | "practice" | "topic";
-  /** Where the page goes for `practice` and `topic`. */
+  /** `question`: the next question of this practice (in the runner, no navigation). `practice`: the next practice's first question. `topic`: the next topic's page. `course`: the course page, after the course's very last question. */
+  kind: "question" | "practice" | "topic" | "course";
+  /** Where the page goes for `practice`, `topic` and `course`. */
   href?: string;
   /** What the skip goes to, in words, for the confirmation. */
   targetLabel: string;
 }
 
 /**
- * Skip to next question (owner, #623): from a question to the next unfinished one of the practice
- * (`completed` is the runner's per-question state, so after a wrap-around with nothing left after
- * this question the skip leaves the practice instead); from there to the next practice's first
- * question; from the last practice of a topic to the next topic. Only the skipped question is
- * recorded (`skipQuestion`); the practice is never completed by a skip.
+ * Skip to next question (owner, 2026-10-11, #661): available on every question, no gate. It goes to
+ * the very next question of the practice (done or not); from the last question to the next
+ * practice's first; from the last practice of a topic to the next topic; from the course's last
+ * question to the course page. Only the skipped question is recorded (`skipQuestion`); the practice
+ * is never completed by a skip.
  */
-export function skipOffer(course: Course, topic: Topic, activity: Activity, progress: Progress, qIndex: number, completed: readonly boolean[]): SkipOffer {
-  const allowed = topic.activities.some((a) => {
-    const r = progress.activities[a.id];
-    return r?.status === "completed" && r.independent && !r.explained;
-  });
-  const nextUnfinished = activity.questions.findIndex((_, i) => i > qIndex && !completed[i]);
-  if (nextUnfinished >= 0) return { allowed, kind: "question", targetLabel: "the next question" };
+export function skipOffer(course: Course, topic: Topic, activity: Activity, qIndex: number): SkipOffer {
+  if (qIndex + 1 < activity.questions.length) return { allowed: true, kind: "question", targetLabel: "the next question" };
   const i = topic.activities.findIndex((a) => a.id === activity.id);
   const nextPractice = i >= 0 ? topic.activities[i + 1] : undefined;
-  if (nextPractice) return { allowed, kind: "practice", href: practiceHref(course, topic, nextPractice), targetLabel: `the next practice, ${nextPractice.title}` };
+  if (nextPractice) return { allowed: true, kind: "practice", href: practiceHref(course, topic, nextPractice), targetLabel: `the next practice, ${nextPractice.title}` };
   const topics = topicsOf(course);
   const next = topics[topics.findIndex((t) => t.id === topic.id) + 1];
-  return { allowed, kind: "topic", href: next ? topicHref(course, next) : topicHref(course, topic), targetLabel: next ? `the next topic, ${next.title}` : "this topic's page" };
+  if (next) return { allowed: true, kind: "topic", href: topicHref(course, next), targetLabel: `the next topic, ${next.title}` };
+  return { allowed: true, kind: "course", href: courseHref(course), targetLabel: "the course page" };
 }
 
 /** A small button on a topic row of the course page: its own Start / Continue / Review. */
