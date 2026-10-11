@@ -76,7 +76,7 @@ export function OpTreeFigure({ expression, revealed = false, caption }: OpTreeFi
             </g>
           ) : (
             <g key={i} data-leaf={n.e.text}>
-              <rect x={n.x - cellW / 2 + 2} y={n.y - 13} width={cellW - 4} height={26} rx="5" className={styles.body} />
+              <rect x={n.x - cellW / 2 + 4} y={n.y - 13} width={cellW - 8} height={26} rx="5" className={styles.body} />
               <text x={n.x} y={n.y + 5} textAnchor="middle" className={`${styles.label} mono`} style={{ fontSize: TEXT }}>
                 {n.e.text}
               </text>

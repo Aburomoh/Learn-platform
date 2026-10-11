@@ -19,7 +19,7 @@ export const BUFFER_PINS = ["producer", "buffer", "consumer"] as const;
 
 // Geometry in SVG units (visual system §4): 330 wide, 15-unit text, never drawn below 0.8× (12 px).
 const W = 330;
-const BOX_W = 74;
+const BOX_W = 72;
 const BOX_H = 36;
 const Y = 30;
 const CELL_H = 36;
@@ -34,7 +34,8 @@ const TEXT = 15;
  */
 export function BufferFigure({ slots, filled, producer = "producer", consumer = "consumer", focus, caption }: BufferFigureProps) {
   const id = useId().replace(/:/g, "");
-  const cellW = Math.min(26, Math.floor(140 / slots));
+  // the buffer never grows past 120 units, so each arrow keeps at least 14 units between a box and the buffer
+  const cellW = Math.min(24, Math.floor(120 / slots));
   const bufW = cellW * slots;
   const bx = (W - bufW) / 2;
   const total = Y + Math.max(BOX_H, CELL_H) + 34;
