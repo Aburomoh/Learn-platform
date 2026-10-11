@@ -56,3 +56,22 @@ describe("SequentialFigure (#454, step 6)", () => {
     expect((await screen.findByRole("img")).querySelector("[data-focus]")).toHaveAttribute("data-ff", "A");
   });
 });
+
+describe("sequential figure text at 390 px (#654)", () => {
+  it("a three-JK figure is 344 units wide and tall, and pins its min-height at MIN_SCALE, so the phone height cap cannot shrink its 15-unit text below 12 px", () => {
+    const three = [
+      { name: "A", ff: "jk" as const, equations: ["JA = x", "KA = x′"] },
+      { name: "B", ff: "jk" as const, equations: ["JB = A", "KB = 1"] },
+      { name: "C", ff: "jk" as const, equations: ["JC = AB", "KC = B"] },
+    ];
+    render(<SequentialFigure flipFlops={three} input="x" />);
+    const img = screen.getByRole("img");
+    const [, , w, h] = img.getAttribute("viewBox")!.split(" ").map(Number);
+    expect(w).toBe(344);
+    expect(h).toBeGreaterThan(275); // taller than 220 / 0.8: the phone cap alone would scale it under MIN_SCALE
+    expect(img.style.minWidth).toBe(`${Math.round(w * 0.8)}px`);
+    expect(img.style.minHeight).toBe(`${Math.round(h * 0.8)}px`);
+    // 15-unit text at the minimum scale is 12 px
+    expect(15 * (parseFloat(img.style.minHeight) / h)).toBeGreaterThanOrEqual(12);
+  });
+});
