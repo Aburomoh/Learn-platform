@@ -89,7 +89,7 @@ describe("CPET 181 Chapter 4 scheduling content (#587)", () => {
   });
 
   it("the comparison sets give different averages under FCFS, SJN and SRT, so there is something to compare", () => {
-    const sets = [0, 1, 2].map((i) => ["cm.q.fcfs", "cm.q.sjn", "cm.q.srt"].map((q) => average(specs("compare-algorithms", "compare", q)[i].spec)));
+    const sets = [0, 1, 2, 3].map((i) => ["cm.q.fcfs", "cm.q.sjn", "cm.q.srt"].map((q) => average(specs("compare-algorithms", "compare", q)[i].spec)));
     for (const set of sets) expect(new Set(set).size, JSON.stringify(set)).toBeGreaterThan(1);
   });
 
@@ -119,7 +119,7 @@ describe("CPET 181 Chapter 4 scheduling content (#587)", () => {
   it("the compare activity ends in which is best: the smallest average of FCFS, SJN and SRT, from the kind's own goals", () => {
     const best = getActivity(COURSE, "compare-algorithms", "compare")!.activity.questions.find((x) => x.id === "cm.q.best")!;
     const names = ["First Come First Served", "Shortest Job Next", "Shortest Remaining Time"];
-    expect(best.variants.map((v) => v.id)).toEqual(["cmp-1", "cmp-2", "cmp-3"]); // the same sets as the average questions (#141)
+    expect(best.variants.map((v) => v.id)).toEqual(["cmp-1", "cmp-2", "cmp-3", "cmp-4"]); // the same sets as the average questions (#141)
     for (const v of best.variants) {
       const avgs = ["cm.q.fcfs", "cm.q.sjn", "cm.q.srt"].map((id) => average(byId("compare-algorithms", "compare", id, v.id)));
       const min = Math.min(...avgs);
@@ -128,6 +128,7 @@ describe("CPET 181 Chapter 4 scheduling content (#587)", () => {
       const { options, correctOptionId } = v.spec;
       const correct = options.find((o) => o.id === correctOptionId)!.text;
       expect(correct, v.id).toBe(winners.length === 1 ? winners[0] : `${winners.join(" and ")} (equal, and the smallest)`);
+      expect(options.map((o) => o.text), v.id).toHaveLength(5); // the same five-option menu for every set
       expect(v.hints.slice(0, -1).map((h) => h.text).join(" "), v.id).not.toContain(correct);
     }
   });
