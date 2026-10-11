@@ -144,7 +144,7 @@
   font-weight: 700;
 }
 
-/* resource sketches (#605): a dashed request arrow, the arrowhead in the line colour */
+/* resource sketches and file organisations (#605): dashed request arrows, arrowheads, arrow words */
 .dashed {
   stroke-dasharray: 6 5;
 }
