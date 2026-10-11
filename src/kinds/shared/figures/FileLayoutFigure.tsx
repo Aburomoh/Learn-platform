@@ -18,12 +18,14 @@ export interface FileLayoutFigureProps {
   caption?: string;
 }
 
-// Geometry in SVG units (visual system §4): 330 wide, 15-unit text, never drawn below 0.8× (12 px).
+// Geometry in SVG units (visual system §4): 330 wide, never drawn below 0.8×, so every text is
+// 15 units or more (12 px at the smallest scale; QA #610 caught 12-unit labels at 11.2 px).
 const W = 330;
 const CELL = 36;
 const ROW = 30;
 const PAD = 10;
 const MIN_SCALE = 0.8;
+const TEXT = 15;
 
 /** Direct access needs a key → address rule; the slide says "computed from the key", so the drawing uses key mod slots. */
 export const hash = (key: string, slots: number) => (Number.isFinite(Number(key)) ? Number(key) : [...key].reduce((a, c) => a + c.charCodeAt(0), 0)) % slots;
@@ -49,7 +51,7 @@ export function FileLayoutFigure({ layout, records, searchKey: key, blockSize = 
         <g key={i} data-record={k} data-on={i === lit || undefined}>
           <rect x={x0 + i * cellW} y={y} width={cellW} height={ROW} className={styles.body} />
           {i === lit && <rect x={x0 + i * cellW + 2} y={y + 2} width={cellW - 4} height={ROW - 4} rx="3" className={styles.rowOn} />}
-          <text x={x0 + i * cellW + cellW / 2} y={y + ROW / 2 + 5} textAnchor="middle" className={`${styles.label} ${i === lit ? styles.high : ""}`} style={{ fontSize: cellW < 30 ? 13 : undefined }}>
+          <text x={x0 + i * cellW + cellW / 2} y={y + ROW / 2 + 5} textAnchor="middle" className={`${styles.label} ${i === lit ? styles.high : ""}`} style={{ fontSize: TEXT }}>
             {k}
           </text>
         </g>
@@ -90,10 +92,12 @@ export function FileLayoutFigure({ layout, records, searchKey: key, blockSize = 
     const count = slots ?? n;
     const addr = key === undefined ? -1 : hash(key, count);
     const placed = records.map((k) => hash(k, count));
-    const slotKeys = Array.from({ length: count }, (_, a) => records.filter((k, i) => placed[i] === a).join("/") || "");
+    const slotKeys = Array.from({ length: count }, (_, a) => records.filter((k, i) => placed[i] === a));
+    const deep = Math.max(1, ...slotKeys.map((k) => k.length));
+    const rowH = deep > 1 ? ROW + (deep - 1) * TEXT : ROW; // a collision stacks its keys; text never shrinks
     const yHash = 30;
     const yFile = yHash + ROW + 40;
-    total = yFile + ROW + 30;
+    total = yFile + rowH + 30;
     const slotW = Math.min(CELL, Math.floor((W - 2 * PAD) / count));
     const x0 = (W - slotW * count) / 2;
     body = (
@@ -110,12 +114,16 @@ export function FileLayoutFigure({ layout, records, searchKey: key, blockSize = 
           {focusOn("file") && <rect x={x0 - 5} y={yFile - 5} width={slotW * count + 10} height={ROW + 10} rx="8" className={styles.hit} />}
           {slotKeys.map((k, a) => (
             <g key={a} data-slot={a} data-on={a === addr || undefined}>
-              <rect x={x0 + a * slotW} y={yFile} width={slotW} height={ROW} className={styles.body} />
-              {a === addr && <rect x={x0 + a * slotW + 2} y={yFile + 2} width={slotW - 4} height={ROW - 4} rx="3" className={styles.rowOn} />}
-              <text x={x0 + a * slotW + slotW / 2} y={yFile + ROW / 2 + 5} textAnchor="middle" className={`${styles.label} ${a === addr ? styles.high : ""}`} style={{ fontSize: slotW < 30 || k.length > 2 ? 12 : undefined }}>
-                {k}
+              <rect x={x0 + a * slotW} y={yFile} width={slotW} height={rowH} className={styles.body} />
+              {a === addr && <rect x={x0 + a * slotW + 2} y={yFile + 2} width={slotW - 4} height={rowH - 4} rx="3" className={styles.rowOn} />}
+              <text x={x0 + a * slotW + slotW / 2} y={yFile + rowH / 2 + 5 - ((k.length - 1) * TEXT) / 2} textAnchor="middle" className={`${styles.label} ${a === addr ? styles.high : ""}`} style={{ fontSize: TEXT }}>
+                {k.map((key, i) => (
+                  <tspan key={key} x={x0 + a * slotW + slotW / 2} dy={i === 0 ? 0 : TEXT}>
+                    {key}
+                  </tspan>
+                ))}
               </text>
-              <text x={x0 + a * slotW + slotW / 2} y={yFile + ROW + 16} textAnchor="middle" className={styles.sub} style={{ fontSize: 12 }}>
+              <text x={x0 + a * slotW + slotW / 2} y={yFile + rowH + 17} textAnchor="middle" className={styles.sub} style={{ fontSize: TEXT }}>
                 {a}
               </text>
             </g>
@@ -123,7 +131,7 @@ export function FileLayoutFigure({ layout, records, searchKey: key, blockSize = 
         </g>
       </>
     );
-    const collisions = slotKeys.filter((k) => k.includes("/"));
+    const collisions = slotKeys.filter((k) => k.length > 1).map((k) => k.join("/"));
     summary = `Direct file with ${count} slots: each key's address is computed from the key.${key !== undefined ? ` ${key} goes to address ${addr}.` : ""}${collisions.length ? ` Collision at ${collisions.join(", ")}.` : ""}`;
   } else {
     const blocks: string[][] = [];
@@ -146,12 +154,12 @@ export function FileLayoutFigure({ layout, records, searchKey: key, blockSize = 
             <g key={b} data-index={b} data-on={b === hitBlock || undefined}>
               <rect x={ix0 + b * idxW} y={yIndex} width={idxW} height={ROW} className={styles.body} />
               {b === hitBlock && <rect x={ix0 + b * idxW + 2} y={yIndex + 2} width={idxW - 4} height={ROW - 4} rx="3" className={styles.rowOn} />}
-              <text x={ix0 + b * idxW + idxW / 2} y={yIndex + ROW / 2 + 5} textAnchor="middle" className={`${styles.label} ${b === hitBlock ? styles.high : ""}`} style={{ fontSize: 13 }}>
+              <text x={ix0 + b * idxW + idxW / 2} y={yIndex + ROW / 2 + 5} textAnchor="middle" className={`${styles.label} ${b === hitBlock ? styles.high : ""}`} style={{ fontSize: TEXT }}>
                 ≤ {k}
               </text>
             </g>
           ))}
-          <text x={ix0} y={yIndex - 8} className={styles.sub} style={{ fontSize: 13 }}>
+          <text x={ix0} y={yIndex - 8} className={styles.sub} style={{ fontSize: TEXT }}>
             index: highest key per block
           </text>
           {hitBlock >= 0 && <path d={`M ${ix0 + hitBlock * idxW + idxW / 2} ${yIndex + ROW} V ${yBlocks - 14} H ${bx0 + hitBlock * (blockW + gap) + blockW / 2} V ${yBlocks - 2}`} markerEnd={`url(#${id}-arrow)`} />}
@@ -166,13 +174,13 @@ export function FileLayoutFigure({ layout, records, searchKey: key, blockSize = 
                   <g key={i} data-record={rec} data-on={lit || undefined}>
                     <rect x={bx0 + k * (blockW + gap) + i * cellW} y={yBlocks} width={cellW} height={ROW} className={styles.body} />
                     {lit && <rect x={bx0 + k * (blockW + gap) + i * cellW + 2} y={yBlocks + 2} width={cellW - 4} height={ROW - 4} rx="3" className={styles.rowOn} />}
-                    <text x={bx0 + k * (blockW + gap) + i * cellW + cellW / 2} y={yBlocks + ROW / 2 + 5} textAnchor="middle" className={`${styles.label} ${lit ? styles.high : ""}`} style={{ fontSize: cellW < 30 ? 13 : undefined }}>
+                    <text x={bx0 + k * (blockW + gap) + i * cellW + cellW / 2} y={yBlocks + ROW / 2 + 5} textAnchor="middle" className={`${styles.label} ${lit ? styles.high : ""}`} style={{ fontSize: TEXT }}>
                       {rec}
                     </text>
                   </g>
                 );
               })}
-              <text x={bx0 + k * (blockW + gap) + blockW / 2} y={yBlocks + ROW + 16} textAnchor="middle" className={styles.sub} style={{ fontSize: 12 }}>
+              <text x={bx0 + k * (blockW + gap) + blockW / 2} y={yBlocks + ROW + 17} textAnchor="middle" className={styles.sub} style={{ fontSize: TEXT }}>
                 block {k}
               </text>
             </g>

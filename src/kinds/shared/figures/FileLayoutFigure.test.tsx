@@ -42,6 +42,23 @@ describe("file-layout figure (Ch8 s.7–9, #605)", () => {
     expect(img).toHaveAccessibleName(/^Direct file with 7 slots: each key's address is computed from the key\. 17 goes to address 3\. Collision at 10\/17\.$/);
     expect(lit()).toEqual(["3"]);
     expect(img.textContent).toContain("address = f(17) = 3");
+    // the colliding keys stack on two lines; nothing shrinks
+    expect(img.querySelectorAll("[data-slot='3'] tspan")).toHaveLength(2);
+  });
+
+  it("no text is set below 15 units in any layout (12 px at the 0.8 floor, #610)", async () => {
+    for (const f of [
+      figure({ type: "file-layout", layout: "sequential", records: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"], key: "12" }),
+      figure({ type: "file-layout", layout: "direct", records: ["10", "20", "33", "17"], slots: 7, key: "17" }),
+      figure({ type: "file-layout", layout: "indexed", records, blockSize: 3, key: "50" }),
+    ]) {
+      const { unmount } = render(<FigureView id="f" figure={f} />);
+      const img = await screen.findByRole("img");
+      const sizes = [...img.querySelectorAll("text")].map((t) => parseFloat((t as SVGElement).style.fontSize || "15"));
+      expect(sizes.length).toBeGreaterThan(0);
+      expect(Math.min(...sizes)).toBeGreaterThanOrEqual(15);
+      unmount();
+    }
   });
 
   it("indexed: blocks of equal size, an index of the highest key per block; the path lights the index entry, then the record; focus from the stage", async () => {
