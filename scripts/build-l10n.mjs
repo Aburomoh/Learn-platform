@@ -3,8 +3,10 @@
 // docs/localization/ar/source-texts.ar.json and writes compact {english: arabic} maps, one per
 // course plus "shared" (tutor catalog and component text), to public/l10n/ar/<name>.<hash>.json
 // with public/l10n/ar/index.json naming the current files (cache-busting: a changed map gets a new
-// name; the index is fetched with no-cache). Only the English bundle is unchanged by this: nothing
-// here is imported by the app. Runs as `prebuild`; also `node scripts/build-l10n.mjs [outDir]`.
+// name; the index is fetched with no-cache). Nothing here is imported by the app, so the English
+// bundle is unchanged. The output is committed: the Vercel build does not upload docs/ (.vercelignore),
+// so there the package is absent and the committed maps are what ships; a unit test keeps them in
+// step with the package. Runs as `prebuild`; also `node scripts/build-l10n.mjs [outDir] [package]`.
 // The Arabic is never edited here. When one English string has two different Arabic texts the
 // first in inventory order is kept and the pair is printed for the owner.
 import { createHash } from "node:crypto";
@@ -31,7 +33,16 @@ export function buildMaps(entries) {
 
 function main() {
   if (!existsSync(PACKAGE)) {
-    console.warn(`build-l10n: ${PACKAGE} not found; no Arabic maps written (the app falls back to English).`);
+    if (existsSync(join(OUT, "index.json"))) {
+      console.log(`build-l10n: ${PACKAGE} not present (not uploaded to this build); keeping the committed maps in ${OUT}.`);
+      return;
+    }
+    const msg = `build-l10n: ${PACKAGE} not found and no committed maps in ${OUT}: Arabic would silently fall back to English.`;
+    if (process.env.CI || process.env.VERCEL) {
+      console.error(msg);
+      process.exit(1);
+    }
+    console.warn(msg);
     return;
   }
   const entries = JSON.parse(readFileSync(PACKAGE, "utf8"));

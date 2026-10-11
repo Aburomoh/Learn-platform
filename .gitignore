@@ -58,6 +58,3 @@ next-env.d.ts
 
 # owner logo handoff (local only, #591)
 public/CET_Learn_Logo_Handoff.zip
-
-# generated Arabic maps (scripts/build-l10n.mjs, prebuild)
-/public/l10n/

@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -39,10 +39,29 @@ describe("scripts/build-l10n.mjs (ADR-0011 §3)", () => {
     expect(readdirSync(out).sort()).toEqual(files);
   });
 
-  it("without the package it writes nothing and exits 0 (the app falls back to English)", () => {
+  it("without the package: committed maps are kept untouched; with none, a CI or Vercel build fails instead of shipping English silently", () => {
     const dir = mkdtempSync(path.join(tmpdir(), "l10n-"));
     const out = path.join(dir, "out");
-    execFileSync(process.execPath, [SCRIPT, out, path.join(dir, "missing.json")], { stdio: "ignore" });
+    const env = { ...process.env, CI: "", VERCEL: "" };
+    // locally, nothing committed: a warning, exit 0
+    execFileSync(process.execPath, [SCRIPT, out, path.join(dir, "missing.json")], { stdio: "ignore", env });
     expect(() => readdirSync(out)).toThrow();
+    // CI / Vercel with nothing committed: exit 1
+    expect(() => execFileSync(process.execPath, [SCRIPT, out, path.join(dir, "missing.json")], { stdio: "ignore", env: { ...env, VERCEL: "1" } })).toThrow();
+    // committed maps present (the Vercel case: docs/ is not uploaded): kept as they are, exit 0
+    mkdirSync(out, { recursive: true });
+    writeFileSync(path.join(out, "index.json"), JSON.stringify({ shared: "shared.abc.json" }));
+    writeFileSync(path.join(out, "shared.abc.json"), "{}");
+    execFileSync(process.execPath, [SCRIPT, out, path.join(dir, "missing.json")], { stdio: "ignore", env: { ...env, VERCEL: "1" } });
+    expect(readdirSync(out).sort()).toEqual(["index.json", "shared.abc.json"]);
+  });
+
+  it("the committed maps in public/l10n/ar are exactly what the package builds (regenerate with `node scripts/build-l10n.mjs`)", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "l10n-"));
+    const out = path.join(dir, "out");
+    execFileSync(process.execPath, [SCRIPT, out, "docs/localization/ar/source-texts.ar.json"], { stdio: "ignore" });
+    const committed = path.resolve(process.cwd(), "public/l10n/ar");
+    expect(readdirSync(committed).sort()).toEqual(readdirSync(out).sort());
+    for (const f of readdirSync(out)) expect(readFileSync(path.join(committed, f), "utf8"), f).toBe(readFileSync(path.join(out, f), "utf8"));
   });
 });

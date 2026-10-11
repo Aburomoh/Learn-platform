@@ -8,7 +8,8 @@ import { SupportiveText } from "./SupportiveText";
 /** A fetch that serves an index and two maps, counting the requests. */
 function fakeFetch(files: Record<string, unknown>) {
   const calls: string[] = [];
-  const fetch = vi.fn(async (url: string, _init?: RequestInit) => {
+  const fetch = vi.fn(async (url: string, init?: RequestInit) => {
+    void init;
     calls.push(url);
     const body = files[url];
     return body === undefined ? new Response("", { status: 404 }) : new Response(JSON.stringify(body), { status: 200, headers: { "content-type": "application/json" } });

@@ -32,7 +32,10 @@ catalog resolves by key with an empty `ar` map, and the English activity bundle 
    writes `public/l10n/ar/<course>.<hash>.json` and `shared.<hash>.json` (tutor catalog and
    component text) as compact `{english: arabic}` maps from the approved package, plus a small
    `index.json` naming the current files. The name carries a content hash, so corrected Arabic
-   reaches students after a deploy; the index is fetched with `cache: "no-cache"`. The app
+   reaches students after a deploy; the index is fetched with `cache: "no-cache"`. The output is
+   committed: the Vercel build does not upload `docs/` (`.vercelignore`), so there the package is
+   absent and the committed maps ship; a unit test keeps them in step with the package, and a CI
+   or Vercel build with neither package nor maps fails rather than shipping English silently. The app
    fetches the shared map and the current course's map only while `locale === "ar"`, caches them
    in module memory and re-renders when they arrive. Nothing Arabic is imported by the English
    bundle, which does not change size. The prefs store's server snapshot is English, so the first
