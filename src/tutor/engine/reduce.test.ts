@@ -38,7 +38,7 @@ describe("tutor engine: core rules", () => {
     expect(state.attempts).toBe(1);
     expect(state.hintLevel).toBe(0);
     expect(types(actions)).not.toContain("REVEAL_HINT");
-    expect(actions).toContainEqual({ type: "CHANGE_EXPRESSION", expression: "thinking" });
+    expect(actions).toContainEqual({ type: "CHANGE_EXPRESSION", expression: "concern" }); // try_again (#663)
     expect(types(actions)).toContain("REQUEST_RETRY");
     expect(says(actions).at(-1)?.messageKey).toBe("wrong.first");
   });
@@ -91,7 +91,8 @@ describe("tutor engine: core rules", () => {
       { type: "HESITATION", seconds: 90 },
     ]);
     expect(says(actions).filter((s) => s.messageKey === "hesitation")).toHaveLength(1);
-    expect(actions).toContainEqual({ type: "CHANGE_EXPRESSION", expression: "curious" });
+    expect(actions).toContainEqual({ type: "CHANGE_EXPRESSION", expression: "reassuring" }); // curious is retired (#663)
+    expect(actions.some((a) => a.type === "CHANGE_EXPRESSION" && (a.expression as string) === "curious")).toBe(false);
     expect(canRequestScaffold(state)).toBe(true);
   });
 
@@ -113,7 +114,7 @@ describe("tutor engine: core rules", () => {
     r = run([{ type: "EXPLANATION_STEP_DONE" }], r.state);
     expect(r.actions).toContainEqual({ type: "ASK", stepId: "s2" });
     r = run([{ type: "PREDICTION_MADE", correct: true }], r.state);
-    expect(r.actions).toContainEqual({ type: "CHANGE_EXPRESSION", expression: "pleased" });
+    expect(r.actions).toContainEqual({ type: "CHANGE_EXPRESSION", expression: "aha" }); // the explanation clicks (#663)
     expect(says(r.actions).at(-1)?.text).toContain("13 remains");
     r = run([{ type: "PREDICTION_MADE", correct: false }], { ...r.state, explanationStep: 2 });
     expect(says(r.actions).at(-1)?.messageKey).toBe("prediction.wrong");
@@ -138,6 +139,39 @@ describe("tutor engine: core rules", () => {
     expect(st).toMatchObject({ stage: "await_answer", attempts: 0, hintLevel: 0, grantedRungs: [], hintsEverUsed: true });
     // a later correct answer on the new numbers still counts as helped
     expect(says(run([{ type: "ANSWER_SUBMITTED", correct: true }], st, c).actions).at(-1)?.messageKey).toBe("correct.after-hints");
+  });
+
+  it("poses (#663): first wrong keeps try_again (concern); the second and later wrong answers reassure until the step moves on", () => {
+    const one = run([{ type: "ANSWER_SUBMITTED", correct: false }]);
+    expect(one.state.expression).toBe("concern");
+    const two = run([{ type: "ANSWER_SUBMITTED", correct: false }], one.state);
+    expect(two.state.expression).toBe("reassuring");
+    expect(two.actions).toContainEqual({ type: "CHANGE_EXPRESSION", expression: "reassuring" });
+    const three = run([{ type: "ANSWER_SUBMITTED", correct: false }], two.state);
+    expect(three.state.expression).toBe("reassuring");
+    // the step moves on: the next step's first wrong answer is try_again again
+    const next = run([{ type: "STEP_COMPLETED" }, { type: "ANSWER_SUBMITTED", correct: false }], three.state);
+    expect(next.state.expression).toBe("concern");
+  });
+
+  it("poses (#663): aha on a correct prediction, and on the first correct answer or step straight after Explain Slowly; not on a later one", () => {
+    const steps = ctx.explanation.length;
+    const explained = run([{ type: "ANSWER_SUBMITTED", correct: false }, { type: "EXPLAIN_SLOWLY_REQUESTED" }, ...Array.from({ length: steps }, () => ({ type: "EXPLANATION_STEP_DONE" }) as LearningEvent)]);
+    expect(explained.state.afterExplanation).toBe(true);
+    expect(explained.state.stage).not.toBe("explaining");
+    const aha = run([{ type: "RETRY_REQUESTED", newVariant: true }, { type: "ANSWER_SUBMITTED", correct: true }], explained.state);
+    expect(aha.actions).toContainEqual({ type: "CHANGE_EXPRESSION", expression: "aha" });
+    expect(aha.state.expression).toBe("aha");
+    // a wrong answer first: the later correct one is the usual pleased
+    const later = run([{ type: "ANSWER_SUBMITTED", correct: false }, { type: "ANSWER_SUBMITTED", correct: true }], explained.state);
+    expect(later.state.expression).toBe("pleased");
+    expect(later.actions.filter((a) => a.type === "CHANGE_EXPRESSION").map((a) => (a as { expression: string }).expression)).not.toContain("aha");
+    // a correct step straight after the explanation
+    const step = run([{ type: "STEP_COMPLETED" }], explained.state);
+    expect(step.state.expression).toBe("aha");
+    expect(step.state.afterExplanation).toBe(false);
+    // without an explanation a correct answer is pleased
+    expect(run([{ type: "ANSWER_SUBMITTED", correct: true }]).state.expression).toBe("pleased");
   });
 
   it("rule 6: correct answer completes; after hints it invites a similar one", () => {

@@ -11,7 +11,6 @@ const tutorPoses: TutorPoseTable = {
     neutral: "neutral",
     explaining: "explaining",
     thinking: "thinking",
-    curious: "curious",
     encouraging: "encouraging",
     concern: "try_again",
     pleased: "correct",
@@ -19,6 +18,10 @@ const tutorPoses: TutorPoseTable = {
     "attention-left": "point_left",
     "attention-right": "point_right",
     welcome: "welcome",
+    // #663 (owner): second and later wrong answers and hesitation; the end of a practice; the explanation clicking
+    reassuring: "reassuring",
+    proud: "proud",
+    aha: "aha",
   },
   compact: { pointing: "explaining" },
 };

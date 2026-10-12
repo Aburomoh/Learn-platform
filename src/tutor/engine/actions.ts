@@ -5,17 +5,21 @@ export type Expression =
   | "neutral"
   | "explaining"
   | "thinking"
-  | "curious"
   | "encouraging"
   | "concern"
   | "pleased"
   | "pointing"
   | "attention-left"
-  | "attention-right";
+  | "attention-right"
+  // owner, 2026-10-12 (#663): the second and later wrong answers and hesitation; a finished practice; the explanation clicking
+  | "reassuring"
+  | "proud"
+  | "aha";
 
 export const EXPRESSIONS: Expression[] = [
-  "neutral", "explaining", "thinking", "curious", "encouraging",
+  "neutral", "explaining", "thinking", "encouraging",
   "concern", "pleased", "pointing", "attention-left", "attention-right",
+  "reassuring", "proud", "aha",
 ];
 
 export type TutorAction =

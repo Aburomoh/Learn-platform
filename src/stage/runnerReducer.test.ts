@@ -39,7 +39,7 @@ describe("runner reducer: walked division", () => {
     expect(s.stepIndex).toBe(1);
     expect(s.last?.result).toMatchObject({ correct: false, misconceptionId: "div.remainder" });
     expect(s.message).toContain("13");
-    expect(s.expression).toBe("thinking");
+    expect(s.expression).toBe("concern"); // the first wrong answer: try_again (#663)
     expect(s.hints).toHaveLength(0);
   });
 
