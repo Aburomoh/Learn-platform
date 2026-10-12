@@ -94,7 +94,7 @@ export const EXPRESSIONS = [
 export const facts = (expression: string) => {
   const { root } = parseExpression(expression);
   const { steps, widest } = schedule(root);
-  return { operations: operations(root).length, steps: steps.length, widest };
+  return { operations: operations(root).length, steps: steps.length, widest, widths: steps.map((s) => s.length) };
 };
 const figureOf = (expression: string): Figure => ({ type: "op-tree", expression, caption: "The operations of the expression as a tree." });
 
@@ -137,6 +137,32 @@ const concurrentSteps = count(
   }),
 );
 
+const LEVEL = "With earliest-step scheduling an operation runs in the first step in which both of its operands are ready: operands that are inputs are ready at once, and an operation that needs another operation's result runs one step after it. The operations of one step run at the same time.";
+const levelQuestion = (n: 1 | 2) =>
+  count(
+    `cc.q.step-${n}`,
+    `Operations in step ${n}`,
+    "cc.concurrent",
+    "cc.obj.processors",
+    EXPRESSIONS.map((e): Count => {
+      const f = facts(e);
+      const w = f.widths[n - 1];
+      return {
+        prompt: `${e}. Every operation runs in the earliest step in which both its operands are ready. How many operations run in step ${n}?`,
+        answer: w,
+        rule: LEVEL,
+        apply:
+          n === 1
+            ? `Step 1 holds every operation whose two operands are inputs: ${w} of them.`
+            : `Step 2 holds the operations that needed a step 1 result and nothing later: ${w} of them.`,
+        hint: n === 1 ? "Which operations have two inputs as their operands, with no other operation's result needed?" : "Which operations need a result from step 1, and nothing from a later step?",
+        figure: figureOf(e),
+      };
+    }),
+  );
+const step1 = levelQuestion(1);
+const step2 = levelQuestion(2);
+
 const PROCESSORS = "With earliest-step scheduling every operation runs as soon as its operands are ready. The processors needed are those of the widest step: the most operations that run in the same step.";
 const processors = count(
   "cc.q.processors",
@@ -146,10 +172,10 @@ const processors = count(
   EXPRESSIONS.map((e): Count => {
     const f = facts(e);
     return {
-      prompt: `${e}. Every operation runs in the earliest step in which both its operands are ready. How many processors does the widest step need?`,
+      prompt: `${e}. Every operation runs in the earliest step in which both its operands are ready, and the processors needed are those of the busiest step. How many processors are needed?`,
       answer: f.widest,
       rule: PROCESSORS,
-      apply: `Run each operation as early as it can: the widest step holds ${f.widest} operations, so ${f.widest} processors.`,
+      apply: `The steps hold ${f.widths.join(", ")} operations; the busiest holds ${f.widest}, so ${f.widest} processors.`,
       hint: "Schedule each operation as early as possible, then count the operations of the busiest step.",
       figure: figureOf(e),
       wrong: [{ id: "cc.processors-as-steps", nudgeKey: "cc.processors-as-steps", value: f.steps }],
@@ -217,11 +243,11 @@ export const concurrentProgrammingTopic: TopicInput = {
     { id: "cc.obj.kind", conceptId: "cc.concurrent", text: "Tell sequential from concurrent evaluation." },
     { id: "cc.obj.sequential", conceptId: "cc.concurrent", text: "Count the steps of a sequential evaluation." },
     { id: "cc.obj.concurrent", conceptId: "cc.concurrent", text: "Count the steps of a concurrent evaluation." },
-    { id: "cc.obj.processors", conceptId: "cc.concurrent", text: "Count the processors the earliest-step schedule needs." },
+    { id: "cc.obj.processors", conceptId: "cc.concurrent", text: "Count the operations in each step of the earliest-step schedule, then the processors it needs." },
   ],
   activities: [
     { id: "kinds", title: "Sequential or concurrent", summary: "What each kind of evaluation does.", authority: "DEMO", minutes: 4, questions: [sequentialOrConcurrent] },
     { id: "sequential-steps", title: "Sequential steps", summary: "One operation per step.", authority: "DEMO", minutes: 6, questions: [sequentialSteps] },
-    { id: "concurrent-steps", title: "Concurrent steps and processors", summary: "The longest chain and the widest step.", authority: "DEMO", minutes: 10, questions: [concurrentSteps, processors] },
+    { id: "concurrent-steps", title: "Concurrent steps and processors", summary: "The longest chain and the widest step.", authority: "DEMO", minutes: 10, questions: [concurrentSteps, step1, step2, processors] },
   ],
 };

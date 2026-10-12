@@ -123,12 +123,13 @@ const protection = mcq("sc.q.protection", "Which protection", "sc.security", "sc
   row("Which protection means choosing complex, memorable passwords and changing them often?", "Password management", others(METHODS, "Password management"), PROTECT, "Complex, memorable, often changed: password management.", "It is about how people choose passwords."),
 ]);
 
-const ETHICS = "The ethics section names the standards of IEEE and ACM, respect for privacy and proprietary information, and the issues of piracy, plagiarism, eavesdropping, cracking or hacking, and unauthorized access.";
+const ETHICS = "The ethics section names the standards of IEEE and ACM, respect for privacy and proprietary information, and the issues of piracy, plagiarism, eavesdropping, cracking or hacking, and unauthorized access. Antivirus, firewalls, encryption and password management are protection methods, not ethical issues.";
+/** Wrong options are the pack's own protection methods: plausible next to a security question, and clearly not ethical issues. */
 const ethics = mcq("sc.q.ethics", "Ethics", "sc.security", "sc.obj.ethics", [
-  row("Which of these is named as an ethical issue in networks?", "Piracy", ["Compaction", "Spooling"], ETHICS, "Piracy is one of the named issues.", "Which one is about behaviour, not about a technique?"),
-  row("Which of these is named as an ethical issue in networks?", "Unauthorized access", ["Round Robin scheduling", "Paging"], ETHICS, "Unauthorized access is one of the named issues.", "Which one is about behaviour, not about a technique?"),
-  row("Which of these is named as an ethical issue in networks?", "Eavesdropping", ["Blocking records", "Aging"], ETHICS, "Eavesdropping is one of the named issues.", "Which one is about behaviour, not about a technique?"),
-  row("Which bodies' ethical standards does the chapter name?", "IEEE and ACM", ["ISO and ANSI", "IETF and W3C"], ETHICS, "The standards named are those of IEEE and ACM.", "Both are professional computing societies."),
+  row("Which of these is named as an ethical issue in networks?", "Piracy", ["Encryption", "A firewall", "Password management"], ETHICS, "Piracy is one of the named issues; the others are protection methods.", "Which one is something people do wrong, not something a system does to protect?"),
+  row("Which of these is named as an ethical issue in networks?", "Unauthorized access", ["Antivirus software", "Encryption", "A firewall"], ETHICS, "Unauthorized access is one of the named issues; the others are protection methods.", "Which one is something people do wrong, not something a system does to protect?"),
+  row("Which of these is a protection method, rather than an ethical issue?", "Encryption", ["Eavesdropping", "Plagiarism", "Piracy"], ETHICS, "Encryption protects sensitive traffic; eavesdropping, plagiarism and piracy are the issues.", "Which one is something a system does to protect, not something people do wrong?"),
+  row("Which of these belongs to the ethics the chapter names, rather than to protection?", "Respect for privacy and for proprietary information", ["Keeping antivirus software up to date", "Hiding the internal network behind a firewall", "Changing passwords often"], ETHICS, "Respecting privacy and proprietary information is an ethical duty; the others are protection methods.", "Which one is about how people should behave?"),
 ]);
 
 /* ---------- topics ---------- */
