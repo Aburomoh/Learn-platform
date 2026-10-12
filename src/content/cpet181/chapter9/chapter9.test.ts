@@ -70,6 +70,14 @@ describe("CPET 181 Chapter 9 networks and security content (#635)", () => {
     }
   });
 
+  it("the ethics distractors are the pack's own protection methods or issues, never an operating-system term (Pedagogy advisory)", () => {
+    const pool = ["encryption", "a firewall", "password management", "antivirus software", "piracy", "plagiarism", "eavesdropping", "unauthorized access", "keeping antivirus software up to date", "hiding the internal network behind a firewall", "changing passwords often", "respect for privacy and for proprietary information"];
+    for (const v of find("sc.q.ethics").variants) {
+      if (v.spec.kind !== "multiple-choice") throw new Error("multiple-choice expected");
+      for (const o of v.spec.options) expect(pool, `${v.id}: ${o.text}`).toContain(o.text.toLowerCase());
+    }
+  });
+
   it("only what the pack gives is asked: no NOS against D/OS, and no 802.11 compatibility", () => {
     const all = ACTIVITIES.flatMap(([t, a]) => questions(t, a)).flatMap((q) => q.variants).map((v) => [v.prompt, ...v.hints.map((h) => h.text), ...v.explanation.map((e) => e.say)].join(" "));
     for (const t of all) {
