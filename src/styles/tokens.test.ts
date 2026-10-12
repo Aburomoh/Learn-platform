@@ -52,6 +52,16 @@ const TEXT_PAIRS: [string, string, number][] = [
   // focus ring against the surfaces it sits on
   ["--focus", "--surface", 3],
   ["--focus", "--bg", 3],
+  // memory-map (#668): labels on the OS, the job share, and on both stripes of each hatch
+  ["--text-muted", "--mem-os", 4.5],
+  ["--text", "--mem-job", 4.5],
+  ["--text-muted", "--mem-job", 4.5],
+  ["--text-muted", "--mem-free", 4.5],
+  ["--text-muted", "--mem-free-line", 4.5],
+  ["--mem-waste-text", "--mem-waste", 4.5],
+  ["--mem-waste-text", "--mem-waste-line", 4.5],
+  // the edge between the job share and the leftover, a non-text boundary
+  ["--mem-job-edge", "--mem-job", 3],
 ];
 
 describe("design tokens", () => {

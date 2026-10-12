@@ -39,6 +39,11 @@ export interface MemoryMapProps {
 const MIN_H = 44;
 const MAX_H = 120;
 const COLUMN_H = 480;
+// A busy fixed partition (#668): the job label sits in the job's share (at least one line), the
+// caption and "waste N" in the leftover (at least two short lines), so neither overflows.
+const LABEL_H = 22;
+const CAPTION_H = 36;
+const COMPACT_REST_H = 12;
 
 /** Pixel heights for the OS block and each region. */
 export function blockHeights(
@@ -137,10 +142,26 @@ function Column({
         const pending = after !== undefined && i >= after.pending;
         const asking =
           pending && after?.asking !== undefined && i === after.pending;
+        const share = fixed && !free && !pending;
+        const left = waste(r);
+        const height = share
+          ? Math.max(
+              heights.rows[i],
+              LABEL_H + (compactLabels ? COMPACT_REST_H : CAPTION_H),
+            )
+          : heights.rows[i];
+        const shareHeight =
+          left > 0
+            ? Math.min(
+                Math.max(LABEL_H, Math.round((height * r.jobSize) / r.size)),
+                height - (compactLabels ? COMPACT_REST_H : CAPTION_H),
+              )
+            : undefined;
         const classes = [
           styles.block,
           free ? styles.free : styles.busy,
-          fixed && !free ? styles.partition : "",
+          share ? styles.partition : "",
+          share && left === 0 ? styles.partitionFull : "",
           halo === i ? styles.halo : "",
           wrong === i ? styles.wrong : "",
           releasing === i ? styles.releasing : "",
@@ -162,22 +183,27 @@ function Column({
             : free
               ? `${name} · ${r.size} ${unit}`
               : `${r.job} · ${r.jobSize} ${unit}`;
-        const inner = (
+        const inner = share ? (
           <>
-            {fixed && !free && (
-              <span
-                className={styles.fill}
-                style={{ height: `${(100 * r.jobSize) / r.size}%` }}
-                aria-hidden="true"
-              />
-            )}
-            <span className={styles.text}>{text}</span>
-            {fixed && !free && !compactLabels && (
+            <span className={styles.fill} style={{ height: shareHeight }}>
+              <span className={styles.text}>{text}</span>
+            </span>
+            {!compactLabels && (
               <small className={styles.sub}>
-                Partition {i + 1} · {r.size} {unit}
-                {wasteShown && waste(r) > 0 ? ` · waste ${waste(r)}` : ""}
+                <span>
+                  Partition {i + 1} · {r.size} {unit}
+                </span>
+                {wasteShown && left > 0 && (
+                  <span className={styles.wasteTag}>
+                    <span className="sr-only">, </span>waste {left}
+                  </span>
+                )}
               </small>
             )}
+          </>
+        ) : (
+          <>
+            <span className={styles.text}>{text}</span>
             {tagFits?.includes(i) && <span className={styles.fits}>fits</span>}
           </>
         );
@@ -189,7 +215,7 @@ function Column({
             {pickable ? (
               <label
                 className={classes}
-                style={{ height: heights.rows[i] }}
+                style={{ height }}
                 {...focusTarget(`block-${i}`)}
                 data-block={i}
               >
@@ -207,7 +233,7 @@ function Column({
             ) : (
               <div
                 className={classes}
-                style={{ height: heights.rows[i] }}
+                style={{ height }}
                 {...focusTarget(`block-${i}`)}
                 data-block={i}
               >
@@ -223,6 +249,28 @@ function Column({
       <span />
       {tail && <div className={styles.tail}>{tail}</div>}
     </div>
+  );
+}
+
+/** The key under the column: shape and colour together (#668). */
+function Legend({ fixed }: { fixed: boolean }) {
+  return (
+    <ul className={styles.legend} aria-label="Key">
+      <li>
+        <span className={`${styles.swatch} ${styles.swatchJob}`} aria-hidden="true" />
+        Job
+      </li>
+      <li>
+        <span className={`${styles.swatch} ${styles.swatchFree}`} aria-hidden="true" />
+        Free
+      </li>
+      {fixed && (
+        <li>
+          <span className={`${styles.swatch} ${styles.swatchWaste}`} aria-hidden="true" />
+          Wasted
+        </li>
+      )}
+    </ul>
   );
 }
 
@@ -263,11 +311,24 @@ function Lists({
           <caption>Partition table</caption>
           <thead>
             <tr>
-              <th scope="col">Partition</th>
+              <th scope="col">
+                <span className={styles.wide} aria-hidden="true">
+                  Partition
+                </span>
+                <span className={styles.narrow} aria-hidden="true">
+                  No.
+                </span>
+                <span className="sr-only">Partition</span>
+              </th>
               <th scope="col">Size</th>
               <th scope="col">Address</th>
               <th scope="col">Status</th>
-              {wasteColumn && <th scope="col">Internal waste</th>}
+              {wasteColumn && (
+                <th scope="col">
+                  <span aria-hidden="true">Waste</span>
+                  <span className="sr-only">Internal waste</span>
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -276,10 +337,17 @@ function Lists({
                 <td>{i + 1}</td>
                 <td className="mono">{r.size}</td>
                 <td className="mono">{r.start}</td>
-                <td>
-                  {r.job === null
-                    ? "free"
-                    : `busy · ${r.job} (${r.jobSize} ${unit})`}
+                <td className={styles.status}>
+                  {r.job === null ? (
+                    "free"
+                  ) : (
+                    <>
+                      busy<span className="sr-only">,</span>{" "}
+                      <span className={styles.statusJob}>
+                        {r.job} · {r.jobSize} {unit}
+                      </span>
+                    </>
+                  )}
                 </td>
                 {wasteColumn && (
                   <td
@@ -339,7 +407,16 @@ function Lists({
             <tr key={i} data-changed={changed(r)}>
               <td className="mono">{r.start}</td>
               <td className="mono">{r.size}</td>
-              <td>{r.job === null ? "free" : `busy · ${r.job}`}</td>
+              <td className={styles.status}>
+                {r.job === null ? (
+                  "free"
+                ) : (
+                  <>
+                    busy<span className="sr-only">,</span>{" "}
+                    <span className={styles.statusJob}>{r.job}</span>
+                  </>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -566,6 +643,7 @@ export function MemoryMap({
                 ) : undefined
               }
             />
+            {!afterRegions && <Legend fixed={fixed} />}
           </div>
           {afterRegions && (
             <div className={styles.half}>

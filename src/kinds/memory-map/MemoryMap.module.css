@@ -99,6 +99,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   font-weight: 600;
+  line-height: 1.25;
   text-align: center;
   color: var(--text);
 }
@@ -108,32 +109,52 @@
   border-top-width: 2px;
 }
 
+/* colours (#668, tokens.css --mem-*): OS neutral, job solid, free a neutral hatch, internal waste a
+   warm hatch. Shape carries the meaning too: solid = in use, hatched = unused. */
 .os {
-  background: var(--surface-2);
+  background: var(--mem-os);
   color: var(--text-muted);
 }
 
 .busy {
-  background: var(--surface-2);
+  background: var(--mem-job);
   font-weight: 700;
 }
 
-/* free: a light diagonal hatch (shape, not colour alone) */
 .free {
-  background: repeating-linear-gradient(135deg, var(--surface) 0 6px, var(--surface-2) 6px 7px);
+  background: repeating-linear-gradient(135deg, var(--mem-free) 0 6px, var(--mem-free-line) 6px 8px);
   color: var(--text-muted);
 }
 
-/* a fixed partition: the job fills its share from the top, the leftover stays hatched */
+/* a busy fixed partition: the job's share on top (label inside), the leftover below is internal
+   waste (caption and "waste N" inside); heights come from the view so neither overflows */
 .partition {
-  background: repeating-linear-gradient(135deg, var(--surface) 0 6px, var(--surface-2) 6px 7px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  background: repeating-linear-gradient(135deg, var(--mem-waste) 0 6px, var(--mem-waste-line) 6px 8px);
+}
+
+.partitionFull {
+  background: var(--mem-job);
 }
 
 .fill {
-  position: absolute;
-  inset: 0 0 auto 0;
-  z-index: -1;
-  background: var(--surface-2);
+  flex: none;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 0 var(--space-2);
+  border-bottom: 2px solid var(--mem-job-edge);
+  background: var(--mem-job);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.partitionFull .fill {
+  flex: 1;
+  border-bottom: 0;
 }
 
 .text {
@@ -141,13 +162,64 @@
 }
 
 .sub {
-  position: absolute;
-  left: 6px;
-  bottom: 2px;
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-end;
+  justify-content: space-between;
+  gap: 0 var(--space-2);
+  padding: 2px 6px 3px;
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 600;
+  line-height: 15px;
+  text-align: left;
+  color: var(--mem-waste-text);
+}
+
+.partitionFull .sub {
+  flex: none;
   color: var(--text-muted);
+}
+
+.wasteTag {
+  font-weight: 700;
+}
+
+/* the key under the column */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  margin: 0;
+  padding: 0 0 0 56px;
+  list-style: none;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.swatch {
+  width: 18px;
+  height: 14px;
+  border: 1px solid var(--text-muted);
+}
+
+.swatchJob {
+  background: var(--mem-job);
+}
+
+.swatchFree {
+  background: repeating-linear-gradient(135deg, var(--mem-free) 0 3px, var(--mem-free-line) 3px 5px);
+}
+
+.swatchWaste {
+  background: repeating-linear-gradient(135deg, var(--mem-waste) 0 3px, var(--mem-waste-line) 3px 5px);
 }
 
 .fits {
@@ -387,6 +459,7 @@
 
 /* a wide table scrolls inside its box, never the page */
 .tableBox {
+  container-type: inline-size;
   min-width: 0;
   max-width: 100%;
   overflow-x: auto;
@@ -414,6 +487,41 @@
   white-space: nowrap;
 }
 
+/* a narrow table box (phone, or the desktop side column): smaller text, tighter cells and short
+   headers, so the waste column fits without a scroll bar (#668) */
+.narrow {
+  display: none;
+}
+
+@container (max-width: 400px) {
+  .list {
+    font-size: var(--text-xs);
+  }
+  .list th,
+  .list td {
+    padding: 0 var(--space-1);
+  }
+  .wide {
+    display: none;
+  }
+  .narrow {
+    display: inline;
+  }
+}
+
+/* "busy" over the job, so the status column stays narrow */
+.list td.status {
+  padding-block: 2px;
+  line-height: 1.25;
+}
+
+.statusJob {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
 .list th {
   font-weight: 700;
 }
@@ -433,7 +541,8 @@
 }
 
 .cellInput {
-  width: 64px;
+  width: calc(4ch + 2 * var(--space-1) + 2px);
+  padding: 0 var(--space-1);
   height: var(--touch-min);
   border: 1px solid var(--accent);
   border-radius: var(--radius-sm);

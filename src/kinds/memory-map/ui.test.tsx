@@ -105,6 +105,50 @@ describe("memory-map kind in the stage (#561)", () => {
     expect(screen.getByText(/Waiting: P3 \(35 KB\)/)).toBeInTheDocument();
   });
 
+  it("fixed partitions (#668): the job label sits in the job's share, the caption and waste in the leftover; a full partition has no leftover; a key under the column; the table's waste header is short but reads in full", async () => {
+    render(<Harness variant={fixed} />);
+    const user = userEvent.setup();
+    await screen.findByText(/Step 1 of 5/);
+    // the key: shape and colour together
+    const key = screen.getByRole("list", { name: "Key" });
+    expect(within(key).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["Job", "Free", "Wasted"]);
+
+    await user.click(screen.getByRole("radio", { name: "Partition 1, 35 KB" }));
+    await user.click(screen.getByRole("button", { name: "Place job" }));
+    await screen.findByText(/Step 2 of 5/);
+    const p1 = document.querySelector("[data-column$='-before'] [data-block='0']")!;
+    const share = p1.querySelector("[class*='fill']")!;
+    expect(share.textContent).toBe("P1 · 15 KB");
+    // the share is a real height in px, at least a line, never the whole block
+    const shareH = parseInt((share as HTMLElement).style.height, 10);
+    const blockH = parseInt((p1 as HTMLElement).style.height, 10);
+    expect(shareH).toBeGreaterThanOrEqual(22);
+    expect(shareH).toBeLessThan(blockH);
+    const leftover = p1.querySelector("[class*='sub']")!;
+    expect(leftover.textContent).toContain("Partition 1 · 35 KB");
+    expect(leftover.textContent).not.toContain("P1");
+    expect(p1.className).toMatch(/partition/);
+    expect(p1.className).not.toMatch(/partitionFull/);
+
+    await user.click(screen.getByRole("radio", { name: "Partition 3, 55 KB" }));
+    await user.click(screen.getByRole("button", { name: "Place job" }));
+    await user.click(screen.getByRole("radio", { name: "Waits" }));
+    await user.click(screen.getByRole("button", { name: "Place job" }));
+    await user.click(screen.getByRole("radio", { name: "Partition 2, 20 KB" }));
+    await user.click(screen.getByRole("button", { name: "Place job" }));
+    await screen.findByText(/Step 5 of 5 · Internal waste/);
+    // P4 (20) fills Partition 2 (20): no leftover, the share is the whole block
+    const p2 = document.querySelector("[data-column$='-before'] [data-block='1']")!;
+    expect(p2.className).toMatch(/partitionFull/);
+    expect((p2.querySelector("[class*='fill']") as HTMLElement).style.height).toBe("");
+    // the partition table: a short header that reads in full, "busy" over the job
+    const table = screen.getByRole("table", { name: "Partition table" });
+    expect(within(table).getByRole("columnheader", { name: "Internal waste" })).toBeInTheDocument();
+    const status = within(table).getAllByRole("cell").filter((c) => c.className.includes("status"));
+    expect(status[0].textContent).toBe("busy, P1 · 15 KB");
+    expect(status[3].textContent).toBe("free");
+  });
+
   it("dynamic release: start and size fields; the first wrong field is marked; a right answer merges the block", async () => {
     render(<Harness variant={release} />);
     const user = userEvent.setup();
