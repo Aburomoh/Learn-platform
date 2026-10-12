@@ -107,7 +107,7 @@ test("C6 expression tree: sequential steps, concurrent steps and processors", as
       return d;
     };
     const d = depth(tree);
-    return { ops, depth: d, width: Math.max(...levels.values()) };
+    return { ops, depth: d, width: Math.max(...levels.values()), level: (k: number) => levels.get(k) ?? 0 };
   };
 
   await page.goto("/courses/cpet181/concurrent-programming/sequential-steps/");
@@ -120,9 +120,12 @@ test("C6 expression tree: sequential steps, concurrent steps and processors", as
   const expr2 = (await mainText(page)).match(/A = ([^\n]*?) with as many processors/)![1];
   await typeAnswer(page, parse(expr2).depth);
   await expectCorrect(page);
-  await page.getByRole("button", { name: /Next challenge/ }).click();
-  await typeAnswer(page, parse(expr2).width);
-  await expectCorrect(page);
+  // operations in step 1, then in step 2, then the processors of the busiest step (#665)
+  for (const answer of [parse(expr2).level(1), parse(expr2).level(2), parse(expr2).width]) {
+    await page.getByRole("button", { name: /Next challenge/ }).click();
+    await typeAnswer(page, answer);
+    await expectCorrect(page);
+  }
 });
 
 test("C7 tape: gaps between records one by one and between blocks", async ({ page }) => {
