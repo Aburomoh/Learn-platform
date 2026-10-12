@@ -24,13 +24,13 @@ const numeric = (q: ReturnType<typeof find>) =>
 
 describe("CPET 181 Chapter 6 concurrent processes content (#621)", () => {
   it("the slides' expressions give the pack's counts: s.22–23 is 7 steps, 4 concurrently, 3 processors; s.24 is 7, 4 and 4", () => {
-    expect(facts(EXPRESSIONS[0])).toEqual({ operations: 7, steps: 4, widest: 3 });
-    expect(facts(EXPRESSIONS[1])).toEqual({ operations: 7, steps: 4, widest: 4 });
+    expect(facts(EXPRESSIONS[0])).toEqual({ operations: 7, steps: 4, widest: 3, widths: [3, 2, 1, 1] });
+    expect(facts(EXPRESSIONS[1])).toEqual({ operations: 7, steps: 4, widest: 4, widths: [4, 1, 1, 1] });
   });
 
   it("the new expressions are worked by hand: (B+C)*(D−E)/F is 4 operations in 3 steps on 2 processors; B*C+D*E+F*G is 5 in 3 on 3", () => {
-    expect(facts(EXPRESSIONS[2])).toEqual({ operations: 4, steps: 3, widest: 2 });
-    expect(facts(EXPRESSIONS[3])).toEqual({ operations: 5, steps: 3, widest: 3 });
+    expect(facts(EXPRESSIONS[2])).toEqual({ operations: 4, steps: 3, widest: 2, widths: [2, 1, 1] });
+    expect(facts(EXPRESSIONS[3])).toEqual({ operations: 5, steps: 3, widest: 3, widths: [3, 1, 1] });
   });
 
   it("the numeric answers are the computed facts, and concurrent steps are fewer than sequential ones", () => {
@@ -38,6 +38,17 @@ describe("CPET 181 Chapter 6 concurrent processes content (#621)", () => {
     expect(numeric(find("concurrent-programming", "concurrent-steps", "cc.q.concurrent"))).toEqual(EXPRESSIONS.map((e) => String(facts(e).steps)));
     expect(numeric(find("concurrent-programming", "concurrent-steps", "cc.q.processors"))).toEqual(EXPRESSIONS.map((e) => String(facts(e).widest)));
     for (const e of EXPRESSIONS) expect(facts(e).steps, e).toBeLessThan(facts(e).operations);
+  });
+
+  it("the processors are built up one level at a time: operations in step 1, then step 2, then the busiest step", () => {
+    const act = "concurrent-steps";
+    expect(numeric(find("concurrent-programming", act, "cc.q.step-1"))).toEqual(EXPRESSIONS.map((e) => String(facts(e).widths[0])));
+    expect(numeric(find("concurrent-programming", act, "cc.q.step-2"))).toEqual(EXPRESSIONS.map((e) => String(facts(e).widths[1])));
+    // the answer of the last question is the largest of the levels
+    for (const e of EXPRESSIONS) expect(facts(e).widest, e).toBe(Math.max(...facts(e).widths));
+    const ids = questions("concurrent-programming", act).map((q) => q.id);
+    expect(ids.indexOf("cc.q.step-1")).toBeLessThan(ids.indexOf("cc.q.processors"));
+    expect(ids.indexOf("cc.q.step-2")).toBeLessThan(ids.indexOf("cc.q.processors"));
   });
 
   it("the processor count is only asked with the earliest-step rule stated", () => {
