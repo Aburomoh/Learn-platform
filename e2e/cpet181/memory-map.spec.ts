@@ -70,7 +70,7 @@ test("memory-map kind: attempt, feedback, hint, retry", async ({ page }) => {
       const rows = page.locator("table input");
       for (let i = 0; i < (await rows.count()); i++) {
         const t = await rows.nth(i).evaluate((x) => (x.closest("tr") as HTMLElement).innerText);
-        const m = t.match(/^(\d+)\s+(\d+)\s+\d+\s+busy · \w+ \((\d+) KB\)/);
+        const m = t.match(/^(\d+)\s+(\d+)\s+\d+\s+busy\W+\w+ · (\d+) KB/); // "busy" over "J1 · 30 KB" since #668
         await rows.nth(i).fill(String(m ? Number(m[2]) - Number(m[3]) : 0));
       }
       await page.getByRole("button", { name: /^Check/ }).click();
