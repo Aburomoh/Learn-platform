@@ -18,6 +18,8 @@ export interface TutorState {
   lastMisconception?: string;
   /** One gentle prompt per attempt cycle. */
   hesitationPrompted: boolean;
+  /** Explain Slowly has just finished and no answer has been given since: the first correct one is an `aha` (#663). */
+  afterExplanation: boolean;
   expression: Expression;
 }
 
@@ -48,6 +50,7 @@ export const initialTutorState: TutorState = {
   hintsEverUsed: false,
   explanationStep: 0,
   hesitationPrompted: false,
+  afterExplanation: false,
   expression: "neutral",
 };
 

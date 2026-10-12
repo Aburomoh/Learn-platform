@@ -28,7 +28,8 @@ add activity-scoped keys. `ar.ts` holds only translated keys (`Partial`); any ot
 falls back to `en` and is listed by `untranslatedKeys("ar")`. A translation must keep the English
 `{slots}` (tested).
 Words the tutor says belong in the catalog, not in content, so a locale can override them.
-Expressions: `neutral, explaining, thinking, curious, encouraging, concern, pleased, pointing,
+Expressions: `neutral, explaining, thinking, encouraging, concern, pleased, pointing,
+reassuring, proud, aha,
 attention-left, attention-right` (placeholders until approved assets exist).
 
 ## Core rules (M1)
@@ -36,7 +37,11 @@ attention-left, attention-right` (placeholders until approved assets exist).
    else generic nudge; `REQUEST_RETRY`. Never reveal.
 2. Second wrong → concept reminder + `FOCUS` on the content-declared focus target.
 3. Hint requests move down the ladder one rung at a time; rungs 5+ add `HIGHLIGHT`/`PULSE`.
-4. Hesitation > 45 s with no attempt → `curious`, one gentle prompt (once per attempt).
+4. Hesitation > 45 s with no attempt → `reassuring`, one gentle prompt (once per attempt).
+   Poses (owner, 2026-10-12, #663): the first wrong answer shows `concern` (try_again), the second
+   and later ones `reassuring` until the step moves on; a correct prediction and the first correct
+   answer or step straight after Explain Slowly show `aha`; a finished practice shows `proud`
+   (stage summary). `curious` is retired.
 5. Explain Slowly → `explaining`, walk steps; each step may `ASK`; correct prediction →
    `pleased` + continue, wrong → short note + continue (no penalty). When it ends, the retry uses
    another variant (`SWITCH_VARIANT`, `explain.done-variant`): the explained numbers can never

@@ -71,11 +71,11 @@ fallback.
 
   | Moment (message already exists) | Expression | Pose | Limit |
   |---|---|---|---|
-  | Last goal of a multi-step challenge solved | `insight` (new) | aha | once per challenge |
-  | Practice completed (summary) | `proud` (new) | proud | once per practice |
-  | Second or later wrong try on the same goal; Explain slowly starts | `reassuring` (new) | reassuring | replaces `concern` there |
-  | A named-mistake nudge (a detector fired) | `caution` (new) | caution | never twice in a row; then `thinking` |
-  | Predict-first prompt | `curious` (existing) | curious (replaces `focus`) | |
+  | The explanation clicks: a correct Explain Slowly prediction; the first correct answer or step straight after Explain Slowly (owner, #663) | `aha` | aha | those moments only |
+  | Practice completed (summary) (owner, #663) | `proud` | proud | once per practice |
+  | Second or later wrong try on the same goal; hesitation (owner, #663) | `reassuring` | reassuring | the first wrong try keeps `concern` (try_again) |
+  | A named-mistake nudge (a detector fired) | `caution` (planned) | caution | never twice in a row; then `thinking` |
+  | ~~Predict-first prompt~~ | ~~`curious`~~ | retired (owner, #663) | |
 
   - **Not used:** shock, x_arms, frustrated, disappointed, concerned, confused, skeptical, unsure, raised_eyebrows, amused, excited, empathetic, serious. They read as a judgement of the student, or duplicate a pose above. Adding one later needs a Pedagogy tone check.
   - **Same rules as the base set:** waist-up in the 168 × 224 box where the tutor has a column, head crop in the strip, 120 ms crossfade, nothing preloaded except neutral, phones never fetch waist-up files. A pose never appears without its message.

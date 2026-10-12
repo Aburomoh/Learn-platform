@@ -36,10 +36,13 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       if (s.stage === "complete" || s.stage === "explaining") break;
       s.attempts += 1;
       s.hesitationPrompted = false;
+      const justExplained = s.afterExplanation;
+      s.afterExplanation = false;
       if (event.correct) {
         s.stage = "complete";
-        s.expression = "pleased";
-        express("pleased");
+        // the explanation clicked (#663): the first correct answer straight after Explain Slowly
+        s.expression = justExplained ? "aha" : "pleased";
+        express(s.expression);
         const usedHints = s.hintLevel > 0 || s.hintsEverUsed;
         const override = usedHints ? ctx.reactions?.correctAfterHints : ctx.reactions?.correct;
         if (override) sayText(usedHints ? "correct.after-hints" : "correct", override);
@@ -50,9 +53,9 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       s.stage = "await_retry";
       s.lastMisconception = event.misconceptionId;
       if (s.attempts === 1) {
-        // Rule 1: nudge only, never reveal. Misconception-specific when recognised.
-        s.expression = "thinking";
-        express("thinking");
+        // Rule 1: nudge only, never reveal. Misconception-specific when recognised. The first wrong answer keeps try_again (#663).
+        s.expression = "concern";
+        express("concern");
         const key = event.misconceptionId && misconceptionKey(ctx, event.misconceptionId);
         if (key) say(key, event.vars);
         else say(genericWrongKey(ctx, event, "wrong.first"), event.vars);
@@ -60,9 +63,9 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         break;
       }
       if (s.attempts === 2) {
-        // Rule 2: concept reminder (rung ≤ 3) plus focus on the content-declared target.
-        s.expression = "thinking";
-        express("thinking");
+        // Rule 2: concept reminder (rung ≤ 3) plus focus on the content-declared target. Reassuring from the second wrong answer on (#663).
+        s.expression = "reassuring";
+        express("reassuring");
         say("wrong.second");
         const reminder = ctx.hints.find((h) => h.rung === 3) ?? nextHint(s, ctx);
         if (reminder && reminder.rung > s.hintLevel) grant(s, reminder.rung, out, reminder.text, ctx);
@@ -71,9 +74,9 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         out.push({ type: "REQUEST_RETRY" });
         break;
       }
-      // Rule 3 (attempts ≥ 3): progressive support, one rung per wrong answer.
-      s.expression = "concern";
-      express("concern");
+      // Rule 3 (attempts ≥ 3): progressive support, one rung per wrong answer; still reassuring (#663).
+      s.expression = "reassuring";
+      express("reassuring");
       const key = event.misconceptionId && misconceptionKey(ctx, event.misconceptionId);
       if (key) say(key, event.vars);
       else say(genericWrongKey(ctx, event, "wrong.again"), event.vars);
@@ -89,8 +92,10 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
     case "STEP_COMPLETED": {
       if (s.stage === "complete" || s.stage === "explaining") break;
       // The ladder restarts for the next step; remember that help was used on this variant.
-      s = { ...s, stage: "await_answer", attempts: 0, hesitationPrompted: false, hintsEverUsed: s.hintsEverUsed || s.hintLevel > 0, hintLevel: 0, grantedRungs: [], lastMisconception: undefined, expression: "encouraging" };
-      express("encouraging");
+      // A correct step straight after Explain Slowly is the explanation clicking (#663): aha, then encouraging as usual.
+      const clicked = s.afterExplanation;
+      s = { ...s, stage: "await_answer", attempts: 0, hesitationPrompted: false, afterExplanation: false, hintsEverUsed: s.hintsEverUsed || s.hintLevel > 0, hintLevel: 0, grantedRungs: [], lastMisconception: undefined, expression: clicked ? "aha" : "encouraging" };
+      express(s.expression);
       if (ctx.reactions?.stepNext) sayText("step.next", ctx.reactions.stepNext);
       else say(stepNextKey(ctx));
       out.push({ type: "STEP_DONE" });
@@ -135,7 +140,8 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       const step = ctx.explanation[s.explanationStep];
       if (!step?.ask) break;
       const text = event.correct ? step.ask.afterCorrect : step.ask.afterWrong;
-      s.expression = event.correct ? "pleased" : "neutral";
+      // a correct prediction is the explanation clicking (#663)
+      s.expression = event.correct ? "aha" : "neutral";
       express(s.expression);
       if (text) sayText(event.correct ? "prediction.correct" : "prediction.wrong", text);
       else say(event.correct ? "prediction.correct" : "prediction.wrong");
@@ -148,7 +154,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         if (ctx.hasOtherVariant) {
           // Explanation finished: the explained numbers are now known, so the independent
           // attempt uses another variant (PEDAGOGY.md: never reveal, then accept). Help is remembered.
-          s = { ...initialTutorState, hintsEverUsed: true, expression: "encouraging" };
+          s = { ...initialTutorState, hintsEverUsed: true, afterExplanation: true, expression: "encouraging" };
           express("encouraging");
           say("explain.done-variant");
           out.push({ type: "SWITCH_VARIANT" });
@@ -159,6 +165,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         // Explanation finished: hand control back for an independent attempt.
         s.stage = "await_retry";
         s.explanationStep = 0;
+        s.afterExplanation = true;
         s.expression = "encouraging";
         express("encouraging");
         say("explain.done");
@@ -175,7 +182,8 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
 
     case "RETRY_REQUESTED": {
       if (event.newVariant) {
-        s = { ...initialTutorState, expression: "encouraging" };
+        // a fresh variant, but an explanation that just ended still counts for the aha (#663)
+        s = { ...initialTutorState, afterExplanation: s.afterExplanation, expression: "encouraging" };
         express("encouraging");
         say("retry.variant");
       } else {
@@ -190,8 +198,9 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       if (s.stage === "complete" || s.stage === "explaining" || s.hesitationPrompted) break;
       if (event.seconds < HESITATION_SECONDS) break;
       s.hesitationPrompted = true;
-      s.expression = "curious";
-      express("curious");
+      // curious is retired (#663): hesitation reassures
+      s.expression = "reassuring";
+      express("reassuring");
       say("hesitation");
       break;
     }

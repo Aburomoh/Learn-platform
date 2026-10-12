@@ -222,7 +222,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
             onRestart={() => act({ type: "RESTART" })}
           />
           <div className={styles.tutor}>
-            <TutorPanel name={product.owner.shortName} expression="pleased" message={resolveMessage("ui.stage.done")} course={course.id} typingSpeed={prefs.typingSpeed} />
+            <TutorPanel name={product.owner.shortName} expression="proud" message={resolveMessage("ui.stage.done")} course={course.id} typingSpeed={prefs.typingSpeed} />
           </div>
         </div>
       </>

@@ -85,7 +85,7 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await divisionStep(page, 13, 6, 0);
   await expect(page.getByRole("status").filter({ hasText: "Not correct yet." })).toBeVisible();
   await expect(stage).toHaveAttribute("data-stage", "await_retry");
-  await expect(page.locator("[data-expression='thinking']:visible")).toBeVisible();
+  await expect(page.locator("[data-expression='concern']:visible")).toBeVisible(); // try_again on the first wrong answer (#663)
   await expect(page.getByLabel("13 divided by 2: result")).toBeVisible();
 
   // 3. hint ladder about this step

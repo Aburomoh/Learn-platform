@@ -26,7 +26,10 @@ describe("tutor pose table (#354, DESIGN_SYSTEM.md Tutor area)", () => {
   it("maps every expression, and welcome, to a pose", () => {
     expect(table).not.toBeNull();
     for (const key of KEYS) expect(table.poses[key], key).toBeTruthy();
-    expect(table.poses.curious).toBe("curious"); // predict-first prompts (#378)
+    expect((table.poses as Record<string, string>).curious).toBeUndefined(); // retired (#663)
+    expect(table.poses.reassuring).toBe("reassuring");
+    expect(table.poses.proud).toBe("proud");
+    expect(table.poses.aha).toBe("aha");
     expect(table.poses.concern).toBe("try_again");
     expect(table.poses.pleased).toBe("correct");
   });
