@@ -146,7 +146,7 @@ Owner chose (a) on #702: these join the batch. Same rules. "Check", "Hint" and t
 |---|---|---|---|
 | Footer (`Chrome.tsx`) | Demo content | محتوى تجريبي | |
 | same | Optional practice, not graded | تدريب اختياري، بلا درجات | |
-| same | Progress stays in this browser | يبقى تقدّمك في هذا المتصفح | **decide**: or «يُحفظ تقدّمك في هذا المتصفح فقط» (Auditor, #686), which says more plainly that nothing leaves the browser. |
+| same | Progress stays in this browser | يُحفظ تقدّمك في هذا المتصفح فقط | Owner chose the Auditor's form (#697): it says plainly that nothing leaves the browser. |
 | Profile menu (`ProfileMenu.tsx`) | Profile and settings | الملف الشخصي والإعدادات | Accessible name. |
 | same | Guest | ضيف | |
 | same | You are a guest. | أنت ضيف. | |
@@ -218,7 +218,7 @@ They are in draft PR #702 (maps rebuilt) with a catalog key each in `src/tutor/m
 | `ui.summary.back` | Back to topic | العودة إلى الموضوع |
 | `ui.foot.demo` | Demo content | محتوى تجريبي |
 | `ui.foot.optional` | Optional practice, not graded | تدريب اختياري، بلا درجات |
-| `ui.foot.local` | Progress stays in this browser | يبقى تقدّمك في هذا المتصفح |
+| `ui.foot.local` | Progress stays in this browser | يُحفظ تقدّمك في هذا المتصفح فقط |
 | `ui.profile.menu` | Profile and settings | الملف الشخصي والإعدادات |
 | `ui.profile.guest` | Guest | ضيف |
 | `ui.profile.you-are-guest` | You are a guest. | أنت ضيف. |
