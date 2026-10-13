@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { Activity, Course, Topic } from "@/content/schema";
 import { product } from "../../config/product";
 import { HintReveal } from "@/interactions/HintReveal/HintReveal";
@@ -11,6 +11,7 @@ import { useOfferingProgress, usePrefs, getProgressStore, recordAttempt, complet
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
+import { replayPreHydrationInputs } from "./preHydration";
 import { KindPrefetch } from "@/kinds/ui";
 import { useHydrated } from "@/shell/useHydrated";
 import { RESUME_ATTR } from "./resumeMarker";
@@ -97,6 +98,12 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
 
   const question = activity.questions[state.qIndex];
   const variant = currentVariant(activity, state);
+
+  // Input made before hydration (#708): put back through React's change path in the hydration
+  // commit, before paint, so a tick or typed digits never vanish and Check turns on.
+  useLayoutEffect(() => {
+    replayPreHydrationInputs();
+  }, []);
 
   // Open once: tutor greeting. Nothing is written to progress on mount (ADR-0013): a look at a
   // practice is not study; the first attempt or finished challenge creates the record.
