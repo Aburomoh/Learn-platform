@@ -3,6 +3,7 @@ import { act, render, screen, within } from "@testing-library/react";
 import { getCourse } from "@/content";
 import { getProgressStore, clearLocalData } from "@/learner";
 import { completeActivity, completeQuestion, startActivity } from "@/learner/progress";
+import { kindWords } from "../kindWords";
 import { TopicNext } from "./TopicNext";
 
 const course = getCourse("ecet111")!;
@@ -21,8 +22,9 @@ describe("TopicNext", () => {
   it("first visit: Start practice, the effort cue from authored values, every step not started", () => {
     render(<TopicNext course={course} topic={topic} />);
     const button = document.querySelector("[data-primary-action]")!;
-    expect(button).toHaveTextContent("Start practice");
+    expect(button).toHaveTextContent(`Start · ${first.title}`);
     expect(button.getAttribute("href")).toContain(`/${topic.id}/${first.id}`);
+    expect(screen.getByText("Recommended next")).toBeInTheDocument();
     expect(document.querySelectorAll("[data-primary-action]")).toHaveLength(1);
     expect(screen.getAllByText(new RegExp(`${first.questions.length} short challenges`)).length).toBeGreaterThan(0);
     const steps = within(screen.getByRole("list", { name: /^Challenges/ })).getAllByRole("listitem");
@@ -48,7 +50,15 @@ describe("TopicNext", () => {
     const rows = within(screen.getByRole("region", { name: "Practices in this topic" })).getAllByRole("listitem");
     expect(rows).toHaveLength(topic.activities.length);
     expect(rows[0]).toHaveAttribute("data-status", "review");
-    expect(within(rows[0]).getByRole("link", { name: `Review: ${first.title}` }).getAttribute("href")).toContain("review=1");
+    expect(within(rows[0]).getByRole("link", { name: `Review · ${first.title}` }).getAttribute("href")).toContain("review=1");
+    // each row's second line: status, the kind in plain words, the step labels (owner refinement 1)
+    expect(rows[0]).toHaveTextContent("Completed");
+    for (const [i, a] of topic.activities.entries()) {
+      expect(rows[i].getAttribute("data-kinds")).toBe(kindWords(a));
+      expect(rows[i]).toHaveTextContent(kindWords(a));
+      const labels = a.questions.map((q) => q.label).filter(Boolean);
+      if (labels.length > 1) expect(rows[i]).toHaveTextContent(labels.join(" → "));
+    }
     // the practice the page button is about is marked "Up next" and has no second button
     expect(rows[1]).toHaveAttribute("data-up-next", "true");
     expect(within(rows[1]).queryByRole("link")).toBeNull();
@@ -65,7 +75,7 @@ describe("TopicNext", () => {
     });
     render(<TopicNext course={course} topic={topic} />);
     const isLast = topics[topics.length - 1].id === topic.id;
-    expect(document.querySelector("[data-primary-action]")).toHaveTextContent(isLast ? "Review" : "Next topic");
+    expect(document.querySelector("[data-primary-action]")).toHaveTextContent(isLast ? "Review ·" : "Next topic ·");
     expect(screen.queryByRole("list", { name: /^Challenges/ })).toBeNull();
     expect(screen.getByText("Completed. You can review it any time.")).toBeInTheDocument();
   });

@@ -4,6 +4,7 @@ import { getTopic, listTopicParams } from "@/content";
 import { CourseTutor, MeetCard, PageFrame, PageHeading, PreviewBoard, TopicNext } from "@/shell/r1";
 import styles from "@/shell/r1/r1.module.css";
 import { Notation } from "@/interactions/shared/Notation";
+import { resolveMessage } from "@/tutor/messages";
 
 type Params = { course: string; topic: string };
 
@@ -29,9 +30,15 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
 
   // "ECET 111 · Chapter 1": the course code and the chapter's short name (before its title).
   const eyebrow = `${course.code} · ${chapter.title.split("·")[0].trim()}`;
-  // The route names the first practice's challenges in order; unlabeled challenges are left out.
+  // A topic of several practices names them (epic #670, QW6); a one-practice topic names that
+  // practice's challenges in order (unlabeled challenges are left out).
   const labels = topic.activities[0].questions.map((q) => q.label).filter(Boolean);
-  const route = labels.length > 1 ? `Today: ${labels.join(" → ")}` : topic.summary;
+  const route =
+    topic.activities.length > 1
+      ? resolveMessage("ui.topic.practices", { titles: topic.activities.map((a) => a.title).join(" · ") })
+      : labels.length > 1
+        ? `Today: ${labels.join(" → ")}`
+        : topic.summary;
   const tutor = { course, messageKey: "page.topic.intro" } as const;
 
   return (

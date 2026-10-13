@@ -48,7 +48,7 @@ describe("HomeNext", () => {
     expect(screen.getByText(new RegExp(`Practice for ${product.owner.displayName}'s courses`))).toBeInTheDocument();
     const button = document.querySelector("[data-primary-action]")!;
     expect(document.querySelectorAll("[data-primary-action]")).toHaveLength(1);
-    expect(button).toHaveTextContent("Start practice");
+    expect(button).toHaveTextContent(`Start · ${practice.title}`);
     expect(button.getAttribute("href")).toContain(`/${firstTopic.id}/${practice.id}`);
     expect(screen.getByRole("heading", { level: 2, name: firstTopic.title })).toBeInTheDocument();
   });

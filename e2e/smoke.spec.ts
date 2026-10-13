@@ -58,7 +58,7 @@ test("home lists the course and navigates to an activity", async ({ page }) => {
   await expect(page.getByText(/ECET 111 · Chapter 1/)).toBeVisible();
   await expect(page.locator("[data-primary-action]")).toHaveCount(1);
   await expect(page.getByRole("group").filter({ hasText: "What you'll practise" }).locator("ul")).toBeHidden();
-  await page.locator("[data-primary-action]", { hasText: "Start practice" }).click();
+  await page.locator("[data-primary-action]", { hasText: /^Start · / }).click();
   await expect(page).toHaveURL(new RegExp(`${ACTIVITY}$`));
   await expect(page.getByTestId("learning-stage")).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

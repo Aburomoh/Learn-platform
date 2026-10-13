@@ -18,6 +18,8 @@ export interface PrimaryActionProps {
   effort?: string;
   /** Smaller button for a row that is not the page's main action. */
   size?: "page" | "row";
+  /** A small line over the button, e.g. "Recommended next" (epic #670, QW7): the order is advice, not a gate. */
+  caption?: string;
 }
 
 const Arrow = () => (
@@ -31,9 +33,10 @@ const Arrow = () => (
  * optional quiet secondary action and the effort cue. It is a real link styled as a button; the
  * surface around it is never the click target.
  */
-export function PrimaryAction({ primary, secondary, effort, size = "page" }: PrimaryActionProps) {
+export function PrimaryAction({ primary, secondary, effort, size = "page", caption }: PrimaryActionProps) {
   return (
     <div className={styles.action}>
+      {caption && <p className={styles.caption}>{caption}</p>}
       <div className={styles.actionRow}>
         <Link href={primary.href} className={`${styles.button} ${size === "row" ? styles.buttonRow : ""}`} data-primary-action>
           {primary.label}
