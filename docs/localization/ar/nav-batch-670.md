@@ -110,7 +110,7 @@ The same pattern exists in 73 more approved strings (`npm run l10n:drift`, UNTRA
 
 ## 8. Addendum (proposal): the English chrome around the translated labels
 
-QA's real render of #702 on #710 (69e7c6d) shows English text on the same screens as the labels above. These strings are **not** in this batch and **not** in #702: the owner decides whether they join it (Lead, #702). Same rules as sections 1–7: owner decisions 1–5 (#697), label:value plurals with one string for `one` and `other`, English titles stay English, Western digits. All of them are hard-coded in components today (no catalog key, so no entry in the package), which is a UI change (move each into `en.ts` as a `ui.*` key, with `{n}` slots); the Arabic below is what the key would carry. Minutes are written «د» after a figure, so there is no dual or plural of «دقيقة».
+QA's real render of #702 on #710 (69e7c6d) shows English text on the same screens as the labels above. The owner chose (a) on #702: these strings join the batch and are in the draft package (section 8c). Same rules as sections 1–7: owner decisions 1–5 (#697), label:value plurals with one string for `one` and `other`, English titles stay English, Western digits. All of them were hard-coded in components, so each now has a `ui.*` catalog key (section 8c) and the UI still has to read it through the Arabic layer. Minutes are written «د» after a figure, so there is no dual or plural of «دقيقة».
 
 | Where (source) | English | Proposed Arabic | Notes |
 |---|---|---|---|
