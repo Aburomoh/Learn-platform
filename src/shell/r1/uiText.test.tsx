@@ -184,7 +184,7 @@ describe("UiText and the resolver's labels", () => {
   });
 
   it("a label:value phrase never splits: the label and its number share one nowrap span (#705)", () => {
-    _setArabicMap(SHARED, { [messageTemplate("ui.summary.line")]: "{activity} · التحديات: {challenges} · المحاولات: {attempts} · {hints}", [messageTemplate("ui.summary.attempts.other")]: "{n}", [messageTemplate("ui.summary.challenges.other")]: "{n}", [messageTemplate("ui.summary.hints.zero")]: "بلا تلميحات" });
+    _setArabicMap(SHARED, { [messageTemplate("ui.summary.line")]: "{activity} · التحديات القصيرة: {challenges} · المحاولات: {attempts} · {hints}", [messageTemplate("ui.summary.attempts.other")]: "{n}", [messageTemplate("ui.summary.challenges.other")]: "{n}", [messageTemplate("ui.summary.hints.zero")]: "بلا تلميحات" });
     act(() => {
       _setPrefs({ locale: "ar" });
     });
@@ -192,7 +192,8 @@ describe("UiText and the resolver's labels", () => {
     render(<ActivitySummary activity={activity} objectives={[]} attempts={7} hintsUsed={0} next={courseAction(course, empty)} topicHref="/t/" onRestart={() => {}} />);
     const pairs = [...document.querySelectorAll("[class*='pair']")].map((el) => el.textContent);
     expect(pairs).toContain("المحاولات: 7");
-    expect(pairs).toContain(`التحديات: ${activity.questions.length}`);
+    // a two-word label stays whole with its number too (QA on #714)
+    expect(pairs).toContain(`التحديات القصيرة: ${activity.questions.length}`);
     for (const el of document.querySelectorAll("[class*='pair']")) expect(el.querySelector("bdi[dir='ltr']")).not.toBeNull();
   });
 

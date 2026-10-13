@@ -8,6 +8,7 @@ import type { LearningEvent } from "./events";
 import type { Expression, TutorAction } from "./actions";
 import { canRequestScaffold, IDLE_SECONDS, initialTutorState, legacyWalkthroughLosesWork, lowestUngrantedHint, nextHint, REFLEX_GUARD_MS, type ActivityContext, type TutorState } from "./state";
 import { hasMessage, messageTemplate, resolveMessage } from "../messages";
+import { softenNudge } from "./soften";
 
 export interface ReduceResult {
   state: TutorState;
@@ -331,9 +332,11 @@ function grant(s: TutorState, rung: number, out: TutorAction[], template: string
   // "I am stuck" can grant a lower rung after a higher one (a wrong check granted 3): the level stays the highest granted
   s.hintLevel = Math.max(s.hintLevel, rung);
   s.grantedRungs = [...s.grantedRungs, rung];
-  const text = fill(template, ctx.vars);
-  out.push({ type: "REVEAL_HINT", rung, text, template, vars: ctx.vars });
-  out.push({ type: "SAY", messageKey: `hint.rung-${rung}`, text, template, vars: ctx.vars });
+  // before any Check there is no answer to call "not yet" (#717): the nudge is shown without its verdict
+  const unchecked = s.attempts === 0;
+  const text = fill(unchecked ? softenNudge(template) : template, ctx.vars);
+  out.push({ type: "REVEAL_HINT", rung, text, template, vars: ctx.vars, ...(unchecked ? { unchecked } : {}) });
+  out.push({ type: "SAY", messageKey: `hint.rung-${rung}`, text, template, vars: ctx.vars, ...(unchecked ? { unchecked } : {}) });
   // the diagnosis stays on the step (#700): the view keeps it as the first card, the hint is the next one
   if (s.diagnosis) out.push({ type: "DIAGNOSIS", ...s.diagnosis });
 }

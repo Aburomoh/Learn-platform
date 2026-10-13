@@ -8,6 +8,7 @@ import shell from "@/shell/r1/r1.module.css";
 import { KindLogicGate } from "@/kinds/logicGate";
 import { ActivityRunner } from "@/stage/ActivityRunner";
 import { ResumeScript } from "@/stage/ResumeScript";
+import { PreInputScript } from "@/stage/PreInputScript";
 
 type Params = { course: string; topic: string; activity: string };
 
@@ -47,6 +48,8 @@ export default async function ActivityPage({ params }: { params: Promise<Params>
         </div>
         {/* before the stage, so it runs before the stage can paint (see ResumeScript.tsx) */}
         <ResumeScript offeringId={course.offeringId} activityId={activity.id} />
+        {/* records a tap or digits made before hydration, so the runner can keep them (#708, preHydration.ts) */}
+        <PreInputScript />
         {/* only this practice's kind logic reaches the browser, preloaded with the page (#683) */}
         <KindLogicGate kinds={activity.questions.flatMap((q) => q.variants.map((v) => v.spec.kind))}>
           <ActivityRunner course={course} topic={topic} activity={activity} />

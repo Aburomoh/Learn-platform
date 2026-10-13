@@ -7,8 +7,8 @@ import { useArabic } from "./arabic";
 import { isArabic, splitBidi } from "./bidi";
 import styles from "./l10n.module.css";
 
-/** A trailing "label: " of an Arabic run, kept on one line with the number that follows (#705). */
-const LABEL_TAIL = /(\S+:\s)$/;
+/** A trailing "label: " (one or two words) of an Arabic run, kept on one line with the number that follows (#705, QA on #714). */
+const LABEL_TAIL = /((?:\S+\s)?\S+:\s)$/;
 /** Only a short value (a count, a number, one token) is kept with its label; a list or a sentence wraps as usual (QA on #714). */
 const SHORT_VALUE = /^\S{1,12}$/;
 
