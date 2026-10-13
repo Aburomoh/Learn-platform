@@ -317,17 +317,7 @@ UI added nine keys in #714 that section 8c did not have. Same rules: label:value
 
 Not drafted here (course text or other scope): the objective lists of "You can now", question prompts, the labels drawn inside the figures and interactions, and the settings page (`SettingsForm.tsx`, long explanatory text). Say if the owner wants any of them as a further addendum.
 
-## 9. A changed hint (#717, PR #718)
-
-The division-chain rung 2 assumed a previous attempt («once more»), which reads wrong after «I'm stuck». The English changed, so the old approved Arabic no longer matches it and Arabic mode shows the English for this one hint until the owner approves.
-
-| Where | English (new) | Approved Arabic of the old string | Proposed Arabic |
-|---|---|---|---|
-| `generators.ts` division chain, rung 2 | Not yet. Do {dividend} ÷ 2 carefully: how many whole 2s fit in {dividend}? | ليس بعد. احسب {dividend} ÷ 2 مرة أخرى، بدقة. | ليس بعد. احسب {dividend} ÷ 2 بدقة: كم مرة يتسع 2 في {dividend}؟ |
-
-Shown to a student who has not checked anything, the leading «ليس بعد.» is dropped by the presentation rule of #718 (`softenNudge`), so «احسب {dividend} ÷ 2 بدقة: …» is what they read.
-
-## 10. Arabic endings on English terms (#686 batch 3, Auditor)
+## 9. Arabic endings on English terms (#686 batch 3, Auditor)
 
 Found in QA's round-3 render: «Bitاً» renders as «Bitً», because the tanween lands on the Latin "t" and the alef joins the next word. The glossary has no rule for endings on an English term. The Auditor proposes four corrections and asks the owner for a rule; nothing here is applied to #702 until the owner decides.
 
