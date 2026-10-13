@@ -2,8 +2,9 @@ import { afterEach, describe, expect, it } from "vitest";
 import { act, render, screen, within } from "@testing-library/react";
 import { getCourse } from "@/content";
 import { clearLocalData, getProgressStore } from "@/learner";
-import { completeActivity, completeQuestion, recordAttempt, startActivity } from "@/learner/progress";
+import { completeActivity, completeQuestion, recordAttempt, skipQuestion, startActivity } from "@/learner/progress";
 import userEvent from "@testing-library/user-event";
+import { courseAction } from "../primaryAction";
 import { ChapterIndex, CourseTopics, chapterStatus, chapterTitle, topicStatus } from "./CourseTopics";
 
 const course = getCourse("ecet111")!;
@@ -42,6 +43,13 @@ describe("topicStatus", () => {
     // one attempt, nothing finished yet: in progress
     const tried = recordAttempt(visited, { activityId: a.id, questionId: a.questions[0].id, conceptId: "c", correct: false, hintsUsed: 0 });
     expect(topicStatus(first, tried)).toMatchObject({ text: expect.stringMatching(/^0 of \d+ challenges done/), started: true });
+  });
+
+  it("a skip with no attempt keeps its 'skipped ahead' marker, yet is not in progress: Start, not Continue (Reviewer on #704)", () => {
+    const a = first.activities[0];
+    const skipped = skipQuestion({ version: 1, offeringId: "x", activities: {}, concepts: {} }, a.id, a.questions[0].id);
+    expect(topicStatus(first, skipped)).toMatchObject({ text: `0 of ${first.activities.reduce((n, x) => n + x.questions.length, 0)} challenges done · skipped ahead`, completed: false, started: true });
+    expect(courseAction(course, skipped).kind).toBe("start");
   });
 
   it("completed only when every practice of the topic is", () => {

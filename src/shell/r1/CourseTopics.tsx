@@ -25,8 +25,9 @@ export function topicStatus(
   }));
   if (records.every(({ r }) => r?.status === "completed"))
     return { text: "Completed", completed: true, started: true };
-  // in progress once a practice has meaningful progress (ADR-0013); a visit alone is not started
-  if (records.some(({ r }) => hasProgress(r))) {
+  // in progress once a practice has meaningful progress (ADR-0013); a visit alone is not started.
+  // A skip is not progress either, but the record of one is kept in view: "skipped ahead" (#623) stays.
+  if (records.some(({ r }) => hasProgress(r) || skippedAhead(r))) {
     const skipped = records.some(({ r }) => skippedAhead(r));
     const done = records.reduce(
       (n, { a, r }) =>
