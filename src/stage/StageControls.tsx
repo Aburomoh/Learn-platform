@@ -21,7 +21,9 @@ export interface StageControlsProps {
   children?: ReactNode;
 }
 
-const T = (k: string) => <SupportiveText template={messageTemplate(k)} inline />;
+const T = (k: string) => (
+  <SupportiveText template={messageTemplate(k)} inline />
+);
 
 /**
  * The quiet help row under the stage (learning architecture §7.3, #691): Hint · I'm stuck ·
@@ -30,48 +32,112 @@ const T = (k: string) => <SupportiveText template={messageTemplate(k)} inline />
  * engagement, and Explain slowly is instruction, never gated. The kind's own Check stays the
  * one filled button of the view.
  */
-export function StageControls({ hasHints, offer, confirmRestart, onHint, onStuck, onExplain, onConfirmExplain, onCancelExplain, children }: StageControlsProps) {
+export function StageControls({
+  hasHints,
+  offer,
+  confirmRestart,
+  onHint,
+  onStuck,
+  onExplain,
+  onConfirmExplain,
+  onCancelExplain,
+  children,
+}: StageControlsProps) {
   return (
     <div className={styles.controls} data-testid="stage-controls">
       {confirmRestart && (
-        <div className={styles.controlsChoice} role="group" aria-label="Start again with new numbers?" data-confirm-restart>
-          <button type="button" className="btn btn-primary" onClick={onConfirmExplain}>
+        <div
+          className={styles.controlsChoice}
+          role="group"
+          aria-label="Start again with new numbers?"
+          data-confirm-restart
+        >
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={onConfirmExplain}
+          >
             {T("ui.stage.go-ahead")}
           </button>
-          <button type="button" className="btn btn-quiet" onClick={onCancelExplain}>
+          <button
+            type="button"
+            className="btn btn-quiet"
+            onClick={onCancelExplain}
+          >
             {T("ui.stage.not-now")}
           </button>
         </div>
       )}
       {!confirmRestart && offer && offer.length > 0 && (
-        <div className={styles.controlsChoice} role="group" aria-label="Help" data-offer>
+        // the tutor's two choices stand in for the row (one clear choice, Auditor on #716); ⋯ stays reachable
+        <div
+          className={styles.controlsRow}
+          role="group"
+          aria-label="Help"
+          data-offer
+        >
           {offer.includes("hint") && (
-            <button type="button" className={`btn btn-quiet ${styles.chip}`} onClick={onHint}>
+            <button
+              type="button"
+              className={`btn btn-quiet ${styles.chip}`}
+              onClick={onHint}
+            >
               {T("ui.stage.show-hint")}
             </button>
           )}
           {offer.includes("explain-slowly") && (
-            <button type="button" className={`btn btn-quiet ${styles.chip}`} onClick={onExplain}>
+            <button
+              type="button"
+              className={`btn btn-quiet ${styles.chip}`}
+              onClick={onExplain}
+            >
               {T("ui.stage.explain")}
             </button>
           )}
+          {children}
         </div>
       )}
-      <div className={styles.controlsRow} role="group" aria-label="Get help">
-        <button type="button" className="btn btn-quiet" onClick={onHint} data-control="hint">
-          {hasHints ? T("ui.stage.another-hint") : T("ui.stage.hint")}
-        </button>
-        <button type="button" className="btn btn-quiet" onClick={onStuck} data-control="stuck">
-          {T("ui.stage.stuck")}
-        </button>
-        <button type="button" className="btn btn-quiet" onClick={onExplain} data-control="explain">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={styles.controlIcon}>
-            <path d="M12 6.5c-1.6-1.3-3.8-1.7-7-1.5v13c3.2-.2 5.4.2 7 1.5 1.6-1.3 3.8-1.7 7-1.5v-13c-3.2-.2-5.4.2-7 1.5zM12 6.5v13" />
-          </svg>
-          {T("ui.stage.explain")}
-        </button>
-        {children}
-      </div>
+      {!(offer && offer.length > 0 && !confirmRestart) && (
+        <div className={styles.controlsRow} role="group" aria-label="Get help">
+          <button
+            type="button"
+            className="btn btn-quiet"
+            onClick={onHint}
+            data-control="hint"
+          >
+            {hasHints ? T("ui.stage.another-hint") : T("ui.stage.hint")}
+          </button>
+          <button
+            type="button"
+            className="btn btn-quiet"
+            onClick={onStuck}
+            data-control="stuck"
+          >
+            {T("ui.stage.stuck")}
+          </button>
+          <button
+            type="button"
+            className="btn btn-quiet"
+            onClick={onExplain}
+            data-control="explain"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className={styles.controlIcon}
+            >
+              <path d="M12 6.5c-1.6-1.3-3.8-1.7-7-1.5v13c3.2-.2 5.4.2 7 1.5 1.6-1.3 3.8-1.7 7-1.5v-13c-3.2-.2-5.4.2-7 1.5zM12 6.5v13" />
+            </svg>
+            {T("ui.stage.explain")}
+          </button>
+          {children}
+        </div>
+      )}
     </div>
   );
 }

@@ -31,6 +31,8 @@ export interface RunnerState {
   offer?: ("hint" | "explain-slowly")[];
   /** The one-time warning before a legacy walkthrough restarts a multi-step question (engine `CONFIRM_RESTART`, #690 §2.6). */
   confirmRestart: boolean;
+  /** The tutor line the warning replaced, so "Not now" can bring it back (Auditor on #716). */
+  beforeWarning?: { message: string; messageSource?: RunnerState["messageSource"] };
   /** Completed steps inside a multi-step question (repeated-division, circuit-predict). */
   stepIndex: number;
   /** Last graded answer on the current variant. */
@@ -199,6 +201,7 @@ export function createRunnerReducer(activity: Activity) {
           break;
         case "CONFIRM_RESTART":
           next.confirmRestart = true;
+          next.beforeWarning = { message: s.message, messageSource: s.messageSource };
           break;
         case "SWITCH_VARIANT": {
           // New numbers for the same question, preferring ones not yet explained; hints shown were for the old ones.
@@ -271,8 +274,11 @@ export function createRunnerReducer(activity: Activity) {
         return next.tutor.stage === "explaining" ? { ...next, last: undefined } : next;
       }
 
-      case "CANCEL_EXPLAIN":
-        return { ...s, confirmRestart: false };
+      case "CANCEL_EXPLAIN": {
+        // the question in the bubble goes with its buttons: back to the line before it
+        const before = s.beforeWarning;
+        return { ...s, confirmRestart: false, beforeWarning: undefined, ...(before ? { message: before.message, messageSource: before.messageSource, messageSeq: s.messageSeq + 1 } : {}) };
+      }
 
       case "PREDICT": {
         if (!s.explanation) return s;

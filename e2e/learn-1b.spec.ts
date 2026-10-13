@@ -76,9 +76,13 @@ for (const [width, height] of [
     const offer = controls(page).getByRole("group", { name: "Help", exact: true });
     await expect(offer.getByRole("button", { name: "Show a hint" })).toBeVisible();
     await expect(offer.getByRole("button", { name: "Explain slowly" })).toBeVisible();
+    // one clear choice: the chips stand in for the row, the ⋯ menu stays with them
+    await expect(controls(page).getByRole("group", { name: "Get help", exact: true })).toHaveCount(0);
+    await expect(offer.getByRole("button", { name: "More" })).toBeVisible();
     await offer.getByRole("button", { name: "Show a hint" }).click();
     await expect(hintCards(page)).toHaveCount(2);
     await expect(controls(page).getByRole("group", { name: "Help", exact: true })).toHaveCount(0);
+    await expect(controls(page).getByRole("group", { name: "Get help", exact: true }).getByRole("button", { name: "Another hint" })).toBeVisible();
     // no horizontal overflow with the row and the cards on screen
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
   });
@@ -94,6 +98,8 @@ for (const [width, height] of [
     const ask = controls(page).getByRole("group", { name: "Start again with new numbers?" });
     await ask.getByRole("button", { name: "Not now" }).click();
     await expect(controls(page).getByRole("group", { name: "Start again with new numbers?" })).toHaveCount(0);
+    // the question leaves the bubble with its buttons
+    await expect(bubble(page)).not.toContainText(/worked example/);
     await expect(page.getByLabel("13 divided by 2: result")).toBeVisible();
     await expect(stage(page)).toHaveAttribute("data-stage", "await_answer");
     await row.getByRole("button", { name: "Explain slowly" }).click();

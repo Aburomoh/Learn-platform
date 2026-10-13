@@ -232,6 +232,10 @@ describe("engagement, I'm stuck, idle and the restart warning (learn 1b, #691)",
     const kept = reducer(asked, { type: "CANCEL_EXPLAIN" });
     expect(kept.confirmRestart).toBe(false);
     expect(kept.stepIndex).toBe(2);
+    // Not now: the bubble goes back to the line before the question (Auditor on #716)
+    expect(kept.message).toBe(atStep2.message);
+    expect(kept.message).not.toMatch(/worked example/);
+    expect(kept.messageSeq).toBe(asked.messageSeq + 1);
     const opened = reducer(asked, { type: "EXPLAIN", confirmed: true });
     expect(opened.tutor.stage).toBe("explaining");
     expect(opened.confirmRestart).toBe(false);
