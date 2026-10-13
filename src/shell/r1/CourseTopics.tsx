@@ -1,7 +1,7 @@
 "use client";
 
 import { skippedAhead } from "@/learner/progress";
-import type { MouseEvent, ReactNode } from "react";
+import { useEffect, type MouseEvent, type ReactNode } from "react";
 import type { Course, Module, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
 import type { OfferingProgress } from "@/learner/progress";
@@ -132,6 +132,23 @@ export function CourseTopics({ course }: { course: Course }) {
   const [progress] = useOfferingProgress(course.offeringId);
   const ready = useHydrated();
   const next = courseAction(course, progress);
+
+  // A `#chapter-<id>` in the address (the location line, the chapter index, a shared link) opens
+  // that chapter on load and whenever the hash changes (epic #670, #674): a closed <details>
+  // would otherwise land the student on a shut section at phone and tablet widths.
+  useEffect(() => {
+    const openFromHash = () => {
+      const id = window.location.hash.slice(1);
+      const target = id ? document.getElementById(id) : null;
+      if (target instanceof HTMLDetailsElement && !target.open) {
+        target.open = true;
+        target.scrollIntoView();
+      }
+    };
+    openFromHash();
+    window.addEventListener("hashchange", openFromHash);
+    return () => window.removeEventListener("hashchange", openFromHash);
+  }, []);
 
   return (
     <div

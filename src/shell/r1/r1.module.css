@@ -731,6 +731,93 @@
   padding-top: var(--space-5);
 }
 
+/* where am I on a practice page (#674): the location line and the practice's name, one block */
+.stageWhere {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.stageTitle {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 750;
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.2;
+}
+
+/* ---- LocationLine (#674): "ECET 111 · Chapter 1 · Binary arithmetic", each level a link ---- */
+.location {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.locationList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.locationItem {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.locationSep {
+  padding: 0 var(--space-2);
+}
+
+.locationLink {
+  color: var(--accent);
+  font-weight: 650;
+  text-decoration: none;
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+}
+
+.locationLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.locationHere {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.locationMore {
+  display: none;
+}
+
+.locationButton {
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
+/* phones: the two nearest segments, the rest behind "…" */
+@media (max-width: 640px) {
+  .locationItem[data-collapsed] {
+    display: none;
+  }
+  .locationMore {
+    display: inline-flex;
+  }
+}
+
 /* ---- TopicNext: primary action, steps, practices ---- */
 .next {
   display: grid;

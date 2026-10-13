@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getTopic, listTopicParams } from "@/content";
 import { CourseTutor, MeetCard, PageFrame, PageHeading, PreviewBoard, TopicNext } from "@/shell/r1";
+import { LocationLine, chapterShort } from "@/shell/r1/LocationLine";
 import styles from "@/shell/r1/r1.module.css";
 import { Notation } from "@/interactions/shared/Notation";
 
@@ -27,8 +28,12 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
   if (!ref) notFound();
   const { course, module: chapter, topic } = ref;
 
-  // "ECET 111 · Chapter 1": the course code and the chapter's short name (before its title).
-  const eyebrow = `${course.code} · ${chapter.title.split("·")[0].trim()}`;
+  // Where am I (epic #670, #674): the location line, course and chapter linked, this topic plain.
+  const location = [
+    { label: course.code, href: `/courses/${course.id}/` },
+    { label: chapterShort(chapter.title), href: `/courses/${course.id}/#chapter-${chapter.id}` },
+    { label: topic.title },
+  ];
   // The route names the first practice's challenges in order; unlabeled challenges are left out.
   const labels = topic.activities[0].questions.map((q) => q.label).filter(Boolean);
   const route = labels.length > 1 ? `Today: ${labels.join(" → ")}` : topic.summary;
@@ -36,7 +41,8 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
 
   return (
     <PageFrame back={{ label: course.code, href: `/courses/${course.id}/` }} demo={course.authority === "DEMO"} aside={<CourseTutor {...tutor} size="lg" />}>
-      <PageHeading eyebrow={eyebrow} title={topic.title} route={route} />
+      <LocationLine segments={location} />
+      <PageHeading title={topic.title} route={route} />
       {/* a device topic shows its symbol card in place of the preview tiles (visual system §11) */}
       {topic.meet ? <MeetCard id={topic.id} meet={topic.meet} /> : topic.preview && <PreviewBoard preview={topic.preview} />}
       {/* on wide screens the tutor sits in the right column instead */}

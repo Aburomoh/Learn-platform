@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getActivity, listActivityParams } from "@/content";
 import { Footer, TopBar } from "@/shell/r1";
+import { LocationLine, chapterShort } from "@/shell/r1/LocationLine";
 import shell from "@/shell/r1/r1.module.css";
 import { ActivityRunner } from "@/stage/ActivityRunner";
 import { ResumeScript } from "@/stage/ResumeScript";
@@ -26,13 +27,22 @@ export default async function ActivityPage({ params }: { params: Promise<Params>
   const ref = getActivity(courseId, topicId, activityId);
   if (!ref) notFound();
   const { course, topic, activity } = ref;
+  const chapter = course.modules.find((m) => m.topics.some((t) => t.id === topic.id));
+  // Where am I (epic #670, #674): course · chapter · topic, each a link; then the practice's name
+  const location = [
+    { label: course.code, href: `/courses/${course.id}/` },
+    ...(chapter ? [{ label: chapterShort(chapter.title), href: `/courses/${course.id}/#chapter-${chapter.id}` }] : []),
+    { label: topic.title, href: `/courses/${course.id}/${topic.id}/` },
+  ];
 
   return (
     <>
       <TopBar back={{ label: topic.title, href: `/courses/${course.id}/${topic.id}/` }} />
       <main className={`${shell.main} ${shell.mainStage}`}>
-        {/* the page still has a name for assistive technology and the tab title */}
-        <h1 className="sr-only">{activity.title}</h1>
+        <div className={shell.stageWhere}>
+          <LocationLine segments={location} />
+          <h1 className={shell.stageTitle}>{activity.title}</h1>
+        </div>
         {/* before the stage, so it runs before the stage can paint (see ResumeScript.tsx) */}
         <ResumeScript offeringId={course.offeringId} activityId={activity.id} />
         <ActivityRunner course={course} topic={topic} activity={activity} />
