@@ -93,6 +93,21 @@ These are on main already and have no Arabic, because the pre-catalog versions h
 
 Owner decision 5: canonical topic and practice titles stay English for now; the Arabic UI may surround them with LTR isolation. Nothing to translate here, and the `{title}` buttons in section 2 are unblocked.
 
+## 7. Corrections to live strings (#701, Auditor proposals on #686)
+
+In these seven approved strings two English terms meet across a full stop and read as one English phrase; the first one reverses the correction it exists to give. An Arabic word now separates them. Terminology is unchanged. Applied in the draft strings PR #702 so QA can render them.
+
+| Id | Current Arabic | Proposed Arabic |
+|---|---|---|
+| `tutor.c1.gave-twos` | هذا هو 2's Complement. 1's Complement يعكس الـ Bits فقط؛ لا يضيف شيئاً. | هذا هو 2's Complement. أمّا 1's Complement فيعكس الـ Bits فقط، ولا يضيف شيئًا. |
+| `tutor.expr.and-or-swapped`, `tutor.tt.and-or-swapped` | …AND وOR. AND يحتاج كل الأجزاء = 1؛ أما OR فيكفيه جزء واحد. | …AND وOR. فـ AND يحتاج كل الأجزاء = 1، أمّا OR فيكفيه جزء واحد. |
+| `tutor.ff.t-as-d` | T لا تُنسخ إلى Q. T = 1 يعني Complement: ما قيمة Q′ هنا؟ | T لا تُنسخ إلى Q. فـ T = 1 يعني Complement: ما قيمة Q′ هنا؟ |
+| `tutor.vm.quotient-remainder-swap` | …الـ Address. Page Number هو Quotient وDisplacement هو Remainder. | …الـ Address. فالـ Page Number هو Quotient، والـ Displacement هو Remainder. |
+| cpet181 `vm.q.virtual.v1.hints[2]` | …Main Memory. Job Size غير محدود بحجم Main Memory. | …Main Memory، إذ إنّ Job Size غير محدود بحجم Main Memory. |
+| ecet111 `lg.q.predict.v101.hints[3]` | هذا هو الـ Gate. Inputs الخاصة به هي {gateInputs}. | هذا هو الـ Gate، ومداخله (Inputs) هي {gateInputs}. **decide**: «Inputs» in the glossary form `English (Arabic)` here, or «أمّا Inputs الخاصة به فهي {gateInputs}.» |
+
+The same pattern exists in 73 more approved strings (`npm run l10n:drift`, UNTRANSLATED.md section "English terms that meet across a full stop"). Many are the "TERM. Gloss is TERM" hint shape. Say whether the Auditor should propose fixes for all of them.
+
 ## Still to come (added as the PRs land)
 
 - Learning step 1b (UI): "I'm stuck", "Show a hint", "Explain slowly", "Back to my step", the restart confirmation buttons.
