@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { TemplateVars } from "@/content/template";
-import { ActionText } from "./uiText";
+import { pluralKey, resolveMessage } from "@/tutor/messages";
+import { ActionText, type UiLine } from "./uiText";
 import styles from "./r1.module.css";
 
 export interface ActionLink {
@@ -22,7 +23,7 @@ export interface PrimaryActionProps {
    * Muted line under the button, e.g. "4 short challenges · about 10 min". Any time figure must
    * say "about" and come from authored minutes, never from tracked time.
    */
-  effort?: string;
+  effort?: ReactNode;
   /** Smaller button for a row that is not the page's main action. */
   size?: "page" | "row";
   /** A small line over the button, e.g. "Recommended next" (epic #670, QW7): the order is advice, not a gate. */
@@ -60,7 +61,13 @@ export function PrimaryAction({ primary, secondary, effort, size = "page", capti
   );
 }
 
-/** "4 short challenges · about 10 min", from the practice's authored values. */
+/** "4 short challenges · about 10 min", from the practice's authored values: the catalogue line (#710). */
+export function effortLine(challenges: number, minutes: number): UiLine {
+  return { key: pluralKey("ui.effort.challenges", challenges, "en"), vars: { n: challenges, minutes } };
+}
+
+/** The English of `effortLine`, for tests and data. */
 export function effortCue(challenges: number, minutes: number): string {
-  return `${challenges} short challenge${challenges === 1 ? "" : "s"} · about ${minutes} min`;
+  const line = effortLine(challenges, minutes);
+  return resolveMessage(line.key, line.vars);
 }

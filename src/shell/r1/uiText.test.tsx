@@ -150,6 +150,38 @@ describe("UiText and the resolver's labels", () => {
     expect(within(line as HTMLElement).getByText(activity.title).closest("bdi")).toHaveAttribute("dir", "ltr");
   });
 
+  it("a translation with no Arabic letters of its own ('+{n}', a label:value line) is still the translation (#710)", () => {
+    _setArabicMap(SHARED, { [messageTemplate("ui.row.more")]: "+{n}", [messageTemplate("ui.summary.line")]: "{activity} · {challenges} · {attempts} · {hints}", [messageTemplate("ui.summary.attempts.other")]: "المحاولات: {n}" });
+    act(() => {
+      _setPrefs({ locale: "ar" });
+    });
+    render(
+      <ol>
+        <TopicRow title="T" action={{ label: "x", href: "/" }} practices={["A", "B", "C", "D", "E", "F"]} />
+      </ol>,
+    );
+    expect(document.querySelector("[class*='moreWide']")).toHaveTextContent("+2");
+    expect(document.querySelector("[class*='moreWide']")).not.toHaveTextContent("more");
+    const activity = multi.activities[0];
+    render(<ActivitySummary activity={activity} objectives={[]} attempts={7} hintsUsed={2} next={courseAction(course, empty)} topicHref="/t/" onRestart={() => {}} />);
+    // the line itself has no Arabic letters, but a filled slot does: Arabic text element, title isolated
+    const line = screen.getByText(/المحاولات/).closest("[dir='rtl'][lang='ar']")!;
+    expect(line.textContent).toContain(`${activity.title} · `);
+    expect(line.textContent).toContain("المحاولات: 7");
+  });
+
+  it("status and effort lines read through the layer; their English is unchanged (#710)", () => {
+    _setArabicMap(SHARED, { [messageTemplate("ui.topic.practices-in")]: "التمارين في هذا الموضوع", [messageTemplate("ui.effort.minutes")]: "حوالي {n} دقيقة", [messageTemplate("ui.summary.title")]: "اكتمل التمرين" });
+    act(() => {
+      _setPrefs({ locale: "ar" });
+    });
+    render(<TopicNext course={course} topic={multi} />);
+    expect(screen.getByRole("heading", { level: 2, name: "التمارين في هذا الموضوع" })).toBeInTheDocument();
+    expect(document.body.textContent).toMatch(/حوالي \d+ دقيقة/);
+    render(<ActivitySummary activity={multi.activities[0]} objectives={["x"]} attempts={1} hintsUsed={0} next={courseAction(course, empty)} topicHref="/t/" onRestart={() => {}} />);
+    expect(screen.getByRole("heading", { level: 2, name: "اكتمل التمرين" })).toBeInTheDocument();
+  });
+
   it("the numeric hint: the catalogue part of the sentence is Arabic", () => {
     arabicOn();
     // the signed and decimal-places shapes are catalogue sentences; the plain base hints are not (ADR-0011 §6)

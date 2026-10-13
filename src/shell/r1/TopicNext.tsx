@@ -8,8 +8,9 @@ import { kindWords, kindsOf } from "../kindWords";
 import { practiceAction, topicAction } from "../primaryAction";
 import { hasMessage } from "@/tutor/messages";
 import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
-import { PrimaryAction, effortCue } from "./PrimaryAction";
-import { ActionText, UiText } from "./uiText";
+import { PrimaryAction, effortLine } from "./PrimaryAction";
+import { ActionText, LineText, UiText } from "./uiText";
+import { pluralKey } from "@/tutor/messages";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
 
@@ -38,14 +39,14 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
         primary={action.primary}
         secondary={action.secondary}
         caption={action.kind !== "review" ? <UiText k="ui.action.recommended" /> : undefined}
-        effort={finished ? "Completed. You can review it any time." : several ? `About ${activity.minutes} min` : effortCue(activity.questions.length, activity.minutes)}
+        effort={finished ? <UiText k="ui.effort.completed-topic" /> : several ? <UiText k="ui.effort.minutes-lead" vars={{ n: activity.minutes }} /> : <LineText line={effortLine(activity.questions.length, activity.minutes)} />}
       />
       {!finished && (
         <div className={styles.stepsBlock}>
           {/* with several practices, say which one the steps belong to */}
           {several && (
             <p className={styles.stepsLabel}>
-              {activity.title} · {activity.questions.length} short challenge{activity.questions.length === 1 ? "" : "s"}
+              {activity.title} · <UiText k={pluralKey("ui.effort.short-challenges", activity.questions.length, "en")} vars={{ n: activity.questions.length }} />
             </p>
           )}
           <ChallengeSteps steps={stepsFrom(activity.questions, done, inProgress(record, activity))} label={several ? `Challenges of ${activity.title}` : "Challenges"} />
@@ -55,7 +56,7 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
       {topic.activities.length > 1 && (
         <section className={styles.practices} aria-labelledby="practices-h">
           <h2 id="practices-h" className={styles.h2}>
-            Practices in this topic
+            <UiText k="ui.topic.practices-in" />
           </h2>
           <ol className={styles.practiceList}>
             {topic.activities.map((a) => {
@@ -63,10 +64,10 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
               const count = effectiveDone(a, progress.activities[a.id]).completed.size;
               // two compact lines (epic #670, QW5 + owner refinement 1): the name, then its status, kind in
               // plain words and the step labels, so the student knows what a practice is before entering
-              const status = own.kind === "review" ? "Completed" : own.kind === "continue" ? `${count} of ${a.questions.length} challenges done` : `about ${a.minutes} min`;
+              const status = own.kind === "review" ? <UiText k="ui.status.completed" /> : own.kind === "continue" ? <UiText k="ui.status.challenges-done" vars={{ done: count, total: a.questions.length }} /> : <UiText k="ui.effort.minutes" vars={{ n: a.minutes }} />;
               const labels = a.questions.map((q) => q.label).filter(Boolean);
               // fewer than two labels: the challenge count alone (the minutes are already in `status`)
-              const steps = labels.length > 1 ? labels.join(" → ") : `${a.questions.length} short challenge${a.questions.length === 1 ? "" : "s"}`;
+              const steps = labels.length > 1 ? labels.join(" → ") : <UiText k={pluralKey("ui.effort.short-challenges", a.questions.length, "en")} vars={{ n: a.questions.length }} />;
               // the kind words are catalogue strings, each read through the Arabic layer (#705)
               const kinds = kindsOf(a);
               // The practice the page button is about has no second button: the primary is its button.
@@ -83,11 +84,11 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
                           {hasMessage(`ui.kind.${kind}`) ? <UiText k={`ui.kind.${kind}`} /> : kind}
                         </span>
                       ))}
-                      {steps ? ` · ${steps}` : ""}
+                      {steps ? <> · {steps}</> : ""}
                     </p>
                   </div>
                   {upNext ? (
-                    <span className={styles.upNext}>{own.kind === "continue" ? "In progress" : "Up next"}</span>
+                    <span className={styles.upNext}>{own.kind === "continue" ? <UiText k="ui.row.in-progress" /> : <UiText k="ui.row.up-next" />}</span>
                   ) : (
                     <Link href={own.link.href} className={`${styles.quiet} ${styles.rowAction} ${styles.rowActionWrap}`}>
                       <ActionText link={own.link} /> <span aria-hidden="true">→</span>

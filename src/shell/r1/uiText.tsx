@@ -25,6 +25,17 @@ export function useUiText() {
   return { locale, t, tp };
 }
 
+/** A catalogue line: its key and slots. `text` (the English) is what pure helpers return beside it, for tests and data attributes. */
+export interface UiLine {
+  key: string;
+  vars?: TemplateVars;
+}
+
+/** Renders a `UiLine`. */
+export function LineText({ line }: { line: UiLine }) {
+  return <UiText k={line.key} vars={line.vars} />;
+}
+
 /** A catalogue string as text: Arabic `dir="rtl" lang="ar"` on this element only when translated; else the English. */
 export function UiText({ k, vars, inline = true }: { k: string; vars?: TemplateVars; inline?: boolean }) {
   return <SupportiveText template={messageTemplate(k)} vars={vars} inline={inline} />;

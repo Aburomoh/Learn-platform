@@ -61,8 +61,8 @@ export interface TopicRowProps {
   href?: string;
   /** One line under the title, e.g. "Decimal → Binary → Octal → Hex". */
   route?: string;
-  /** Status or effort line, e.g. "2 of 4 challenges done" or "3 short challenges · about 6 min". */
-  status?: string;
+  /** Status or effort line, e.g. "2 of 4 challenges done" or "3 short challenges · about 6 min"; a `<LineText>` for the Arabic layer (#710). */
+  status?: ReactNode;
   /** Muted, normal weight for an effort cue; the default (semibold) is for progress. */
   statusMuted?: boolean;
   /** True for a finished topic: the status gets a check mark as well as its text. */
