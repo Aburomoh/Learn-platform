@@ -1,7 +1,7 @@
 # Learning architecture: attempt → check → hint → lesson → return (epic #684)
 
 Role: Educational / Pedagogy Engineer (on demand) · 2026-10-13 · main @ 7822804
-Status: **proposal only**. No code. UX completes §7 and the "UX: see §7" placeholders. The Lead fills §9 (final order) and §10.
+Status: **proposal only**. No code. §7 by UX / Design Engineer (2026-10-13). The Lead fills §9 (final order) and §10.
 Inputs: the owner's directive (#684 body), the Lead's file-cited code facts (#684), the Content Engineer's inventory (#684),
 `docs/PEDAGOGY.md`, ADR-0007, ADR-0008, `docs/navigation/IA_AUDIT_670.md` (§7, §8, §12) and Pedagogy's conditions C1–C5 on #678.
 
@@ -118,7 +118,7 @@ Every input event also **resets the idle clock** (fixes RC2).
   the live numbers. With lessons it is no longer needed, so the student does not lose completed steps.
 
 ### 2.4 "I'm stuck"
-- **S1.** It is an explicit, secondary control on every question (presentation: UX, §7). It **counts as engagement** (H1), subject only
+- **S1.** It is an explicit, secondary control on every question (presentation: §7.3). It **counts as engagement** (H1), subject only
   to H5.
 - **S2.** Its first response is the **lowest rung not yet granted on this step**. That is usually rung 2: restate the step's goal in
   one sentence, then a nudge. It never skips rungs. The response ends with two choices: "Show a hint" (next rung) and "Explain
@@ -211,7 +211,7 @@ SectionRef { lesson: string, section: string }
 Not every section needs every screen (owner point 5). The **minimum** is a concept or walkthrough, plus a check.
 A content test enforces this.
 
-**UX: see §7** for how screens, sections and the return look.
+Presentation of screens, sections and the return: §7.4 and §7.6.
 
 ### 4.2 Depth standard
 The order is concept → simple example → walkthrough → check → apply → return. As in PEDAGOGY "Explain Slowly":
@@ -236,7 +236,7 @@ Question.alsoNeeds?:  SectionRef[]                          // extra skills a co
   `minterms › expand-a-term`. `pg.q.page-number` and `pg.q.whole` point at `paging › page-and-displacement`. Fixing a section
   fixes every question that uses it.
 - **Direct access:** a lesson, and any section, can be opened without a question (owner point 4). Opened this way, nothing is
-  recorded (§2.5). **UX: see §7.**
+  recorded (§2.5). Where lessons live in the navigation: §7.2.
 - **Content tests (new):**
   - every ref resolves;
   - every section reached from a question has a check screen;
@@ -253,7 +253,7 @@ This is what makes E5 safe. It also means one lesson serves 3–4 variants witho
 Restoring needs these: `qIndex`, the **variant id** (not the index, because ids survive content reordering), `stepIndex`, the sub-chunk
 (§3), the **draft** values of the current chunk, `hints` (revealed), `tutor.hintLevel` / `grantedRungs`, and `completed[]`.
 
-Two cases, depending on UX's choice of presentation:
+Two cases. **UX chose case A** (§7.1): the lesson opens in the same page and the runner stays mounted.
 
 | Case | Requires | Storage |
 |---|---|---|
@@ -360,30 +360,216 @@ retired. Rung 8/9 hints remain the "your numbers" help inside the problem.
 
 ## 7. UX implications
 
-**UX to complete.** Presentation is UX's: the panel / sheet / route choice, layouts at 390 / 768 / 1280, the "I'm stuck" placement,
-lesson navigation and direct access from course and topic pages.
+Role: UX / Design Engineer (on demand) · 2026-10-13. Fits the approved navigation model (IA §4, §12), R1 classroom layout,
+`docs/DESIGN_SYSTEM.md` (44 px targets, one filled action per view, colour never the sole state carrier, motion only with meaning),
+epic #110 (calm, no radical change) and ADR-0011 (`EN | عربي`, new labels in the shared map). Tutor: Mr. Mohanad.
 
-Pedagogical constraints UX must respect:
-1. **Never trap.** "Back to my step" is visible on every lesson screen. The check and apply screens are offered, never required to
-   leave.
-2. **Return means the same step.** Focus returns to the field or cell the student last edited. The problem's current state is
-   visible immediately: no reload, no step 1, no new numbers (E4).
-3. **Two mechanisms, two looks.** Hints stay in the problem (tutor bubble, focus/highlight). A lesson is visibly "instruction",
-   so a student can tell "a hint about my numbers" from "learning the idea".
-4. **No live numbers in a lesson.** If the problem stays visible beside the lesson (case A), its fields are read-only while the
-   lesson is open, so lesson screens are not used as an answer key. The lesson's own numbers must be distinguishable from the
-   problem's.
-5. **"I'm stuck" is secondary but findable.** It is not a primary button, it has no countdown, and it never pulses on a timer. No
-   timer is visible anywhere (patience, #42).
-6. **Explain Slowly is always enabled.** It never appears disabled with "try first" (E1). The Hint button may show its
-   "try once first" state.
-7. **One idea per screen** and a prediction before each reveal. Phone: the lesson must not require seeing the problem at the same
-   time.
-8. **Chunks are visible.** The active 8-row block and the "1s first" K-map stage are marked as the current goal, and later parts
-   are dim (step as goal).
-9. **Direct lesson access** is clearly separate from practice: opening a lesson is browsing (IA §7.1), not progress.
-10. All new labels go through the shared Arabic map (ADR-0011). Keyboard and screen reader: the detour and return move focus
-    predictably and announce "Back to {stepLabel}".
+### 7.1 Lesson presentation: one component, two hosts; the detour is **case A**
+
+| Option | Verdict | Why |
+|---|---|---|
+| **Same page, runner stays mounted** (sheet on phone, focused overlay on tablet, side panel on desktop) | **Recommended** | No storage change (§4.5 A); return is a state flip, so fields, revealed hints and the ladder survive by construction; the tutor stays the same person in the same place; on phone the problem need not be visible (constraint 7) |
+| Separate route `/…/<activity>/lesson/` | Rejected for the detour | Unmounts the runner: needs the `draft` contract, the `cet-learn:v1:draft` key and an ADR-0005 amendment before the first lesson can ship; Back becomes ambiguous (leave the lesson or leave the practice?) |
+| Inline accordion under the prompt | Rejected | At 390 it pushes the problem off-screen anyway, and the lesson's numbers sit next to the live numbers (constraint 4) |
+
+So: **one `LessonView` component with two hosts.** Host 1 is the **detour** (Explain Slowly, "I'm stuck → Explain slowly", the
+E3 offer), rendered inside the practice page over the mounted runner. Host 2 is the **lesson page** for independent access (§7.2),
+a static route. The screens, tutor and check look identical in both; only the header differs (detour: "Back to my step";
+page: location line and "Practise this").
+
+Detour geometry (no new breakpoints: ≤640, <900, ≥900):
+- **390**: full-height sheet, slides up from the bottom edge, covers the stage; `role="dialog" aria-modal="true"`, focus trapped. The
+  runner beneath is `inert`. The sheet keeps the top bar visible (logo, `EN | عربي`), so the student never loses the shell.
+- **768**: the same sheet inset to a 600 px centred overlay (`aria-modal`), the problem dimmed to `--pending-opacity` behind it and
+  read-only. The dim is the visual promise that the problem is paused, not gone.
+- **1280**: a **side panel that takes the tutor column** (≥900 the R1 aside), widened to 440 px; the problem stays in the main column,
+  read-only (fields `aria-disabled`, Check hidden, goal chip reads "Paused · lesson open"). Not modal: `role="region"
+  aria-label="Lesson"`. Mr. Mohanad moves from the aside into the panel header, so the lesson is still him teaching.
+- The sheet pushes one history entry with the hash `#lesson=<lesson>/<section>`; **browser Back closes the lesson** (popstate →
+  `detour: null`), which is what phone users press. The hash is not a route; a reload with the hash opens the lesson over a fresh
+  runner at step 0, the same loss as any reload today (case B fixes it later, §9 step 7).
+- Problem and lesson never share a surface colour: the lesson body sits on `--surface-2` with a dashed border, eyebrow **Lesson ·**
+  `<lesson> › <section>`, and every lesson stage carries the tag "Example numbers". The live problem never shows that tag.
+
+### 7.2 Independent lesson access (learn before practising)
+
+Lessons live **at topic level**, where the concepts and objectives they map to already live (§6 starting map). No global menu.
+
+- **Topic page**: one quiet block **"Learn first (optional)"** between the preview board and "Recommended next": the topic's lesson
+  sections as 1-line links, "Read canonical form · 3 min", "Expand a term · 4 min". It is never the filled button; Recommended next
+  keeps pointing at a practice (browsing is not progress, IA §7.1).
+- **Course page**: no new rows (calm). Topic rows keep the kind line from IA §12.1; a topic with lessons gets the word "Lessons"
+  appended to its muted line ("… · Subtraction by 2's complement · Lessons").
+- **Practice page**: the S2 navigator disclosure gets a second group "Lessons for this topic" under the practice list. Opening one
+  from there is the **detour** (host 1), so the work stays. The group is hidden while a detour is open.
+- **Lesson page** route: `/courses/<c>/<t>/learn/<lesson>/#<section>`, pre-rendered (ADR-0008), location line
+  `ECET 111 › Ch 2 › Minterms › Lesson`, up = `← <topic>`. Its last screen offers "Practise this: Start · <practice>" (quiet link to
+  the first practice referencing the section) and "Back to topic". Section list = a left rail at ≥900, a `<details>` above the
+  body below it. Nothing is written to progress (§2.5).
+- Guide, not trap: every lesson section is reachable from its topic page in two taps, leavable in one (up link or Back to my step),
+  and no screen has to be finished to leave.
+
+### 7.3 Controls in the practice
+
+Action row under the stage, same at every width (wraps to two rows at 390):
+
+```
+[ Check rows 1–8 ▸ ]                                    ← the one filled button; its label names the chunk
+Hint        I'm stuck        Explain slowly        ⋯    ← quiet text buttons, 44 px targets; ⋯ = skip menu, as today
+```
+
+- **Check names its chunk**: "Check column Q(t+1)", "Check rows 1–8", "Check the 1s", "Check group 2", "Check what I have",
+  "Check" alone for single-answer kinds. The label comes from the step tag plus sub-chunk (§3), so the strip, the goal chip and the
+  button all say the same thing. Disabled state as today (`aria-disabled`, never hidden) until the chunk's rule is met.
+- **Goal chip** above the stage, left-aligned under the prompt: `Now: rows 1–8 of column Q(t+1) · 3 of 10 columns`. This is the
+  "step as goal" line; it changes on every step or sub-chunk and is announced politely (§7.5).
+- **Hint**: quiet, before engagement it stays enabled and answers in the tutor bubble "Try once first, or tell me you're stuck."
+  (H1), so it is never greyed out and never pulses. Revealed rungs stack in the bubble as today (`HintReveal`).
+- **"I'm stuck"**: a quiet text button, same weight as Hint, always present, no icon, no timer, no badge (constraint 5). Its reply
+  (S2) ends with two inline chips in the bubble: `Show a hint` and `Explain slowly`. The 5 s guard (H5) is silent.
+- **Explain slowly**: quiet, **always enabled** (E1). It is the only control that opens a lesson; its icon is a small open book so
+  it reads as "instruction", not "help with my numbers" (constraint 3). Legacy fallback (E2) keeps today's walkthrough look.
+- **⋯**: unchanged `SkipMenu`, last in the row, 44 px.
+- **Idle line** (H2) is an ordinary tutor message in the bubble, no motion.
+- Only one filled button per view: during the detour at 1280, Check is hidden (not disabled) in the main column, so the lesson's
+  own Next / Check is the single filled action on screen.
+
+Chunk boundaries on the stage:
+- **Truth table > 8 rows**: a 2 px rule between rows 8 and 9 (the MSB flip), row numbers 1–8 / 9–16 in the gutter, and the active
+  block in the active column gets `--focus-halo`; the other block of the same column is dim (`--pending-opacity`), inputs disabled.
+  After the first block is right, its cells lock with a tick, the halo moves down, Check reads "Check rows 9–16". Repeated headers
+  every 8 rows (existing phone pattern) coincide with the block edge.
+- **K-map**: a three-chip **phase strip** over the map: `① Place the 1s  ② Group  ③ Expression`, current chip filled, later chips
+  outlined. Verify is the Check at the end of each phase, so the chips are goals, not five steps. In phase ①, empty cells read as
+  faint "·" and the Check is "Check the 1s"; when right, a one-tap quiet action **"Fill the rest with 0"** writes the 0s visibly
+  (no auto-fill without the tap, so the student sees the map complete). Per-term variant (§3 b): the current product term is the
+  goal chip ("Now: the cells x′z covers") and Check reads "Check x′z".
+- **cpu-schedule numeric columns**: Check reads "Check what I have"; graded-right cells lock (tick, read-only), wrong cells get the
+  error outline and keep their value, empty cells stay open. The column header carries the goal ("Finish times").
+- **base-to-decimal terms row**: same "Check what I have" treatment; the weights row above it is locked once right.
+
+### 7.4 Lesson screen types
+
+Shared frame: eyebrow `Lesson · Minterms › Expand a term`, a small Mr. Mohanad head (the strip crop) beside the screen text,
+screen dots `● ● ○ ○ ○` with the type name as the dot's title, body, footer. **"Back to my step"** is a quiet outlined button in
+the header on every screen (constraint 1). The filled button in the footer is Next, or Check inside a check/apply screen.
+
+| Screen | Visual pattern | Tutor's role |
+|---|---|---|
+| `concept` | heading = the idea in ≤ 2 sentences (`--text`, 18–20 px), optional ADR-0009 figure in `given` state. No inputs | states it once, pose `explain` |
+| `example` | the kind's stage in demo mode on the lesson surface, tag "Example numbers", values pre-filled, nothing editable; a "Why?" disclosure under it | points at the stage (`point_left` ≥1200), one line |
+| `walkthrough` | `say` left, `stage` right (stacked at 390); `ask` renders 2–4 option chips; the reveal appears only after a pick, with `afterCorrect` / `afterWrong` in the bubble | asks the prediction, then confirms; pose `think` on the ask |
+| `check` | 1–3 items on the lesson surface, heading "Check your understanding", one filled **Check** inside the screen; right → tick and one sentence; wrong → one nudge and "Read it again" (back one screen). Never required to leave | gives the feedback, never the answer before a try |
+| `apply` | one graded item, heading "Try one", same look as check; wrong → one nudge, then "Show me" reveals the lesson's answer (lesson numbers, so it is safe) | nudges once |
+| `return` | recap in one line, **[ Back to my step ]** filled (the only screen where it is), quiet "Stay in the lesson" | says "Back to {stepLabel}? Your work is as you left it." |
+
+Understanding check vs the practice Check: the lesson Check sits inside the lesson surface, grades lesson numbers, writes nothing
+to progress and never shows the practice's goal chip, so a student can tell the two apart at a glance.
+
+### 7.5 Return mechanics, Arabic and RTL, accessibility, motion
+
+**Return (E4, constraint 2).** Closing the lesson (Back to my step, the return screen, Escape, or browser Back) sets
+`detour: null`; the kind views were never unmounted, so cells, drafts, revealed hints and `hintLevel` are exactly as left. Then:
+1. focus moves to the element the runner recorded on the last "engaged" input (or the first empty cell of the chunk; fallback Check);
+2. the active chunk's `--focus-halo` is re-drawn once (static outline under reduced motion);
+3. the tutor bubble shows "Back to {stepLabel}. Your work is as you left it." and the goal chip is unchanged.
+The hash entry is popped so a second Back leaves the practice, as before the lesson.
+
+**Arabic and RTL.** All labels above (Check rows 1–8, I'm stuck, Explain slowly, Learn first, Back to my step, Example numbers,
+Fill the rest with 0, the phase chips) enter `docs/localization/ar/source-texts.ar.json` before release. Lesson prose, tutor
+lines and the action row follow the document direction (`dir="rtl"`, logical flex, so the filled Check sits at the reading start).
+The stage, tables, K-maps, charts, expressions and all numbers stay LTR inside `dir="ltr"` isolates (`<bdi>` for inline
+numbers): **no mirroring** of figures or tables. The phase strip's order follows reading direction but its numerals ①②③ keep
+their value. The 1280 lesson panel takes the tutor column wherever that column is under RTL (logical `inline-end`).
+
+**Accessibility.** Sheet and overlay are modal dialogs with the title focused on open and the runner `inert`; the 1280 panel is a
+region whose heading receives focus on open. One `role="status"` live region (the existing tutor bubble) announces the return
+line, check feedback and goal-chip changes (`aria-live="polite"`); screen dots are a `<nav aria-label="Lesson screens">`. Escape
+closes the detour at every width. Locked cells are `readonly` with a tick glyph plus text, never colour alone. All targets 44 px.
+
+**Motion.** Sheet: 200 ms slide (`--dur-base`), overlay/panel: 120 ms fade; return: one halo redraw; all instant under
+`prefers-reduced-motion`. Nothing pulses on a timer; "I'm stuck", Hint and Explain slowly never animate to attract attention.
+
+### 7.6 Low-fi mockups (390 · 768 · 1280)
+
+**390** — practice with controls · lesson opened from step 4 · return
+```
+┌───────────────────────────────┐ ┌───────────────────────────────┐ ┌───────────────────────────────┐
+│▣ CET Learn ← Three JK  EN|عربي│ │▣ CET Learn             EN|عربي│ │▣ CET Learn ← Three JK  EN|عربي│
+│ECET 111 › Ch 5 › Three JK      │ │ Lesson · Flip-flops › JK rule  │ │ECET 111 › Ch 5 › Three JK      │
+│Next-state table                │ │            [ Back to my step ] │ │Next-state table                │
+│● ● ● ◉ ○ ○ ○ ○ ○ ○  Step 4/10  │ │ ● ● ○ ○ ○   walkthrough 2 of 5 │ │● ● ● ◉ ○ ○ ○ ○ ○ ○  Step 4/10  │
+│┌ Mr. Mohanad ─────────────────┐│ │┌ Mr. Mohanad ─────────────────┐│ │┌ Mr. Mohanad ─────────────────┐│
+││"Rows 1–8 first. Which rows   ││ ││ "If J=1 and K=0, what does Q ││ ││"Back to column Q_A(t+1). Your││
+││ flip?"                       ││ ││  do on the clock edge?"      ││ ││ work is as you left it."     ││
+│└──────────────────────────────┘│ │└──────────────────────────────┘│ │└──────────────────────────────┘│
+│Now: rows 1–8 of Q_A(t+1) · 4/10│ │ ┌ Example numbers ───────────┐ │ │Now: rows 1–8 of Q_A(t+1) · 4/10│
+│  #  A B C │ JA KA │ QA(t+1)    │ │ │  J K │ Q → Q(t+1)          │ │ │  #  A B C │ JA KA │ QA(t+1)    │
+│  1  0 0 0 │ 1  0 │ [1]   ╮    │ │ │  1 0 │ 1 →  ?              │ │ │  1  0 0 0 │ 1  0 │ [1]   ╮    │
+│  2  0 0 1 │ 0  1 │ [ ]   │halo│ │ └────────────────────────────┘ │ │  2  0 0 1 │ 0  1 │ [▌]   │halo│  ← focus
+│  …  …     │      │ [ ]   ╯    │ │  ( ) stays 1  ( ) becomes 0    │ │  …  …     │      │ [ ]   ╯    │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │ │  ( ) toggles  ( ) sets to 1    │ │ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│  9  1 0 0 │ … dim, disabled    │ │                                │ │  9  1 0 0 │ … dim, disabled    │
+│ 16  1 1 1 │                    │ │                                │ │ 16  1 1 1 │                    │
+│[ Check rows 1–8 ▸ ]            │ │               [ Next ▸ ]       │ │[ Check rows 1–8 ▸ ]            │
+│Hint  I'm stuck  Explain slowly ⋯│ │ sheet · Esc / Back closes      │ │Hint  I'm stuck  Explain slowly ⋯│
+└───────────────────────────────┘ └───────────────────────────────┘ └───────────────────────────────┘
+```
+
+**768** — the lesson is a centred overlay; the problem is dimmed and read-only behind it
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│▣ CET Learn   ← Three JK flip-flops                          EN|عربي ◯│
+│ ECET 111 › Ch 5 › Three JK         Next-state table    ● ● ● ◉ ○ 4/10 │
+│ ┌ Mr. Mohanad "Rows 1–8 first…" ┐  Now: rows 1–8 of Q_A(t+1) · 4/10  │
+│ ░░░░░░░░░░░░┌──────────────────────────────────────────┐░░░░░░░░░░░░░│
+│ ░ table    ░│ Lesson · Flip-flops › JK rule   [Back to my step]       │
+│ ░ dimmed,  ░│ ● ● ● ○ ○   check 4 of 5                 │░ (read-only)│
+│ ░ paused   ░│ Check your understanding                 │░            │
+│ ░          ░│ ┌ Example numbers ────────────────────┐  │░            │
+│ ░          ░│ │ Q=0, J=1, K=1.  Q(t+1) = ?          │  │░            │
+│ ░          ░│ └─────────────────────────────────────┘  │░            │
+│ ░          ░│ ( ) 0   (•) 1   ( ) unchanged            │░            │
+│ ░          ░│                       [ Check ]          │░            │
+│ ░░░░░░░░░░░░└──────────────────────────────────────────┘░░░░░░░░░░░░░│
+│  (Check hidden while the lesson is open)   Hint  I'm stuck  Explain… ⋯│
+└──────────────────────────────────────────────────────────────────────┘
+```
+Return at 768: the overlay fades, the dim lifts, focus lands on the half-filled cell in row 2, the bubble reads
+"Back to column Q_A(t+1). Your work is as you left it.", and `[ Check rows 1–8 ▸ ]` reappears as the one filled button.
+
+**1280** — practice (left) and the lesson in the tutor column (right); the return state below
+```
+┌──────────────────────────────────────────────────────────────────┬────────────────────────────────────┐
+│▣ CET Learn   ← Three JK flip-flops                                │                       EN|عربي ◯ Guest│
+│ ECET 111 › Ch 5 › Three JK                                        │ Lesson · Flip-flops › JK rule       │
+│ Next-state table   ▸ Practices in this topic (4 of 5)              │ [ Back to my step ]                 │
+│ ● ● ● ◉ ○ ○ ○ ○ ○ ○   Step 4 of 10                                 │ ● ● ○ ○ ○  walkthrough 2 of 5        │
+│ Paused · lesson open                                               │ ┌ Mr. Mohanad (head) ─────────────┐│
+│  #  A B C │ JA KA │ QA(t+1)   (fields aria-disabled)               │ │ "If J=1 and K=0, what does Q do ││
+│  1  0 0 0 │ 1  0 │ [1]                                            │ │  on the clock edge?"            ││
+│  2  0 0 1 │ 0  1 │ [ ]                                            │ └─────────────────────────────────┘│
+│  …        │      │                                                │ ┌ Example numbers ───────────────┐ │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │ │  J K │ Q → Q(t+1)              │ │
+│  9 … 16   dim                                                      │ │  1 0 │ 1 →  ?                  │ │
+│                                                                    │ └────────────────────────────────┘ │
+│ (no Check while the lesson is open)   Hint  I'm stuck  Explain… ⋯  │ ( ) stays 1  ( ) becomes 0        │
+│                                                                    │ ( ) toggles  ( ) sets to 1        │
+│                                                                    │                        [ Next ▸ ]  │
+└──────────────────────────────────────────────────────────────────┴────────────────────────────────────┘
+after return:
+│ Now: rows 1–8 of Q_A(t+1) · 4 of 10        rows 1–8 halo redrawn   │ Mr. Mohanad (waist-up, point_left)  │
+│  2  0 0 1 │ 0  1 │ [▌]  ← focus returns here                        │ "Back to column Q_A(t+1). Your work │
+│ [ Check rows 1–8 ▸ ]   Hint  I'm stuck  Explain slowly  ⋯          │  is as you left it."                │
+```
+
+Before the practice (any width), the same stage with the K-map phase strip, for reference:
+```
+│ ① Place the 1s   ② Group   ③ Expression        Now: place the 1s of Σ(1,3,5,7)        [ Check the 1s ▸ ] │
+```
+
+**Storage:** none. Case A needs no new key and no ADR-0005 amendment; the only new runner field is `detour` (in memory).
+Case B (draft key) stays a later, separate step (§9 step 7) and does not change anything drawn here.
 
 ---
 
