@@ -57,6 +57,16 @@ export function mergedEnglishRuns(): { id: string; arabic: string }[] {
   return arabic.filter((e) => re.test(e.arabic ?? "")).map((e) => ({ id: e.id, arabic: e.arabic! }));
 }
 
+/**
+ * Arabic strings with an Arabic ending attached to an English term (#686 batch 3): «Bitاً», «Inputين», «Jobان».
+ * The tanween lands on the Latin letter and the alef joins the next word, so the term renders broken. The
+ * glossary has no rule for endings on an English term; the owner decides, so this is information.
+ */
+export function attachedEndings(): { id: string; arabic: string }[] {
+  const re = /[A-Za-z][ء-يً-ْ]/;
+  return arabic.filter((e) => re.test(e.arabic ?? "")).map((e) => ({ id: e.id, arabic: e.arabic! }));
+}
+
 export function driftReport(): { markdown: string; distinct: number; missing: number; placements: number; catalogMissing: string[] } {
   const all = supportivePlacements();
   const distinct = new Set(all.map((p) => p.english));
@@ -107,6 +117,12 @@ export function driftReport(): { markdown: string; distinct: number; missing: nu
     "Arabic strings (already approved) where a sentence ends with an English term and the next begins with one, so the two read as one English phrase. Information for the owner and the Auditor: proposed fixes go through #686; nothing was edited here.",
     "",
     ...mergedEnglishRuns().map((m) => `- \`${m.id}\`: ${m.arabic}`),
+    "",
+    `## Arabic endings attached to an English term (#686 batch 3): ${attachedEndings().length}`,
+    "",
+    "Strings where an Arabic ending (dual «ين»/«ان», tanween) is written straight after an English term, which renders broken at the join. Information for the owner and the Auditor; nothing was edited here.",
+    "",
+    ...attachedEndings().map((m) => `- \`${m.id}\`: ${m.arabic}`),
     "",
     "## The strings",
     "",

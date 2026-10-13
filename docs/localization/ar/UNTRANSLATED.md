@@ -110,6 +110,91 @@ Arabic strings (already approved) where a sentence ends with an English term and
 - `tutor.law.assoc-commut`: قريب، لكن ليس تماماً. Commutative يغيّر ترتيب الـ Terms؛ Associative يحافظ على الترتيب وينقل الأقواس.
 - `component.kinds.circuit-predict.ui.L89`: ما الذي يخرج من ${gate.type} gate؟ هذا هو ${outputName}.
 
+## Arabic endings attached to an English term (#686 batch 3): 80
+
+Strings where an Arabic ending (dual «ين»/«ان», tanween) is written straight after an English term, which renders broken at the join. Information for the owner and the Auditor; nothing was edited here.
+
+- `cpet181.deadlock-basics.deadlock-or-starvation.dl.q.deadlock-starvation.v1.explanation[0].say`: Deadlock (الجمود) هو تشابك على مستوى النظام يبدأ عندما تتوقف Jobان أو أكثر، وكل واحدة تنتظر Resource (مورداً) تحتفظ به أخرى. أما Starvation (التجويع) فهو تأجيل Job واحدة إلى أجل غير محدد بينما تستمر بقية الـ Jobs.
+- `cpet181.magnetic-tape.count-gaps.tp.q.irg.v1.hints[1]`: الـ Gap (الفجوة) تقع بين Recordين. عُدّ الأماكن بين السجلات المتجاورة، لا السجلات نفسها.
+- `cpet181.multiprocessing.parallel.cf.q.parallel.v4.explanation[1].say`: CPUان أو أكثر ينفذان تعليمات في الوقت نفسه.
+- `cpet181.multiprocessing.parallel.cf.q.parallel.v4.hints[2]`: Executes Two or More Instructions at the Same Time (تنفذ تعليمتين أو أكثر في الوقت نفسه). CPUان أو أكثر ينفذان تعليمات في الوقت نفسه.
+- `cpet181.synchronization.readers-writers.sy.q.rw.v1.explanation[1].say`: Readerان يمكنهما مشاركة الـ File: مسموح.
+- `cpet181.synchronization.readers-writers.sy.q.rw.v1.hints[2]`: Yes. Readerان يمكنهما مشاركة الـ File: مسموح.
+- `ecet111.binary-arithmetic.binary-addition.ba.q.zero.v-sum.hints[0]`: ليس بعد. Binary لديه فقط Digitان: 0 و1.
+- `ecet111.derived-gates.derived-gates.dg.q.nand.vab.explanation[1].say`: A·B: AND للـ Inputين.
+- `ecet111.derived-gates.derived-gates.dg.q.nand.vpq.explanation[1].say`: P·Q: AND للـ Inputين.
+- `ecet111.derived-gates.derived-gates.dg.q.nand.vxy.explanation[1].say`: x·y: AND للـ Inputين.
+- `ecet111.derived-gates.derived-gates.dg.q.nor.vab.explanation[1].say`: A + B: OR للـ Inputين.
+- `ecet111.derived-gates.derived-gates.dg.q.nor.vpq.explanation[1].say`: P + Q: OR للـ Inputين.
+- `ecet111.derived-gates.derived-gates.dg.q.nor.vxy.explanation[1].say`: x + y: OR للـ Inputين.
+- `ecet111.derived-gates.derived-gates.dg.q.xnor.vab.explanation[5].say`: A·B + A′·B′: OR للـ Productين.
+- `ecet111.derived-gates.derived-gates.dg.q.xnor.vpq.explanation[5].say`: P·Q + P′·Q′: OR للـ Productين.
+- `ecet111.derived-gates.derived-gates.dg.q.xnor.vxy.explanation[5].say`: x·y + x′·y′: OR للـ Productين.
+- `ecet111.derived-gates.derived-gates.dg.q.xor.vab.explanation[5].say`: A·B′ + A′·B: OR للـ Productين.
+- `ecet111.derived-gates.derived-gates.dg.q.xor.vpq.explanation[5].say`: P·Q′ + P′·Q: OR للـ Productين.
+- `ecet111.derived-gates.derived-gates.dg.q.xor.vxy.explanation[5].say`: x·y′ + x′·y: OR للـ Productين.
+- `ecet111.flip-flops.flip-flop-equations.ff.q.eq-t.et.hints[2]`: أي Gate تعطي 1 عندما يختلف Inputان؟
+- `ecet111.full-adder.full-adder-table.fa.q.row.v011.hints[2]`: ما ناتج 0 + 1 + 1 عند كتابته على شكل Bitين؟
+- `ecet111.full-adder.full-adder-table.fa.q.row.v100.hints[2]`: ما ناتج 1 + 0 + 0 عند كتابته على شكل Bitين؟
+- `ecet111.full-adder.full-adder-table.fa.q.row.v111.explanation[1].ask.prompt`: وعند كتابته على شكل Bitين يكون…
+- `ecet111.full-adder.full-adder-table.fa.q.row.v111.hints[2]`: ما ناتج 1 + 1 + 1 عند كتابته على شكل Bitين؟
+- `ecet111.full-adder.full-adder-table.fa.q.table.vtable.explanation[0].say`: كل Row يجمع 3 Bits. احسب عدد الـ 1s، ثم اكتب العدد على شكل Bitين: Co على اليسار وS على اليمين.
+- `ecet111.full-adder.full-adder-table.fa.q.table.vtable.hints[1]`: احسب عدد الـ 1s في الـ Row: 0 أو 1 أو 2 أو 3. اكتب هذا العدد بالنظام Binary (الثنائي) على شكل Bitين.
+- `ecet111.half-adder.half-adder.ha.q.add.v01.explanation[1].ask.prompt`: 0 + 1 على شكل Bitين هو…
+- `ecet111.half-adder.half-adder.ha.q.add.v01.hints[2]`: ما ناتج 0 + 1 عند كتابته على شكل Bitين؟
+- `ecet111.half-adder.half-adder.ha.q.add.v10.explanation[1].ask.prompt`: 1 + 0 على شكل Bitين هو…
+- `ecet111.half-adder.half-adder.ha.q.add.v10.hints[2]`: ما ناتج 1 + 0 عند كتابته على شكل Bitين؟
+- `ecet111.half-adder.half-adder.ha.q.add.v11.explanation[0].say`: الـ Half Adder يجمع Bitين، مثل Column واحد من عمليات الجمع Binary (الثنائية) في Chapter 1، لكن من دون Carry داخل إليه.
+- `ecet111.half-adder.half-adder.ha.q.add.v11.explanation[1].ask.prompt`: 1 + 1 على شكل Bitين هو…
+- `ecet111.half-adder.half-adder.ha.q.add.v11.hints[0]`: ليس بعد. اجمع الـ Bitين كما فعلت في Chapter 1.
+- `ecet111.half-adder.half-adder.ha.q.add.v11.hints[2]`: ما ناتج 1 + 1 عند كتابته على شكل Bitين؟
+- `ecet111.half-adder.half-adder.ha.q.gates.vc.hints[2]`: C = 1 في Row واحد فقط: عندما يكون كلا Inputين يساوي 1.
+- `ecet111.half-adder.half-adder.ha.q.table.vtable.explanation[0].say`: كل Row يجمع A + B. اكتب الناتج على شكل Bitين: C على اليسار وS على اليمين.
+- `ecet111.half-adder.half-adder.ha.q.walk.v01.explanation[2].ask.afterWrong`: AND يعطي 1 فقط عندما يكون كلا Inputين يساوي 1، لذلك C = 0.
+- `ecet111.half-adder.half-adder.ha.q.walk.v11.explanation[0].say`: يدخل A وB إلى كلا Gateين في الوقت نفسه: XOR ينتج S، وAND ينتج C.
+- `ecet111.half-adder.half-adder.ha.q.walk.v11.explanation[2].ask.afterWrong`: AND يعطي 1 فقط عندما يكون كلا Inputين يساوي 1، لذلك C = 1.
+- `ecet111.kmap-expression.expression-to-map.km.q.expand.e3.explanation[1].say`: أي Product ينقصه Variable واحد يمثل Mintermين، واحداً لكل قيمة لذلك Variable.
+- `ecet111.kmap-four.kmap-four.km.q.four.m45.explanation[1].ask.afterWrong`: Group من 4 Cells يلغي Variableين، لذلك يبقى 2.
+- `ecet111.kmap-three.kmap-three.km.q.three.m023467.explanation[1].ask.afterWrong`: Group من 4 Cells يلغي Variableين، لذلك يبقى Variable واحد.
+- `ecet111.latches.latches.lt.q.nand.n001.explanation[2].say`: وجودهما معاً عند 0 يجبر كلا Outputين على 1، لذلك لا تعود Q وQ′ متكاملتين: هذه حالة Invalid.
+- `ecet111.latches.latches.lt.q.nand.n001.hints[3]`: Set = Reset = 0 حالة Invalid: كلا Outputين يصبح 1.
+- `ecet111.latches.latches.lt.q.nand.n110.hints[2]`: هل كلا Inputين يساوي 1؟ إذاً هل يتم إجبار أي NAND على قيمة معينة؟
+- `ecet111.logic-gates.gate-tables.bg.q.and.vand-xy.explanation[0].say`: AND يعطي 1 فقط عندما تكون كل Inputs = 1. وجود Inputين يعطي 4 Rows: 2^2.
+- `ecet111.logic-gates.gate-tables.bg.q.or.vor-xy.explanation[0].say`: OR يعطي 1 عندما يكون Input واحد على الأقل = 1. وجود Inputين يعطي 4 Rows: 2^2.
+- `ecet111.logic-gates.predict-gate-output.lg.q.identify.v-and.explanation[2].ask.afterCorrect`: صحيح، 0. AND يحتاج أن يكون كلا Inputين = 1.
+- `ecet111.logic-gates.predict-gate-output.lg.q.identify.v-and.explanation[3].say`: إذن الـ Gate الذي يعطي 1 فقط عندما يكون كلا Inputين = 1 هو AND.
+- `ecet111.logic-gates.predict-gate-output.lg.q.identify.v-and.hints[6]`: الـ Gate الذي يحتاج كلا Inputين هو AND.
+- `ecet111.logic-gates.predict-gate-output.lg.q.identify.v-and.hints[7]`: AND يعطي Output = 1 فقط عندما يكون كلا Inputين = 1.
+- `ecet111.logic-gates.predict-gate-output.lg.q.identify.v-not.explanation[0].say`: AND وOR يجمعان Inputين أو أكثر. هناك Gate واحد يعمل على Input واحد فقط.
+- `ecet111.logic-gates.predict-gate-output.lg.q.identify.v-not.hints[1]`: AND وOR وNAND وNOR تأخذ Inputين أو أكثر. هناك Basic Gate واحدة فقط تأخذ Input واحداً.
+- `ecet111.logic-gates.predict-gate-output.lg.q.identify.v-or.explanation[2].say`: إذن OR يعطي 0 فقط عندما يكون كلا Inputين = 0.
+- `ecet111.logic-gates.predict-gate-output.lg.q.identify.v-or.hints[7]`: OR يعطي Output = 0 فقط عندما يكون كلا Inputين = 0.
+- `ecet111.logic-gates.predict-gate-output.lg.q.predict.v000.explanation[3].ask.afterCorrect`: صحيح. كلا Inputين = 0، لذلك OR يعطي 0.
+- `ecet111.logic-gates.predict-gate-output.lg.q.predict.v000.explanation[3].ask.afterWrong`: كلا Inputين = 0، لذلك OR يعطي 0.
+- `ecet111.logic-gates.predict-gate-output.lg.q.predict.v101.explanation[2].ask.afterCorrect`: صحيح، كلا Inputين = 1، لذلك الناتج 1.
+- `ecet111.logic-gates.predict-gate-output.lg.q.predict.v101.explanation[2].ask.afterWrong`: كلا Inputين = 1، لذلك AND gate يعطي 1.
+- `ecet111.multiplexers.mux-functions.mx.q.pairs.f3.hints[0]`: ليس بعد. انظر فقط إلى الـ Rowين في هذا الزوج: {dataVar} = 0، ثم {dataVar} = 1.
+- `ecet111.number-systems.decimal-to-binary.ns.q.divide.v26.explanation[0].say`: لتحويل {value} إلى Binary (ثنائي)، نقسم على 2 مراراً. كل Remainder (باقٍ) يصبح Bitاً واحداً.
+- `ecet111.number-systems.decimal-to-binary.ns.q.divide.v75.explanation[0].say`: اقسم {value} على 2 مراراً. كل Remainder يصبح Bitاً واحداً.
+- `ecet111.number-systems.decimal-to-binary.ns.q.hex.v26.explanation[1].say`: الـ Group اليسرى تحتوي Bitاً واحداً فقط.
+- `ecet111.number-systems.decimal-to-binary.ns.q.hex.v37.explanation[1].say`: الـ Group اليسرى فيها Bitان فقط.
+- `ecet111.number-systems.decimal-to-binary.ns.q.octal.v26.explanation[1].ask.prompt`: الـ Group اليسرى 11 تحتوي Bitين فقط. ماذا نفعل؟
+- `ecet111.number-systems.decimal-to-binary.ns.q.octal.v26.explanation[1].say`: من اليمين: 010 هي Group واحدة. يتبقى Bitان: 11.
+- `ecet111.number-systems.decimal-to-binary.ns.q.octal.v37.explanation[1].ask.afterCorrect`: صحيح. كلا Groupين مكتملان.
+- `ecet111.number-systems.decimal-to-binary.ns.q.octal.v37.explanation[1].ask.afterWrong`: 6 Bits = 2 × 3، لذلك كلا Groupين مكتملان بالفعل.
+- `ecet111.number-systems.decimal-to-binary.ns.q.octal.v37.explanation[1].say`: ستة Bits تكوّن بالضبط Groupين، كل واحدة من 3.
+- `tutor.lg.check-and`: انظر إلى AND gate مرة أخرى. يحتاج كلا Inputين = 1.
+- `tutor.lg.check-xor`: انظر إلى XOR gate مرة أخرى. يعطي 1 فقط عندما يكون Inputاه مختلفين.
+- `tutor.lg.nand-inverted`: NAND هو عكس AND. فكّر ماذا يعطي عندما يكون كلا Inputين = 1.
+- `tutor.lg.nand-not`: NAND يأخذ Inputين. أي Gate يأخذ Inputاً واحداً فقط ويعكسه؟
+- `tutor.lt.nand-00-hold`: وجود كلا Inputين عند 0 ليس "No change" في NAND Latch: كلا NAND outputs يُجبران على 1. ما نوع الحالة التي ينتجها ذلك؟
+- `tutor.mx.pair-constant`: F ليست متساوية في الـ Rowين من هذا الزوج، لذلك لا يمكن أن يعطيها Constant. أي شكل من الـ Variable يطابقها؟
+- `tutor.mx.pair-variable`: F متساوية في الـ Rowين من هذا الزوج، لذلك الـ Input لا يعتمد على الـ Variable. ما الـ Constant المناسب؟
+- `tutor.gate.rule.AND`: AND يعطي 1 فقط عندما يكون كلا Inputين = 1.
+- `tutor.gate.rule.NAND`: NAND هو AND يتبعه NOT: يعطي 0 فقط عندما يكون كلا Inputين = 1.
+- `tutor.gate.rule.NOR`: NOR هو OR يتبعه NOT: يعطي 1 فقط عندما يكون كلا Inputين = 0.
+- `tutor.gate.rule.XOR`: XOR يعطي 1 عندما يكون Inputاه مختلفين.
+
 ## The strings
 
 One line per distinct string: its first id, how many placements use it, its type, and the English.
