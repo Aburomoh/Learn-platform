@@ -6,13 +6,15 @@
  * | Local progress | Button                                   | Goes to                        |
  * |----------------|------------------------------------------|--------------------------------|
  * | No record      | Start practice                           | the practice (challenge 1)     |
- * | started        | Continue                                 | the practice (runner resumes)  |
+ * | in progress    | Continue                                 | the practice (runner resumes)  |
  * | completed      | Next topic (primary), Review (secondary) | next topic; Review = challenge 1 |
  * Completed last topic of the course: no Next topic; Review becomes primary.
+ * "In progress" is `inProgress` (ADR-0013): a `started` record with an attempt or a done question.
+ * A visited-only or explained-only record reads as no record.
  */
 import type { Activity, Course, Topic } from "@/content/schema";
 import { resolveMessage } from "@/tutor/messages";
-import type { ActivityProgress, OfferingProgress } from "@/learner/progress";
+import { inProgress, type ActivityProgress, type OfferingProgress } from "@/learner/progress";
 
 export interface ActionLink {
   label: string;
@@ -41,8 +43,11 @@ export const reviewHref = (course: Course, topic: Topic, activity: Activity) => 
 
 const topicsOf = (course: Course): Topic[] => course.modules.flatMap((m) => m.topics);
 
+/** `new`, `started` (in progress, ADR-0013) or `completed`; `skipped` and visited-only read as `new`. */
 function statusOf(progress: Progress, activity: Activity): ActivityProgress["status"] {
-  return progress.activities[activity.id]?.status ?? "new";
+  const record = progress.activities[activity.id];
+  if (record?.status === "completed") return "completed";
+  return inProgress(record) ? "started" : "new";
 }
 
 /** The practice a topic's button is about: its first unfinished one, else its first. */
@@ -81,7 +86,7 @@ export function topicAction(course: Course, topic: Topic, progress: Progress): P
 
 /**
  * Course page and home: the same rule applied to the course as a whole.
- * - a practice in progress → Continue the most recently touched one;
+ * - a practice in progress (`inProgress`) → Continue the one with the newest meaningful `lastAt`;
  * - otherwise → Start practice on the first topic that is not completed;
  * - everything completed → Review the last topic.
  */
@@ -91,7 +96,7 @@ export function courseAction(course: Course, progress: Progress): PrimaryAction 
   for (const topic of topics)
     for (const activity of topic.activities) {
       const record = progress.activities[activity.id];
-      if (record?.status === "started" && (!latest || record.lastAt > latest.at)) latest = { topic, activity, at: record.lastAt };
+      if (record && inProgress(record) && (!latest || record.lastAt > latest.at)) latest = { topic, activity, at: record.lastAt };
     }
   if (latest) return { kind: "continue", primary: { label: actionLabel("continue", latest.activity.title), href: practiceHref(course, latest.topic, latest.activity) }, topic: latest.topic, activity: latest.activity };
 

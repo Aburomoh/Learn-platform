@@ -22,7 +22,7 @@ describe("skip to next question (#579, #623, #661, PEDAGOGY)", () => {
     let p = startActivity(emptyProgress(course.offeringId), first.id, 1);
     expect(skipOffer(course, topic, first, 0).allowed).toBe(true);
     p = completeActivity(p, first.id, false, 2);
-    p = markExplained(p, first.id, 3);
+    p = markExplained(p, first.id);
     expect(p.activities[first.id].explained).toBe(true);
     expect(skipOffer(course, topic, first, 0).allowed).toBe(true);
     // a first practice of a first topic, nothing done anywhere
@@ -60,7 +60,7 @@ describe("skip to next question (#579, #623, #661, PEDAGOGY)", () => {
     const [first, second] = topic.activities;
     const [q1, q2] = second.questions;
     let p = completeActivity(startActivity(emptyProgress(course.offeringId), first.id, 1), first.id, true, 2);
-    p = skipQuestion(startActivity(p, second.id, 3), second.id, q1.id, 4);
+    p = skipQuestion(startActivity(p, second.id, 3), second.id, q1.id);
     expect(p.activities[first.id].status).toBe("completed");
     expect(p.activities[second.id]).toMatchObject({ status: "started", skippedQuestions: [q1.id] });
     expect(skippedAhead(p.activities[second.id])).toBe(true);
@@ -72,9 +72,9 @@ describe("skip to next question (#579, #623, #661, PEDAGOGY)", () => {
     const chapter = course.modules.find((m) => m.topics.includes(topic))!;
     expect(chapterStatus(chapter, p).state).not.toBe("done");
     // the same skip twice records once; a finished question cannot be skipped
-    expect(skipQuestion(p, second.id, q1.id, 5)).toBe(p);
+    expect(skipQuestion(p, second.id, q1.id)).toBe(p);
     p = completeQuestion(p, second.id, q2.id, 6);
-    expect(skipQuestion(p, second.id, q2.id, 7)).toBe(p);
+    expect(skipQuestion(p, second.id, q2.id)).toBe(p);
     // done later: no longer skipped
     p = completeQuestion(p, second.id, q1.id, 8);
     expect(p.activities[second.id].skippedQuestions).toEqual([]);
