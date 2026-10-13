@@ -60233,7 +60233,7 @@
     "slots": [
       "value"
     ],
-    "arabic": "لتحويل {value} إلى Binary (ثنائي)، نقسم على 2 مراراً. كل Remainder (باقٍ) يصبح Bitاً واحداً."
+    "arabic": "لتحويل {value} إلى Binary (ثنائي)، نقسم على 2 مراراً. كل Remainder (باقٍ) يصبح Bit واحدًا."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.divide.v26.explanation[1].ask.afterCorrect",
@@ -61117,7 +61117,7 @@
     "slots": [
       "value"
     ],
-    "arabic": "اقسم {value} على 2 مراراً. كل Remainder يصبح Bitاً واحداً."
+    "arabic": "اقسم {value} على 2 مراراً. كل Remainder يصبح Bit واحدًا."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.divide.v75.explanation[1].ask.afterCorrect",
@@ -62174,7 +62174,7 @@
       "number-systems/decimal-to-binary/ns.q.hex/v26#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "الـ Group اليسرى تحتوي Bitاً واحداً فقط."
+    "arabic": "الـ Group اليسرى فيها Bit واحد فقط."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.hex.v26.explanation[2].ask.afterCorrect",
@@ -71241,7 +71241,7 @@
       "ecet111/logic-gates"
     ],
     "slots": [],
-    "arabic": "NAND يأخذ Inputين. أي Gate يأخذ Inputاً واحداً فقط ويعكسه؟"
+    "arabic": "NAND يأخذ اثنين من الـ Inputs. أي Gate يأخذ Input واحدًا فقط ويعكسه؟"
   },
   {
     "id": "tutor.lg.nor-inverted",

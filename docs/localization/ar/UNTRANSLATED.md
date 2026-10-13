@@ -110,7 +110,7 @@ Arabic strings (already approved) where a sentence ends with an English term and
 - `tutor.law.assoc-commut`: قريب، لكن ليس تماماً. Commutative يغيّر ترتيب الـ Terms؛ Associative يحافظ على الترتيب وينقل الأقواس.
 - `component.kinds.circuit-predict.ui.L89`: ما الذي يخرج من ${gate.type} gate؟ هذا هو ${outputName}.
 
-## Arabic endings attached to an English term (#686 batch 3): 80
+## Arabic endings attached to an English term (#686 batch 3): 76
 
 Strings where an Arabic ending (dual «ين»/«ان», tanween) is written straight after an English term, which renders broken at the join. Information for the owner and the Auditor; nothing was edited here.
 
@@ -174,9 +174,6 @@ Strings where an Arabic ending (dual «ين»/«ان», tanween) is written stra
 - `ecet111.logic-gates.predict-gate-output.lg.q.predict.v101.explanation[2].ask.afterCorrect`: صحيح، كلا Inputين = 1، لذلك الناتج 1.
 - `ecet111.logic-gates.predict-gate-output.lg.q.predict.v101.explanation[2].ask.afterWrong`: كلا Inputين = 1، لذلك AND gate يعطي 1.
 - `ecet111.multiplexers.mux-functions.mx.q.pairs.f3.hints[0]`: ليس بعد. انظر فقط إلى الـ Rowين في هذا الزوج: {dataVar} = 0، ثم {dataVar} = 1.
-- `ecet111.number-systems.decimal-to-binary.ns.q.divide.v26.explanation[0].say`: لتحويل {value} إلى Binary (ثنائي)، نقسم على 2 مراراً. كل Remainder (باقٍ) يصبح Bitاً واحداً.
-- `ecet111.number-systems.decimal-to-binary.ns.q.divide.v75.explanation[0].say`: اقسم {value} على 2 مراراً. كل Remainder يصبح Bitاً واحداً.
-- `ecet111.number-systems.decimal-to-binary.ns.q.hex.v26.explanation[1].say`: الـ Group اليسرى تحتوي Bitاً واحداً فقط.
 - `ecet111.number-systems.decimal-to-binary.ns.q.hex.v37.explanation[1].say`: الـ Group اليسرى فيها Bitان فقط.
 - `ecet111.number-systems.decimal-to-binary.ns.q.octal.v26.explanation[1].ask.prompt`: الـ Group اليسرى 11 تحتوي Bitين فقط. ماذا نفعل؟
 - `ecet111.number-systems.decimal-to-binary.ns.q.octal.v26.explanation[1].say`: من اليمين: 010 هي Group واحدة. يتبقى Bitان: 11.
@@ -186,7 +183,6 @@ Strings where an Arabic ending (dual «ين»/«ان», tanween) is written stra
 - `tutor.lg.check-and`: انظر إلى AND gate مرة أخرى. يحتاج كلا Inputين = 1.
 - `tutor.lg.check-xor`: انظر إلى XOR gate مرة أخرى. يعطي 1 فقط عندما يكون Inputاه مختلفين.
 - `tutor.lg.nand-inverted`: NAND هو عكس AND. فكّر ماذا يعطي عندما يكون كلا Inputين = 1.
-- `tutor.lg.nand-not`: NAND يأخذ Inputين. أي Gate يأخذ Inputاً واحداً فقط ويعكسه؟
 - `tutor.lt.nand-00-hold`: وجود كلا Inputين عند 0 ليس "No change" في NAND Latch: كلا NAND outputs يُجبران على 1. ما نوع الحالة التي ينتجها ذلك؟
 - `tutor.mx.pair-constant`: F ليست متساوية في الـ Rowين من هذا الزوج، لذلك لا يمكن أن يعطيها Constant. أي شكل من الـ Variable يطابقها؟
 - `tutor.mx.pair-variable`: F متساوية في الـ Rowين من هذا الزوج، لذلك الـ Input لا يعتمد على الـ Variable. ما الـ Constant المناسب؟
