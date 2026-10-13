@@ -90,6 +90,16 @@
   background: var(--accent-soft);
 }
 
+/* "Recommended next" over the filled button (epic #670, QW7) */
+.caption {
+  margin: 0;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 .effort {
   margin: 0;
   font-size: var(--text-sm);
@@ -647,6 +657,51 @@
 .topicRoute {
   font-size: var(--text-sm);
   color: var(--text-muted);
+}
+
+/* the practices behind a topic title (QW5): all of them wide, the first two and "+N more" on phones */
+.topicPractices {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.moreNarrow {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .topicPractice[data-index="2"],
+  .topicPractice[data-index="3"],
+  .moreWide {
+    display: none;
+  }
+  .moreNarrow {
+    display: inline;
+  }
+}
+
+/* a topic-page practice row's second line: status · kind · steps */
+.practiceMeta {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* the row link names its practice, so it may wrap (after `.rowAction`'s nowrap in specificity) */
+.practiceList .rowActionWrap {
+  display: inline-block;
+  padding-block: calc((var(--touch-min) - 1.4em) / 2);
+  line-height: 1.4;
+  white-space: normal;
+  text-align: right;
+}
+
+/* on phones the row links sit under the text, flush with it (QA note on #682): no inline padding */
+@media (max-width: 640px) {
+  .practiceList .rowActionWrap,
+  .rowActions .rowAction {
+    padding-inline: 0;
+    text-align: left;
+  }
 }
 
 .topicStatus {

@@ -56,9 +56,26 @@ describe("CourseTopics", () => {
     render(<CourseTopics course={course} />);
     const filled = document.querySelectorAll("[data-primary-action]");
     expect(filled).toHaveLength(1);
-    expect(filled[0]).toHaveTextContent("Start practice");
+    expect(filled[0]).toHaveTextContent(`Start · ${first.activities[0].title}`);
     expect(screen.getAllByRole("listitem")[0]).toContainElement(filled[0] as HTMLElement);
-    expect(within(screen.getAllByRole("listitem")[1]).getByRole("link", { name: `Start: ${second.title}` })).toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")[0]).toHaveTextContent("Recommended next");
+    // a topic of several practices opens its page; a one-practice topic starts that practice (QW1)
+    const secondLink = within(screen.getAllByRole("listitem")[1]).getByRole("link", { name: second.activities.length > 1 ? `Open topic: ${second.title}` : `Start · ${second.activities[0].title}: ${second.title}` });
+    expect(secondLink.getAttribute("href")).toMatch(second.activities.length > 1 ? new RegExp(`/courses/ecet111/${second.id}/?$`) : new RegExp(`/${second.activities[0].id}/?$`));
+  });
+
+  it("a row lists the practices behind its title, with '+N more' beyond the first four (QW5)", () => {
+    render(<CourseTopics course={course} />);
+    const rows = screen.getAllByRole("listitem");
+    const multi = topics.findIndex((t) => t.activities.length > 1);
+    const line = rows[multi].querySelector("[data-practices]")!;
+    expect(line.getAttribute("data-practices")).toBe(String(topics[multi].activities.length));
+    for (const a of topics[multi].activities.slice(0, 4)) expect(line).toHaveTextContent(a.title);
+    const big = topics.findIndex((t) => t.activities.length > 4);
+    if (big >= 0) expect(rows[big].querySelector("[data-practices]")).toHaveTextContent(`+${topics[big].activities.length - 4} more`);
+    // a one-practice topic has no such line
+    const single = topics.findIndex((t) => t.activities.length === 1);
+    if (single >= 0) expect(rows[single].querySelector("[data-practices]")).toBeNull();
   });
 
   it("after finishing the first topic: it shows Completed with Review, and the next topic gets the filled button", () => {
@@ -68,8 +85,8 @@ describe("CourseTopics", () => {
     render(<CourseTopics course={course} />);
     const rows = screen.getAllByRole("listitem");
     expect(rows[0]).toHaveTextContent("Completed");
-    expect(within(rows[0]).getByRole("link", { name: `Review: ${first.title}` }).getAttribute("href")).toContain("review=1");
-    expect(rows[1].querySelector("[data-primary-action]")).toHaveTextContent("Start practice");
+    expect(within(rows[0]).getByRole("link", { name: first.activities.length > 1 ? `Open topic: ${first.title}` : `Review · ${first.activities[0].title}: ${first.title}` })).toBeInTheDocument();
+    expect(rows[1].querySelector("[data-primary-action]")).toHaveTextContent(`Start · ${second.activities[0].title}`);
     expect(document.querySelectorAll("[data-primary-action]")).toHaveLength(1);
   });
 

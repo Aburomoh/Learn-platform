@@ -3,7 +3,9 @@
 import Link from "next/link";
 import type { Course, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
+import { kindWords } from "../kindWords";
 import { practiceAction, topicAction } from "../primaryAction";
+import { resolveMessage } from "@/tutor/messages";
 import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
 import { PrimaryAction, effortCue } from "./PrimaryAction";
 import { useHydrated } from "../useHydrated";
@@ -32,6 +34,7 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
       <PrimaryAction
         primary={action.primary}
         secondary={action.secondary}
+        caption={action.kind !== "review" ? resolveMessage("ui.action.recommended") : undefined}
         effort={finished ? "Completed. You can review it any time." : several ? `About ${activity.minutes} min` : effortCue(activity.questions.length, activity.minutes)}
       />
       {!finished && (
@@ -55,19 +58,25 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
             {topic.activities.map((a) => {
               const own = practiceAction(course, topic, a, progress);
               const count = progress.activities[a.id]?.completedQuestions?.length ?? 0;
-              const line = own.kind === "review" ? "Completed" : own.kind === "continue" ? `${count} of ${a.questions.length} challenges done` : effortCue(a.questions.length, a.minutes);
+              // two compact lines (epic #670, QW5 + owner refinement 1): the name, then its status, kind in
+              // plain words and the step labels, so the student knows what a practice is before entering
+              const status = own.kind === "review" ? "Completed" : own.kind === "continue" ? `${count} of ${a.questions.length} challenges done` : `about ${a.minutes} min`;
+              const labels = a.questions.map((q) => q.label).filter(Boolean);
+              // fewer than two labels: the challenge count alone (the minutes are already in `status`)
+              const steps = labels.length > 1 ? labels.join(" → ") : `${a.questions.length} short challenge${a.questions.length === 1 ? "" : "s"}`;
+              const meta = [status, kindWords(a), steps].filter(Boolean).join(" · ");
               // The practice the page button is about has no second button: the primary is its button.
               const upNext = !finished && a.id === activity.id;
               return (
-                <li key={a.id} className={styles.practiceRow} data-status={own.kind} data-up-next={upNext || undefined}>
+                <li key={a.id} className={styles.practiceRow} data-status={own.kind} data-up-next={upNext || undefined} data-kinds={kindWords(a)}>
                   <div className={styles.practiceText}>
                     <h3 className={styles.topicTitle}>{a.title}</h3>
-                    <p className={`${styles.topicStatus} ${own.kind === "review" ? styles.topicDone : styles.statusMuted}`}>{line}</p>
+                    <p className={`${styles.practiceMeta} ${own.kind === "review" ? styles.topicDone : ""}`}>{meta}</p>
                   </div>
                   {upNext ? (
                     <span className={styles.upNext}>{own.kind === "continue" ? "In progress" : "Up next"}</span>
                   ) : (
-                    <Link href={own.link.href} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`${own.link.label}: ${a.title}`}>
+                    <Link href={own.link.href} className={`${styles.quiet} ${styles.rowAction} ${styles.rowActionWrap}`}>
                       {own.link.label} <span aria-hidden="true">→</span>
                     </Link>
                   )}
