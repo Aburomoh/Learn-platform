@@ -65,7 +65,10 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
   const record = progress.activities[activity.id];
   const done = [...effectiveDone(activity, record).completed];
   // a visited-only or explained-only record is not "returning" (ADR-0013)
-  const returning = courses.some((c) => Object.values(progressOf(c).activities).some((a) => hasProgress(a)));
+  const returning = courses.some((c) => {
+    const p = progressOf(c);
+    return c.modules.some((m) => m.topics.some((t) => t.activities.some((a) => hasProgress(p.activities[a.id], a))));
+  });
   const finishedAll = action.kind === "review";
 
   return (
