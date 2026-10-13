@@ -89,10 +89,12 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await expect(page.getByLabel("13 divided by 2: result")).toBeVisible();
 
   // 3. hint ladder about this step
+  // this wrong step names its mistake, so the diagnosis counts as the nudge already given (#700): the first hint is the concept
   await page.getByRole("button", { name: "Hint", exact: true }).click();
-  await expect(page.getByText("Nudge")).toBeVisible();
-  await page.getByRole("button", { name: "Another hint" }).click();
   await expect(page.getByText("Concept")).toBeVisible();
+  await expect(page.getByText("Nudge")).toHaveCount(0);
+  await page.getByRole("button", { name: "Another hint" }).click();
+  await expect(page.getByText("Question", { exact: true })).toBeVisible();
 
   // 4. Explain Slowly with a prediction before the reveal
   await page.getByRole("button", { name: "Explain slowly" }).click();
@@ -448,7 +450,7 @@ test("reduced motion: no running animations, tutor text appears at once", async 
   await divisionStep(page, 26, 12, 0);
   await expect(page.getByRole("status").filter({ hasText: "Not correct yet." })).toBeVisible();
   await page.getByRole("button", { name: "Hint", exact: true }).click();
-  await expect(page.getByText("Nudge")).toBeVisible();
+  await expect(page.getByText("Concept")).toBeVisible(); // the diagnosed step starts above the nudge (#700)
   const running = await page.evaluate(() =>
     document.getAnimations().filter((a) => a.playState === "running").map((a) => (a.effect as KeyframeEffect | null)?.target?.getAttribute("class") ?? "?"),
   );

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Course, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
+import { inProgress } from "@/learner/progress";
 import { kindWords, kindsOf } from "../kindWords";
 import { practiceAction, topicAction } from "../primaryAction";
 import { hasMessage } from "@/tutor/messages";
@@ -46,7 +47,7 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
               {activity.title} · {activity.questions.length} short challenge{activity.questions.length === 1 ? "" : "s"}
             </p>
           )}
-          <ChallengeSteps steps={stepsFrom(activity.questions, done, record?.status === "started")} label={several ? `Challenges of ${activity.title}` : "Challenges"} />
+          <ChallengeSteps steps={stepsFrom(activity.questions, done, inProgress(record))} label={several ? `Challenges of ${activity.title}` : "Challenges"} />
         </div>
       )}
 

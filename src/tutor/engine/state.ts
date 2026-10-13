@@ -17,6 +17,12 @@ export interface TutorState {
   explanationStep: number;
   lastMisconception?: string;
   /**
+   * A misconception was named on this step (#700). The diagnosis counts as the help already given: the
+   * generic nudge rungs (≤ `DIAGNOSIS_RUNG`) are skipped, so a hint or "I am stuck" is never vaguer than it.
+   * Cleared when the step completes.
+   */
+  diagnosis?: { messageKey: string; text: string; template: string; vars: TemplateVars };
+  /**
    * The student has engaged with the current step: a first edit, or "I am stuck" (#690, §2.1). A
    * Check is engagement too, and shows as `attempts > 0`. Cleared when the step completes.
    */
@@ -87,9 +93,18 @@ export function legacyWalkthroughLosesWork(ctx: Pick<ActivityContext, "stepIndex
 
 /** The lowest rung of this step's ladder not yet granted (rung 2 is usually still free after a wrong check granted 3). */
 export function lowestUngrantedHint(s: TutorState, ctx: ActivityContext): Hint | undefined {
-  return [...ctx.hints].sort((a, b) => a.rung - b.rung).find((h) => !s.grantedRungs.includes(h.rung));
+  const above = diagnosisFloor(s, ctx);
+  return [...ctx.hints].sort((a, b) => a.rung - b.rung).find((h) => h.rung > above && !s.grantedRungs.includes(h.rung));
 }
 
 export function nextHint(s: TutorState, ctx: ActivityContext): Hint | undefined {
-  return ctx.hints.find((h) => h.rung > s.hintLevel);
+  return ctx.hints.find((h) => h.rung > Math.max(s.hintLevel, diagnosisFloor(s, ctx)));
+}
+
+/** Rungs up to this one are the generic "Not yet" nudge: less specific than a named misconception (#700). */
+export const DIAGNOSIS_RUNG = 2;
+
+/** With a diagnosis on the step the ladder starts above the generic nudge, if the ladder has anything above it. */
+function diagnosisFloor(s: TutorState, ctx: ActivityContext): number {
+  return s.diagnosis && ctx.hints.some((h) => h.rung > DIAGNOSIS_RUNG) ? DIAGNOSIS_RUNG : 0;
 }

@@ -43,6 +43,12 @@ export function emptyProgress(offeringId: string): OfferingProgress {
   return { version: 1, offeringId, activities: {}, concepts: {} };
 }
 
+/**
+ * ADR-0013: opening a practice is not progress, so the runner no longer calls this on mount. The
+ * record is created by the first meaningful writer (`recordAttempt`, `completeQuestion`). Kept for
+ * tests and stored data; a `started` record with no attempt and no done question reads as `new`
+ * everywhere (`inProgress`).
+ */
 export function startActivity(p: OfferingProgress, activityId: string, now = Date.now()): OfferingProgress {
   const a = p.activities[activityId];
   // coming back to a skipped practice starts it again (its finished challenges are kept)
@@ -86,19 +92,39 @@ export function completeActivity(p: OfferingProgress, activityId: string, indepe
   return { ...p, activities: { ...p.activities, [activityId]: { ...prev, status: "completed", independent: prev.independent || independent, lastAt: now } } };
 }
 
-/** Explain Slowly was opened: the practice no longer counts toward the skip gate (#579). */
-export function markExplained(p: OfferingProgress, activityId: string, now = Date.now()): OfferingProgress {
-  const prev = p.activities[activityId] ?? { status: "started" as const, attempts: 0, hintsUsed: 0, independent: false, lastAt: now };
+/**
+ * Explain Slowly was opened: remembered on the record (#579). Not meaningful progress (ADR-0013,
+ * owner refinement 3): `lastAt` is left as it was, and a record created here reads as `new`.
+ */
+export function markExplained(p: OfferingProgress, activityId: string): OfferingProgress {
+  const prev = p.activities[activityId] ?? { status: "started" as const, attempts: 0, hintsUsed: 0, independent: false, lastAt: 0 };
   if (prev.explained) return p;
-  return { ...p, activities: { ...p.activities, [activityId]: { ...prev, explained: true, lastAt: now } } };
+  return { ...p, activities: { ...p.activities, [activityId]: { ...prev, explained: true } } };
 }
 
-/** The hidden skip (#623): the question is recorded as skipped; the practice stays unfinished (never completed by a skip). */
-export function skipQuestion(p: OfferingProgress, activityId: string, questionId: string, now = Date.now()): OfferingProgress {
-  const prev = p.activities[activityId] ?? { status: "started" as const, attempts: 0, hintsUsed: 0, independent: false, lastAt: now };
+/**
+ * The hidden skip (#623): the question is recorded as skipped; the practice stays unfinished (never
+ * completed by a skip). A skip is not meaningful progress (ADR-0013): `lastAt` is left as it was.
+ */
+export function skipQuestion(p: OfferingProgress, activityId: string, questionId: string): OfferingProgress {
+  const prev = p.activities[activityId] ?? { status: "started" as const, attempts: 0, hintsUsed: 0, independent: false, lastAt: 0 };
   if (prev.completedQuestions?.includes(questionId) || prev.skippedQuestions?.includes(questionId)) return p;
   const status = prev.status === "completed" ? "completed" : "started";
-  return { ...p, activities: { ...p.activities, [activityId]: { ...prev, status, skippedQuestions: [...(prev.skippedQuestions ?? []), questionId], lastAt: now } } };
+  return { ...p, activities: { ...p.activities, [activityId]: { ...prev, status, skippedQuestions: [...(prev.skippedQuestions ?? []), questionId] } } };
+}
+
+/**
+ * The one test for "in progress" (ADR-0013 rule 8), used by every reader of `started`: a `started`
+ * record with meaningful progress, an attempt or a done question. A visited-only or explained-only
+ * record (`started`, no attempt, nothing done: the shape older builds wrote on mount) reads as `new`.
+ */
+export function inProgress(a: ActivityProgress | undefined): boolean {
+  return !!a && a.status === "started" && (a.attempts > 0 || (a.completedQuestions?.length ?? 0) > 0);
+}
+
+/** Meaningful progress of any kind: in progress or completed. What "returning" and "started" mean on the course rows. */
+export function hasProgress(a: ActivityProgress | undefined): boolean {
+  return !!a && (a.status === "completed" || inProgress(a));
 }
 
 /** A practice the student skipped ahead in (#623), or one left by the first skip (#579). */

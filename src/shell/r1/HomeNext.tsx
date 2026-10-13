@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Course } from "@/content/schema";
 import { getProgressStore } from "@/learner";
-import { emptyProgress, type OfferingProgress } from "@/learner/progress";
+import { emptyProgress, hasProgress, type OfferingProgress } from "@/learner/progress";
 // the message catalogue and the card directly, not the tutor barrels: Home must not carry the
 // engine or the kinds' logic (#675 size trim)
 import { resolveMessage } from "@/tutor/messages";
@@ -23,7 +23,7 @@ interface Pick {
   action: NextAction;
 }
 
-/** The course to lead with: the one with the most recently touched practice in progress, else the first. */
+/** The course to lead with (ADR-0013 rule 5): the one whose practice in progress has the newest meaningful `lastAt`, else the first. */
 export function pickCourse(courses: Course[], progressOf: (course: Course) => OfferingProgress): Pick {
   const all = courses.map((course) => {
     const progress = progressOf(course);
@@ -65,7 +65,8 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
   const chapter = course.modules.find((m) => m.topics.some((t) => t.id === topic.id));
   const record = progress.activities[activity.id];
   const done = record?.completedQuestions ?? [];
-  const returning = courses.some((c) => Object.values(progressOf(c).activities).some((a) => a.status !== "new"));
+  // a visited-only or explained-only record is not "returning" (ADR-0013)
+  const returning = courses.some((c) => Object.values(progressOf(c).activities).some(hasProgress));
   const finishedAll = action.kind === "review";
 
   return (
@@ -118,7 +119,7 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
             const topics = c.modules.flatMap((m) => m.topics);
             const p = progressOf(c);
             const finished = topics.filter((t) => t.activities.every((a) => p.activities[a.id]?.status === "completed")).length;
-            const started = topics.filter((t) => t.activities.some((a) => (p.activities[a.id]?.status ?? "new") !== "new")).length - finished;
+            const started = topics.filter((t) => t.activities.some((a) => hasProgress(p.activities[a.id]))).length - finished;
             const own = c.id === course.id ? action : courseAction(c, p);
             return (
               <li key={c.id} className={styles.practiceRow} data-course={c.id} data-action={own.kind}>

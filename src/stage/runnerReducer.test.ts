@@ -51,8 +51,10 @@ describe("runner reducer: walked division", () => {
     expect(s.hints).toEqual([]);
     expect(s.tutor.hintLevel).toBe(0);
     expect(s.tutor.hintsEverUsed).toBe(true);
-    s = run([step(2, 0, 0), { type: "HINT" }], s);
-    expect(s.hints[0].text).toContain("6 ÷ 2");
+    // the wrong check names the mistake, so help starts above the generic nudge (#700): rung 3, then rung 4 with the numbers
+    s = run([step(2, 0, 0), { type: "HINT" }, { type: "HINT" }], s);
+    expect(s.hints.map((h) => h.rung)).toEqual([3, 4]);
+    expect(s.hints[1].text).toContain("Is 6 even");
   });
 
   it("the last step completes the question; hints used earlier are remembered", () => {

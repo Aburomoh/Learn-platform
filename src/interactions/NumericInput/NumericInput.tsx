@@ -4,8 +4,8 @@ import { useId, useState } from "react";
 import type { InteractionBaseProps } from "../shared/types";
 import { focusTarget } from "../shared/types";
 import { Notation } from "../shared/Notation";
-import { UiText } from "@/shell/r1/uiText";
-import { pluralKey } from "@/tutor/messages";
+import { SupportiveText } from "@/l10n/SupportiveText";
+import { messageTemplate, pluralKey } from "@/tutor/messages";
 import styles from "./NumericInput.module.css";
 
 export type NumberBase = 2 | 8 | 10 | 16;
@@ -102,7 +102,7 @@ export function NumericInput({
         </button>
       </div>
       <span id={hintId} className={styles.hint}>
-        Enter a {info.label} value ({extended ? <UiText k={hintKey} vars={{ n: decimals }} /> : info.hint}).
+        Enter a {info.label} value ({extended ? <SupportiveText template={messageTemplate(hintKey)} vars={{ n: decimals }} inline /> : info.hint}).
       </span>
     </form>
   );

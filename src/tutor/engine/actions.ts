@@ -25,6 +25,8 @@ export const EXPRESSIONS: Expression[] = [
 export type TutorAction =
   /** `text` is the filled English; `template` and `vars` let the UI render it in the learner's language (ADR-0011). */
   | { type: "SAY"; messageKey: string; text: string; template: string; vars: TemplateVars }
+  /** A misconception was named on this step (#700). It stays true until the step completes; the view keeps it visible beside any hint. */
+  | { type: "DIAGNOSIS"; messageKey: string; text: string; template: string; vars: TemplateVars }
   | { type: "CHANGE_EXPRESSION"; expression: Expression }
   | { type: "FOCUS"; target: string }
   | { type: "HIGHLIGHT"; target: string }
