@@ -8,6 +8,8 @@ export type ColumnAdditionAnswer = { kind: "column-addition"; step: number; sum:
 const stepsOf = (spec: ColumnAdditionSpec) => additionSteps(spec.a, spec.b, spec.endCarry !== "drop");
 
 export const columnAddition: KindLogic<ColumnAdditionSpec, ColumnAdditionAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const steps = stepsOf(variant.spec);
     const step = steps[answer.step];

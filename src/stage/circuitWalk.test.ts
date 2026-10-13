@@ -59,7 +59,7 @@ describe("runner reducer: gate-by-gate circuit walk", () => {
   });
 
   it("Explain Slowly resets the walk to the first gate", () => {
-    let s = run([{ type: "OPEN" }, gate(0, 1), gate(1, 0), { type: "EXPLAIN" }]);
+    let s = run([{ type: "OPEN" }, gate(0, 1), gate(1, 0), { type: "EXPLAIN", confirmed: true }]);
     const steps = currentVariant(activity, s).explanation.length;
     for (let i = 0; i < steps; i++) {
       if (currentVariant(activity, s).explanation[s.explanation!.step].ask && !s.explanation!.prediction) s = reducer(s, { type: "PREDICT", index: 0 });

@@ -42,6 +42,8 @@ export function computedAnswer(spec: BitGroupingSpec): string {
 }
 
 export const bitGrouping: KindLogic<BitGroupingSpec, BitGroupingAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const groups = allGroups(spec);

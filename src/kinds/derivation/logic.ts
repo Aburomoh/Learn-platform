@@ -49,6 +49,8 @@ export function canonical(e: BoolExpr): string {
 const parse = (spec: DerivationSpec, text: string) => parseBool(text, { vars: spec.vars });
 
 export const derivation: KindLogic<DerivationSpec, DerivationAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const i = Math.floor(answer.step / 2);

@@ -18,6 +18,21 @@ describe("HintReveal", () => {
     expect(screen.getByText("Try once first")).toBeInTheDocument();
   });
 
+  it("list only (the stage renders its own controls, #691): nothing with no hints, the named mistake as the first card beside every hint (#700)", () => {
+    const { container, rerender } = render(<HintReveal revealed={[]} />);
+    expect(container).toBeEmptyDOMElement();
+    rerender(<HintReveal revealed={[]} diagnosis={{ text: "They are swapped." }} />);
+    expect(screen.getAllByRole("listitem")).toHaveLength(1);
+    expect(screen.getByRole("listitem")).toHaveTextContent("What went wrong");
+    expect(screen.getByRole("listitem")).toHaveTextContent("They are swapped.");
+    rerender(<HintReveal revealed={[{ rung: 2, text: "Not yet." }]} diagnosis={{ text: "They are swapped." }} />);
+    const items = screen.getAllByRole("listitem");
+    expect(items).toHaveLength(2);
+    expect(items[0]).toHaveAttribute("data-diagnosis");
+    expect(items[1]).toHaveTextContent("Nudge");
+    expect(screen.queryByRole("button")).toBeNull();
+  });
+
   it("offers Explain slowly when a handler is given", async () => {
     const onExplain = vi.fn();
     render(<HintReveal revealed={[]} canRequest onRequest={() => {}} onExplainSlowly={onExplain} />);

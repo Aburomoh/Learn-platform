@@ -96,8 +96,10 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   await page.getByRole("button", { name: "Another hint" }).click();
   await expect(page.getByText("Question", { exact: true })).toBeVisible();
 
-  // 4. Explain Slowly with a prediction before the reveal
+  // 4. Explain Slowly with a prediction before the reveal. Past step 0 a legacy walkthrough asks
+  //    once first, because it restarts the question with new numbers (#691, §2.6)
   await page.getByRole("button", { name: "Explain slowly" }).click();
+  await page.getByRole("button", { name: "Go ahead" }).click();
   await expect(page.getByText("Step 1 of 7")).toBeVisible();
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.locator("[data-prediction]").getByText("What is the remainder of 26 ÷ 2?")).toBeVisible();
@@ -483,7 +485,8 @@ test("binary addition: rules, column by column with the end carry, then the deci
   await sum.fill("2");
   await carry.fill("0");
   await step.click();
-  await expect(page.getByText(/A column holds a single bit/)).toBeVisible();
+  // the named mistake is in the bubble and stays as a card on the stage (#700, #691)
+  await expect(page.getByRole("complementary", { name: "Tutor" }).getByText(/A column holds a single bit/)).toBeVisible();
   for (const [s, c] of [["0", "1"], ["0", "1"], ["1", "1"], ["0", "1"]]) {
     await sum.fill(s);
     await carry.fill(c);

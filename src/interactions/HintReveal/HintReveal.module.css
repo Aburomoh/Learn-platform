@@ -22,6 +22,11 @@
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
+/* the named mistake (#700): the same card, in the attention colour, so it reads as "this is what went wrong" */
+.diagnosis {
+  border-inline-start-color: var(--warn, var(--accent));
+}
+
 .rung {
   font-size: var(--text-sm);
   color: var(--text-muted);

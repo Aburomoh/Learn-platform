@@ -67,7 +67,7 @@ describe("runner reducer: walked division", () => {
   });
 
   it("Explain Slowly walks the chain, then retries on new numbers from step 0", () => {
-    let s = run([{ type: "OPEN" }, step(0, 13, 0), step(1, 0, 0), { type: "EXPLAIN" }]);
+    let s = run([{ type: "OPEN" }, step(0, 13, 0), step(1, 0, 0), { type: "EXPLAIN", confirmed: true }]);
     expect(s.explanation).toEqual({ step: 0 });
     s = reducer(s, { type: "CONTINUE" });
     s = reducer(s, { type: "PREDICT", index: 0 });
@@ -174,9 +174,79 @@ describe("runner reducer: walked division", () => {
     expect(explaining.tutor.stage).toBe("explaining");
   });
 
-  it("hesitation unlocks hints before the first attempt", () => {
-    const s = run([{ type: "OPEN" }, { type: "HINT" }, { type: "HESITATION", seconds: 60 }, { type: "HINT" }]);
+});
+
+describe("engagement, I'm stuck, idle and the restart warning (learn 1b, #691)", () => {
+  it("before any engagement Hint gives the 'try once first, or say you are stuck' line and no card; the first edit opens it", () => {
+    const asked = run([{ type: "OPEN" }, { type: "HINT" }]);
+    expect(asked.hints).toHaveLength(0);
+    expect(asked.message).toMatch(/one try first/);
+    const s = run([{ type: "OPEN" }, { type: "ENGAGED" }, { type: "HINT" }]);
+    expect(s.tutor.engaged).toBe(true);
     expect(s.hints).toHaveLength(1);
+    // ENGAGED is sent once: a second one is a no-op on the same state
+    expect(reducer(s, { type: "ENGAGED" })).toBe(s);
+  });
+
+  it("a reflex Hint tap (under 5 s since the step appeared, before any Check) is ignored without a message", () => {
+    const s = run([{ type: "OPEN" }, { type: "ENGAGED" }]);
+    const tapped = reducer(s, { type: "HINT", sinceStepMs: 800 });
+    expect(tapped.hints).toHaveLength(0);
+    expect(tapped.message).toBe(s.message);
+    expect(reducer(s, { type: "HINT", sinceStepMs: 5000 }).hints).toHaveLength(1);
+  });
+
+  it("I'm stuck engages, grants the lowest rung not yet granted and offers a hint and Explain slowly; the offer lasts until the next event", () => {
+    const s = run([{ type: "OPEN" }, { type: "STUCK" }]);
+    expect(s.tutor.engaged).toBe(true);
+    expect(s.hints.map((h) => h.rung)).toEqual([2]);
+    expect(s.offer).toEqual(["hint", "explain-slowly"]);
+    const next = reducer(s, { type: "HINT" });
+    expect(next.offer).toBeUndefined();
+    expect(next.hints.map((h) => h.rung)).toEqual([2, 3]);
+  });
+
+  it("idle says one quiet line at 45 s and opens nothing; under 45 s nothing; a Check starts a new cycle", () => {
+    const quiet = run([{ type: "OPEN" }, { type: "IDLE", seconds: 30 }]);
+    expect(quiet.tutor.idlePrompted).toBe(false);
+    const idle = reducer(quiet, { type: "IDLE", seconds: 45 });
+    expect(idle.tutor.idlePrompted).toBe(true);
+    expect(idle.message).toMatch(/Take your time/);
+    expect(idle.tutor.engaged).toBe(false);
+    expect(reducer(idle, { type: "HINT" }).hints).toHaveLength(0);
+    const again = reducer(reducer(idle, step(0, 1, 1)), { type: "IDLE", seconds: 45 });
+    expect(again.tutor.idlePrompted).toBe(true);
+  });
+
+  it("Explain slowly opens before any attempt at step 0; past step 0 it asks first, Not now keeps the step, Go ahead opens the walkthrough", () => {
+    const fresh = run([{ type: "OPEN" }, { type: "EXPLAIN" }]);
+    expect(fresh.tutor.stage).toBe("explaining");
+    expect(fresh.confirmRestart).toBe(false);
+    const atStep2 = run([{ type: "OPEN" }, step(0, 13, 0), step(1, 6, 1), step(2, 3, 1)]);
+    expect(atStep2.stepIndex).toBe(2);
+    const asked = reducer(atStep2, { type: "EXPLAIN" });
+    expect(asked.tutor.stage).toBe("await_retry");
+    expect(asked.confirmRestart).toBe(true);
+    expect(asked.last).toBeDefined();
+    expect(asked.message).toMatch(/worked example/);
+    const kept = reducer(asked, { type: "CANCEL_EXPLAIN" });
+    expect(kept.confirmRestart).toBe(false);
+    expect(kept.stepIndex).toBe(2);
+    const opened = reducer(asked, { type: "EXPLAIN", confirmed: true });
+    expect(opened.tutor.stage).toBe("explaining");
+    expect(opened.confirmRestart).toBe(false);
+    expect(opened.last).toBeUndefined();
+  });
+
+  it("a named mistake stays on the tutor state as the step's diagnosis until the step completes; a hint keeps it", () => {
+    const swapped = run([{ type: "OPEN" }, step(0, 0, 13)]);
+    expect(swapped.tutor.diagnosis?.messageKey).toContain("div.swapped");
+    const hinted = reducer(swapped, { type: "HINT" });
+    expect(hinted.tutor.diagnosis).toBeDefined();
+    expect(hinted.hints.length).toBeGreaterThan(0);
+    const stepped = reducer(hinted, step(0, 13, 0));
+    expect(stepped.stepIndex).toBe(1);
+    expect(stepped.tutor.diagnosis).toBeUndefined();
   });
 });
 

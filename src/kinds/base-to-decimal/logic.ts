@@ -61,6 +61,8 @@ export function normaliseDecimal(text: string): string {
 }
 
 export const baseToDecimal: KindLogic<BaseToDecimalSpec, BaseToDecimalAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const ds = placeDigits(spec);

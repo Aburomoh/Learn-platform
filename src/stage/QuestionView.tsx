@@ -26,10 +26,12 @@ export interface QuestionViewProps {
   onSubmit: (answer: Answer) => void;
   onPredict: (index: number) => void;
   onContinue: () => void;
+  /** A kind that reports its edits (ADR-0008 amendment 1); optional on both sides. */
+  onInput?: (targetId: string) => void;
 }
 
 /** Renders one variant in practice mode or, while `explanation` is set, in Explain Slowly mode. */
-export function QuestionView({ variant, last, stepIndex, locked, explanation, onSubmit, onPredict, onContinue }: QuestionViewProps) {
+export function QuestionView({ variant, last, stepIndex, locked, explanation, onSubmit, onPredict, onContinue, onInput }: QuestionViewProps) {
   const prompt = fill(variant.prompt, variant.vars);
   const state = last ? (last.result.correct ? "correct" : "incorrect") : "idle";
 
@@ -65,7 +67,7 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
   const calculator = !(locked && state === "correct") ? variant.calculator?.[tag] : undefined;
   const answer = (
     <>
-      {createElement(views[variant.spec.kind].Practice, { variant, prompt, state, last, stepIndex, locked, onSubmit })}
+      {createElement(views[variant.spec.kind].Practice, { variant, prompt, state, last, stepIndex, locked, onSubmit, onInput })}
       {calculator && <Calculator key={`${variant.id}-${stepIndex}`} expression={fill(calculator, { ...variant.vars, ...stepVars(variant.spec, stepIndex) })} />}
       {last && (
         <p className={`${styles.feedback} ${last.result.correct ? styles.ok : styles.no}`} role="status">
