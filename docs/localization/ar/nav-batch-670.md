@@ -1,6 +1,6 @@
 # Arabic batch for the new navigation labels (#676, epic #670)
 
-**Status: REVISED per the owner's decisions of 2026-10-13 (#697), for final approval. Nothing here ships until the owner approves it.** The real strings are in the draft PR #702's package files so QA can render them. Content Engineer, 2026-10-13, main @ f53dec5.
+**Status: APPROVED by the owner, 2026-10-13 (#697): A = this document, #702 (merged), the #701 corrections and the four ending fixes; B = #722, the 80 endings on English terms and the divide Concept hint (#686 batches 4 and 5). Not covered: section 8f (the four #719 navigator strings), a separate approval.** Content Engineer, main @ f53dec5.
 
 How to read it: `key · English · proposed Arabic · notes`. A row marked **decide** needs the owner. Every `{slot}` is kept exactly. Digits are Western. The rules are the owner's (REQUIREMENTS.md): Modern Standard Arabic, slightly conversational; English technical terms stay English and are LTR-isolated; no machine translation. Terms follow `TECHNICAL_GLOSSARY_AR.md`; "Courses" is «المقررات», with no hybrid «الـ Courses» form (owner decision 1, #697). "Topic" is «الموضوع» in navigation (owner, #697); "Chapter" stays English («Chapter 1») and «جمّع الـ Bits» keeps the course term. Address is the masculine imperative, as the approved package does (جرّب، ابحث).
 
