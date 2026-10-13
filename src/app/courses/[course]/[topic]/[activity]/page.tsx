@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getActivity, listActivityParams } from "@/content";
 import { Footer, TopBar } from "@/shell/r1/Chrome";
 import { LocationLine } from "@/shell/r1/LocationLine";
+import { TopicNavigator } from "@/shell/r1/TopicNavigator";
 import { chapterShort } from "@/shell/location";
 import shell from "@/shell/r1/r1.module.css";
 import { KindLogicGate } from "@/kinds/logicGate";
@@ -44,6 +45,8 @@ export default async function ActivityPage({ params }: { params: Promise<Params>
         <div className={shell.stageWhere}>
           <LocationLine segments={location} />
           <h1 className={shell.stageTitle}>{activity.title}</h1>
+          {/* S2 (#680): the topic's practices, collapsed; a navigator, never a stage control */}
+          <TopicNavigator course={course} topic={topic} activity={activity} />
         </div>
         {/* before the stage, so it runs before the stage can paint (see ResumeScript.tsx) */}
         <ResumeScript offeringId={course.offeringId} activityId={activity.id} />
