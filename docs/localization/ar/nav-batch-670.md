@@ -278,8 +278,8 @@ They are in draft PR #702 (maps rebuilt) with a catalog key each in `src/tutor/m
 | Key | English | Arabic |
 |---|---|---|
 | `ui.status.completed` | Completed | مكتمل |
-| `ui.status.not-started` | Not started | لم يبدأ بعد |
-| `ui.status.coming-soon` | Not started · Coming soon | لم يبدأ بعد · قريبًا |
+| `ui.status.not-started` | Not started | لم تبدأه بعد |
+| `ui.status.coming-soon` | Not started · Coming soon | لم تبدأه بعد · قريبًا |
 | `ui.status.challenges-done` | {done} of {total} challenges done | التحديات المنجزة: {done} من {total} |
 | `ui.status.challenges-done-skipped` | {done} of {total} challenges done · skipped ahead | التحديات المنجزة: {done} من {total} · تخطّيت بعضها |
 | `ui.status.chapter-progress.one/.other` | In progress · {done} of {n} topic(s) done | جارٍ · المواضيع المنجزة: {done} من {n} |
@@ -299,7 +299,7 @@ They are in draft PR #702 (maps rebuilt) with a catalog key each in `src/tutor/m
 | `ui.summary.again` | Practise again | تدرّب مرة أخرى |
 | `ui.summary.back` | Back to topic | العودة إلى الموضوع |
 
-New wording to check: «لم يبدأ بعد», «قريبًا», «التالي» (a row that is next), «اكتمل. يمكنك مراجعة أي موضوع.».
+New wording to check: «لم تبدأه بعد», «قريبًا», «التالي» (a row that is next), «اكتمل. يمكنك مراجعة أي موضوع.».
 
 Not drafted here (course text or other scope): the objective lists of "You can now", question prompts, the labels drawn inside the figures and interactions, and the settings page (`SettingsForm.tsx`, long explanatory text). Say if the owner wants any of them as a further addendum.
 
