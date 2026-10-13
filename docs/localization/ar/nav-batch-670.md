@@ -134,7 +134,7 @@ QA's real render of #702 on #710 (69e7c6d) shows English text on the same screen
 | same, first visit | Start here | ابدأ من هنا | |
 | same | Your course / Your courses | مقررك / مقرراتك | Decision 1: مقرر, no hybrid form. |
 | End of a practice (`ActivitySummary.tsx`) | Practice complete | اكتمل التمرين | Also the section's accessible name. |
-| same | You can now: | يمكنك الآن: | **Already approved** in the package (component text); kept. The Auditor's alternative «تستطيع الآن:» (reads like the English, no gender-marked adjective) is a change to an approved string: **decide**. |
+| same | You can now: | يمكنك الآن: | **Already approved** in the package (component text); kept. The Auditor first proposed «تستطيع الآن:» and withdrew it: no decision needed. |
 | same | Practise again | تدرّب مرة أخرى | The approved package uses التدرّب. |
 | same | Back to topic | العودة إلى الموضوع | |
 
@@ -165,7 +165,7 @@ Owner chose (a) on #702: these join the batch. Same rules. "Check", "Hint" and t
 | Hint panel (`HintReveal.tsx`) | Hint / Another hint | تلميح / تلميح آخر | |
 | same | Explain slowly | اشرح ببطء | |
 | same | Hints | التلميحات | Accessible name. |
-| Hint cards | Nudge · Concept · Question · Look here · Break it down · Similar example · Guided · Full explanation | تلميح أولي · المفهوم · السؤال · انظر هنا · قسّمها إلى خطوات أبسط · مثال مشابه · حلّ موجّه · الشرح الكامل | The ladder's names, one per rung. «Break it down», «Similar example» and «Full explanation» are **already approved** (kept); the Auditor proposes «تقسيم المسألة» for the first (an imperative with an unexplained ـها reads like an order): **decide**. «Question» is one English word for the card and the section name, so one Arabic («السؤال»). «Guided» → «حلّ موجّه» (Auditor). |
+| Hint cards | Nudge · Concept · Question · Look here · Break it down · Similar example · Guided · Full explanation | تلميح أولي · المفهوم · السؤال · انظر هنا · قسّمها إلى خطوات أبسط · مثال مشابه · حلّ موجّه · الشرح الكامل | The ladder's names, one per rung. «Break it down», «Similar example» and «Full explanation» are **already approved** (kept); the Auditor's alternative «تقسيم المسألة» was withdrawn. «Question» is one English word for the card and the section name, so one Arabic («السؤال»). «Guided» → «حلّ موجّه» (Auditor). |
 | Check buttons (interactions) | Check / Check step / Check bits / Check groups / Check digit | تحقّق / تحقّق من الخطوة / تحقّق من الـ Bits / تحقّق من المجموعات / تحقّق من الرقم | Bit stays English (glossary). |
 | Explanation (`QuestionView.tsx`) | Explanation | الشرح | Accessible name. |
 | same | Question | السؤال | Accessible name. |
@@ -182,7 +182,7 @@ Owner chose (a) on #702: these join the batch. Same rules. "Check", "Hint" and t
 
 ### 8c. Where these strings are in the draft package
 
-They are in draft PR #702 (maps rebuilt) with a catalog key each in `src/tutor/messages/en.ts`. The two already-approved strings above keep their approved Arabic; the Auditor's alternatives are owner decisions. Almost all are hard-coded in components today, so a عربي screen shows them only when UI reads these keys through the Arabic layer (as #710 does for the navigation labels). The label:value count families have one string for `one` and `other`.
+They are in draft PR #702 (maps rebuilt) with a catalog key each in `src/tutor/messages/en.ts`. The two already-approved strings above keep their approved Arabic; the Auditor withdrew both alternatives. Almost all are hard-coded in components today, so a عربي screen shows them only when UI reads these keys through the Arabic layer (as #710 does for the navigation labels). The label:value count families have one string for `one` and `other`.
 
 | Key | English | Arabic |
 |---|---|---|
@@ -213,7 +213,7 @@ They are in draft PR #702 (maps rebuilt) with a catalog key each in `src/tutor/m
 | `ui.home.your-courses` | Your courses | مقرراتك |
 | `ui.home.open-course` | Open course: {title} | افتح المقرر: {title} |
 | `ui.summary.complete` | Practice complete | اكتمل التمرين |
-| `ui.summary.can-now` | You can now: | تستطيع الآن: |
+| `ui.summary.can-now` | You can now: | يمكنك الآن: |
 | `ui.summary.again` | Practise again | تدرّب مرة أخرى |
 | `ui.summary.back` | Back to topic | العودة إلى الموضوع |
 | `ui.foot.demo` | Demo content | محتوى تجريبي |
@@ -244,7 +244,7 @@ They are in draft PR #702 (maps rebuilt) with a catalog key each in `src/tutor/m
 | `ui.hint.rung-3` | Concept | المفهوم |
 | `ui.hint.rung-4` | Question | السؤال |
 | `ui.hint.rung-5` | Look here | انظر هنا |
-| `ui.hint.rung-6` | Break it down | تقسيم المسألة |
+| `ui.hint.rung-6` | Break it down | قسّمها إلى خطوات أبسط |
 | `ui.hint.rung-7` | Similar example | مثال مشابه |
 | `ui.hint.rung-8` | Guided | حلّ موجّه |
 | `ui.hint.rung-9` | Full explanation | الشرح الكامل |
