@@ -108,6 +108,38 @@ In these seven approved strings two English terms meet across a full stop and re
 
 The same pattern exists in 73 more approved strings (`npm run l10n:drift`, UNTRANSLATED.md section "English terms that meet across a full stop"). Many are the "TERM. Gloss is TERM" hint shape. Say whether the Auditor should propose fixes for all of them.
 
+## 8. Addendum (proposal): the English chrome around the translated labels
+
+QA's real render of #702 on #710 (69e7c6d) shows English text on the same screens as the labels above. These strings are **not** in this batch and **not** in #702: the owner decides whether they join it (Lead, #702). Same rules as sections 1–7: owner decisions 1–5 (#697), label:value plurals with one string for `one` and `other`, English titles stay English, Western digits. All of them are hard-coded in components today (no catalog key, so no entry in the package), which is a UI change (move each into `en.ts` as a `ui.*` key, with `{n}` slots); the Arabic below is what the key would carry. Minutes are written «د» after a figure, so there is no dual or plural of «دقيقة».
+
+| Where (source) | English | Proposed Arabic | Notes |
+|---|---|---|---|
+| Course row, topic status (`CourseTopics.tsx`) | {done} of {total} challenges done | التحديات المنجزة: {done} من {total} | Label:value. |
+| same | · skipped ahead | · تخطّيت بعضها | Appended to the line above; "skipped" is the learner's own act. |
+| same | In progress · {done} of {total} topics done | قيد المتابعة · المواضيع المنجزة: {done} من {total} | |
+| same | {n} short practices · about {m} min | التمارين القصيرة: {n} · المدة: نحو {m} د | |
+| same, topic page row | Completed | مكتمل | |
+| Topic page, effort (`TopicNext.tsx`) | Completed. You can review it any time. | اكتمل. يمكنك مراجعته في أي وقت. | |
+| same | About {n} min | المدة: نحو {n} د | |
+| same, step label | {title} · {n} short challenges | {title} · التحديات القصيرة: {n} | Title stays English, LTR-isolated. |
+| same, row status | about {n} min | المدة: نحو {n} د | |
+| same | {n} of {total} challenges done | التحديات المنجزة: {n} من {total} | As in the course row. |
+| same, heading | Practices in this topic | التمارين في هذا الموضوع | Decision 2: تمرين / تمارين; Topic is «الموضوع». |
+| same, list name for screen readers | Challenges of {title} / Challenges | تحديات {title} / التحديات | |
+| Under the button (`PrimaryAction.tsx`) | {n} short challenges · about {m} min | التحديات القصيرة: {n} · المدة: نحو {m} د | |
+| Home (`HomeNext.tsx`) | Challenge {k} of {n} · about {m} min left | التحدي {k} من {n} · المتبقي: نحو {m} د | |
+| same, returning | Welcome back | أهلًا بعودتك | |
+| same | Pick up where you left off | أكمل من حيث توقفت | |
+| same | You have finished every topic | أنهيت كل المواضيع | |
+| same, first visit | Start here | ابدأ من هنا | |
+| same | Your course / Your courses | مقررك / مقرراتك | Decision 1: مقرر, no hybrid form. |
+| End of a practice (`ActivitySummary.tsx`) | Practice complete | اكتمل التمرين | Also the section's accessible name. |
+| same | You can now: | أصبحت قادرًا الآن على: | The learner's objectives follow, in English (objectives are course text). |
+| same | Practise again | تدرّب مرة أخرى | The approved package uses التدرّب. |
+| same | Back to topic | العودة إلى الموضوع | |
+
+Not drafted here (course text or other scope): the objective lists of "You can now", question prompts, the skip menu and "Stuck? You skipped ahead…" notes (`SkipMenu.tsx`, `ActivityRunner.tsx`), and the settings form. Say if the owner wants them as a further addendum.
+
 ## Still to come (added as the PRs land)
 
 - Learning step 1b (UI): "I'm stuck", "Show a hint", "Explain slowly", "Back to my step", the restart confirmation buttons.
