@@ -149,7 +149,11 @@ Rules that make this "guide, not trap":
   "← Courses" (`/courses/`). At 390 the label is the *short* parent name (topic title, course code).
 - **Where am I** is a **location line under the top bar** on topic and practice pages:
   `ECET 111 · Chapter 1 · Binary arithmetic` — each segment a link; the last segment is the current topic on a
-  practice page (on the topic page it is plain text). This revives the breadcrumb the R1 docs promised and the
+  practice page (on the topic page it is plain text). Targets: course segment → `/courses/<c>/`; **chapter
+  segment → `/courses/<c>/#chapter-<module.id>`** (the anchor the chapter map already carries,
+  `CourseTopics.tsx` `chapterAnchor`, e.g. `#chapter-chapter-2`), and the course page **opens that `<details>`
+  on load when the hash names it** (today only a rail click opens one, `openChapter`; a bare hash lands on a
+  closed section at 390/768 where chapters 2+ are collapsed); topic segment → `/courses/<c>/<t>/`. This revives the breadcrumb the R1 docs promised and the
   code dropped. At 390 it shows the two nearest segments and collapses the rest into "…" (which opens the
   full trail inline). It replaces the eyebrow on the topic page; on the practice page it is new and sits
   above the challenge strip, with the **practice title visible** (today sr-only).
@@ -318,11 +322,30 @@ migration** (ADR-0005 stays at v1). The "revive a skipped practice" branch (`pro
 first-attempt moment.
 
 ### 7.2 Resume target rules
+- **Timestamp source: `lastAt`, written only by meaningful writers.** `recordAttempt`, `completeQuestion`,
+  `completeActivity` and `markExplained` keep bumping `lastAt`; **`skipQuestion` stops bumping it** (it still
+  records `skippedQuestions`), the mount write goes (§7.1) and the skipped-revive branch moves to the first
+  attempt. After that, `lastAt` *is* the last meaningful event per practice, with no format change. Chosen over
+  "newest concept-evidence `at`" because evidence carries a `questionId` but no activity id (`progress.ts:9-15`),
+  so it would need a content lookup for the per-course Continue and give one clock for active-course and another
+  for Continue. Old records whose `lastAt` was bumped by a skip are accepted as they are (a skip happens inside a
+  working session; the error is bounded to that session).
 - **Per course** (`courseAction`): Continue = the practice with meaningful progress, status `started`, newest
   `lastAt`; else Start = first topic not completed; else Review. A visited-only practice never becomes Continue.
-- **Active course** (`pickCourse`): the course whose newest meaningful event is most recent. Opening another
-  course's practice without answering does not change it. Tie / no meaningful progress anywhere → the first
-  course in the catalogue (as today).
+- **Active course** (`pickCourse`): the course whose newest `lastAt` over practices *with meaningful progress*
+  is most recent. Opening another course's practice without answering does not change it. Tie / no meaningful
+  progress anywhere → the first course in the catalogue (as today).
+- **`#q=` meets a `started` record** (§8.4): the explicit entry wins, exactly as `?review=1` wins today
+  (`ActivityRunner.tsx:37-41`); the runner opens at the declared entry, the record is not touched until an
+  answer, and the strip shows the already-finished dots.
+- **Continue after a declared-entry visit**: unchanged rule, first unfinished challenge in question order
+  (`resumeRunnerState`, `runnerReducer.ts:148-156`). Entering Fixed partitions at Best-fit (q2) and finishing it
+  → Continue lands on First-fit (q1) with q2 shown done; the practice completes only when all three are done.
+- **Expected results**, one each: **E** — fresh browser, direct URL to `subtraction-positive`, look, leave →
+  Home shows "Start here · Place value" and the ECET111 row "Start · Place value"; after one checked answer →
+  Home "Continue · Subtraction by 2's complement" . **F** — ECET111 student with one answered challenge opens a
+  CPET181 practice, looks, leaves → Home greets ECET111 (Continue · the ECET111 practice); CPET181 row shows
+  "Start · Hardware categories". Only a checked answer in CPET181 flips the greeting.
 - **Home** shows one panel for the active course and, on every *other* course row, its own one-line
   per-course action ("Continue · Fixed partitions" / "Start · Hardware categories"), so the second thread is
   visible without a second hero.
@@ -336,8 +359,9 @@ ECET111; the CPET181 row shows "Start · …". If they answer one CPET181 challe
 the ECET111 row shows "Continue · Subtraction by 2's complement, challenge 3". Both are honest.
 
 ### 7.3 Tests this needs
-Unit: `primaryAction.test.ts` (visited-only never Continue), `HomeNext.test.tsx` (active-course rule, per-row
-actions). E2E (`e2e/smoke.spec.ts`): journey F at 390 and 1280; Continue still resumes at the first unfinished
+Unit: `progress.test.ts` (`skipQuestion` leaves `lastAt` unchanged; no record on mount), `primaryAction.test.ts`
+(visited-only never Continue), `HomeNext.test.tsx` (active-course rule, per-row actions), runner tests (`#q=`
+beats a started record; Continue after a declared-entry visit lands on the first unfinished in order). E2E (`e2e/smoke.spec.ts`): journey F at 390 and 1280; Continue still resumes at the first unfinished
 challenge (existing test at l.311 must keep passing since `completedQuestions` is untouched).
 
 ---
@@ -345,8 +369,10 @@ challenge (existing test at l.311 must keep passing since `completedQuestions` i
 ## 8. Impact on direct-entry safety
 
 Content inventory (#670): 148 practices; every prompt carries its own numbers; 16 back-referencing questions,
-of which **5 are real gaps** (`sub.q.add`, `subx.q.add`, `subn.q.add`, `sb8p.q.add`, `sb8n.q.add`: "Now add A
-and the 2's complement of B" with A and B not on screen). The other 11 restate their context.
+of which **5 are real gaps** (`sub.q.add`, `subx.q.add`, `subn.q.add`, `sb8p.q.add`, `sb8n.q.add`). Reviewer
+correction: these prompts already show the binary operands (`${s.A} + ${s.twos}`, `binary-arithmetic.ts:301`);
+what is missing is the decimal statement "A − B = 13 − 9" that names A and B. QW8 is therefore one clause per
+prompt. The other 11 restate their context.
 
 Rules this proposal adds:
 1. **The practice stays the unit of entry.** Direct URL, navigator and resume all land on a practice page;
@@ -385,10 +411,11 @@ map (ADR-0011 §3; `scripts/build-l10n.mjs`) and need Arabic from the owner's pa
 | QW5 | Topic rows (topic page) show their challenge labels in one muted line; course rows show practice titles (+N more) | `TopicNext.tsx:55-75`, `CourseTopics.tsx` TopicRow `route` | RC2, C, D |
 | QW6 | Multi-practice topics: "Practices: …" line instead of "Today: …" built from practice 1 only | `[topic]/page.tsx:33-34` | RC5 |
 | QW7 | "Recommended next" caption over the filled button on course and topic pages | `PrimaryAction.tsx` (optional caption prop) | IA6 |
-| QW8 | Content: restate A − B in the five `*.q.add` prompts; extend the context guard | `src/content/ecet111/chapter1/binary-arithmetic.ts`, content tests | §8 gap |
+| QW8 | Content: add the decimal "A − B = …" clause to the five `*.q.add` prompts; extend the context guard | `src/content/ecet111/chapter1/binary-arithmetic.ts:301`, content tests | §8 gap |
 | QW9 | Home: per-course one-line action on each course row ("Continue · …" / "Start · …") | `HomeNext.tsx:109-130` | F (visibility half) |
+| QW10 | **Home hero size**: drop the challenge-dot list from the returning hero (keep the one effort line "Challenge 3 of 7 · about 9 min left"); the dots stay on the topic page. **Target: the first course row's top edge is inside the viewport at 390×844 and 1280×800** (today y≈787/1019 and 792/939), measured by e2e (S6) | `HomeNext.tsx:69` (`ChallengeSteps` in the panel), `r1.module.css` panel padding | owner obs. 1, F (visibility) |
 
-Order inside quick wins: QW8 (content, independent) ‖ QW1+QW2 ‖ QW3 ‖ QW4 ‖ QW5+QW6 ‖ QW7 ‖ QW9.
+Order inside quick wins: QW8 (content, independent) ‖ QW1+QW2 ‖ QW3 ‖ QW4 ‖ QW5+QW6 ‖ QW7 ‖ QW9+QW10.
 
 ---
 
@@ -396,12 +423,12 @@ Order inside quick wins: QW8 (content, independent) ‖ QW1+QW2 ‖ QW3 ‖ QW4 
 
 | # | Change | Scope | Depends on |
 |---|---|---|---|
-| S1 | **Meaningful-progress resume model** (§7): no write on mount; derived "visited-only" rule; active-course rule; per-course Continue on Home | `progress.ts`, `ActivityRunner.tsx:103-108`, `primaryAction.ts`, `HomeNext.tsx`, tests | QW9 for the UI half |
+| S1 | **Meaningful-progress resume model** (§7): no write on mount; `skipQuestion` no longer bumps `lastAt`; derived "visited-only" rule; active-course rule; per-course Continue on Home. **Needs an ADR-0005 amendment** (progress semantics: what `started`/`lastAt` mean) before code | `progress.ts`, `ActivityRunner.tsx:103-108`, `primaryAction.ts`, `HomeNext.tsx`, tests | QW9 for the UI half |
 | S2 | **Topic navigator on the practice page** (§4.3b): collapsed `<details>` under the location line listing the topic's practices with labels, current marked | new `src/shell/r1/TopicNavigator.tsx` reused by `TopicNext` and the activity page; CSS in `r1.module.css` | QW4, QW5 |
-| S3 | **Declared entries** (§8.4): `entry?: boolean` on questions in the schema, `#q=` handling in the runner, "Steps before this one" strip, navigator deep-links | `src/content/schema.ts`, `runnerReducer.ts` (`initialRunnerState`), `ActivityRunner.tsx`, content tests, Content Engineer flags the first entries | QW8, S2, Pedagogy sign-off |
+| S3 | **Declared entries** (§8.4): `entry?: boolean` on questions in the schema, `#q=` handling in the runner, "Steps before this one" strip, navigator deep-links. **This is the change that meets the structural gate** (⋯ skip no longer the only route into best-fit or the subtraction "Add" step). **Needs ADR-0007/0008 amendments** (a question-level entry in the step contract; `#q=` on pre-rendered routes) before code | `src/content/schema.ts`, `runnerReducer.ts` (`initialRunnerState`), `ActivityRunner.tsx`, content tests, Content Engineer flags the first entries | QW8, S2, Pedagogy sign-off (Phase 4a) |
 | S4 | **Find a practice** filter on the course page (§4.4) | `CourseTopics.tsx` (client-side filter over the course object), Arabic placeholder string | QW5 (labels in the rows) |
 | S5 | **768 chapter strip** replacing the hidden aside below 900 px (§6) | `CourseTopics.tsx` `ChapterIndex` variant, `r1.module.css:644-698` | none |
-| S6 | **E2E navigation suite**: journeys C, D, E, F, G at 390 and 1280 (Pixel 7 + Desktop Chrome projects exist) | `e2e/navigation.spec.ts` | each of the above lands behind a test |
+| S6 | **E2E navigation suite**: journeys C, D, E, F, G at 390 and 1280 (Pixel 7 + Desktop Chrome projects exist), plus the **Home fold check** (QW10: first course row's `boundingBox().y < viewport height` at 390×844 and 1280×800, first visit and returning) and the chapter-hash check (`/courses/<c>/#chapter-<id>` opens that `<details>`) | `e2e/navigation.spec.ts` | each of the above lands behind a test |
 
 Not proposed: new storage keys, challenge-level routes, a drawer, a global search, any change to grading,
 tutor engine or stage internals (#110 constraints).
@@ -418,13 +445,19 @@ Phase 1 (quick wins, 1 PR each, UI Engineer)
    QW4 location line + title     ─┤
    QW5 + QW6 label lines          │
    QW7 Recommended caption        │
-   QW9 per-course row actions    ─┘  (visual half of S1; safe before S1)
-Phase 2 (progress model)          S1 meaningful progress + resume rules + unit tests + e2e journey F
-                                  ← depends on nothing above, but QW9 first makes the change visible
+   QW9 per-course row actions     │  (visual half of S1; safe before S1)
+   QW10 Home hero without dots   ─┘  (fold target measured in S6)
+Phase 2 (progress model)          ADR-0005 amendment (Lead) → S1 meaningful progress + resume rules
+                                  + unit tests + e2e journey F   ← QW9 first makes the change visible
 Phase 3 (navigator)               S2 topic navigator on the practice page   ← QW4, QW5
-Phase 4 (question context)        S3 declared entries + #q= + "steps before" strip
-                                  ← QW8 merged, S2 merged, Pedagogy approves the strip wording,
-                                    Content flags fx.q.best and the subtraction "Add" steps first
+                                  NOTE: after Phase 3 the structural gate is NOT met: best-fit and the
+                                  subtraction "Add" step are visible but ⋯ skip is still the only route in.
+                                  The epic does not close here.
+Phase 4a (sign-off)               Pedagogy reviews the declared-entry rule and the "Steps before this one"
+                                  wording (one issue, advisory veto window); Content flags fx.q.best and the
+                                  five "Add" steps; Lead amends ADR-0007/0008        ← QW8 merged
+Phase 4b (question context)       S3 declared entries + #q= + strip + navigator deep-links  ← 4a, S2
+                                  → structural gate met; epic #670 can close after S6 covers C, D, E, F, G
 Phase 5 (find)                    S4 find-a-practice filter                 ← QW5
 Phase 6 (tablet)                  S5 chapter strip at <900                  ← independent; after S4 so the
                                                                               filter and strip share a header
@@ -434,8 +467,9 @@ Arabic                            every new label lands in docs/localization/ar/
 ```
 
 Acceptance against the Reviewer's gates: Freedom (QW3, QW4), Direct entry (QW4, QW8, S3), Hierarchy (QW4),
-Resume correctness (S1 + e2e F), Structural not moved buttons (S2/S3: ⋯ skip no longer the only route to
-best-fit or to the subtraction step), Arabic strings and no storage format change (all phases).
+Resume correctness (S1 + e2e F), **Structural not moved buttons: met only by S3** (S2 makes best-fit and the
+subtraction step visible; S3 makes them enterable without ⋯ skip), Home fold (QW10 + S6), Arabic strings and
+no storage format change (all phases; S1 and S3 carry ADR amendments, not format changes).
 
 Expected step counts after Phases 1–3 (same measuring rules as §2): C = 3 taps, 0–1 scroll, subtraction step
 reachable by its labelled entry in 4 taps (after S3); D = 4 taps (Open CPET 181 → Chapter 2 → Fixed partitions
