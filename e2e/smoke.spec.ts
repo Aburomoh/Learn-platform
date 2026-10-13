@@ -29,7 +29,7 @@ test("home lists the course and navigates to an activity", async ({ page }) => {
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
   await page.setViewportSize(viewport);
   // each hop waits for its URL so a slow transition fails at the hop, not on a stale page
-  await page.getByRole("link", { name: /Introduction to Digital System Design/ }).click();
+  await page.getByRole("link", { name: /^Open course: Introduction to Digital System Design/ }).click(); // the row also has its own Start · … link (#675)
   await expect(page).toHaveURL(/\/courses\/ecet111\/$/);
   // course page: a chapter map; the topic title is a quiet link, and exactly one button is filled
   await expect(page.locator("[data-primary-action]")).toHaveCount(1);

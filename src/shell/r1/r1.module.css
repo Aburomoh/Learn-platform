@@ -1107,6 +1107,38 @@
   gap: var(--space-7);
 }
 
+/* a course row's two quiet actions (#675), one under the other: its own Continue / Start (the
+   practice title can be long, so it wraps), then Open course */
+.rowActions {
+  flex: none;
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.rowActions .rowAction {
+  display: inline-block;
+  padding-block: calc((var(--touch-min) - 1.4em) / 2);
+  line-height: 1.4;
+  white-space: normal;
+}
+
+@media (min-width: 641px) {
+  .rowActions {
+    max-width: 50%;
+    justify-items: end;
+    text-align: right;
+  }
+}
+
+@media (max-width: 640px) {
+  /* the first course row inside a phone's first screen (owner, #670): a tighter top band */
+  .bands {
+    gap: var(--space-5);
+  }
+}
+
 /* ---- ShareCard (#657): the QR code on a light tile, caption and address; secondary, calm ---- */
 .share {
   display: grid;

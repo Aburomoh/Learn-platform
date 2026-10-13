@@ -5,11 +5,12 @@ import type { ReactNode } from "react";
 import type { Course } from "@/content/schema";
 import { getProgressStore } from "@/learner";
 import { emptyProgress, type OfferingProgress } from "@/learner/progress";
-import { resolveMessage } from "@/tutor";
-import { TutorCard } from "@/tutor/ui";
+// the message catalogue and the card directly, not the tutor barrels: Home must not carry the
+// engine or the kinds' logic (#675 size trim)
+import { resolveMessage } from "@/tutor/messages";
+import { TutorCard } from "@/tutor/ui/TutorCard";
 import { product } from "../../../config/product";
 import { courseAction, type PrimaryAction as NextAction } from "../primaryAction";
-import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
 import { PageHeading } from "./PageHeading";
 import { PrimaryAction, effortCue } from "./PrimaryAction";
 import { useHydrated } from "../useHydrated";
@@ -39,10 +40,18 @@ export function remainingCue(done: number, total: number, minutes: number): stri
   return `Challenge ${done + 1} of ${total} · about ${left} min left`;
 }
 
+/** A course row's own action (#675): what the course page's button would do, named after its practice. */
+export function rowActionLabel(action: NextAction): string {
+  const key = action.kind === "continue" ? "ui.home.row.continue" : action.kind === "review" ? "ui.home.row.review" : "ui.home.row.start";
+  return resolveMessage(key, { title: action.activity.title });
+}
+
 /**
  * Home (R1 redesign): one clear way in. A returning student gets "Pick up where you left off"
  * with Continue; a first-time student gets "Start here" with Start practice on the first topic.
- * Below it, each course as a plain row with a quiet "Open course". Works with one course or many.
+ * Below it, each course as a plain row with its own Continue / Start and a quiet "Open course"
+ * (#675: the hero is short enough for the first row to sit inside a phone's first screen).
+ * Works with one course or many.
  *
  * Progress lives in this browser, so the content is shown once it has been read; the server
  * renders the first-visit version invisibly.
@@ -76,8 +85,7 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
           <h2 id="next-h" className={styles.h2}>
             {topic.title}
           </h2>
-          {/* #593: the worked-example tiles live on the topic page; the challenge dots only once there is progress to show */}
-          {returning && !finishedAll && <ChallengeSteps steps={stepsFrom(activity.questions, done, action.kind === "continue")} />}
+          {/* #593: the worked-example tiles live on the topic page; #675: the challenge dots too (the effort line says where you are) */}
           <PrimaryAction
             primary={action.primary}
             secondary={action.secondary}
@@ -101,7 +109,7 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
         </div>
       </section>
 
-      <section className={styles.chapter} aria-labelledby="courses-h">
+      <section id="courses" className={styles.chapter} aria-labelledby="courses-h">
         <h2 id="courses-h" className={styles.h2}>
           {courses.length === 1 ? "Your course" : "Your courses"}
         </h2>
@@ -111,8 +119,9 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
             const p = progressOf(c);
             const finished = topics.filter((t) => t.activities.every((a) => p.activities[a.id]?.status === "completed")).length;
             const started = topics.filter((t) => t.activities.some((a) => (p.activities[a.id]?.status ?? "new") !== "new")).length - finished;
+            const own = c.id === course.id ? action : courseAction(c, p);
             return (
-              <li key={c.id} className={styles.practiceRow}>
+              <li key={c.id} className={styles.practiceRow} data-course={c.id} data-action={own.kind}>
                 <div className={styles.practiceText}>
                   <p className={styles.eyebrow}>{c.code}</p>
                   <h3 className={styles.topicTitle}>{c.title}</h3>
@@ -123,9 +132,14 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
                     {started > 0 ? ` · ${started} started` : ""}
                   </p>
                 </div>
-                <Link href={`/courses/${c.id}/`} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`Open course: ${c.title}`}>
-                  Open course <span aria-hidden="true">→</span>
-                </Link>
+                <div className={styles.rowActions}>
+                  <Link href={own.primary.href} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`${rowActionLabel(own)}: ${c.title}`}>
+                    {rowActionLabel(own)} <span aria-hidden="true">→</span>
+                  </Link>
+                  <Link href={`/courses/${c.id}/`} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`Open course: ${c.title}`}>
+                    Open course <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
               </li>
             );
           })}

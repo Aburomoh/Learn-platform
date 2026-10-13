@@ -9,6 +9,10 @@ export const en = {
   "page.home.returning": "Good to see you. Try the next step first; I'm here if you need me.",
   "page.course.intro": "Take the topics in order. Each challenge is short, and your progress is saved, so you can stop at any point.",
   "page.topic.intro": "We'll do this one step at a time. Try first; I'm here if you need me.",
+  // Home course rows (#675, epic #670): each course's own one-line action names its destination
+  "ui.home.row.start": "Start · {title}",
+  "ui.home.row.continue": "Continue · {title}",
+  "ui.home.row.review": "Review · {title}",
 
   // component sentences that used to be built in code (ADR-0011 §6): whole sentences, one per
   // count form (`.one` / `.other`; Arabic may add `.zero` `.two` `.few` `.many`), `{n}` the count

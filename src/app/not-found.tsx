@@ -1,5 +1,7 @@
 import { courses } from "@/content";
-import { PageFrame, PageHeading, PrimaryAction } from "@/shell/r1";
+import { PageFrame } from "@/shell/r1/PageFrame";
+import { PageHeading } from "@/shell/r1/PageHeading";
+import { PrimaryAction } from "@/shell/r1/PrimaryAction";
 
 export default function NotFound() {
   return (
