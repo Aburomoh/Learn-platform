@@ -52,6 +52,8 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       }
       s.stage = "await_retry";
       s.lastMisconception = event.misconceptionId;
+      // a diagnosis describes the latest answer only (#703): replaced below when this one names a mistake, otherwise gone
+      s.diagnosis = undefined;
       if (s.attempts === 1) {
         // Rule 1: nudge only, never reveal. Misconception-specific when recognised. The first wrong answer keeps try_again (#663).
         s.expression = "concern";
@@ -69,6 +71,12 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         s.expression = "reassuring";
         express("reassuring");
         say("wrong.second");
+        // rule 2 does not speak the misconception line, but the mistake is still named for the ladder and the view
+        const named = event.misconceptionId && misconceptionKey(ctx, event.misconceptionId);
+        if (named) {
+          const vars = { ...ctx.vars, ...event.vars };
+          s.diagnosis = { messageKey: named, text: resolveMessage(named, vars, ctx.locale), template: messageTemplate(named), vars };
+        }
         const reminder = ctx.hints.find((h) => h.rung === 3) ?? nextHint(s, ctx);
         if (reminder && reminder.rung > s.hintLevel) grant(s, reminder.rung, out, reminder.text, ctx);
         const focus = ctx.hints.find((h) => h.focus)?.focus;

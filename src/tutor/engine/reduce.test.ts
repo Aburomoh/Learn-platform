@@ -449,4 +449,14 @@ describe("a diagnosed mistake counts as help already given (#700)", () => {
     const r = run([wrong, { type: "HINT_REQUESTED" }], initialTutorState, only);
     expect(hintRungs(r.actions)).toEqual([2]);
   });
+  it("a diagnosis describes the latest answer only: a later generic wrong answer clears it (#703)", () => {
+    const r = run([wrong, { type: "ANSWER_SUBMITTED", correct: false }, { type: "HINT_REQUESTED" }], initialTutorState, dctx);
+    expect(r.state.diagnosis).toBeUndefined();
+    expect(r.actions.filter((a) => a.type === "DIAGNOSIS")).toHaveLength(1);
+  });
+
+  it("the second wrong answer names its mistake for the ladder even though rule 2 does not say it (#703)", () => {
+    const r = run([{ type: "ANSWER_SUBMITTED", correct: false }, wrong], initialTutorState, dctx);
+    expect(r.state.diagnosis?.messageKey).toBe("div.swapped");
+  });
 });
