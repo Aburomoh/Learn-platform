@@ -1,15 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import type { Course, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
 import { effectiveDone, inProgress } from "@/learner/progress";
-import { kindWords, kindsOf } from "../kindWords";
-import { practiceAction, topicAction } from "../primaryAction";
-import { hasMessage } from "@/tutor/messages";
+import { topicAction } from "../primaryAction";
 import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
 import { PrimaryAction, effortLine } from "./PrimaryAction";
-import { ActionText, LineText, UiText, useUiText } from "./uiText";
+import { LineText, UiText, useUiText } from "./uiText";
+import { PracticeRows } from "./TopicNavigator";
 import { pluralKey } from "@/tutor/messages";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
@@ -55,51 +53,11 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
       )}
 
       {topic.activities.length > 1 && (
-        <section className={styles.practices} aria-labelledby="practices-h">
+        <section id="practices" className={styles.practices} aria-labelledby="practices-h">
           <h2 id="practices-h" className={styles.h2}>
             <UiText k="ui.topic.practices-in" />
           </h2>
-          <ol className={styles.practiceList}>
-            {topic.activities.map((a) => {
-              const own = practiceAction(course, topic, a, progress);
-              const count = effectiveDone(a, progress.activities[a.id]).completed.size;
-              // two compact lines (epic #670, QW5 + owner refinement 1): the name, then its status, kind in
-              // plain words and the step labels, so the student knows what a practice is before entering
-              const status = own.kind === "review" ? <UiText k="ui.status.completed" /> : own.kind === "continue" ? <UiText k="ui.status.challenges-done" vars={{ done: count, total: a.questions.length }} /> : <UiText k="ui.effort.minutes" vars={{ n: a.minutes }} />;
-              const labels = a.questions.map((q) => q.label).filter(Boolean);
-              // fewer than two labels: the challenge count alone (the minutes are already in `status`)
-              const steps = labels.length > 1 ? labels.join(" → ") : <UiText k={pluralKey("ui.effort.short-challenges", a.questions.length, "en")} vars={{ n: a.questions.length }} />;
-              // the kind words are catalogue strings, each read through the Arabic layer (#705)
-              const kinds = kindsOf(a);
-              // The practice the page button is about has no second button: the primary is its button.
-              const upNext = !finished && a.id === activity.id;
-              return (
-                <li key={a.id} className={styles.practiceRow} data-status={own.kind} data-up-next={upNext || undefined} data-kinds={kindWords(a)}>
-                  <div className={styles.practiceText}>
-                    <h3 className={styles.topicTitle}>{a.title}</h3>
-                    <p className={`${styles.practiceMeta} ${own.kind === "review" ? styles.topicDone : ""}`}>
-                      {status}
-                      {kinds.map((kind) => (
-                        <span key={kind}>
-                          {" · "}
-                          {/* each kind word isolated (Auditor on #702): an Arabic word between English separators keeps its place */}
-                          <bdi>{hasMessage(`ui.kind.${kind}`) ? <UiText k={`ui.kind.${kind}`} /> : kind}</bdi>
-                        </span>
-                      ))}
-                      {steps ? <> · {steps}</> : ""}
-                    </p>
-                  </div>
-                  {upNext ? (
-                    <span className={styles.upNext}>{own.kind === "continue" ? <UiText k="ui.row.in-progress" /> : <UiText k="ui.row.up-next" />}</span>
-                  ) : (
-                    <Link href={own.link.href} className={`${styles.quiet} ${styles.rowAction} ${styles.rowActionWrap}`}>
-                      <ActionText link={own.link} /> <span aria-hidden="true">→</span>
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
-          </ol>
+          <PracticeRows course={course} topic={topic} progress={progress} upNextId={finished ? undefined : activity.id} />
         </section>
       )}
     </div>

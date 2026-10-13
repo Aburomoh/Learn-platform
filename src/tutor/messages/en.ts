@@ -138,6 +138,11 @@ export const en = {
   "ui.home.started": "{n} started",
   "ui.home.open-course-short": "Open course",
   "ui.stage.challenge-n": "Challenge {n}",
+  // the practice page's navigator and the summary's quiet exits (S2, #680)
+  "ui.nav.practices-count": "Practices in this topic ({k} of {n})",
+  "ui.row.here": "Here",
+  "ui.summary.another": "Another practice in this topic",
+  "ui.summary.course-map": "Course map",
   "ui.nav.here": "You are here",
   "ui.nav.show-path": "Show the whole path",
   "ui.nav.all-courses": "All courses",
