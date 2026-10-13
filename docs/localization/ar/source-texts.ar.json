@@ -2205,7 +2205,7 @@
       "deadlock-basics/deadlock-or-starvation/dl.q.deadlock-starvation/v4#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "Deadlock (الجمود) هو تشابك على مستوى النظام يبدأ عندما تتوقف Jobان أو أكثر، وكل واحدة تنتظر Resource (مورداً) تحتفظ به أخرى. أما Starvation (التجويع) فهو تأجيل Job واحدة إلى أجل غير محدد بينما تستمر بقية الـ Jobs."
+    "arabic": "Deadlock (الجمود) هو تشابك على مستوى النظام يبدأ عندما تتوقف 2 Jobs أو أكثر، وكل واحدة تنتظر Resource (مورداً) تحتفظ به أخرى. أما Starvation (التجويع) فهو تأجيل Job واحدة إلى أجل غير محدد بينما تستمر بقية الـ Jobs."
   },
   {
     "id": "cpet181.deadlock-basics.deadlock-or-starvation.dl.q.deadlock-starvation.v1.explanation[1].say",
@@ -10698,7 +10698,7 @@
       "magnetic-tape/count-gaps/tp.q.irg/v4#hints[1]"
     ],
     "slots": [],
-    "arabic": "الـ Gap (الفجوة) تقع بين Recordين. عُدّ الأماكن بين السجلات المتجاورة، لا السجلات نفسها."
+    "arabic": "الـ Gap (الفجوة) تقع بين Record وآخر. عُدّ الأماكن بين السجلات المتجاورة، لا السجلات نفسها."
   },
   {
     "id": "cpet181.magnetic-tape.count-gaps.tp.q.irg.v1.hints[2]",
@@ -12671,7 +12671,7 @@
       "multiprocessing/parallel/cf.q.parallel/v4#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "CPUان أو أكثر ينفذان تعليمات في الوقت نفسه."
+    "arabic": "2 CPUs أو أكثر تنفّذ تعليمات في الوقت نفسه."
   },
   {
     "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v4.hints[1]",
@@ -12707,7 +12707,7 @@
       "multiprocessing/parallel/cf.q.parallel/v4#hints[2]"
     ],
     "slots": [],
-    "arabic": "Executes Two or More Instructions at the Same Time (تنفذ تعليمتين أو أكثر في الوقت نفسه). CPUان أو أكثر ينفذان تعليمات في الوقت نفسه."
+    "arabic": "Executes Two or More Instructions at the Same Time (تنفذ تعليمتين أو أكثر في الوقت نفسه). 2 CPUs أو أكثر تنفّذ تعليمات في الوقت نفسه."
   },
   {
     "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v1.explanation[0].say",
@@ -22108,7 +22108,7 @@
       "synchronization/readers-writers/sy.q.rw/v1#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "Readerان يمكنهما مشاركة الـ File: مسموح."
+    "arabic": "يمكن لـ 2 Readers مشاركة الـ File: مسموح."
   },
   {
     "id": "cpet181.synchronization.readers-writers.sy.q.rw.v1.hints[1]",
@@ -22148,7 +22148,7 @@
       "synchronization/readers-writers/sy.q.rw/v1#hints[2]"
     ],
     "slots": [],
-    "arabic": "Yes. Readerان يمكنهما مشاركة الـ File: مسموح."
+    "arabic": "نعم. يمكن لـ 2 Readers مشاركة الـ File: مسموح."
   },
   {
     "id": "cpet181.synchronization.readers-writers.sy.q.rw.v2.explanation[1].say",
@@ -29467,7 +29467,7 @@
       "binary-arithmetic/binary-addition/ba.q.two/v-sum#hints[0]"
     ],
     "slots": [],
-    "arabic": "ليس بعد. Binary لديه فقط Digitان: 0 و1."
+    "arabic": "ليس بعد. Binary لديه 2 Digits فقط: 0 و1."
   },
   {
     "id": "ecet111.binary-arithmetic.binary-addition.ba.q.zero.v-sum.hints[1]",
@@ -39559,7 +39559,7 @@
       "derived-gates/derived-gates/dg.q.nand/vab#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "A·B: AND للـ Inputين."
+    "arabic": "A·B: AND للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nand.vab.explanation[2].ask.afterWrong",
@@ -39818,7 +39818,7 @@
       "derived-gates/derived-gates/dg.q.nand/vpq#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "P·Q: AND للـ Inputين."
+    "arabic": "P·Q: AND للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nand.vpq.explanation[2].ask.prompt",
@@ -39891,7 +39891,7 @@
       "derived-gates/derived-gates/dg.q.nand/vxy#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "x·y: AND للـ Inputين."
+    "arabic": "x·y: AND للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nand.vxy.explanation[2].ask.prompt",
@@ -39964,7 +39964,7 @@
       "derived-gates/derived-gates/dg.q.nor/vab#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "A + B: OR للـ Inputين."
+    "arabic": "A + B: OR للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nor.vab.explanation[2].ask.prompt",
@@ -40059,7 +40059,7 @@
       "derived-gates/derived-gates/dg.q.nor/vpq#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "P + Q: OR للـ Inputين."
+    "arabic": "P + Q: OR للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nor.vpq.explanation[2].ask.prompt",
@@ -40132,7 +40132,7 @@
       "derived-gates/derived-gates/dg.q.nor/vxy#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "x + y: OR للـ Inputين."
+    "arabic": "x + y: OR للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nor.vxy.explanation[2].ask.prompt",
@@ -40454,7 +40454,7 @@
       "derived-gates/derived-gates/dg.q.xnor/vab#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "A·B + A′·B′: OR للـ Productين."
+    "arabic": "A·B + A′·B′: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.xnor.vab.explanation[6].say",
@@ -40586,7 +40586,7 @@
       "derived-gates/derived-gates/dg.q.xnor/vpq#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "P·Q + P′·Q′: OR للـ Productين."
+    "arabic": "P·Q + P′·Q′: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.xnor.vxy.explanation[3].ask.prompt",
@@ -40695,7 +40695,7 @@
       "derived-gates/derived-gates/dg.q.xnor/vxy#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "x·y + x′·y′: OR للـ Productين."
+    "arabic": "x·y + x′·y′: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.xor.vab.explanation[1].ask.prompt",
@@ -40876,7 +40876,7 @@
       "derived-gates/derived-gates/dg.q.xor/vab#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "A·B′ + A′·B: OR للـ Productين."
+    "arabic": "A·B′ + A′·B: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.xor.vab.explanation[6].say",
@@ -41079,7 +41079,7 @@
       "derived-gates/derived-gates/dg.q.xor/vpq#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "P·Q′ + P′·Q: OR للـ Productين."
+    "arabic": "P·Q′ + P′·Q: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.xor.vxy.explanation[1].ask.prompt",
@@ -41260,7 +41260,7 @@
       "derived-gates/derived-gates/dg.q.xor/vxy#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "x·y′ + x′·y: OR للـ Productين."
+    "arabic": "x·y′ + x′·y: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.design.design-excitation.dz.q.jk-inputs.down.explanation[1].ask.afterCorrect",
@@ -44868,7 +44868,7 @@
       "flip-flops/flip-flop-equations/ff.q.eq-t/et#hints[2]"
     ],
     "slots": [],
-    "arabic": "أي Gate تعطي 1 عندما يختلف Inputان؟"
+    "arabic": "أي Gate تعطي 1 عندما تختلف قيمتا الـ Inputs؟"
   },
   {
     "id": "ecet111.flip-flops.flip-flop-equations.ff.q.eq-t.et.hints[3]",
@@ -46685,7 +46685,7 @@
       "full-adder/full-adder-table/fa.q.row/v011#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 0 + 1 + 1 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 0 + 1 + 1 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.row.v011.hints[4]",
@@ -46776,7 +46776,7 @@
       "full-adder/full-adder-table/fa.q.row/v100#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 1 + 0 + 0 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 1 + 0 + 0 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.row.v100.hints[4]",
@@ -46876,7 +46876,7 @@
       "full-adder/full-adder-table/fa.q.row/v100#explanation[1].ask.prompt"
     ],
     "slots": [],
-    "arabic": "وعند كتابته على شكل Bitين يكون…"
+    "arabic": "وعند كتابته على شكل 2 Bits يكون…"
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.row.v111.explanation[1].say",
@@ -46969,7 +46969,7 @@
       "full-adder/full-adder-table/fa.q.row/v111#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 1 + 1 + 1 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 1 + 1 + 1 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.row.v111.hints[3]",
@@ -47029,7 +47029,7 @@
       "full-adder/full-adder-table/fa.q.table/vtable#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "كل Row يجمع 3 Bits. احسب عدد الـ 1s، ثم اكتب العدد على شكل Bitين: Co على اليسار وS على اليمين."
+    "arabic": "كل Row يجمع 3 Bits. احسب عدد الـ 1s، ثم اكتب العدد على شكل 2 Bits: Co على اليسار وS على اليمين."
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.table.vtable.explanation[1].ask.afterCorrect",
@@ -47145,7 +47145,7 @@
       "full-adder/full-adder-table/fa.q.table/vtable#hints[1]"
     ],
     "slots": [],
-    "arabic": "احسب عدد الـ 1s في الـ Row: 0 أو 1 أو 2 أو 3. اكتب هذا العدد بالنظام Binary (الثنائي) على شكل Bitين."
+    "arabic": "احسب عدد الـ 1s في الـ Row: 0 أو 1 أو 2 أو 3. اكتب هذا العدد بالنظام Binary (الثنائي) على شكل 2 Bits."
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.table.vtable.hints[2]",
@@ -47272,7 +47272,7 @@
       "half-adder/half-adder/ha.q.add/v01#explanation[1].ask.prompt"
     ],
     "slots": [],
-    "arabic": "0 + 1 على شكل Bitين هو…"
+    "arabic": "0 + 1 على شكل 2 Bits هو…"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v01.explanation[1].say",
@@ -47330,7 +47330,7 @@
       "half-adder/half-adder/ha.q.add/v01#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 0 + 1 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 0 + 1 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v01.hints[4]",
@@ -47387,7 +47387,7 @@
       "half-adder/half-adder/ha.q.add/v10#explanation[1].ask.prompt"
     ],
     "slots": [],
-    "arabic": "1 + 0 على شكل Bitين هو…"
+    "arabic": "1 + 0 على شكل 2 Bits هو…"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v10.explanation[1].say",
@@ -47423,7 +47423,7 @@
       "half-adder/half-adder/ha.q.add/v10#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 1 + 0 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 1 + 0 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v10.hints[4]",
@@ -47467,7 +47467,7 @@
       "half-adder/half-adder/ha.q.add/v10#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "الـ Half Adder يجمع Bitين، مثل Column واحد من عمليات الجمع Binary (الثنائية) في Chapter 1، لكن من دون Carry داخل إليه."
+    "arabic": "الـ Half Adder يجمع 2 Bits، مثل Column واحد من عمليات الجمع Binary (الثنائية) في Chapter 1، لكن من دون Carry داخل إليه."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v11.explanation[1].ask.afterCorrect",
@@ -47523,7 +47523,7 @@
       "half-adder/half-adder/ha.q.add/v11#explanation[1].ask.prompt"
     ],
     "slots": [],
-    "arabic": "1 + 1 على شكل Bitين هو…"
+    "arabic": "1 + 1 على شكل 2 Bits هو…"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v11.explanation[1].say",
@@ -47582,7 +47582,7 @@
       "half-adder/half-adder/ha.q.add/v10#hints[0]"
     ],
     "slots": [],
-    "arabic": "ليس بعد. اجمع الـ Bitين كما فعلت في Chapter 1."
+    "arabic": "ليس بعد. اجمع الـ Bits الاثنين كما فعلت في Chapter 1."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v11.hints[1]",
@@ -47622,7 +47622,7 @@
       "half-adder/half-adder/ha.q.add/v11#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 1 + 1 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 1 + 1 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v11.hints[3]",
@@ -47753,7 +47753,7 @@
       "half-adder/half-adder/ha.q.gates/vc#hints[2]"
     ],
     "slots": [],
-    "arabic": "C = 1 في Row واحد فقط: عندما يكون كلا Inputين يساوي 1."
+    "arabic": "C = 1 في Row واحد فقط: عندما يكون كل Input يساوي 1."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.gates.vc.hints[3]",
@@ -47963,7 +47963,7 @@
       "half-adder/half-adder/ha.q.table/vtable#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "كل Row يجمع A + B. اكتب الناتج على شكل Bitين: C على اليسار وS على اليمين."
+    "arabic": "كل Row يجمع A + B. اكتب الناتج على شكل 2 Bits: C على اليسار وS على اليمين."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.table.vtable.explanation[1].ask.afterCorrect",
@@ -48244,7 +48244,7 @@
       "half-adder/half-adder/ha.q.walk/v10#explanation[2].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "AND يعطي 1 فقط عندما يكون كلا Inputين يساوي 1، لذلك C = 0."
+    "arabic": "AND يعطي 1 فقط عندما يكون كل Input يساوي 1، لذلك C = 0."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.walk.v01.explanation[2].say",
@@ -48366,7 +48366,7 @@
       "half-adder/half-adder/ha.q.walk/v10#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "يدخل A وB إلى كلا Gateين في الوقت نفسه: XOR ينتج S، وAND ينتج C."
+    "arabic": "يدخل A وB إلى الـ XOR والـ AND في الوقت نفسه: XOR ينتج S، وAND ينتج C."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.walk.v11.explanation[1].ask.afterCorrect",
@@ -48479,7 +48479,7 @@
       "half-adder/half-adder/ha.q.walk/v11#explanation[2].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "AND يعطي 1 فقط عندما يكون كلا Inputين يساوي 1، لذلك C = 1."
+    "arabic": "AND يعطي 1 فقط عندما يكون كل Input يساوي 1، لذلك C = 1."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.walk.v11.explanation[2].ask.prompt",
@@ -49719,7 +49719,7 @@
       "kmap-expression/expression-to-map/km.q.expand/exy#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "أي Product ينقصه Variable واحد يمثل Mintermين، واحداً لكل قيمة لذلك Variable."
+    "arabic": "أي Product ينقصه Variable واحد يمثل 2 Minterms، واحداً لكل قيمة لذلك Variable."
   },
   {
     "id": "ecet111.kmap-expression.expression-to-map.km.q.expand.e3.explanation[2].say",
@@ -50332,7 +50332,7 @@
       "design/design-problem/dz.q.problem-maps/py#explanation[1].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "Group من 4 Cells يلغي Variableين، لذلك يبقى 2."
+    "arabic": "Group من 4 Cells يلغي 2 Variables، لذلك يبقى 2."
   },
   {
     "id": "ecet111.kmap-four.kmap-four.km.q.four.m45.explanation[1].say",
@@ -50665,7 +50665,7 @@
       "kmap-dont-cares/kmap-dont-cares/km.q.dont-care/d2467#explanation[1].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "Group من 4 Cells يلغي Variableين، لذلك يبقى Variable واحد."
+    "arabic": "Group من 4 Cells يلغي 2 Variables، لذلك يبقى Variable واحد."
   },
   {
     "id": "ecet111.kmap-three.kmap-three.km.q.three.m023467.explanation[1].ask.prompt",
@@ -51507,7 +51507,7 @@
       "latches/latches/lt.q.nand/n001#explanation[2].say"
     ],
     "slots": [],
-    "arabic": "وجودهما معاً عند 0 يجبر كلا Outputين على 1، لذلك لا تعود Q وQ′ متكاملتين: هذه حالة Invalid."
+    "arabic": "وجودهما معاً عند 0 يجبر كل Output على 1، لذلك لا تعود Q وQ′ متكاملتين: هذه حالة Invalid."
   },
   {
     "id": "ecet111.latches.latches.lt.q.nand.n001.hints[3]",
@@ -51527,7 +51527,7 @@
       "latches/latches/lt.q.nand/n001#hints[3]"
     ],
     "slots": [],
-    "arabic": "Set = Reset = 0 حالة Invalid: كلا Outputين يصبح 1."
+    "arabic": "Set = Reset = 0 حالة Invalid: كل Output يصبح 1."
   },
   {
     "id": "ecet111.latches.latches.lt.q.nand.n010.explanation[0].say",
@@ -51853,7 +51853,7 @@
       "latches/latches/lt.q.nand/n110#hints[2]"
     ],
     "slots": [],
-    "arabic": "هل كلا Inputين يساوي 1؟ إذاً هل يتم إجبار أي NAND على قيمة معينة؟"
+    "arabic": "هل كل Input يساوي 1؟ إذاً هل يتم إجبار أي NAND على قيمة معينة؟"
   },
   {
     "id": "ecet111.laws-and-rules.laws-and-rules.br.q.law.vlaw-a.explanation[1].ask.afterCorrect",
@@ -53535,7 +53535,7 @@
       "logic-gates/gate-tables/bg.q.and/vand-ab#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "AND يعطي 1 فقط عندما تكون كل Inputs = 1. وجود Inputين يعطي 4 Rows: 2^2."
+    "arabic": "AND يعطي 1 فقط عندما تكون كل Inputs = 1. وجود 2 Inputs يعطي 4 Rows: 2^2."
   },
   {
     "id": "ecet111.logic-gates.gate-tables.bg.q.and.vand-xy.explanation[1].ask.afterCorrect",
@@ -53962,7 +53962,7 @@
       "logic-gates/gate-tables/bg.q.or/vor-ab#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "OR يعطي 1 عندما يكون Input واحد على الأقل = 1. وجود Inputين يعطي 4 Rows: 2^2."
+    "arabic": "OR يعطي 1 عندما يكون Input واحد على الأقل = 1. وجود 2 Inputs يعطي 4 Rows: 2^2."
   },
   {
     "id": "ecet111.logic-gates.gate-tables.bg.q.or.vor-xy.explanation[1].ask.afterCorrect",
@@ -54179,7 +54179,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-and#explanation[2].ask.afterCorrect"
     ],
     "slots": [],
-    "arabic": "صحيح، 0. AND يحتاج أن يكون كلا Inputين = 1."
+    "arabic": "صحيح، 0. AND يحتاج أن يكون كل Input = 1."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-and.explanation[2].ask.afterWrong",
@@ -54259,7 +54259,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-and#explanation[3].say"
     ],
     "slots": [],
-    "arabic": "إذن الـ Gate الذي يعطي 1 فقط عندما يكون كلا Inputين = 1 هو AND."
+    "arabic": "إذن الـ Gate الذي يعطي 1 فقط عندما يكون كل Input = 1 هو AND."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-and.hints[0]",
@@ -54401,7 +54401,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-and#hints[6]"
     ],
     "slots": [],
-    "arabic": "الـ Gate الذي يحتاج كلا Inputين هو AND."
+    "arabic": "الـ Gate الذي يحتاج الـ Inputs الاثنين معاً هو AND."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-and.hints[7]",
@@ -54421,7 +54421,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-and#hints[7]"
     ],
     "slots": [],
-    "arabic": "AND يعطي Output = 1 فقط عندما يكون كلا Inputين = 1."
+    "arabic": "AND يعطي Output = 1 فقط عندما يكون كل Input = 1."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-not.explanation[0].say",
@@ -54443,7 +54443,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-not#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "AND وOR يجمعان Inputين أو أكثر. هناك Gate واحد يعمل على Input واحد فقط."
+    "arabic": "AND وOR يجمعان 2 Inputs أو أكثر. هناك Gate واحد يعمل على Input واحد فقط."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-not.explanation[1].ask.afterCorrect",
@@ -54562,7 +54562,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-not#hints[1]"
     ],
     "slots": [],
-    "arabic": "AND وOR وNAND وNOR تأخذ Inputين أو أكثر. هناك Basic Gate واحدة فقط تأخذ Input واحداً."
+    "arabic": "AND وOR وNAND وNOR تأخذ 2 Inputs أو أكثر. هناك Basic Gate واحدة فقط تأخذ Input واحداً."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-not.hints[2]",
@@ -54681,7 +54681,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-or#explanation[2].say"
     ],
     "slots": [],
-    "arabic": "إذن OR يعطي 0 فقط عندما يكون كلا Inputين = 0."
+    "arabic": "إذن OR يعطي 0 فقط عندما يكون كل Input = 0."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-or.hints[0]",
@@ -54840,7 +54840,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-or#hints[7]"
     ],
     "slots": [],
-    "arabic": "OR يعطي Output = 0 فقط عندما يكون كلا Inputين = 0."
+    "arabic": "OR يعطي Output = 0 فقط عندما يكون كل Input = 0."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v000.explanation[0].say",
@@ -54943,7 +54943,7 @@
       "logic-gates/predict-gate-output/lg.q.predict/v000#explanation[3].ask.afterCorrect"
     ],
     "slots": [],
-    "arabic": "صحيح. كلا Inputين = 0، لذلك OR يعطي 0."
+    "arabic": "صحيح. كل Input = 0، لذلك OR يعطي 0."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v000.explanation[3].ask.afterWrong",
@@ -54963,7 +54963,7 @@
       "logic-gates/predict-gate-output/lg.q.predict/v000#explanation[3].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "كلا Inputين = 0، لذلك OR يعطي 0."
+    "arabic": "كل Input = 0، لذلك OR يعطي 0."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v000.explanation[3].say",
@@ -55249,7 +55249,7 @@
       "logic-gates/predict-gate-output/lg.q.predict/v101#explanation[2].ask.afterCorrect"
     ],
     "slots": [],
-    "arabic": "صحيح، كلا Inputين = 1، لذلك الناتج 1."
+    "arabic": "صحيح، كل Input = 1، لذلك الناتج 1."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v101.explanation[2].ask.afterWrong",
@@ -55270,7 +55270,7 @@
       "logic-gates/predict-gate-output/lg.q.predict/v101#explanation[2].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "كلا Inputين = 1، لذلك AND gate يعطي 1."
+    "arabic": "كل Input = 1، لذلك AND gate يعطي 1."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v101.explanation[2].ask.prompt",
@@ -57790,7 +57790,7 @@
     "slots": [
       "dataVar"
     ],
-    "arabic": "ليس بعد. انظر فقط إلى الـ Rowين في هذا الزوج: {dataVar} = 0، ثم {dataVar} = 1."
+    "arabic": "ليس بعد. انظر فقط إلى الـ Rows الاثنين في هذا الزوج: {dataVar} = 0، ثم {dataVar} = 1."
   },
   {
     "id": "ecet111.multiplexers.mux-functions.mx.q.pairs.f3.hints[1]",
@@ -60671,7 +60671,7 @@
       "number-systems/conversion-exercise/ns.x.divide/v73#hints[1]"
     ],
     "slots": [],
-    "arabic": "في كل خطوة: اقسم على 2. الناتج الصحيح يذهب إلى الـ Row أسفل، وما يتبقى (0 أو 1) يُكتب بجانب العدد."
+    "arabic": "في كل خطوة: اقسم على 2. ناتج القسمة دون الكسر يذهب إلى الـ Row أسفل، وما يتبقى (0 أو 1) يُكتب بجانب العدد."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.divide.v26.hints[2]",
@@ -62440,7 +62440,7 @@
       "number-systems/decimal-to-binary/ns.q.hex/v37#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "الـ Group اليسرى فيها Bitان فقط."
+    "arabic": "الـ Group اليسرى فيها 2 Bits فقط."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.hex.v37.explanation[2].ask.afterWrong",
@@ -63390,7 +63390,7 @@
       "number-systems/decimal-to-binary/ns.q.octal/v26#explanation[1].ask.prompt"
     ],
     "slots": [],
-    "arabic": "الـ Group اليسرى 11 تحتوي Bitين فقط. ماذا نفعل؟"
+    "arabic": "الـ Group اليسرى 11 فيها 2 Bits فقط. ماذا نفعل؟"
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.octal.v26.explanation[1].say",
@@ -63410,7 +63410,7 @@
       "number-systems/decimal-to-binary/ns.q.octal/v26#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "من اليمين: 010 هي Group واحدة. يتبقى Bitان: 11."
+    "arabic": "من اليمين: 010 هي Group واحدة. يتبقى 2 Bits: 11."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.octal.v26.explanation[2].ask.afterCorrect",
@@ -64044,7 +64044,7 @@
       "number-systems/decimal-to-binary/ns.q.octal/v37#explanation[1].ask.afterCorrect"
     ],
     "slots": [],
-    "arabic": "صحيح. كلا Groupين مكتملان."
+    "arabic": "صحيح. كل Group مكتملة."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.octal.v37.explanation[1].ask.afterWrong",
@@ -64064,7 +64064,7 @@
       "number-systems/decimal-to-binary/ns.q.octal/v37#explanation[1].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "6 Bits = 2 × 3، لذلك كلا Groupين مكتملان بالفعل."
+    "arabic": "6 Bits = 2 × 3، لذلك كل Group مكتملة بالفعل."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.octal.v37.explanation[1].ask.prompt",
@@ -64101,7 +64101,7 @@
       "number-systems/decimal-to-binary/ns.q.octal/v37#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "ستة Bits تكوّن بالضبط Groupين، كل واحدة من 3."
+    "arabic": "ستة Bits تكوّن بالضبط 2 Groups، كل واحدة من 3."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.octal.v37.explanation[2].ask.afterCorrect",
@@ -71136,7 +71136,7 @@
       "ecet111/half-adder"
     ],
     "slots": [],
-    "arabic": "انظر إلى AND gate مرة أخرى. يحتاج كلا Inputين = 1."
+    "arabic": "انظر إلى AND gate مرة أخرى. يحتاج أن يكون كل Input = 1."
   },
   {
     "id": "tutor.lg.check-not",
@@ -71199,7 +71199,7 @@
       "ecet111/half-adder"
     ],
     "slots": [],
-    "arabic": "انظر إلى XOR gate مرة أخرى. يعطي 1 فقط عندما يكون Inputاه مختلفين."
+    "arabic": "انظر إلى XOR gate مرة أخرى. يعطي 1 فقط عندما تختلف قيمتا الـ Inputs."
   },
   {
     "id": "tutor.lg.nand-inverted",
@@ -71220,7 +71220,7 @@
       "ecet111/logic-gates"
     ],
     "slots": [],
-    "arabic": "NAND هو عكس AND. فكّر ماذا يعطي عندما يكون كلا Inputين = 1."
+    "arabic": "NAND هو عكس AND. فكّر ماذا يعطي عندما يكون كل Input = 1."
   },
   {
     "id": "tutor.lg.nand-not",
@@ -71365,7 +71365,7 @@
       "ecet111/latches"
     ],
     "slots": [],
-    "arabic": "وجود كلا Inputين عند 0 ليس \"No change\" في NAND Latch: كلا NAND outputs يُجبران على 1. ما نوع الحالة التي ينتجها ذلك؟"
+    "arabic": "وجود كل Input عند 0 ليس \"No change\" في NAND Latch: كل NAND output يُجبر على 1. ما نوع الحالة التي ينتجها ذلك؟"
   },
   {
     "id": "tutor.mt.not-canonical",
@@ -71460,7 +71460,7 @@
       "ecet111/multiplexers"
     ],
     "slots": [],
-    "arabic": "F ليست متساوية في الـ Rowين من هذا الزوج، لذلك لا يمكن أن يعطيها Constant. أي شكل من الـ Variable يطابقها؟"
+    "arabic": "F ليست متساوية في الـ Rows الاثنين من هذا الزوج، لذلك لا يمكن أن يعطيها Constant. أي شكل من الـ Variable يطابقها؟"
   },
   {
     "id": "tutor.mx.pair-swapped",
@@ -71499,7 +71499,7 @@
       "ecet111/multiplexers"
     ],
     "slots": [],
-    "arabic": "F متساوية في الـ Rowين من هذا الزوج، لذلك الـ Input لا يعتمد على الـ Variable. ما الـ Constant المناسب؟"
+    "arabic": "F متساوية في الـ Rows الاثنين من هذا الزوج، لذلك الـ Input لا يعتمد على الـ Variable. ما الـ Constant المناسب؟"
   },
   {
     "id": "tutor.ns.bits-reversed",
@@ -72985,7 +72985,7 @@
     "occurrences": 0,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "AND يعطي 1 فقط عندما يكون كلا Inputين = 1."
+    "arabic": "AND يعطي 1 فقط عندما يكون كل Input = 1."
   },
   {
     "id": "tutor.gate.rule.NAND",
@@ -73005,7 +73005,7 @@
     "occurrences": 0,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "NAND هو AND يتبعه NOT: يعطي 0 فقط عندما يكون كلا Inputين = 1."
+    "arabic": "NAND هو AND يتبعه NOT: يعطي 0 فقط عندما يكون كل Input = 1."
   },
   {
     "id": "tutor.gate.rule.NOR",
@@ -73025,7 +73025,7 @@
     "occurrences": 0,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "NOR هو OR يتبعه NOT: يعطي 1 فقط عندما يكون كلا Inputين = 0."
+    "arabic": "NOR هو OR يتبعه NOT: يعطي 1 فقط عندما يكون كل Input = 0."
   },
   {
     "id": "tutor.gate.rule.NOT",
@@ -73079,7 +73079,7 @@
     "occurrences": 0,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "XOR يعطي 1 عندما يكون Inputاه مختلفين."
+    "arabic": "XOR يعطي 1 عندما تختلف قيمتا الـ Inputs."
   },
   {
     "id": "tutor.hesitation",
