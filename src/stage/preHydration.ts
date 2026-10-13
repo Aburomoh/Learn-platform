@@ -7,11 +7,14 @@
  * 1. `preInputScript`: a tiny inline script placed before the stage. Until hydration it records
  *    every `input` / `change` on the page (capture phase), latest value per element, on
  *    `window.__cetPreInput`. Element references, not selectors: hydration adopts the same nodes.
- * 2. `replayPreHydrationInputs()`: run by the runner in a layout effect on mount (the hydration
- *    commit, before paint). Each recorded value is put back through React's own change path, so
- *    the runner's state is what the student saw: the tick is back and Check turns on before the
- *    next frame. The record is then cleared and the listeners removed.
+ * 2. `replayPreHydrationInputs()`: run by the runner in an effect on mount, right after the
+ *    hydration commit. Each recorded value is put back through React's own change path and
+ *    committed on its own (`flushSync`, as typing does), so the runner's state is what the
+ *    student saw: the tick is back and Check turns on. The record is then cleared and the
+ *    listeners removed.
  */
+
+import { flushSync } from "react-dom";
 
 export const PRE_INPUT_KEY = "__cetPreInput";
 
@@ -48,19 +51,23 @@ export function replayPreHydrationInputs(): number {
   for (const [el, value] of pre.map) {
     if (!el.isConnected || (el as HTMLInputElement).disabled) continue;
     try {
-      if (typeof value === "boolean") {
-        if (!value) continue;
-        // React may have reset it or left it: clear through the tracked property, then a real click checks it and fires change
-        (el as HTMLInputElement).checked = false;
-        (el as HTMLInputElement).click();
-      } else {
-        if (value === "") continue;
-        // clear through the tracked property so the tracker holds "", then set the value past it: the input event is a change
-        el.value = "";
-        setNative(el, "value", value);
-        el.dispatchEvent(new Event("input", { bubbles: true }));
-      }
-      n += 1;
+      // each field commits on its own, as typing does (QA on #711): a kind whose updater reads
+      // `e.target.value` for several fields would otherwise see the others restored to "" first
+      flushSync(() => {
+        if (typeof value === "boolean") {
+          if (!value) return;
+          // React may have reset it or left it: clear through the tracked property, then a real click checks it and fires change
+          (el as HTMLInputElement).checked = false;
+          (el as HTMLInputElement).click();
+        } else {
+          if (value === "") return;
+          // clear through the tracked property so the tracker holds "", then set the value past it: the input event is a change
+          el.value = "";
+          setNative(el, "value", value);
+          el.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        n += 1;
+      });
     } catch {
       // one bad element never blocks the rest
     }

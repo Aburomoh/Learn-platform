@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { Activity, Course, Topic } from "@/content/schema";
 import { product } from "../../config/product";
 import { HintReveal } from "@/interactions/HintReveal/HintReveal";
@@ -100,9 +100,10 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
   const question = activity.questions[state.qIndex];
   const variant = currentVariant(activity, state);
 
-  // Input made before hydration (#708): put back through React's change path in the hydration
-  // commit, before paint, so a tick or typed digits never vanish and Check turns on.
-  useLayoutEffect(() => {
+  // Input made before hydration (#708): put back through React's change path right after the
+  // hydration commit, each field committed on its own (`flushSync`, which a layout effect could
+  // not do), so a tick or typed digits never vanish and Check turns on.
+  useEffect(() => {
     replayPreHydrationInputs();
   }, []);
 

@@ -66,6 +66,35 @@ for (const [width, height] of [
   });
 }
 
+for (const [width, height] of [
+  [390, 844],
+  [1280, 800],
+] as const) {
+  test(`several fields typed before hydration at ${width}×${height} all survive (QA on #711: dynamic partitions release, compare algorithms)`, async ({ page }) => {
+    await page.setViewportSize({ width, height });
+    await slowScripts(page, 2500);
+    await page.goto("/courses/cpet181/dynamic-partitions/release/", { waitUntil: "commit" });
+    const fields = page.locator("main input:not([type=radio]):not([type=checkbox])");
+    await expect(fields.first()).toBeVisible();
+    const count = Math.min(await fields.count(), 4);
+    expect(count).toBeGreaterThanOrEqual(2);
+    for (let i = 0; i < count; i++) await fields.nth(i).fill("1");
+    expect(await notHydrated(page), "typed before hydration").toBe(true);
+    await hydrated(page);
+    for (let i = 0; i < count; i++) await expect(fields.nth(i)).toHaveValue("1");
+    await expect(page.getByRole("button", { name: /^Check/ }).first()).toBeEnabled();
+
+    await page.goto("/courses/cpet181/compare-algorithms/compare/", { waitUntil: "commit" });
+    const more = page.locator("main input:not([type=radio]):not([type=checkbox])");
+    await expect(more.first()).toBeVisible();
+    const n = Math.min(await more.count(), 4);
+    for (let i = 0; i < n; i++) await more.nth(i).fill("1");
+    expect(await notHydrated(page), "typed before hydration").toBe(true);
+    await hydrated(page);
+    for (let i = 0; i < n; i++) await expect(more.nth(i)).toHaveValue("1");
+  });
+}
+
 test("a practice opened and left alone: nothing replayed, no page error", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(String(e)));
