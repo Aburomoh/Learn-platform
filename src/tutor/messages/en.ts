@@ -216,6 +216,8 @@ export const en = {
   "ns.missing-largest": "Check the largest place value. Does {largest} fit in {value}?",
   "ns.extra-place": "One of the lit places is too big for what is left. Check the remainder after each step.",
   "ns.hex-letter": "In hex, 10 to 15 are single letters A to F, not two digits.",
+  "ns.hex-neighbour": "Close, but check the count: A = 10, and each letter after it is one more.",
+  "ns.bits-neighbour": "Those bits stand for the next or the previous digit. Add the weights 8, 4, 2, 1 where there is a 1.",
   "sm.absorb-mixup": "Look at the second term again: A + AB gives A, but here it is A + A′B. Which rule has the complement?",
   "cx.not-applied": "That is what goes into the gate. What does the gate do to it?",
   "cx.bar-misplaced": "Check where the bar belongs: on one letter, or over everything that reaches the NOT gate?",

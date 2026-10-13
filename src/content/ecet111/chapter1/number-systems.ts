@@ -165,14 +165,33 @@ function checkBackVariant(value: number, base: 8 | 16, k: number): VariantInput 
 
 /* ---------- The 0–15 table: decimal, hex digit, 4 bits (#215, slides 23–25) ---------- */
 
+// a pointer first, the table next, the answer last (#726): the first rung must not hand over the answer
 const tableHints: HintInput[] = [
-  { rung: 2, text: "Not yet. Hex digits go 0–9, then A = 10, B = 11, C = 12, D = 13, E = 14, F = 15." },
-  { rung: 3, text: "Four bits have the weights 8, 4, 2, 1." },
+  { rung: 2, text: "Not yet. After 9, hex uses letters: count on from A = 10." },
+  { rung: 3, text: "Not yet. Hex digits go 0–9, then A = 10, B = 11, C = 12, D = 13, E = 14, F = 15." },
+  { rung: 4, text: "Four bits have the weights 8, 4, 2, 1." },
   { rung: 9, text: "{fact}" },
 ];
 
-function digitOptions(correct: string, wrong: string[]): { id: string; text: string }[] {
-  return [correct, ...wrong.filter((w, k, all) => w !== correct && all.indexOf(w) === k)].slice(0, 4).map((t) => ({ id: `o-${t.toLowerCase()}`, text: t }));
+/** The mistake a distractor was built for (#726): each one names it when picked. */
+type Slip = "decimal" | "neighbour-letter" | "bits-reversed" | "neighbour-bits";
+const SLIPS: Record<Slip, { id: string; title: string; nudgeKey: string }> = {
+  decimal: { id: "ns.hex-digit-decimal", title: "Wrote the decimal value instead of a hex digit", nudgeKey: "ns.hex-letter" },
+  "neighbour-letter": { id: "ns.hex-neighbour", title: "The neighbouring digit", nudgeKey: "ns.hex-neighbour" },
+  "bits-reversed": { id: "ns.bits-reversed", title: "Read the bits from the wrong end", nudgeKey: "ns.bits-reversed" },
+  "neighbour-bits": { id: "ns.bits-neighbour", title: "The bits of the next or previous digit", nudgeKey: "ns.bits-neighbour" },
+};
+type Wrong = [text: string, slip: Slip];
+
+function digitOptions(correct: string, wrong: Wrong[]): { id: string; text: string; slip?: Slip }[] {
+  const seen = new Set<string>([correct]);
+  const options: { id: string; text: string; slip?: Slip }[] = [{ id: `o-${correct.toLowerCase()}`, text: correct }];
+  for (const [text, slip] of wrong) {
+    if (seen.has(text)) continue;
+    seen.add(text);
+    options.push({ id: `o-${text.toLowerCase()}`, text, slip });
+  }
+  return options.slice(0, 4);
 }
 
 /** Rotate options so the correct one is not always first. */
@@ -181,14 +200,22 @@ function rotated<T>(xs: T[], k: number): T[] {
   return [...xs.slice(r), ...xs.slice(0, r)];
 }
 
-function tableVariant(id: string, prompt: string, correct: string, wrong: string[], fact: string, k: number): VariantInput {
-  const options = rotated(digitOptions(correct, wrong), k);
+function tableVariant(id: string, prompt: string, correct: string, wrong: Wrong[], fact: string, k: number): VariantInput {
+  const withSlips = digitOptions(correct, wrong);
+  const options = rotated(withSlips, k).map(({ id: oid, text }) => ({ id: oid, text }));
+  // one misconception per kind of slip that a distractor carries
+  const used = [...new Set(withSlips.flatMap((o) => (o.slip ? [o.slip] : [])))];
+  const misconceptions = used.flatMap((slip) => {
+    const optionId = withSlips.find((o) => o.slip === slip)!.id;
+    return [{ ...SLIPS[slip], detect: { type: "option" as const, optionId } }];
+  });
   return {
     id,
     prompt,
     spec: { kind: "multiple-choice", options, correctOptionId: `o-${correct.toLowerCase()}` },
     vars: { fact },
     hints: tableHints,
+    misconceptions,
     explanation: [
       { id: "s1", say: "Hex digits go 0–9, then A = 10 up to F = 15. Four bits, with weights 8, 4, 2, 1, cover exactly 0 to 15." },
       { id: "s2", say: fact },
@@ -201,13 +228,13 @@ const bits4 = (n: number) => n.toString(2).padStart(4, "0");
 
 /** Decimal 10–15 → hex digit; wrong: the decimal written as is, the neighbouring letters. */
 const decimalToDigit = (n: number, k: number) =>
-  tableVariant(`vdec${n}`, `Which hexadecimal digit stands for ${n}?`, hex(n), [String(n), hex(n - 1), hex(Math.min(n + 1, 15))], `${n} is written ${hex(n)} in hexadecimal.`, k);
+  tableVariant(`vdec${n}`, `Which hexadecimal digit stands for ${n}?`, hex(n), [[String(n), "decimal"], [hex(n - 1), "neighbour-letter"], [hex(Math.min(n + 1, 15)), "neighbour-letter"]], `${n} is written ${hex(n)} in hexadecimal.`, k);
 /** Hex digit → 4 bits; wrong: the bits reversed, the neighbour's bits. */
 const digitToBits = (n: number, k: number) =>
-  tableVariant(`vhex${n}`, `Which 4 bits stand for the hex digit ${hex(n)}?`, bits4(n), [[...bits4(n)].reverse().join(""), bits4(n - 1), bits4((n + 1) % 16)], `${hex(n) === String(n) ? n : `${hex(n)} = ${n}`} = ${bits4(n)}: ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")}.`, k);
+  tableVariant(`vhex${n}`, `Which 4 bits stand for the hex digit ${hex(n)}?`, bits4(n), [[[...bits4(n)].reverse().join(""), "bits-reversed"], [bits4(n - 1), "neighbour-bits"], [bits4((n + 1) % 16), "neighbour-bits"]], `${hex(n) === String(n) ? n : `${hex(n)} = ${n}`} = ${bits4(n)}: ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")}.`, k);
 /** 4 bits → hex digit; wrong: the bits read reversed, the decimal value for a letter digit. */
 const bitsToDigit = (n: number, k: number) =>
-  tableVariant(`vbits${n}`, `Which hex digit is ${bits4(n)}?`, hex(n), [hex(parseInt([...bits4(n)].reverse().join(""), 2)), n >= 10 ? String(n) : hex(n + 1), hex(n ^ 1)], `${bits4(n)} = ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")} = ${n}, written ${hex(n)}.`, k);
+  tableVariant(`vbits${n}`, `Which hex digit is ${bits4(n)}?`, hex(n), [[hex(parseInt([...bits4(n)].reverse().join(""), 2)), "bits-reversed"], [n >= 10 ? String(n) : hex(n + 1), n >= 10 ? "decimal" : "neighbour-letter"], [hex(n ^ 1), "neighbour-letter"]], `${bits4(n)} = ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")} = ${n}, written ${hex(n)}.`, k);
 
 const hexDigitsActivity: TopicInput["activities"][number] = {
   id: "hex-digits",
