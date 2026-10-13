@@ -105,12 +105,19 @@ describe("topicRowLink: the quiet link of a course-page row (epic #670, QW1)", (
   const multi = topics.find((t) => t.activities.length > 1)!;
   const single = topics.find((t) => t.activities.length === 1)!;
   it("a topic with several practices opens its page, where the practices are chosen", () => {
-    expect(topicRowLink(course, multi, progress())).toEqual({ label: "Open topic", href: `/courses/ecet111/${multi.id}/` });
+    expect(topicRowLink(course, multi, progress())).toMatchObject({ label: "Open topic", href: `/courses/ecet111/${multi.id}/` });
     expect(topicRowLink(course, multi, progress(done(multi))).label).toBe("Open topic");
   });
+  it("every catalogue label carries its template and slots for the Arabic layer (#705)", () => {
+    const a = first.activities[0];
+    expect(practiceAction(course, first, a, progress()).link).toMatchObject({ template: "Start · {title}", vars: { title: a.title } });
+    expect(topicRowLink(course, multi, progress()).template).toBe("Open topic");
+    expect(courseAction(course, allDone()).primary.template).toBe("Review · {title}");
+  });
+
   it("a one-practice topic goes straight to the practice, naming it", () => {
     const a = single.activities[0];
-    expect(topicRowLink(course, single, progress())).toEqual({ label: `Start · ${a.title}`, href: `/courses/ecet111/${single.id}/${a.id}/` });
+    expect(topicRowLink(course, single, progress())).toMatchObject({ label: `Start · ${a.title}`, href: `/courses/ecet111/${single.id}/${a.id}/` });
     expect(topicRowLink(course, single, progress({ [a.id]: record("started") })).label).toBe(`Continue · ${a.title}`);
     expect(topicRowLink(course, single, progress(done(single))).label).toBe(`Review · ${a.title}`);
   });
@@ -130,11 +137,11 @@ describe("practiceAction: one practice's own row", () => {
   it("is Start, Continue or Review from that practice's status alone", () => {
     const a = practice(0);
     const href = `/courses/ecet111/${first.id}/${a.id}/`;
-    expect(practiceAction(course, first, a, progress())).toEqual({ kind: "start", link: { label: `Start · ${a.title}`, href } });
+    expect(practiceAction(course, first, a, progress())).toMatchObject({ kind: "start", link: { label: `Start · ${a.title}`, href } });
     expect(practiceAction(course, first, a, progress({ [a.id]: record("new") })).kind).toBe("start");
-    expect(practiceAction(course, first, a, progress({ [a.id]: record("started") }))).toEqual({ kind: "continue", link: { label: `Continue · ${a.title}`, href } });
+    expect(practiceAction(course, first, a, progress({ [a.id]: record("started") }))).toMatchObject({ kind: "continue", link: { label: `Continue · ${a.title}`, href } });
     expect(practiceAction(course, first, a, progress({ [a.id]: visited() })).kind).toBe("start");
     expect(practiceAction(course, first, a, progress({ [a.id]: visited(1, true) })).kind).toBe("start");
-    expect(practiceAction(course, first, a, progress({ [a.id]: record("completed") }))).toEqual({ kind: "review", link: { label: `Review · ${a.title}`, href: `${href}?review=1` } });
+    expect(practiceAction(course, first, a, progress({ [a.id]: record("completed") }))).toMatchObject({ kind: "review", link: { label: `Review · ${a.title}`, href: `${href}?review=1` } });
   });
 });

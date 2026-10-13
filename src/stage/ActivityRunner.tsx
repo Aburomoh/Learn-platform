@@ -13,6 +13,7 @@ import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVari
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
 import { replayPreHydrationInputs } from "./preHydration";
+import { useUiText } from "@/shell/r1/uiText";
 import { KindPrefetch } from "@/kinds/ui";
 import { useHydrated } from "@/shell/useHydrated";
 import { RESUME_ATTR } from "./resumeMarker";
@@ -94,6 +95,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
   const [state, dispatch] = useReducer(reducer, initial);
   const [progress, updateProgress] = useOfferingProgress(offeringId);
   const [prefs] = usePrefs();
+  const { t } = useUiText();
   const stageRef = useRef<HTMLDivElement>(null);
   const { apply } = useFocusEffects(stageRef);
 
@@ -286,7 +288,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
           <HintReveal
             revealed={state.hints}
             canRequest={scaffoldsOpen && state.tutor.hintLevel < 9}
-            lockedReason={!scaffoldsOpen ? resolveMessage("ui.stage.try-first") : undefined}
+            lockedReason={!scaffoldsOpen ? t("ui.stage.try-first") : undefined}
             course={course.id}
             onRequest={() => act({ type: "HINT" })}
             onExplainSlowly={scaffoldsOpen ? () => act({ type: "EXPLAIN" }) : undefined}

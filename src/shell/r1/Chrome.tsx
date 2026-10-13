@@ -1,10 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { resolveMessage } from "@/tutor/messages";
 import { product } from "../../../config/product";
 import { LanguageToggle } from "./LanguageToggle";
 import { PrimaryAction, type ActionLink } from "./PrimaryAction";
 import { ProfileMenu } from "./ProfileMenu";
+import { BackLabel, RowActionLink, UiText } from "./uiText";
 import styles from "./r1.module.css";
 
 /**
@@ -29,7 +29,8 @@ export function TopBar({ back }: { back?: ActionLink }) {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={styles.utilIcon}>
               <path d="M19 12H5M11 6l-6 6 6 6" />
             </svg>
-            <span>{back.label}</span>
+            {/* the clipped text element carries dir from the language (#705), so an ellipsis ends Arabic text */}
+            <BackLabel link={back} />
           </Link>
         )}
         <span className={styles.spacer} />
@@ -60,8 +61,8 @@ export interface TopicRowProps {
   href?: string;
   /** One line under the title, e.g. "Decimal → Binary → Octal → Hex". */
   route?: string;
-  /** Status or effort line, e.g. "2 of 4 challenges done" or "3 short challenges · about 6 min". */
-  status?: string;
+  /** Status or effort line, e.g. "2 of 4 challenges done" or "3 short challenges · about 6 min"; a `<LineText>` for the Arabic layer (#710). */
+  status?: ReactNode;
   /** Muted, normal weight for an effort cue; the default (semibold) is for progress. */
   statusMuted?: boolean;
   /** True for a finished topic: the status gets a check mark as well as its text. */
@@ -76,7 +77,7 @@ export interface TopicRowProps {
   /** The practices behind the topic's title, in order (epic #670, QW5); on phones the first two and "+N more". */
   practices?: string[];
   /** Caption over the filled button (QW7). */
-  caption?: string;
+  caption?: ReactNode;
 }
 
 /** How many practice titles a row shows at full width; phones show two (CSS). */
@@ -116,13 +117,13 @@ export function TopicRow({ title, href, route, status, statusMuted = false, comp
             {practices.length > 2 && (
               <span className={styles.moreNarrow}>
                 <span aria-hidden="true"> · </span>
-                {resolveMessage("ui.row.more", { n: practices.length - 2 })}
+                <UiText k="ui.row.more" vars={{ n: practices.length - 2 }} />
               </span>
             )}
             {practices.length > ROW_PRACTICES && (
               <span className={styles.moreWide}>
                 <span aria-hidden="true"> · </span>
-                {resolveMessage("ui.row.more", { n: practices.length - ROW_PRACTICES })}
+                <UiText k="ui.row.more" vars={{ n: practices.length - ROW_PRACTICES }} />
               </span>
             )}
           </p>
@@ -142,9 +143,7 @@ export function TopicRow({ title, href, route, status, statusMuted = false, comp
         {emphasis === "primary" ? (
           <PrimaryAction primary={action} size="row" caption={caption} />
         ) : (
-          <Link href={action.href} className={styles.quiet} aria-label={`${action.label}: ${title}`}>
-            {action.label} <span aria-hidden="true">→</span>
-          </Link>
+          <RowActionLink link={action} title={title} className={styles.quiet} />
         )}
       </div>
     </li>
