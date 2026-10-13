@@ -327,6 +327,21 @@ The division-chain rung 2 assumed a previous attempt («once more»), which read
 
 Shown to a student who has not checked anything, the leading «ليس بعد.» is dropped by the presentation rule of #718 (`softenNudge`), so «احسب {dividend} ÷ 2 بدقة: …» is what they read.
 
+## 10. Arabic endings on English terms (#686 batch 3, Auditor)
+
+Found in QA's round-3 render: «Bitاً» renders as «Bitً», because the tanween lands on the Latin "t" and the alef joins the next word. The glossary has no rule for endings on an English term. The Auditor proposes four corrections and asks the owner for a rule; nothing here is applied to #702 until the owner decides.
+
+| Id | Current | Proposed |
+|---|---|---|
+| `…ns.q.divide.v26.explanation[0].say` | … كل Remainder (باقٍ) يصبح Bitاً واحداً. | … كل Remainder (باقٍ) يصبح Bit واحدًا. |
+| `…ns.q.divide.v75.explanation[0].say` (7 places) | اقسم {value} على 2 مراراً. كل Remainder يصبح Bitاً واحداً. | اقسم {value} على 2 مراراً. كل Remainder يصبح Bit واحدًا. |
+| `…ns.q.hex.v26.explanation[1].say` | الـ Group اليسرى تحتوي Bitاً واحداً فقط. | الـ Group اليسرى فيها Bit واحد فقط. |
+| `tutor.lg.nand-not` | NAND يأخذ Inputين. أي Gate يأخذ Inputاً واحداً فقط ويعكسه؟ | NAND يأخذ اثنين من الـ Inputs. أي Gate يأخذ Input واحدًا فقط ويعكسه؟ |
+
+**Owner decision:** adopt "no Arabic ending on an English term" as a rule in the glossary, so new strings follow it?
+
+**How many strings have it.** `npm run l10n:drift` now lists the strings with an Arabic ending attached straight to an English term (UNTRANSLATED.md, "Arabic endings attached to an English term"): **80** approved strings, almost all the dual («Inputين», «Bitين», «Productين», «Jobان», «Readerان», «Digitان», «CPUان») on top of the four above. If the owner adopts the rule, the Auditor can propose the fixes for all of them in one batch; I would apply them to the package and keep the list in the drift report until it is empty.
+
 ## Still to come (added as the PRs land)
 
 - Learning step 1b (UI): "I'm stuck", "Show a hint", "Explain slowly", "Back to my step", the restart confirmation buttons.
