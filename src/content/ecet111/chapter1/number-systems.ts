@@ -203,11 +203,13 @@ function rotated<T>(xs: T[], k: number): T[] {
 function tableVariant(id: string, prompt: string, correct: string, wrong: Wrong[], fact: string, k: number): VariantInput {
   const withSlips = digitOptions(correct, wrong);
   const options = rotated(withSlips, k).map(({ id: oid, text }) => ({ id: oid, text }));
-  // one misconception per kind of slip that a distractor carries
-  const used = [...new Set(withSlips.flatMap((o) => (o.slip ? [o.slip] : [])))];
-  const misconceptions = used.flatMap((slip) => {
-    const optionId = withSlips.find((o) => o.slip === slip)!.id;
-    return [{ ...SLIPS[slip], detect: { type: "option" as const, optionId } }];
+  // one misconception per distractor, so every wrong pick is named (ids are suffixed when a slip repeats)
+  const count = new Map<Slip, number>();
+  const misconceptions = withSlips.flatMap((o) => {
+    if (!o.slip) return [];
+    const n = (count.get(o.slip) ?? 0) + 1;
+    count.set(o.slip, n);
+    return [{ ...SLIPS[o.slip], id: n === 1 ? SLIPS[o.slip].id : `${SLIPS[o.slip].id}-${n}`, detect: { type: "option" as const, optionId: o.id } }];
   });
   return {
     id,
@@ -234,7 +236,7 @@ const digitToBits = (n: number, k: number) =>
   tableVariant(`vhex${n}`, `Which 4 bits stand for the hex digit ${hex(n)}?`, bits4(n), [[[...bits4(n)].reverse().join(""), "bits-reversed"], [bits4(n - 1), "neighbour-bits"], [bits4((n + 1) % 16), "neighbour-bits"]], `${hex(n) === String(n) ? n : `${hex(n)} = ${n}`} = ${bits4(n)}: ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")}.`, k);
 /** 4 bits → hex digit; wrong: the bits read reversed, the decimal value for a letter digit. */
 const bitsToDigit = (n: number, k: number) =>
-  tableVariant(`vbits${n}`, `Which hex digit is ${bits4(n)}?`, hex(n), [[hex(parseInt([...bits4(n)].reverse().join(""), 2)), "bits-reversed"], [n >= 10 ? String(n) : hex(n + 1), n >= 10 ? "decimal" : "neighbour-letter"], [hex(n ^ 1), "neighbour-letter"]], `${bits4(n)} = ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")} = ${n}, written ${hex(n)}.`, k);
+  tableVariant(`vbits${n}`, `Which hex digit is ${bits4(n)}?`, hex(n), [[hex(parseInt([...bits4(n)].reverse().join(""), 2)), "bits-reversed"], [n >= 10 ? String(n) : hex(n + 1), n >= 10 ? "decimal" : "neighbour-bits"], [hex(n ^ 1), "neighbour-bits"]], `${bits4(n)} = ${[8, 4, 2, 1].filter((w) => n & w).join(" + ")} = ${n}, written ${hex(n)}.`, k);
 
 const hexDigitsActivity: TopicInput["activities"][number] = {
   id: "hex-digits",
