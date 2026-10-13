@@ -723,12 +723,11 @@ export function MemoryMap({
                         aria-invalid={(wrong && wrongFirst === 0) || undefined}
                         value={fields.start}
                         disabled={!editing}
-                        onChange={(e) =>
-                          setFields((f) => ({
-                            ...f,
-                            start: e.target.value.replace(/[^0-9]/g, ""),
-                          }))
-                        }
+                        onChange={(e) => {
+                          // read the value in the handler, never in the updater: a replayed edit (#708) is restored by then
+                          const start = e.target.value.replace(/[^0-9]/g, "");
+                          setFields((f) => ({ ...f, start }));
+                        }}
                         {...focusTarget("release-start")}
                       />
                     </label>
@@ -741,12 +740,11 @@ export function MemoryMap({
                         aria-invalid={(wrong && wrongFirst === 1) || undefined}
                         value={fields.size}
                         disabled={!editing}
-                        onChange={(e) =>
-                          setFields((f) => ({
-                            ...f,
-                            size: e.target.value.replace(/[^0-9]/g, ""),
-                          }))
-                        }
+                        onChange={(e) => {
+                          // read the value in the handler, never in the updater: a replayed edit (#708) is restored by then
+                          const size = e.target.value.replace(/[^0-9]/g, "");
+                          setFields((f) => ({ ...f, size }));
+                        }}
                         {...focusTarget("release-size")}
                       />
                     </label>
