@@ -6,7 +6,7 @@ import { effectiveDone, inProgress } from "@/learner/progress";
 import { topicAction } from "../primaryAction";
 import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
 import { PrimaryAction, effortLine } from "./PrimaryAction";
-import { LineText, UiText } from "./uiText";
+import { LineText, UiText, useUiText } from "./uiText";
 import { PracticeRows } from "./TopicNavigator";
 import { pluralKey } from "@/tutor/messages";
 import { useHydrated } from "../useHydrated";
@@ -30,6 +30,7 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
   const done = [...effectiveDone(activity, record).completed];
   const finished = action.kind === "next-topic" || action.kind === "review";
   const several = topic.activities.length > 1;
+  const { t } = useUiText();
 
   return (
     <div className={styles.next} style={ready ? undefined : { visibility: "hidden" }} aria-busy={!ready} data-action={action.kind}>
@@ -44,10 +45,10 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
           {/* with several practices, say which one the steps belong to */}
           {several && (
             <p className={styles.stepsLabel}>
-              {activity.title} · <UiText k={pluralKey("ui.effort.short-challenges", activity.questions.length, "en")} vars={{ n: activity.questions.length }} />
+              <UiText k={pluralKey("ui.topic.practice-challenges", activity.questions.length, "en")} vars={{ title: activity.title, n: activity.questions.length }} />
             </p>
           )}
-          <ChallengeSteps steps={stepsFrom(activity.questions, done, inProgress(record, activity))} label={several ? `Challenges of ${activity.title}` : "Challenges"} />
+          <ChallengeSteps steps={stepsFrom(activity.questions, done, inProgress(record, activity))} label={several ? t("ui.topic.challenges-of", { title: activity.title }) : t("ui.topic.challenges")} />
         </div>
       )}
 

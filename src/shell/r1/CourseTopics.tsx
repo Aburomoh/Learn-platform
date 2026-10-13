@@ -253,10 +253,12 @@ export function ChapterIndex({
     <div className={styles.rail}>
       <nav
         className={styles.chapterIndex}
-        aria-label="Chapters"
+        aria-label={t("ui.nav.chapters")}
         style={ready ? undefined : { visibility: "hidden" }}
       >
-        <p className={styles.eyebrow}>Chapters</p>
+        <p className={styles.eyebrow}>
+          <UiText k="ui.nav.chapters" />
+        </p>
         <ol>
           {course.modules.map((chapter, i) => {
             const status = chapterStatus(chapter, progress);

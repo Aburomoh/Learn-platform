@@ -17,9 +17,31 @@ const rtlElements = (page: Page) =>
     })),
   );
 
+test("عربي at 390: a topic page of eight practices and Home never overflow sideways (QA on #714)", async ({ page }) => {
+  // the build has no Arabic for the chrome yet: the test serves a stub map with the lines that matter
+  const stub = { "Practices: {titles}": "التمارين: {titles}", "{n} chapters": "الفصول: {n}", "{n} topics": "المواضيع: {n}", "{n} started": "جارٍ: {n}", "Start · {title}": "ابدأ · {title}" };
+  await page.route("**/l10n/ar/index.json", (route) => route.fulfill({ json: { shared: "shared.test.json" } }));
+  await page.route("**/l10n/ar/shared.test.json", (route) => route.fulfill({ json: stub }));
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("group", { name: /Language|اللغة/ }).getByRole("button", { name: "عربي" }).click();
+  const overflow = () => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  await expect(page.locator("#courses")).toContainText("الفصول:");
+  expect(await overflow()).toBeLessThanOrEqual(0);
+  await page.goto("/courses/ecet111/binary-arithmetic/");
+  await expect(page.locator("h1")).toContainText("Binary arithmetic");
+  await expect(page.locator("main")).toContainText("التمارين:");
+  expect(await overflow()).toBeLessThanOrEqual(0);
+  // the list is not a nowrap pair: it wraps over several lines
+  const line = page.locator("main").getByText(/التمارين:/).first();
+  const box = (await line.boundingBox())!;
+  expect(box.width).toBeLessThanOrEqual(390);
+  expect(box.height).toBeGreaterThan(40);
+});
+
 test("EN | عربي: applies at once, persists across pages and a reload, Arabic is RTL text only", async ({ page }) => {
   await page.goto("/");
-  const group = page.getByRole("group", { name: "Language" });
+  const group = page.getByRole("group", { name: /^(Language|اللغة)$/ });
   await expect(group.getByRole("button", { name: "EN" })).toHaveAttribute("aria-pressed", "true");
   await group.getByRole("button", { name: "عربي" }).click();
   await expect(group.getByRole("button", { name: "عربي" })).toHaveAttribute("aria-pressed", "true");
@@ -31,7 +53,7 @@ test("EN | عربي: applies at once, persists across pages and a reload, Arabic
 
   // persists: a direct entry into an activity and a reload keep Arabic
   await page.goto(ACTIVITY);
-  await expect(page.getByRole("group", { name: "Language" }).getByRole("button", { name: "عربي" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("group", { name: /^(Language|اللغة)$/ }).getByRole("button", { name: "عربي" })).toHaveAttribute("aria-pressed", "true");
   const bubble = page.locator("[data-tutor-text]");
   await expect(bubble).toHaveAttribute("dir", "rtl");
   await expect(bubble).toHaveAttribute("lang", "ar");
@@ -62,10 +84,10 @@ test("EN | عربي: applies at once, persists across pages and a reload, Arabic
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 
   // back to English at once, from the same control, and it sticks
-  await page.getByRole("group", { name: "Language" }).getByRole("button", { name: "EN" }).click();
+  await page.getByRole("group", { name: /^(Language|اللغة)$/ }).getByRole("button", { name: "EN" }).click();
   await expect(page.locator("[data-tutor-text]")).not.toHaveAttribute("dir", "rtl");
   await page.reload();
-  await expect(page.getByRole("group", { name: "Language" }).getByRole("button", { name: "EN" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("group", { name: /^(Language|اللغة)$/ }).getByRole("button", { name: "EN" })).toHaveAttribute("aria-pressed", "true");
 });
 
 test("the Arabic maps are static files: the index names content-hashed maps and the English bundle does not load them", async ({ page }) => {
@@ -76,7 +98,7 @@ test("the Arabic maps are static files: the index names content-hashed maps and 
   await page.goto(ACTIVITY);
   await page.waitForLoadState("networkidle");
   expect(requests).toEqual([]);
-  await page.getByRole("group", { name: "Language" }).getByRole("button", { name: "عربي" }).click();
+  await page.getByRole("group", { name: /^(Language|اللغة)$/ }).getByRole("button", { name: "عربي" }).click();
   await expect(page.locator("[data-tutor-text]")).toHaveAttribute("lang", "ar");
   expect(requests[0]).toBe("/l10n/ar/index.json");
   expect(requests.slice(1).sort()).toEqual(expect.arrayContaining([expect.stringMatching(/^\/l10n\/ar\/shared\.[0-9a-f]{10}\.json$/), expect.stringMatching(/^\/l10n\/ar\/ecet111\.[0-9a-f]{10}\.json$/)]));

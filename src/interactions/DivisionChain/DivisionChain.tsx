@@ -2,6 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { focusTarget } from "../shared/types";
+import { SupportiveText } from "@/l10n/SupportiveText";
+import { messageTemplate } from "@/tutor/messages";
 import styles from "./DivisionChain.module.css";
 
 export interface ChainStep {
@@ -171,7 +173,7 @@ export function DivisionChain({ id, steps, stepIndex, onStep, state = "idle", di
             {active.dividend} ÷ 2: write the <em>result below</em> and the <em>remainder beside it</em>
           </span>
           <button type="submit" className="btn btn-primary" disabled={quotient === "" || remainder === ""}>
-            Check step
+            <SupportiveText template={messageTemplate("ui.check.step")} inline />
           </button>
         </div>
       )}

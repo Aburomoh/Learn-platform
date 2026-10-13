@@ -14,6 +14,7 @@ import { Calculator } from "@/kinds/shared/Calculator";
 import { FigureView } from "@/kinds/shared/figures/FigureView";
 import type { ExplainProps, PracticeProps } from "@/kinds/types";
 import { kindUI } from "@/kinds/ui";
+import { UiText, useUiText } from "@/shell/r1/uiText";
 import styles from "./Stage.module.css";
 
 export interface QuestionViewProps {
@@ -32,13 +33,14 @@ export interface QuestionViewProps {
 export function QuestionView({ variant, last, stepIndex, locked, explanation, onSubmit, onPredict, onContinue }: QuestionViewProps) {
   const prompt = fill(variant.prompt, variant.vars);
   const state = last ? (last.result.correct ? "correct" : "incorrect") : "idle";
+  const { t } = useUiText();
 
   if (explanation) {
     const step = variant.explanation[explanation.step];
     const isLast = explanation.step >= variant.explanation.length - 1;
     const needsPrediction = !!step.ask && !explanation.prediction;
     return (
-      <section className={styles.question} aria-label="Explanation">
+      <section className={styles.question} aria-label={t("ui.explain.section")}>
         <p className={styles.prompt}>
           <Notation text={prompt} />
         </p>
@@ -49,10 +51,10 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
         )}
         <div className={styles.actions}>
           <span className={styles.stepCount}>
-            Step {explanation.step + 1} of {variant.explanation.length}
+            <UiText k="ui.explain.step" vars={{ k: explanation.step + 1, n: variant.explanation.length }} />
           </span>
           <button type="button" className="btn btn-primary" onClick={onContinue} disabled={needsPrediction}>
-            {isLast ? "Now I try" : "Continue"}
+            <UiText k={isLast ? "ui.explain.now-i-try" : "ui.explain.continue"} />
           </button>
         </div>
       </section>
@@ -76,13 +78,13 @@ export function QuestionView({ variant, last, stepIndex, locked, explanation, on
   );
   if (!variant.figure)
     return (
-      <section className={styles.question} aria-label="Question">
+      <section className={styles.question} aria-label={t("ui.question.section")}>
         {answer}
       </section>
     );
   // With a figure (ADR-0009): the figure first on phones, beside the answer area from 900 px.
   return (
-    <section className={`${styles.question} ${styles.withFigure}`} aria-label="Question">
+    <section className={`${styles.question} ${styles.withFigure}`} aria-label={t("ui.question.section")}>
       {/* never lit before a correct answer: `result` is the only state that shows the answer */}
       <FigureView id={variant.id} figure={variant.figure} revealed={locked && state === "correct"} />
       <div className={styles.question}>{answer}</div>

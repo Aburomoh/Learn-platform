@@ -50,7 +50,8 @@ export function PracticeRows({ course, topic, progress, upNextId, currentId }: P
                 {kinds.map((kind) => (
                   <span key={kind}>
                     {" · "}
-                    {hasMessage(`ui.kind.${kind}`) ? <UiText k={`ui.kind.${kind}`} /> : kind}
+                    {/* each kind word isolated (Auditor on #702): an Arabic word between English separators keeps its place */}
+                    <bdi>{hasMessage(`ui.kind.${kind}`) ? <UiText k={`ui.kind.${kind}`} /> : kind}</bdi>
                   </span>
                 ))}
                 {steps ? <> · {steps}</> : ""}

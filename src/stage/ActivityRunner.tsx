@@ -11,9 +11,10 @@ import { effectiveDone, effectiveStatus } from "@/learner/progress";
 import { useOfferingProgress, usePrefs, getProgressStore, recordAttempt, completeActivity, completeQuestion, markExplained, skipQuestion, skippedAhead, flushPendingWrites } from "@/learner";
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
+import { UiText, useUiText } from "@/shell/r1/uiText";
+import { ReturnOffer } from "./ReturnOffer";
 import { ActivitySummary, practiceObjectives } from "./ActivitySummary";
 import { replayPreHydrationInputs } from "./preHydration";
-import { useUiText } from "@/shell/r1/uiText";
 import { KindPrefetch } from "@/kinds/ui";
 import { useHydrated } from "@/shell/useHydrated";
 import { RESUME_ATTR } from "./resumeMarker";
@@ -253,10 +254,11 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
       <div className={styles.stage} ref={stageRef} data-testid="learning-stage" data-stage={stage}>
         <div className={styles.stageHead}>
           <p className={styles.eyebrow}>
-            Challenge {state.qIndex + 1} of {activity.questions.length}
+            <UiText k="ui.stage.challenge-of" vars={{ k: state.qIndex + 1, n: activity.questions.length }} />
             {question.label ? ` · ${question.label}` : ""}
           </p>
-          <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} onSkip={doSkip} />
+          {/* while a walkthrough runs or after a correct answer the hint panel is gone, so the ⋯ menu stays reachable up here */}
+          {(stage === "explaining" || stage === "complete") && <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} target={skip.target} onSkip={doSkip} />}
         </div>
 
         <QuestionView
@@ -272,18 +274,16 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         />
 
         {state.last && !state.last.result.correct && skippedHere && stage !== "explaining" && (
-          <p className={styles.returnOffer}>
-            Stuck? You skipped{" "}
+          <ReturnOffer k="ui.return.challenge" slot="label" value={skippedHere.label}>
             <button type="button" className={styles.returnLink} onClick={() => act({ type: "GO_TO_QUESTION", index: skippedHere.index })}>
               {skippedHere.label}
             </button>
-            ; it leads here. Go back any time.
-          </p>
+          </ReturnOffer>
         )}
         {state.last && !state.last.result.correct && skippedBefore && stage !== "explaining" && (
-          <p className={styles.returnOffer}>
-            Stuck? You skipped ahead in <a href={practiceHref(course, topic, skippedBefore)}>{skippedBefore.title}</a>; it covers this. Go back any time.
-          </p>
+          <ReturnOffer k="ui.return.practice" slot="title" value={skippedBefore.title}>
+            <a href={practiceHref(course, topic, skippedBefore)}>{skippedBefore.title}</a>
+          </ReturnOffer>
         )}
 
         {stage !== "explaining" && stage !== "complete" && (
@@ -291,6 +291,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
             revealed={state.hints}
             canRequest={scaffoldsOpen && state.tutor.hintLevel < 9}
             lockedReason={!scaffoldsOpen ? t("ui.stage.try-first") : undefined}
+            skipMenu={<SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} target={skip.target} onSkip={doSkip} />}
             course={course.id}
             onRequest={() => act({ type: "HINT" })}
             onExplainSlowly={scaffoldsOpen ? () => act({ type: "EXPLAIN" }) : undefined}
@@ -298,14 +299,14 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         )}
 
         {stage === "complete" && (
-          <div className={styles.actions} role="group" aria-label="Next steps">
+          <div className={styles.actions} role="group" aria-label={t("ui.stage.next-steps")}>
             {hasAnotherVariant(activity, state) && (
               <button type="button" className="btn" onClick={() => act({ type: "RETRY_VARIANT" })}>
-                Try a similar one
+                <UiText k="ui.stage.try-similar" />
               </button>
             )}
             <button type="button" className="btn btn-primary" onClick={() => act({ type: "NEXT_QUESTION" })}>
-              {state.completed.every(Boolean) ? "Finish" : "Next challenge"}
+              <UiText k={state.completed.every(Boolean) ? "ui.stage.finish" : "ui.stage.next-challenge"} />
             </button>
           </div>
         )}

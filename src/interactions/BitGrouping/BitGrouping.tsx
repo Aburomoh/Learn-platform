@@ -3,6 +3,8 @@
 import { Fragment, useEffect, useId, useRef, useState } from "react";
 import { focusTarget } from "../shared/types";
 import { useScrollFade } from "../shared/useScrollFade";
+import { SupportiveText } from "@/l10n/SupportiveText";
+import { messageTemplate } from "@/tutor/messages";
 import styles from "./BitGrouping.module.css";
 
 export interface BitGroupingProps {
@@ -243,7 +245,7 @@ function MarkGroups({ bits, groupSize, onGroups, wrong }: { bits: string; groupS
       {interactive && (
         <div className={styles.actions}>
           <button type="submit" className="btn btn-primary">
-            Check groups
+            <SupportiveText template={messageTemplate("ui.check.groups")} inline />
           </button>
         </div>
       )}
@@ -339,7 +341,7 @@ function Digits({
             Group {active + 1} of {groups.length}: write <span className="mono">{groups[active]}</span> as one {BASE_NAME[groupSize]} digit
           </span>
           <button type="submit" className="btn btn-primary" disabled={text === ""}>
-            Check digit
+            <SupportiveText template={messageTemplate("ui.check.digit")} inline />
           </button>
         </div>
       )}
@@ -437,7 +439,7 @@ function DigitsToBits({
             Digit {active + 1} of {digits.length}: write <span className="mono">{digits[active]}</span> as {groupSize} bits
           </span>
           <button type="submit" className="btn btn-primary" disabled={text === ""}>
-            Check bits
+            <SupportiveText template={messageTemplate("ui.check.bits")} inline />
           </button>
         </div>
       )}
