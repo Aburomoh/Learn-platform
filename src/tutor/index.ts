@@ -6,5 +6,6 @@ export { initialTutorState, canRequestScaffold, legacyWalkthroughLosesWork, lowe
 export { reduce, type ReduceResult } from "./engine/reduce";
 export { resolveMessage, hasMessage, messageKeys, messageTemplate, pluralKey, resolvePlural, untranslatedKeys, LOCALES, type MessageKey } from "./messages";
 export { gateWording } from "./gateVars";
+export { softenNudge } from "./engine/soften";
 export { RuleBasedTutor, createTutorAdapter, type ConversationalTutorAdapter, type TutorAdapterKind, type TutorTurnInput, type TutorTurnOutput } from "./adapter";
 export { contextFromVariant } from "./context";

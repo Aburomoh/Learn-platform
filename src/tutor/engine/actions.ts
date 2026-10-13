@@ -24,7 +24,7 @@ export const EXPRESSIONS: Expression[] = [
 
 export type TutorAction =
   /** `text` is the filled English; `template` and `vars` let the UI render it in the learner's language (ADR-0011). */
-  | { type: "SAY"; messageKey: string; text: string; template: string; vars: TemplateVars }
+  | { type: "SAY"; messageKey: string; text: string; template: string; vars: TemplateVars; unchecked?: boolean }
   /** A misconception was named on this step (#700). It stays true until the step completes; the view keeps it visible beside any hint. */
   | { type: "DIAGNOSIS"; messageKey: string; text: string; template: string; vars: TemplateVars }
   | { type: "CHANGE_EXPRESSION"; expression: Expression }
@@ -33,7 +33,8 @@ export type TutorAction =
   | { type: "PULSE"; target: string }
   | { type: "WAIT"; ms: number }
   | { type: "ASK"; stepId: string }
-  | { type: "REVEAL_HINT"; rung: number; text: string; template: string; vars: TemplateVars }
+  /** `unchecked`: granted before any Check on this step (#717). `text` is already softened; a view that renders `template` in another language applies `softenNudge` to its result. */
+  | { type: "REVEAL_HINT"; rung: number; text: string; template: string; vars: TemplateVars; unchecked?: boolean }
   | { type: "ADVANCE_EXPLANATION"; step: number }
   | { type: "RESET_INTERACTION" }
   | { type: "REQUEST_RETRY" }
