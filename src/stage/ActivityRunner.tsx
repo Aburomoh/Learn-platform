@@ -12,7 +12,6 @@ import { useOfferingProgress, usePrefs, getProgressStore, recordAttempt, complet
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary, practiceObjectives } from "./ActivitySummary";
-import { ActivitySummary } from "./ActivitySummary";
 import { replayPreHydrationInputs } from "./preHydration";
 import { useUiText } from "@/shell/r1/uiText";
 import { KindPrefetch } from "@/kinds/ui";
