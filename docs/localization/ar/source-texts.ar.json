@@ -74294,7 +74294,7 @@
     "slots": [
       "{title}"
     ],
-    "arabic": "الـ Topic التالي · {title}"
+    "arabic": "الموضوع التالي · {title}"
   },
   {
     "id": "catalog.ui.action.open-topic",
@@ -74309,7 +74309,7 @@
     "occurrences": 1,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "افتح الـ Topic"
+    "arabic": "افتح الموضوع"
   },
   {
     "id": "catalog.ui.action.recommended",
