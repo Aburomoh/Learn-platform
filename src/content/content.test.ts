@@ -1031,6 +1031,25 @@ describe("authored truth is internally consistent", () => {
     for (const { path, variant } of allVariants()) expect(variant.prompt, path).not.toMatch(/\bthe same (circuit|design|diagram|table|map|figure)/i);
   });
 
+  it("a practice's title and summary never name numbers that a variant switch replaces (#693)", () => {
+    // After Explain Slowly the practice goes on with another number set; a heading such as "Exercise: 15 − 4" would then mislead.
+    // A number in the title is fine only when every variant keeps it (a fixed range such as 0 to 15, a case number, a quantum).
+    const found: string[] = [];
+    for (const course of courses)
+      for (const m of course.modules)
+        for (const t of m.topics)
+          for (const a of t.activities) {
+            // a question's variants are the number sets (#141); a number is "in" a variant when its prompt or its vars carry it
+            const has = (v: Variant, n: string) => new RegExp(`\\b${n}\\b`).test(v.prompt) || Object.values(v.vars ?? {}).some((x) => String(x) === n);
+            const heading = `${a.title} ${a.summary}`;
+            for (const n of heading.match(/\b\d{2,}\b/g) ?? []) {
+              const replaced = a.questions.some((q) => q.variants.some((v) => has(v, n)) && !q.variants.every((v) => has(v, n)));
+              if (replaced) found.push(`${t.id}/${a.id}: "${a.title}" names ${n}, which a variant switch replaces`);
+            }
+          }
+    expect(found).toEqual([]);
+  });
+
   it("a prompt with a back-reference cue (now, next, earlier, again, the same) names the quantity it works on (#672)", () => {
     // a safety net for direct entry: "Now add A and B" is unanswerable unless the numbers or the expression are on the page.
     // In a multiple-choice concept question "next" is ordinary English ("before the next starts"), so only a sentence-opening cue counts there.
