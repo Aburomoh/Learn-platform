@@ -317,7 +317,7 @@ UI added nine keys in #714 that section 8c did not have. Same rules: label:value
 
 ### 8f. Four keys from #719 (the practice navigator and the summary exits)
 
-QA: without these the navigator stays English in عربي. Label:value, no brackets (the owner's plural rule; #720 on brackets).
+QA: without these the navigator stays English in عربي. **Not covered by the owner's approval of A and B, and not in #702**: they go to the owner as a small separate approval. Label:value, no brackets (the owner's plural rule; #720 on brackets).
 
 | Key | English | Arabic | Notes |
 |---|---|---|---|
