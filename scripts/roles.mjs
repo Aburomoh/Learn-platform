@@ -1,12 +1,15 @@
-// Team V2 roles (owner, 2026-10-06; ADR-0010). Five permanent roles, six on-demand specialists.
+// Team V2 roles (owner, 2026-10-06; ADR-0010). Six permanent roles (the Auditor added by
+// ADR-0012), six on-demand specialists.
 // `alarm` wakes the role; `labels` are its other triggers; `retired` maps old Team V1 names and labels
 // to their new owner, so old commands and labels keep working during the migration.
 export const ROLES = {
-  lead: { title: "Lead", alarm: "wake:lead", labels: ["blocked:architecture", "blocked:product", "blocked", "owner-decision"], charter: "lead" },
+  lead: { title: "Lead", alarm: "wake:lead", labels: ["blocked:architecture", "blocked:product", "blocked", "owner-decision", "audit:critical"], charter: "lead" },
   "content-engineer": { title: "Content Engineer", alarm: "wake:content", labels: [], charter: "content_engineer" },
   "ui-engineer": { title: "UI / Interaction Engineer", alarm: "wake:ui", labels: [], charter: "ui_engineer" },
   "code-architecture-reviewer": { title: "Independent Reviewer", alarm: "wake:reviewer", labels: [], charter: "code_architecture_reviewer" },
   "qa-test-engineer": { title: "Independent QA", alarm: "wake:qa", labels: [], charter: "qa_test_engineer" },
+  // ADR-0012: audit-only, non-blocking. Its `audit:critical` findings also reach the Lead (label above).
+  "educational-auditor": { title: "Educational Integrity Auditor", alarm: "wake:auditor", labels: [], charter: "educational_auditor" },
   // On demand: no permanent session; their wakes are routed to the Lead's inbox.
   "pedagogy-engineer": { title: "Pedagogy (on demand)", alarm: "wake:pedagogy", labels: ["pedagogy-review"], charter: "pedagogy_engineer", onDemand: true },
   "ux-design-engineer": { title: "UX / Design (Fable, on demand)", alarm: "wake:ux", labels: [], charter: "ux_design_engineer", onDemand: true },

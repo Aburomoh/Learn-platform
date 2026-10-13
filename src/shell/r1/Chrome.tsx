@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { resolveMessage } from "@/tutor/messages";
 import { product } from "../../../config/product";
 import { LanguageToggle } from "./LanguageToggle";
 import { PrimaryAction, type ActionLink } from "./PrimaryAction";
@@ -72,13 +73,20 @@ export interface TopicRowProps {
   action: ActionLink;
   /** Filled button for the next topic to do; quiet text action for the rest. */
   emphasis?: "primary" | "quiet";
+  /** The practices behind the topic's title, in order (epic #670, QW5); on phones the first two and "+N more". */
+  practices?: string[];
+  /** Caption over the filled button (QW7). */
+  caption?: string;
 }
+
+/** How many practice titles a row shows at full width; phones show two (CSS). */
+const ROW_PRACTICES = 4;
 
 /**
  * One topic on the course page: a plain surface with a visual, the title and route, a status
  * line and one button. The row itself is never the click target.
  */
-export function TopicRow({ title, href, route, status, statusMuted = false, completed = false, visual, reserveVisual = false, action, emphasis = "quiet" }: TopicRowProps) {
+export function TopicRow({ title, href, route, status, statusMuted = false, completed = false, visual, reserveVisual = false, action, emphasis = "quiet", practices, caption }: TopicRowProps) {
   return (
     <li className={styles.topicRow}>
       {(visual || reserveVisual) && (
@@ -97,6 +105,28 @@ export function TopicRow({ title, href, route, status, statusMuted = false, comp
           )}
         </h3>
         {route && <p className={styles.topicRoute}>{route}</p>}
+        {practices && practices.length > 1 && (
+          <p className={styles.topicPractices} data-practices={practices.length}>
+            {practices.slice(0, ROW_PRACTICES).map((p, i) => (
+              <span key={p} className={styles.topicPractice} data-index={i}>
+                {i > 0 && <span aria-hidden="true"> · </span>}
+                {p}
+              </span>
+            ))}
+            {practices.length > 2 && (
+              <span className={styles.moreNarrow}>
+                <span aria-hidden="true"> · </span>
+                {resolveMessage("ui.row.more", { n: practices.length - 2 })}
+              </span>
+            )}
+            {practices.length > ROW_PRACTICES && (
+              <span className={styles.moreWide}>
+                <span aria-hidden="true"> · </span>
+                {resolveMessage("ui.row.more", { n: practices.length - ROW_PRACTICES })}
+              </span>
+            )}
+          </p>
+        )}
         {status && (
           <p className={`${styles.topicStatus} ${completed ? styles.topicDone : statusMuted ? styles.statusMuted : ""}`}>
             {completed && (
@@ -110,7 +140,7 @@ export function TopicRow({ title, href, route, status, statusMuted = false, comp
       </div>
       <div className={styles.topicAction}>
         {emphasis === "primary" ? (
-          <PrimaryAction primary={action} size="row" />
+          <PrimaryAction primary={action} size="row" caption={caption} />
         ) : (
           <Link href={action.href} className={styles.quiet} aria-label={`${action.label}: ${title}`}>
             {action.label} <span aria-hidden="true">→</span>

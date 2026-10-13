@@ -40,10 +40,9 @@ export function remainingCue(done: number, total: number, minutes: number): stri
   return `Challenge ${done + 1} of ${total} · about ${left} min left`;
 }
 
-/** A course row's own action (#675): what the course page's button would do, named after its practice. */
+/** A course row's own action (#675): what the course page's button would do, named after its practice (the resolver's label, #673). */
 export function rowActionLabel(action: NextAction): string {
-  const key = action.kind === "continue" ? "ui.home.row.continue" : action.kind === "review" ? "ui.home.row.review" : "ui.home.row.start";
-  return resolveMessage(key, { title: action.activity.title });
+  return action.primary.label;
 }
 
 /**

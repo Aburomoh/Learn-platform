@@ -5,13 +5,8 @@ import { useEffect, type MouseEvent, type ReactNode } from "react";
 import type { Course, Module, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
 import type { OfferingProgress } from "@/learner/progress";
-import {
-  courseAction,
-  topicHref,
-  topicRowAction,
-  type ActionLink,
-  type PrimaryAction,
-} from "../primaryAction";
+import { courseAction, topicHref, topicRowLink } from "../primaryAction";
+import { resolveMessage } from "@/tutor/messages";
 import { TopicRow } from "./Chrome";
 import { PreviewBoard, parsePreview } from "./PreviewBoard";
 import { effortCue } from "./PrimaryAction";
@@ -62,13 +57,6 @@ function rowPreview(preview: string | undefined): string | undefined {
   return parsePreview(preview).length >= 2
     ? `${tiles[0]} → ${tiles[tiles.length - 1]}`
     : undefined;
-}
-
-/** A quiet row action uses the short word (the mock-up's "Start →"); the filled button keeps the resolver's label. */
-function quietAction(action: PrimaryAction): ActionLink {
-  return action.kind === "start"
-    ? { ...action.primary, label: "Start" }
-    : action.primary;
 }
 
 export type ChapterState = "new" | "progress" | "done";
@@ -218,13 +206,9 @@ export function CourseTopics({ course }: { course: Course }) {
                           ) : undefined
                         }
                         reserveVisual
-                        action={
-                          isNext
-                            ? next.primary
-                            : quietAction(
-                                topicRowAction(course, topic, progress),
-                              )
-                        }
+                        practices={topic.activities.map((a) => a.title)}
+                        action={isNext ? next.primary : topicRowLink(course, topic, progress)}
+                        caption={isNext && next.kind !== "review" ? resolveMessage("ui.action.recommended") : undefined}
                         emphasis={isNext ? "primary" : "quiet"}
                       />
                     );

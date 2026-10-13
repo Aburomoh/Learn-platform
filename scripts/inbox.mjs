@@ -18,7 +18,7 @@ import { ROLES, roleOf } from "./roles.mjs";
 const role = roleOf(process.argv[2]);
 const stream = process.argv.includes("--stream");
 if (!role || ROLES[role].onDemand) {
-  console.error("Usage: node scripts/inbox.mjs <lead|content-engineer|ui-engineer|code-architecture-reviewer|qa-test-engineer> [--stream]");
+  console.error("Usage: node scripts/inbox.mjs <lead|content-engineer|ui-engineer|code-architecture-reviewer|qa-test-engineer|educational-auditor> [--stream]");
   process.exit(1);
 }
 const DIR = join(tmpdir(), "cet-wake", "inbox");

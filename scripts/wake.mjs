@@ -19,7 +19,7 @@ const line = (it, labels) => `[${it.labels.map((l) => l.name).filter((n) => labe
 function usage() {
   console.error(
     'Usage:\n  npm run wake <role>\n  npm run alarm <role> <issue|pr #> "<reason>" [from-role]\n  npm run wake:ack <role> <issue|pr #...>\n' +
-      "  npm run wake:pending\n  npm run wake:health\nPermanent roles: lead, content-engineer, ui-engineer, code-architecture-reviewer (reviewer), qa-test-engineer (qa)\n" +
+      "  npm run wake:pending\n  npm run wake:health\nPermanent roles: lead, content-engineer, ui-engineer, code-architecture-reviewer (reviewer), qa-test-engineer (qa), educational-auditor (auditor)\n" +
       "On demand (wakes go to the Lead): pedagogy, ux, material, security, performance, devops",
   );
   process.exit(1);
@@ -33,7 +33,7 @@ if (mode === "--pending") {
   console.log(
     "Team V2 (ADR-0010): if this session holds a permanent role, run ONE listener as a background Bash command (run_in_background);\n" +
       "it completes once per real wake: read it, act, start it again. No Monitor, no polling:\n" +
-      "  node scripts/inbox.mjs <lead|content-engineer|ui-engineer|code-architecture-reviewer|qa-test-engineer>\n" +
+      "  node scripts/inbox.mjs <lead|content-engineer|ui-engineer|code-architecture-reviewer|qa-test-engineer|educational-auditor>\n" +
       `Recover from repository truth: agents/SESSION_PROMPTS.md, your charter agents/<role>.md, and your comment on state board #${BOARD}.`,
   );
   try {

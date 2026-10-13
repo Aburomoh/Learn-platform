@@ -6,6 +6,7 @@ import { LocationLine } from "@/shell/r1/LocationLine";
 import { chapterShort } from "@/shell/location";
 import styles from "@/shell/r1/r1.module.css";
 import { Notation } from "@/interactions/shared/Notation";
+import { resolveMessage } from "@/tutor/messages";
 
 type Params = { course: string; topic: string };
 
@@ -35,9 +36,15 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
     { label: chapterShort(chapter.title), href: `/courses/${course.id}/#chapter-${chapter.id}` },
     { label: topic.title },
   ];
-  // The route names the first practice's challenges in order; unlabeled challenges are left out.
+  // A topic of several practices names them (epic #670, QW6); a one-practice topic names that
+  // practice's challenges in order (unlabeled challenges are left out).
   const labels = topic.activities[0].questions.map((q) => q.label).filter(Boolean);
-  const route = labels.length > 1 ? `Today: ${labels.join(" → ")}` : topic.summary;
+  const route =
+    topic.activities.length > 1
+      ? resolveMessage("ui.topic.practices", { titles: topic.activities.map((a) => a.title).join(" · ") })
+      : labels.length > 1
+        ? `Today: ${labels.join(" → ")}`
+        : topic.summary;
   const tutor = { course, messageKey: "page.topic.intro" } as const;
 
   return (
