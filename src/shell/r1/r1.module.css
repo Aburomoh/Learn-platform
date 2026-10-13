@@ -669,6 +669,12 @@
   display: none;
 }
 
+/* the "+N more" tail (and its Arabic) stays on one line (#705) */
+.moreNarrow,
+.moreWide {
+  white-space: nowrap;
+}
+
 @media (max-width: 640px) {
   .topicPractice[data-index="2"],
   .topicPractice[data-index="3"],

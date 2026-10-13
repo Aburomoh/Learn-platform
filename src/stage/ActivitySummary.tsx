@@ -1,8 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import type { Activity } from "@/content/schema";
 import { Notation } from "@/interactions/shared/Notation";
 import { PrimaryAction } from "@/shell/r1/PrimaryAction";
-import { resolveMessage, resolvePlural } from "@/tutor";
+import { UiText, useUiText } from "@/shell/r1/uiText";
 import type { PrimaryAction as NextAction } from "@/shell/primaryAction";
 import styles from "./Stage.module.css";
 
@@ -25,16 +27,21 @@ export interface ActivitySummaryProps {
 export function ActivitySummary({ activity, objectives, attempts, hintsUsed, next, topicHref, onRestart }: ActivitySummaryProps) {
   // Review of this same practice is offered as "Practise again", so it is not repeated as a link.
   const primary = next.kind === "review" ? { label: "Back to topic", href: topicHref } : next.primary;
+  // the sentence and its count phrases are catalogue strings read through the Arabic layer (#705); the title stays English
+  const { t, tp } = useUiText();
   return (
     <section className={styles.stage} aria-label="Practice complete" data-testid="activity-summary">
       <h2 className={styles.summaryTitle}>Practice complete</h2>
       <p>
-        {resolveMessage("ui.summary.line", {
-          activity: activity.title,
-          challenges: resolvePlural("ui.summary.challenges", activity.questions.length),
-          attempts: resolvePlural("ui.summary.attempts", attempts),
-          hints: hintsUsed === 0 ? resolveMessage("ui.summary.hints.zero") : resolvePlural("ui.summary.hints", hintsUsed),
-        })}
+        <UiText
+          k="ui.summary.line"
+          vars={{
+            activity: activity.title,
+            challenges: tp("ui.summary.challenges", activity.questions.length),
+            attempts: tp("ui.summary.attempts", attempts),
+            hints: hintsUsed === 0 ? t("ui.summary.hints.zero") : tp("ui.summary.hints", hintsUsed),
+          }}
+        />
       </p>
       {objectives.length > 0 && (
         <div>

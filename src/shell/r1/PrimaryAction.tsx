@@ -1,9 +1,16 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
+import type { TemplateVars } from "@/content/template";
+import { ActionText } from "./uiText";
 import styles from "./r1.module.css";
 
 export interface ActionLink {
+  /** The English label, as the resolver built it. */
   label: string;
   href: string;
+  /** The catalogue template the label came from and its slots (#705): the Arabic lookup. Absent for a code-built label. */
+  template?: string;
+  vars?: TemplateVars;
 }
 
 export interface PrimaryActionProps {
@@ -19,7 +26,7 @@ export interface PrimaryActionProps {
   /** Smaller button for a row that is not the page's main action. */
   size?: "page" | "row";
   /** A small line over the button, e.g. "Recommended next" (epic #670, QW7): the order is advice, not a gate. */
-  caption?: string;
+  caption?: ReactNode;
 }
 
 const Arrow = () => (
@@ -39,12 +46,12 @@ export function PrimaryAction({ primary, secondary, effort, size = "page", capti
       {caption && <p className={styles.caption}>{caption}</p>}
       <div className={styles.actionRow}>
         <Link href={primary.href} className={`${styles.button} ${size === "row" ? styles.buttonRow : ""}`} data-primary-action>
-          {primary.label}
+          <ActionText link={primary} />
           <Arrow />
         </Link>
         {secondary && (
           <Link href={secondary.href} className={styles.quiet}>
-            {secondary.label}
+            <ActionText link={secondary} />
           </Link>
         )}
       </div>

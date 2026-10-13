@@ -3,11 +3,12 @@
 import Link from "next/link";
 import type { Course, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
-import { kindWords } from "../kindWords";
+import { kindWords, kindsOf } from "../kindWords";
 import { practiceAction, topicAction } from "../primaryAction";
-import { resolveMessage } from "@/tutor/messages";
+import { hasMessage } from "@/tutor/messages";
 import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
 import { PrimaryAction, effortCue } from "./PrimaryAction";
+import { ActionText, UiText } from "./uiText";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
 
@@ -34,7 +35,7 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
       <PrimaryAction
         primary={action.primary}
         secondary={action.secondary}
-        caption={action.kind !== "review" ? resolveMessage("ui.action.recommended") : undefined}
+        caption={action.kind !== "review" ? <UiText k="ui.action.recommended" /> : undefined}
         effort={finished ? "Completed. You can review it any time." : several ? `About ${activity.minutes} min` : effortCue(activity.questions.length, activity.minutes)}
       />
       {!finished && (
@@ -64,20 +65,30 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
               const labels = a.questions.map((q) => q.label).filter(Boolean);
               // fewer than two labels: the challenge count alone (the minutes are already in `status`)
               const steps = labels.length > 1 ? labels.join(" → ") : `${a.questions.length} short challenge${a.questions.length === 1 ? "" : "s"}`;
-              const meta = [status, kindWords(a), steps].filter(Boolean).join(" · ");
+              // the kind words are catalogue strings, each read through the Arabic layer (#705)
+              const kinds = kindsOf(a);
               // The practice the page button is about has no second button: the primary is its button.
               const upNext = !finished && a.id === activity.id;
               return (
                 <li key={a.id} className={styles.practiceRow} data-status={own.kind} data-up-next={upNext || undefined} data-kinds={kindWords(a)}>
                   <div className={styles.practiceText}>
                     <h3 className={styles.topicTitle}>{a.title}</h3>
-                    <p className={`${styles.practiceMeta} ${own.kind === "review" ? styles.topicDone : ""}`}>{meta}</p>
+                    <p className={`${styles.practiceMeta} ${own.kind === "review" ? styles.topicDone : ""}`}>
+                      {status}
+                      {kinds.map((kind) => (
+                        <span key={kind}>
+                          {" · "}
+                          {hasMessage(`ui.kind.${kind}`) ? <UiText k={`ui.kind.${kind}`} /> : kind}
+                        </span>
+                      ))}
+                      {steps ? ` · ${steps}` : ""}
+                    </p>
                   </div>
                   {upNext ? (
                     <span className={styles.upNext}>{own.kind === "continue" ? "In progress" : "Up next"}</span>
                   ) : (
                     <Link href={own.link.href} className={`${styles.quiet} ${styles.rowAction} ${styles.rowActionWrap}`}>
-                      {own.link.label} <span aria-hidden="true">→</span>
+                      <ActionText link={own.link} /> <span aria-hidden="true">→</span>
                     </Link>
                   )}
                 </li>

@@ -6,8 +6,8 @@ import type { Course, Module, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
 import type { OfferingProgress } from "@/learner/progress";
 import { courseAction, topicHref, topicRowLink } from "../primaryAction";
-import { resolveMessage } from "@/tutor/messages";
 import { TopicRow } from "./Chrome";
+import { UiText } from "./uiText";
 import { PreviewBoard, parsePreview } from "./PreviewBoard";
 import { effortCue } from "./PrimaryAction";
 import { useHydrated } from "../useHydrated";
@@ -208,7 +208,7 @@ export function CourseTopics({ course }: { course: Course }) {
                         reserveVisual
                         practices={topic.activities.map((a) => a.title)}
                         action={isNext ? next.primary : topicRowLink(course, topic, progress)}
-                        caption={isNext && next.kind !== "review" ? resolveMessage("ui.action.recommended") : undefined}
+                        caption={isNext && next.kind !== "review" ? <UiText k="ui.action.recommended" /> : undefined}
                         emphasis={isNext ? "primary" : "quiet"}
                       />
                     );

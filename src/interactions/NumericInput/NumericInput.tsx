@@ -4,7 +4,8 @@ import { useId, useState } from "react";
 import type { InteractionBaseProps } from "../shared/types";
 import { focusTarget } from "../shared/types";
 import { Notation } from "../shared/Notation";
-import { resolveMessage, resolvePlural } from "@/tutor/messages";
+import { UiText } from "@/shell/r1/uiText";
+import { pluralKey } from "@/tutor/messages";
 import styles from "./NumericInput.module.css";
 
 export type NumberBase = 2 | 8 | 10 | 16;
@@ -57,17 +58,9 @@ export function NumericInput({
   const hintId = useId();
   const plain = BASE_INFO[base];
   const extended = base === 10 && (signed || decimals > 0);
-  const info = extended
-    ? {
-        ...plain,
-        pattern: decimalPattern(signed, decimals),
-        // one whole sentence per shape (ADR-0011 §6), never fragments joined in code
-        hint:
-          decimals > 0
-            ? resolvePlural(signed ? "ui.numeric.decimal.signed-places" : "ui.numeric.decimal.places", decimals)
-            : resolveMessage(signed ? "ui.numeric.decimal.signed" : "ui.numeric.decimal"),
-      }
-    : plain;
+  const info = extended ? { ...plain, pattern: decimalPattern(signed, decimals) } : plain;
+  // one whole sentence per shape (ADR-0011 §6), never fragments joined in code; read through the Arabic layer (#705)
+  const hintKey = decimals > 0 ? pluralKey(signed ? "ui.numeric.decimal.signed-places" : "ui.numeric.decimal.places", decimals, "en") : signed ? "ui.numeric.decimal.signed" : "ui.numeric.decimal";
   const stateClass = state === "correct" ? styles.correct : state === "incorrect" ? styles.incorrect : "";
   const ready = text.trim() !== "" && (!extended || completeNumber(text.trim()));
 
@@ -109,7 +102,7 @@ export function NumericInput({
         </button>
       </div>
       <span id={hintId} className={styles.hint}>
-        Enter a {info.label} value ({info.hint}).
+        Enter a {info.label} value ({extended ? <UiText k={hintKey} vars={{ n: decimals }} /> : info.hint}).
       </span>
     </form>
   );

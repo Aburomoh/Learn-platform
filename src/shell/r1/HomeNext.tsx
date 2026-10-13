@@ -13,6 +13,7 @@ import { product } from "../../../config/product";
 import { courseAction, type PrimaryAction as NextAction } from "../primaryAction";
 import { PageHeading } from "./PageHeading";
 import { PrimaryAction, effortCue } from "./PrimaryAction";
+import { RowActionLink } from "./uiText";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
 
@@ -132,9 +133,7 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
                   </p>
                 </div>
                 <div className={styles.rowActions}>
-                  <Link href={own.primary.href} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`${rowActionLabel(own)}: ${c.title}`}>
-                    {rowActionLabel(own)} <span aria-hidden="true">→</span>
-                  </Link>
+                  <RowActionLink link={own.primary} title={c.title} className={`${styles.quiet} ${styles.rowAction}`} />
                   <Link href={`/courses/${c.id}/`} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`Open course: ${c.title}`}>
                     Open course <span aria-hidden="true">→</span>
                   </Link>

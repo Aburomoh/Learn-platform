@@ -11,12 +11,15 @@
  * Completed last topic of the course: no Next topic; Review becomes primary.
  */
 import type { Activity, Course, Topic } from "@/content/schema";
-import { resolveMessage } from "@/tutor/messages";
+import { messageTemplate, resolveMessage } from "@/tutor/messages";
 import type { ActivityProgress, OfferingProgress } from "@/learner/progress";
 
 export interface ActionLink {
   label: string;
   href: string;
+  /** The catalogue template of the label and its slots (#705): rendered through the Arabic layer. */
+  template?: string;
+  vars?: Record<string, string | number>;
 }
 
 export type ActionKind = "start" | "continue" | "next-topic" | "review";
@@ -55,12 +58,20 @@ const isCompleted = (topic: Topic, progress: Progress) => topic.activities.every
 /** Labels name their destination (epic #670, QW2): "Start · Binary addition", "Next topic · Latches". */
 export const actionLabel = (kind: "start" | "continue" | "review" | "next-topic", title: string) => resolveMessage(`ui.action.${kind}`, { title });
 
+/** A link whose label is a catalogue string with the title in its slot; the template rides along for the Arabic layer (#705). */
+export const actionLink = (kind: "start" | "continue" | "review" | "next-topic", title: string, href: string): ActionLink => ({
+  label: actionLabel(kind, title),
+  href,
+  template: messageTemplate(`ui.action.${kind}`),
+  vars: { title },
+});
+
 /** One practice's own action, for a row that lists it: Start, Continue or Review. */
 export function practiceAction(course: Course, topic: Topic, activity: Activity, progress: Progress): { kind: "start" | "continue" | "review"; link: ActionLink } {
   const status = statusOf(progress, activity);
-  if (status === "completed") return { kind: "review", link: { label: actionLabel("review", activity.title), href: reviewHref(course, topic, activity) } };
-  if (status === "started") return { kind: "continue", link: { label: actionLabel("continue", activity.title), href: practiceHref(course, topic, activity) } };
-  return { kind: "start", link: { label: actionLabel("start", activity.title), href: practiceHref(course, topic, activity) } };
+  if (status === "completed") return { kind: "review", link: actionLink("review", activity.title, reviewHref(course, topic, activity)) };
+  if (status === "started") return { kind: "continue", link: actionLink("continue", activity.title, practiceHref(course, topic, activity)) };
+  return { kind: "start", link: actionLink("start", activity.title, practiceHref(course, topic, activity)) };
 }
 
 /** Topic page: follows the table above for this topic's current practice. */
@@ -69,14 +80,14 @@ export function topicAction(course: Course, topic: Topic, progress: Progress): P
   const status = statusOf(progress, activity);
   if (!isCompleted(topic, progress)) {
     return status === "started"
-      ? { kind: "continue", primary: { label: actionLabel("continue", activity.title), href: practiceHref(course, topic, activity) }, topic, activity }
-      : { kind: "start", primary: { label: actionLabel("start", activity.title), href: practiceHref(course, topic, activity) }, topic, activity };
+      ? { kind: "continue", primary: actionLink("continue", activity.title, practiceHref(course, topic, activity)), topic, activity }
+      : { kind: "start", primary: actionLink("start", activity.title, practiceHref(course, topic, activity)), topic, activity };
   }
-  const review: ActionLink = { label: actionLabel("review", activity.title), href: reviewHref(course, topic, activity) };
+  const review: ActionLink = actionLink("review", activity.title, reviewHref(course, topic, activity));
   const topics = topicsOf(course);
   const next = topics[topics.findIndex((t) => t.id === topic.id) + 1];
   if (!next) return { kind: "review", primary: review, topic, activity };
-  return { kind: "next-topic", primary: { label: actionLabel("next-topic", next.title), href: topicHref(course, next) }, secondary: review, topic, activity };
+  return { kind: "next-topic", primary: actionLink("next-topic", next.title, topicHref(course, next)), secondary: review, topic, activity };
 }
 
 /**
@@ -93,7 +104,7 @@ export function courseAction(course: Course, progress: Progress): PrimaryAction 
       const record = progress.activities[activity.id];
       if (record?.status === "started" && (!latest || record.lastAt > latest.at)) latest = { topic, activity, at: record.lastAt };
     }
-  if (latest) return { kind: "continue", primary: { label: actionLabel("continue", latest.activity.title), href: practiceHref(course, latest.topic, latest.activity) }, topic: latest.topic, activity: latest.activity };
+  if (latest) return { kind: "continue", primary: actionLink("continue", latest.activity.title, practiceHref(course, latest.topic, latest.activity)), topic: latest.topic, activity: latest.activity };
 
   const open = topics.find((t) => !isCompleted(t, progress));
   if (open) return topicAction(course, open, progress);
@@ -149,6 +160,6 @@ export function topicRowAction(course: Course, topic: Topic, progress: Progress)
  * practice with its own Start / Continue / Review.
  */
 export function topicRowLink(course: Course, topic: Topic, progress: Progress): ActionLink {
-  if (topic.activities.length > 1) return { label: resolveMessage("ui.action.open-topic"), href: topicHref(course, topic) };
+  if (topic.activities.length > 1) return { label: resolveMessage("ui.action.open-topic"), href: topicHref(course, topic), template: messageTemplate("ui.action.open-topic") };
   return topicRowAction(course, topic, progress).primary;
 }

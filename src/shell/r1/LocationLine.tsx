@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { resolveMessage } from "@/tutor/messages";
+import { useUiText } from "./uiText";
 import styles from "./r1.module.css";
 
 export interface Crumb {
@@ -20,13 +20,14 @@ export interface Crumb {
  */
 export function LocationLine({ segments }: { segments: Crumb[] }) {
   const [open, setOpen] = useState(false);
+  const { t } = useUiText();
   const collapsed = open ? 0 : Math.max(0, segments.length - 2);
   return (
-    <nav className={styles.location} aria-label={resolveMessage("ui.nav.here")} data-open={open || undefined}>
+    <nav className={styles.location} aria-label={t("ui.nav.here")} data-open={open || undefined}>
       <ol className={styles.locationList}>
         {collapsed > 0 && (
           <li className={styles.locationMore}>
-            <button type="button" className={styles.locationButton} aria-label={resolveMessage("ui.nav.show-path")} aria-expanded={false} onClick={() => setOpen(true)}>
+            <button type="button" className={styles.locationButton} aria-label={t("ui.nav.show-path")} aria-expanded={false} onClick={() => setOpen(true)}>
               …
             </button>
           </li>
