@@ -76374,7 +76374,7 @@
     "slots": [
       "{n}"
     ],
-    "arabic": "المنجز: {n}"
+    "arabic": "المنجزة: {n}"
   },
   {
     "id": "catalog.ui.home.started",
@@ -76391,7 +76391,7 @@
     "slots": [
       "{n}"
     ],
-    "arabic": "جارٍ: {n}"
+    "arabic": "الجارية: {n}"
   },
   {
     "id": "catalog.ui.home.open-course-short",
