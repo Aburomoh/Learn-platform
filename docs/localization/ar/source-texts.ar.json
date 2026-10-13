@@ -60233,7 +60233,7 @@
     "slots": [
       "value"
     ],
-    "arabic": "لتحويل {value} إلى Binary (ثنائي)، نقسم على 2 مراراً. كل Remainder (باقٍ) يصبح Bit واحدًا."
+    "arabic": "لتحويل {value} إلى Binary (ثنائي)، نقسم على 2 مراراً. كل Remainder (باقٍ) يصبح Bit واحداً."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.divide.v26.explanation[1].ask.afterCorrect",
@@ -61117,7 +61117,7 @@
     "slots": [
       "value"
     ],
-    "arabic": "اقسم {value} على 2 مراراً. كل Remainder يصبح Bit واحدًا."
+    "arabic": "اقسم {value} على 2 مراراً. كل Remainder يصبح Bit واحداً."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.divide.v75.explanation[1].ask.afterCorrect",
@@ -71241,7 +71241,7 @@
       "ecet111/logic-gates"
     ],
     "slots": [],
-    "arabic": "NAND يأخذ اثنين من الـ Inputs. أي Gate يأخذ Input واحدًا فقط ويعكسه؟"
+    "arabic": "NAND يأخذ 2 Inputs. أي Gate يأخذ Input واحداً فقط ويعكسه؟"
   },
   {
     "id": "tutor.lg.nor-inverted",
