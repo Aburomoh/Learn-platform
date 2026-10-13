@@ -61,18 +61,20 @@ test("EN | عربي: applies at once, persists across pages and a reload, Arabic
   await expect(page.locator("[data-tutor-text]")).toHaveAttribute("lang", "ar");
 
   // the question stays English and LTR; the English numbers in the Arabic bubble are isolated runs
-  const question = page.getByRole("region", { name: "Question" });
+  const question = page.getByRole("region", { name: /^(Question|السؤال)$/ });
   await expect(question).not.toHaveAttribute("dir", "rtl");
-  await expect(question.locator("[dir='rtl']")).toHaveCount(0);
+  // the question text stays English; only the app's own controls inside it (buttons, #702 chrome) may be Arabic
+  const rtlInQuestion = await question.evaluate((el) => [...el.querySelectorAll("[dir='rtl']")].filter((n) => !n.closest("button")).length);
+  expect(rtlInQuestion).toBe(0);
   expect(await question.getByLabel(/divided by 2: result/).first().isVisible()).toBe(true);
 
   // a wrong step: the Arabic feedback and, after a hint, an Arabic hint with the bit string in <bdi dir=ltr>
   await page.getByLabel(/divided by 2: result/).first().fill("1");
   await page.getByLabel(/divided by 2: remainder/).first().fill("1");
-  await page.getByRole("button", { name: "Check step" }).click();
+  await page.getByRole("button", { name: /^(Check step|تحقّق من الخطوة)$/ }).click();
   await expect(page.getByRole("status").filter({ hasText: /[؀-ۿ]/ }).first()).toBeVisible();
-  await page.getByRole("button", { name: "Hint" }).click();
-  const hints = page.getByRole("region", { name: "Hints" });
+  await page.getByRole("button", { name: /^(Hint|تلميح)$/ }).click();
+  const hints = page.getByRole("region", { name: /^(Hints|التلميحات)$/ });
   await expect(hints.locator("[dir='rtl'][lang='ar']").first()).toBeVisible();
   // every rtl element on the page is a text span holding only text and isolated runs: no mirrored layout
   for (const el of await rtlElements(page)) {
