@@ -1,6 +1,6 @@
 # Arabic batch for the new navigation labels (#676, epic #670)
 
-**Status: DRAFT for the owner's approval. Nothing here ships until the owner approves it.** Content Engineer, 2026-10-13, main @ f53dec5.
+**Status: REVISED per the owner's decisions of 2026-10-13 (#697), for final approval. Nothing here ships until the owner approves it.** The real strings are in the draft PR #699's package files so QA can render them. Content Engineer, 2026-10-13, main @ f53dec5.
 
 How to read it: `key · English · proposed Arabic · notes`. A row marked **decide** needs the owner. Every `{slot}` is kept exactly. Digits are Western. The rules are the owner's (REQUIREMENTS.md): Modern Standard Arabic, slightly conversational; English technical terms stay English and are LTR-isolated; no machine translation. Terms follow `TECHNICAL_GLOSSARY_AR.md`; "Course", "Chapter" and "Topic" stay English (owner, 2026-10-13, #676), written with the `الـ` prefix as the approved package does («الـ Processors»). Address is the masculine imperative, as the approved package does (جرّب، ابحث).
 
@@ -14,9 +14,9 @@ What is already covered: all 229 non-`ui.*` catalog keys have Arabic in the appr
 |---|---|---|---|
 | `ui.nav.here` | You are here | أنت هنا | Accessible name of the location line. Auditor proposal on #676. |
 | `ui.nav.show-path` | Show the whole path | اعرض المسار كاملًا | The "…" button on phones. |
-| `ui.nav.all-courses` | All courses | كل الـ Courses | Per the owner's decision. **decide**: the form «الـ + English plural». |
-| `ui.nav.courses-moved` | The courses are listed on the home page. | الـ Courses معروضة في الصفحة الرئيسية. | Same form. |
-| `ui.nav.go-courses` | Go to the courses | اذهب إلى الـ Courses | Same form. |
+| `ui.nav.all-courses` | All courses | كل المقررات | Owner decision 1: المقررات, no hybrid form. |
+| `ui.nav.courses-moved` | The courses are listed on the home page. | المقررات معروضة في الصفحة الرئيسية. | Owner decision 1. |
+| `ui.nav.go-courses` | Go to the courses | اذهب إلى المقررات | Owner decision 1. |
 
 The location line itself («ECET 111 · Chapter 1 · Binary arithmetic») needs no string: the separators and the English words stay as they are. Course codes stay Latin, LTR-isolated.
 
@@ -31,9 +31,9 @@ The location line itself («ECET 111 · Chapter 1 · Binary arithmetic») needs 
 | `ui.action.review` | Review · {title} | راجع · {title} | |
 | `ui.action.next-topic` | Next topic · {title} | الـ Topic التالي · {title} | "Topic" stays English (approved package). |
 | `ui.action.open-topic` | Open topic | افتح الـ Topic | |
-| `ui.action.recommended` | Recommended next | المقترح تاليًا | The caption over the filled button. **decide** if you prefer «الخطوة التالية المقترحة» (longer). |
-| `ui.topic.practices` | Practices: {titles} | التمارين: {titles} | **decide** the word for "practice": تمارين, or keep "Practices" in English like Topic. |
-| `ui.row.more` | +{n} more | +{n} أخرى | «أخرى» agrees with any plural of a non-human noun; no number agreement needed. |
+| `ui.action.recommended` | Recommended next | الخطوة التالية المقترحة | Owner decision 2. |
+| `ui.topic.practices` | Practices: {titles} | التمارين: {titles} | Owner decision 2: تمرين / تمارين. Titles stay English. |
+| `ui.row.more` | +{n} more | أخرى: {n} | Label:value form (owner decision 4); avoids a leading + in RTL. |
 
 ## 3. The kind of a practice, in plain words (#673, PR #685)
 
@@ -47,7 +47,7 @@ Shown on a practice row before entry: what the student will do.
 | `ui.kind.column-addition` | Add column by column | اجمع عمودًا عمودًا | |
 | `ui.kind.cpu-schedule` | Draw the schedule | ارسم مخطط الجدولة | The Gantt chart. |
 | `ui.kind.derivation` | Step-by-step derivation | اشتقاق خطوة بخطوة | |
-| `ui.kind.device` | Read the device | اقرأ المكوّن | Here "device" is a decoder or multiplexer; «جهاز» is the glossary's OS device, so «المكوّن» avoids the clash. **decide** |
+| `ui.kind.device` | Read the device | اقرأ المكوّن | Owner decision 3: generic circuit component («المكوّن»). The course concept Device would stay «Device (جهاز)»; no label here means that. |
 | `ui.kind.expression` | Write the expression | اكتب التعبير | Expression (تعبير), glossary. |
 | `ui.kind.kmap` | K-map | K-map | English only (glossary). |
 | `ui.kind.memory-map` | Memory map | خريطة الذاكرة | Memory (الذاكرة), glossary. |
@@ -61,23 +61,23 @@ Shown on a practice row before entry: what the student will do.
 
 ## 4. Older component strings found missing while collecting (not from the nav PRs)
 
-These are on main already and have no Arabic, because the pre-catalog versions held `${…}` expressions that could not be translated (TRANSLATION_REVIEW_NOTES.md). The catalog has `one` and `other` forms only: Arabic also has a dual (2) and different forms for 3–10 and 11+, so «{n} تحديات» is right for 3–10 and acceptable for 2 and 11+. **decide** whether to add `two`/`many` forms to the plural catalog (a UI change) or accept that.
+These are on main already and have no Arabic, because the pre-catalog versions held `${…}` expressions that could not be translated (TRANSLATION_REVIEW_NOTES.md). Owner decision 4: label:value forms, the same string for `one` and `other`, so no Arabic number agreement is needed.
 
 | Key | English | Proposed Arabic | Notes |
 |---|---|---|---|
 | `ui.summary.line` | {activity}: {challenges}, {attempts}, {hints}. | {activity}: {challenges}، {attempts}، {hints}. | Arabic comma. |
-| `ui.summary.challenges.one` | {n} challenge | {n} تحدٍّ | |
-| `ui.summary.challenges.other` | {n} challenges | {n} تحديات | The package already says التحدي. |
-| `ui.summary.attempts.one` | {n} attempt | {n} محاولة | |
-| `ui.summary.attempts.other` | {n} attempts | {n} محاولات | |
-| `ui.summary.hints.one` | hints used on {n} challenge | استخدمت تلميحات في {n} تحدٍّ | Zero form is already approved: «لم تحتج إلى تلميحات». |
-| `ui.summary.hints.other` | hints used on {n} challenges | استخدمت تلميحات في {n} تحديات | |
+| `ui.summary.challenges.one` | {n} challenge | التحديات: {n} | |
+| `ui.summary.challenges.other` | {n} challenges | التحديات: {n} | The package already says التحدي. |
+| `ui.summary.attempts.one` | {n} attempt | المحاولات: {n} | |
+| `ui.summary.attempts.other` | {n} attempts | المحاولات: {n} | |
+| `ui.summary.hints.one` | hints used on {n} challenge | التحديات التي استُخدمت فيها تلميحات: {n} | Zero form is already approved: «لم تحتج إلى تلميحات». |
+| `ui.summary.hints.other` | hints used on {n} challenges | التحديات التي استُخدمت فيها تلميحات: {n} | |
 | `ui.numeric.decimal` | digits 0 to 9 | أرقام من 0 إلى 9 | |
 | `ui.numeric.decimal.signed` | digits 0 to 9, a leading minus sign | أرقام من 0 إلى 9، وإشارة ناقص في البداية | |
-| `ui.numeric.decimal.places.one` | digits 0 to 9, and up to {n} decimal place after the point | أرقام من 0 إلى 9، وحتى {n} منزلة عشرية بعد الفاصلة | Spoken by a screen reader: «الفاصلة» as in the glossary's binary point. |
-| `ui.numeric.decimal.places.other` | digits 0 to 9, and up to {n} decimal places after the point | أرقام من 0 إلى 9، وحتى {n} منازل عشرية بعد الفاصلة | |
-| `ui.numeric.decimal.signed-places.one` | digits 0 to 9, a leading minus sign, and up to {n} decimal place after the point | أرقام من 0 إلى 9، وإشارة ناقص في البداية، وحتى {n} منزلة عشرية بعد الفاصلة | |
-| `ui.numeric.decimal.signed-places.other` | digits 0 to 9, a leading minus sign, and up to {n} decimal places after the point | أرقام من 0 إلى 9، وإشارة ناقص في البداية، وحتى {n} منازل عشرية بعد الفاصلة | |
+| `ui.numeric.decimal.places.one` | digits 0 to 9, and up to {n} decimal place after the point | أرقام من 0 إلى 9. أقصى عدد للمنازل العشرية بعد الفاصلة: {n} | Spoken by a screen reader: «الفاصلة» as in the glossary's binary point. |
+| `ui.numeric.decimal.places.other` | digits 0 to 9, and up to {n} decimal places after the point | أرقام من 0 إلى 9. أقصى عدد للمنازل العشرية بعد الفاصلة: {n} | |
+| `ui.numeric.decimal.signed-places.one` | digits 0 to 9, a leading minus sign, and up to {n} decimal place after the point | أرقام من 0 إلى 9، وإشارة ناقص في البداية. أقصى عدد للمنازل العشرية بعد الفاصلة: {n} | |
+| `ui.numeric.decimal.signed-places.other` | digits 0 to 9, a leading minus sign, and up to {n} decimal places after the point | أرقام من 0 إلى 9، وإشارة ناقص في البداية. أقصى عدد للمنازل العشرية بعد الفاصلة: {n} | |
 
 ## 5. Tutor engine: help that follows the learner's step (#690, PR #695, not merged yet)
 
@@ -89,16 +89,9 @@ These are on main already and have no Arabic, because the pre-catalog versions h
 | `stuck.offer` | Want another hint, or shall I explain it slowly? | هل تريد تلميحًا آخر، أم أشرح لك الأمر ببطء؟ | "Explain Slowly" is the name of the feature in English UI; here it is a verb phrase. |
 | `explain.confirm-restart` | This walks through a worked example. Afterwards you start this question again with new numbers. Go ahead? | هذا شرح بمثال محلول. بعده تبدأ هذا السؤال من جديد بأرقام جديدة. هل نتابع؟ | |
 
-## 6. Practice titles whose English changed (#693, PR #696)
+## 6. Practice titles
 
-Titles are navigation text; the scope decision (AUDIT.md §3) is open, so **do not ship these until the owner decides it**. Drafted so the decision is easy.
-
-| Where | English | Proposed Arabic | Notes |
-|---|---|---|---|
-| title, `subtraction-exercise-positive` | Exercise: 4-bit subtraction, a positive result | تمرين: طرح 4-bit، نتيجة موجبة | |
-| title, `subtraction-exercise-negative` | Exercise: 4-bit subtraction, a negative result | تمرين: طرح 4-bit، نتيجة سالبة | |
-| title, `conversion-exercise` | Exercise: convert to binary, octal and hexadecimal | تمرين: التحويل إلى Binary (ثنائي) وOctal (ثماني) وHexadecimal (سداسي عشري) | Glossary form `English (Arabic)`. |
-| summary, `binary-addition` | The four rules, then a sum column by column, then a check in decimal. | القواعد الأربع، ثم مجموع عمودًا عمودًا، ثم تحقق بالنظام العشري. | |
+Owner decision 5: canonical topic and practice titles stay English for now; the Arabic UI may surround them with LTR isolation. Nothing to translate here, and the `{title}` buttons in section 2 are unblocked.
 
 ## Still to come (added as the PRs land)
 
@@ -106,10 +99,8 @@ Titles are navigation text; the scope decision (AUDIT.md §3) is open, so **do n
 - Navigation S2–S4 (practice navigator, declared entries, resume rules): their PR bodies will list strings; this file gets a section each.
 - The practice navigator's status words and "Steps before this one".
 
-## Decisions needed (summary)
+## Decisions applied (owner, #697)
 
-1. The form «الـ + English plural» for "Courses" (section 1).
-2. "Recommended next" wording; the word for "practice" (section 2).
-3. «المكوّن» for "device" in the kind label (section 3).
-4. Whether the plural catalog gets dual/many forms (section 4).
-5. Navigation text scope: do titles and summaries get Arabic? (blocks section 6, and the `{title}` in section 2.)
+1. المقررات; no «الـ + English plural». 2. «الخطوة التالية المقترحة»; تمرين / تمارين. 3. «المكوّن» for a generic component; «Device (جهاز)» for the course concept. 4. Label:value plurals. 5. Titles stay English. 6. RTL rendering is checked by QA on the draft strings PR.
+
+Open note for the owner: «الـ Topic» (section 2) keeps the earlier decision that Topic stays English; say if it should follow the same rule as المقررات.
