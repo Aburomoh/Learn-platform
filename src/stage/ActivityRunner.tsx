@@ -12,6 +12,7 @@ import { useOfferingProgress, usePrefs, getProgressStore, recordAttempt, complet
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
+import { useUiText } from "@/shell/r1/uiText";
 import { KindPrefetch } from "@/kinds/ui";
 import { useHydrated } from "@/shell/useHydrated";
 import { RESUME_ATTR } from "./resumeMarker";
@@ -95,6 +96,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
   const [state, dispatch] = useReducer(reducer, initial);
   const [progress, updateProgress] = useOfferingProgress(offeringId);
   const [prefs] = usePrefs();
+  const { t } = useUiText();
   const stageRef = useRef<HTMLDivElement>(null);
   const { apply } = useFocusEffects(stageRef);
 

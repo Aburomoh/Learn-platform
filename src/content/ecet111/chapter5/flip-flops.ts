@@ -232,7 +232,8 @@ export const flipFlopEquationsActivity: Activity = {
   minutes: 12,
   questions: [
     // one fixed equation per flip-flop: exempt from the three-set rule (content.test)
-    ...(["JK", "T", "D"] as const).map((ff) => ({ id: `ff.q.eq-${ff.toLowerCase()}`, label: `${ff} equation`, conceptId: "ff.flip-flop", objectiveId: "ff.obj.equation", variants: [equationVariant(ff)] })),
+    // simplest first: D, then T, then JK (#692, §5 item 3)
+    ...(["D", "T", "JK"] as const).map((ff) => ({ id: `ff.q.eq-${ff.toLowerCase()}`, label: `${ff} equation`, conceptId: "ff.flip-flop", objectiveId: "ff.obj.equation", variants: [equationVariant(ff)] })),
     { id: "ff.q.next", label: "Next state", conceptId: "ff.flip-flop", objectiveId: "ff.obj.equation", variants: NEXT_SETS.map((s, k) => nextVariant(s, k)) },
   ],
 };

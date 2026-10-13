@@ -528,7 +528,7 @@ describe("content registry", () => {
   it("flip-flop equations (#297): each question's minterms are its table's 1-rows; next states by the equation", () => {
     const x = getActivity(COURSE, "flip-flops", "flip-flop-equations")!.activity;
     const mts = x.questions.slice(0, 3).map((q) => (q.variants[0].spec.kind === "expression" ? q.variants[0].spec.minterms : []));
-    expect(mts).toEqual([[1, 4, 5, 6], [1, 2], [2, 3]]); // JK, T, D (pack ch5-parti §3)
+    expect(mts).toEqual([[2, 3], [1, 2], [1, 4, 5, 6]]); // D, T, JK: simplest first (#692; pack ch5-parti §3)
     const picked = x.questions[3].variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
     expect(picked).toEqual(["1", "1", "0"]);
     // every JK set catches the swapped equation (JQ + KQ′): it gives the other answer

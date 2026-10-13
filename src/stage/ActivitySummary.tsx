@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import type { Activity } from "@/content/schema";
 import { Notation } from "@/interactions/shared/Notation";
 import { PrimaryAction } from "@/shell/r1/PrimaryAction";
-import { resolveMessage, resolvePlural } from "@/tutor";
+import { UiText, useUiText } from "@/shell/r1/uiText";
+import { messageTemplate } from "@/tutor/messages";
 import type { PrimaryAction as NextAction } from "@/shell/primaryAction";
 import styles from "./Stage.module.css";
 
@@ -24,21 +27,30 @@ export interface ActivitySummaryProps {
  */
 export function ActivitySummary({ activity, objectives, attempts, hintsUsed, next, topicHref, onRestart }: ActivitySummaryProps) {
   // Review of this same practice is offered as "Practise again", so it is not repeated as a link.
-  const primary = next.kind === "review" ? { label: "Back to topic", href: topicHref } : next.primary;
+  const primary = next.kind === "review" ? { label: "Back to topic", href: topicHref, template: messageTemplate("ui.summary.back") } : next.primary;
+  // the sentence and its count phrases are catalogue strings read through the Arabic layer (#705); the title stays English
+  const { t, tp } = useUiText();
   return (
     <section className={styles.stage} aria-label="Practice complete" data-testid="activity-summary">
-      <h2 className={styles.summaryTitle}>Practice complete</h2>
+      <h2 className={styles.summaryTitle}>
+        <UiText k="ui.summary.title" />
+      </h2>
       <p>
-        {resolveMessage("ui.summary.line", {
-          activity: activity.title,
-          challenges: resolvePlural("ui.summary.challenges", activity.questions.length),
-          attempts: resolvePlural("ui.summary.attempts", attempts),
-          hints: hintsUsed === 0 ? resolveMessage("ui.summary.hints.zero") : resolvePlural("ui.summary.hints", hintsUsed),
-        })}
+        <UiText
+          k="ui.summary.line"
+          vars={{
+            activity: activity.title,
+            challenges: tp("ui.summary.challenges", activity.questions.length),
+            attempts: tp("ui.summary.attempts", attempts),
+            hints: hintsUsed === 0 ? t("ui.summary.hints.zero") : tp("ui.summary.hints", hintsUsed),
+          }}
+        />
       </p>
       {objectives.length > 0 && (
         <div>
-          <p className={styles.summaryLead}>You can now:</p>
+          <p className={styles.summaryLead}>
+            <UiText k="ui.summary.you-can" />
+          </p>
           <ul className={styles.summaryList}>
             {objectives.map((text) => (
               <li key={text}>
@@ -52,11 +64,11 @@ export function ActivitySummary({ activity, objectives, attempts, hintsUsed, nex
         <PrimaryAction primary={primary} />
         <div className={styles.actions}>
           <button type="button" className="btn btn-quiet" onClick={onRestart}>
-            Practise again
+            <UiText k="ui.summary.again" />
           </button>
           {next.kind !== "review" && (
             <Link href={topicHref} className="btn btn-quiet">
-              Back to topic
+              <UiText k="ui.summary.back" />
             </Link>
           )}
         </div>
