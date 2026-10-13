@@ -74538,7 +74538,7 @@
     "occurrences": 1,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "اكتب الرقم"
+    "arabic": "اكتب العدد"
   },
   {
     "id": "catalog.ui.kind.place-value",
