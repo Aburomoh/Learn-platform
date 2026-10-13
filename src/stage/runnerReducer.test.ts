@@ -238,6 +238,18 @@ describe("engagement, I'm stuck, idle and the restart warning (learn 1b, #691)",
     expect(opened.last).toBeUndefined();
   });
 
+  it("the idle tick never removes an offer or the restart warning; a student event does (Reviewer, #716)", () => {
+    const asked = run([{ type: "OPEN" }, step(0, 13, 0), step(1, 6, 1), step(2, 3, 1), { type: "EXPLAIN" }]);
+    expect(asked.confirmRestart).toBe(true);
+    const later = reducer(reducer(asked, { type: "IDLE", seconds: 15 }), { type: "IDLE", seconds: 30 });
+    expect(later.confirmRestart).toBe(true);
+    expect(reducer(later, { type: "IDLE", seconds: 45 }).confirmRestart).toBe(true);
+    expect(reducer(later, { type: "CANCEL_EXPLAIN" }).confirmRestart).toBe(false);
+    const offered = run([{ type: "OPEN" }, { type: "STUCK" }]);
+    expect(reducer(reducer(offered, { type: "IDLE", seconds: 15 }), { type: "IDLE", seconds: 45 }).offer).toEqual(["hint", "explain-slowly"]);
+    expect(reducer(offered, { type: "HINT" }).offer).toBeUndefined();
+  });
+
   it("a named mistake stays on the tutor state as the step's diagnosis until the step completes; a hint keeps it", () => {
     const swapped = run([{ type: "OPEN" }, step(0, 0, 13)]);
     expect(swapped.tutor.diagnosis?.messageKey).toContain("div.swapped");

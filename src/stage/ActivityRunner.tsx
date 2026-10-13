@@ -265,8 +265,8 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
             Challenge {state.qIndex + 1} of {activity.questions.length}
             {question.label ? ` · ${question.label}` : ""}
           </p>
-          {/* while a walkthrough runs the help row is gone, so the ⋯ menu stays reachable up here */}
-          {stage === "explaining" && <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} onSkip={doSkip} />}
+          {/* while a walkthrough runs or after a correct answer the help row is gone, so the ⋯ menu stays reachable up here (as on main) */}
+          {(stage === "explaining" || stage === "complete") && <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} onSkip={doSkip} />}
         </div>
 
         <QuestionView

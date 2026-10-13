@@ -259,8 +259,11 @@ export function createRunnerReducer(activity: Activity) {
       case "ENGAGED":
         return s.tutor.engaged || s.tutor.stage === "complete" || s.tutor.stage === "explaining" ? s : runTutor(s, { type: "ENGAGED" });
 
-      case "IDLE":
-        return runTutor(s, { type: "IDLE", seconds: action.seconds });
+      case "IDLE": {
+        // the clock is not the student: an offer or a restart warning on screen stays until they act (Reviewer, #716)
+        const next = runTutor(s, { type: "IDLE", seconds: action.seconds });
+        return { ...next, offer: s.offer, confirmRestart: s.confirmRestart };
+      }
 
       case "EXPLAIN": {
         // the last feedback clears only once the walkthrough really opens (the warning keeps it)
