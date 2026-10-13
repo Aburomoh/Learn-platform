@@ -49,7 +49,7 @@ export function NumericInput({
   disabled = false,
   state = "idle",
   submittedText,
-  submitLabel = "Check",
+  submitLabel,
   signed = false,
   decimals = 0,
 }: NumericInputProps) {
@@ -98,7 +98,7 @@ export function NumericInput({
           {...focusTarget("numeric-input")}
         />
         <button type="submit" className="btn btn-primary" disabled={disabled || !ready}>
-          {submitLabel}
+          {submitLabel ?? <SupportiveText template={messageTemplate("ui.check.button")} inline />}
         </button>
       </div>
       <span id={hintId} className={styles.hint}>

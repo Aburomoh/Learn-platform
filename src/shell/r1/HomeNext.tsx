@@ -13,7 +13,8 @@ import { product } from "../../../config/product";
 import { courseAction, type PrimaryAction as NextAction } from "../primaryAction";
 import { PageHeading } from "./PageHeading";
 import { PrimaryAction, effortLine } from "./PrimaryAction";
-import { LineText, RowActionLink, UiText, type UiLine } from "./uiText";
+import { LineText, RowActionLink, UiText, useUiText, type UiLine } from "./uiText";
+import { pluralKey } from "@/tutor/messages";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
 
@@ -77,13 +78,14 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
     return c.modules.some((m) => m.topics.some((t) => t.activities.some((a) => hasProgress(p.activities[a.id], a))));
   });
   const finishedAll = action.kind === "review";
+  const { t } = useUiText();
 
   return (
     <div className={`${styles.column} ${styles.bands}`} style={ready ? undefined : { visibility: "hidden" }} aria-busy={!ready} data-home={returning ? "returning" : "first"}>
       {returning ? (
-        <PageHeading eyebrow="Welcome back" title={finishedAll ? "You have finished every topic" : "Pick up where you left off"} />
+        <PageHeading eyebrow={<UiText k="ui.home.welcome-back" />} title={<UiText k={finishedAll ? "ui.home.finished-all" : "ui.home.pick-up"} />} />
       ) : (
-        <PageHeading eyebrow={product.tagline} title="Start here" route={`Practice for ${product.owner.displayName}'s courses. No account needed.`} />
+        <PageHeading eyebrow={product.tagline} title={<UiText k="ui.home.start-here" />} route={<UiText k="ui.home.first-route" vars={{ owner: product.owner.displayName }} />} />
       )}
 
       <section className={styles.panel} aria-labelledby="next-h">
@@ -123,7 +125,7 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
 
       <section id="courses" className={styles.chapter} aria-labelledby="courses-h">
         <h2 id="courses-h" className={styles.h2}>
-          {courses.length === 1 ? "Your course" : "Your courses"}
+          <UiText k={courses.length === 1 ? "ui.home.your-course" : "ui.home.your-courses"} />
         </h2>
         <ol className={styles.topicList}>
           {courses.map((c) => {
@@ -139,15 +141,27 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
                   <h3 className={styles.topicTitle}>{c.title}</h3>
                   <p className={styles.topicRoute}>{c.summary}</p>
                   <p className={`${styles.topicStatus} ${styles.statusMuted}`}>
-                    {c.modules.length} chapter{c.modules.length === 1 ? "" : "s"} · {topics.length} topic{topics.length === 1 ? "" : "s"}
-                    {finished > 0 ? ` · ${finished} done` : ""}
-                    {started > 0 ? ` · ${started} started` : ""}
+                    <UiText k={pluralKey("ui.home.chapters", c.modules.length, "en")} vars={{ n: c.modules.length }} />
+                    {" · "}
+                    <UiText k={pluralKey("ui.home.topics", topics.length, "en")} vars={{ n: topics.length }} />
+                    {finished > 0 && (
+                      <>
+                        {" · "}
+                        <UiText k="ui.home.done" vars={{ n: finished }} />
+                      </>
+                    )}
+                    {started > 0 && (
+                      <>
+                        {" · "}
+                        <UiText k="ui.home.started" vars={{ n: started }} />
+                      </>
+                    )}
                   </p>
                 </div>
                 <div className={styles.rowActions}>
                   <RowActionLink link={own.primary} title={c.title} className={`${styles.quiet} ${styles.rowAction}`} />
-                  <Link href={`/courses/${c.id}/`} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`Open course: ${c.title}`}>
-                    Open course <span aria-hidden="true">→</span>
+                  <Link href={`/courses/${c.id}/`} className={`${styles.quiet} ${styles.rowAction}`} aria-label={t("ui.home.open-course", { title: c.title })}>
+                    <UiText k="ui.home.open-course-short" /> <span aria-hidden="true">→</span>
                   </Link>
                 </div>
               </li>

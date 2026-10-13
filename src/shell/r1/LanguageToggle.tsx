@@ -1,7 +1,8 @@
 "use client";
 
 import { usePrefs, type Prefs } from "@/learner";
-import { loadArabic, SHARED } from "@/l10n/arabic";
+import { loadArabic, SHARED, useArabic } from "@/l10n/arabic";
+import { messageTemplate } from "@/tutor/messages";
 import styles from "./r1.module.css";
 
 type Locale = Prefs["locale"];
@@ -14,13 +15,14 @@ type Locale = Prefs["locale"];
  */
 export function LanguageToggle() {
   const [prefs, setPrefs] = usePrefs();
+  const { translate } = useArabic();
   const current: Locale = prefs.locale === "ar" ? "ar" : "en";
   const choose = (locale: Locale) => {
     if (locale !== current) setPrefs({ locale });
     if (locale === "ar") void loadArabic(SHARED);
   };
   return (
-    <div className={styles.lang} role="group" aria-label="Language">
+    <div className={styles.lang} role="group" aria-label={translate(messageTemplate("ui.nav.language"))}>
       <button type="button" className={styles.langChoice} lang="en" aria-pressed={current === "en"} onClick={() => choose("en")}>
         EN
       </button>

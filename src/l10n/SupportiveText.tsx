@@ -1,27 +1,51 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, type ReactNode } from "react";
 import { fill, type TemplateVars } from "@/content/template";
 import { Notation } from "@/interactions/shared/Notation";
 import { useArabic } from "./arabic";
 import { isArabic, splitBidi } from "./bidi";
 import styles from "./l10n.module.css";
 
-/** Arabic text as React children with each English run isolated LTR; never raw HTML. */
+/** A trailing "label: " of an Arabic run, kept on one line with the number that follows (#705). */
+const LABEL_TAIL = /(\S+:\s)$/;
+
+/**
+ * Arabic text as React children with each English run isolated LTR; never raw HTML. A label:value
+ * phrase («المحاولات: 3») is wrapped so the label and its number never split at a line end.
+ */
 export function BidiText({ text }: { text: string }) {
-  return (
-    <>
-      {splitBidi(text).map((run, i) =>
-        "ltr" in run ? (
-          <bdi key={i} dir="ltr">
-            <Notation text={run.ltr} />
-          </bdi>
-        ) : (
-          <Fragment key={i}>{run.rtl}</Fragment>
-        ),
-      )}
-    </>
-  );
+  const runs = splitBidi(text);
+  const out: ReactNode[] = [];
+  for (let i = 0; i < runs.length; i++) {
+    const run = runs[i];
+    if ("ltr" in run) {
+      out.push(
+        <bdi key={i} dir="ltr">
+          <Notation text={run.ltr} />
+        </bdi>,
+      );
+      continue;
+    }
+    const next = runs[i + 1];
+    const following = next && "ltr" in next ? next : undefined;
+    const m = following ? run.rtl.match(LABEL_TAIL) : null;
+    if (!m || !following) {
+      out.push(<Fragment key={i}>{run.rtl}</Fragment>);
+      continue;
+    }
+    out.push(<Fragment key={i}>{run.rtl.slice(0, -m[1].length)}</Fragment>);
+    out.push(
+      <span key={`${i}-pair`} className={styles.pair}>
+        {m[1]}
+        <bdi dir="ltr">
+          <Notation text={following.ltr} />
+        </bdi>
+      </span>,
+    );
+    i += 1;
+  }
+  return <>{out}</>;
 }
 
 export interface SupportiveTextProps {

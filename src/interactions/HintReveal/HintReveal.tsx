@@ -1,7 +1,10 @@
 "use client";
 
+import type { ReactNode } from "react";
 import type { TemplateVars } from "@/content/template";
 import { SupportiveText } from "@/l10n";
+import { useArabic } from "@/l10n/arabic";
+import { messageTemplate } from "@/tutor/messages";
 import styles from "./HintReveal.module.css";
 
 export interface RevealedHint {
@@ -25,28 +28,24 @@ export interface HintRevealProps {
   onExplainSlowly?: () => void;
   /** Course id: which Arabic map holds this course's hints. */
   course?: string;
+  /** The ⋯ menu, rendered last in the row of buttons (#705). */
+  skipMenu?: ReactNode;
 }
 
-const RUNG_LABEL: Record<number, string> = {
-  2: "Nudge",
-  3: "Concept",
-  4: "Question",
-  5: "Look here",
-  6: "Break it down",
-  7: "Similar example",
-  8: "Guided",
-  9: "Full explanation",
-};
+/** The ladder's names, one catalogue key per rung (`ui.hint.rung-N`). */
+const RUNGS = [2, 3, 4, 5, 6, 7, 8, 9];
+const T = (k: string) => <SupportiveText template={messageTemplate(k)} inline />;
 
 /** Ladder-aware hint list. Never shows more than the engine has granted. */
-export function HintReveal({ revealed, canRequest, lockedReason, onRequest, onExplainSlowly, course }: HintRevealProps) {
+export function HintReveal({ revealed, canRequest, lockedReason, onRequest, onExplainSlowly, course, skipMenu }: HintRevealProps) {
+  const { translate } = useArabic();
   return (
-    <section className={styles.root} aria-label="Hints">
+    <section className={styles.root} aria-label={translate(messageTemplate("ui.hint.list"))}>
       {revealed.length > 0 && (
         <ol className={styles.list}>
           {revealed.map((h) => (
             <li key={h.rung} className={styles.item}>
-              <span className={styles.rung}>{RUNG_LABEL[h.rung] ?? `Hint ${h.rung}`}</span>
+              <span className={styles.rung}>{RUNGS.includes(h.rung) ? T(`ui.hint.rung-${h.rung}`) : `Hint ${h.rung}`}</span>
               <span>
                 <SupportiveText template={h.template ?? h.text} vars={h.vars} course={course} />
               </span>
@@ -56,13 +55,14 @@ export function HintReveal({ revealed, canRequest, lockedReason, onRequest, onEx
       )}
       <div className={styles.actions}>
         <button type="button" className="btn btn-quiet" onClick={onRequest} disabled={!canRequest} aria-describedby={!canRequest && lockedReason ? "hint-lock" : undefined}>
-          {revealed.length === 0 ? "Hint" : "Another hint"}
+          {revealed.length === 0 ? T("ui.hint.button") : T("ui.hint.another")}
         </button>
         {onExplainSlowly && (
           <button type="button" className="btn btn-quiet" onClick={onExplainSlowly}>
-            Explain slowly
+            {T("ui.hint.explain")}
           </button>
         )}
+        {skipMenu && <span className={styles.menu}>{skipMenu}</span>}
         {!canRequest && lockedReason && (
           <span id="hint-lock" className={styles.lock}>
             <SupportiveText template={lockedReason} inline />

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { usePrefs } from "@/learner";
 import { applyTheme, DEFAULT_THEME, type Theme } from "../theme";
+import { UiText, useUiText } from "./uiText";
 import styles from "./r1.module.css";
 
 /**
@@ -13,6 +14,7 @@ import styles from "./r1.module.css";
  * returns to the button.
  */
 export function ProfileMenu() {
+  const { t } = useUiText();
   const [open, setOpen] = useState(false);
   const [prefs, setPrefs] = usePrefs();
   const panelId = useId();
@@ -41,20 +43,25 @@ export function ProfileMenu() {
         }
       }}
     >
-      <button ref={buttonRef} type="button" className={styles.util} aria-expanded={open} aria-controls={panelId} aria-label="Profile and settings" onClick={() => setOpen((o) => !o)}>
+      <button ref={buttonRef} type="button" className={styles.util} aria-expanded={open} aria-controls={panelId} aria-label={t("ui.profile.menu")} onClick={() => setOpen((o) => !o)}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true" className={styles.utilIcon}>
           <circle cx="12" cy="8" r="4" />
           <path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" />
         </svg>
-        <span className={styles.utilText}>Guest</span>
+        <span className={styles.utilText}>
+          <UiText k="ui.profile.guest" />
+        </span>
       </button>
       {open && (
         <div id={panelId} className={styles.profilePanel}>
           <p className={styles.profileNote}>
-            <strong>You are a guest.</strong> Your progress stays in this browser. Nothing is sent to a server.
+            <strong>
+              <UiText k="ui.profile.you-are-guest" />
+            </strong>{" "}
+            <UiText k="ui.profile.local" />
           </p>
           <label htmlFor={themeId} className={styles.profileRow}>
-            Appearance
+            <UiText k="ui.profile.appearance" />
             <select
               id={themeId}
               value={theme}
@@ -64,13 +71,13 @@ export function ProfileMenu() {
                 applyTheme(next);
               }}
             >
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-              <option value="system">Match device</option>
+              <option value="light">{t("ui.profile.light")}</option>
+              <option value="dark">{t("ui.profile.dark")}</option>
+              <option value="system">{t("ui.profile.system")}</option>
             </select>
           </label>
           <Link href="/settings/" className={styles.profileLink} onClick={() => setOpen(false)}>
-            Settings
+            <UiText k="ui.profile.settings" />
           </Link>
         </div>
       )}

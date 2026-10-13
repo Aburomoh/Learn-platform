@@ -4,6 +4,8 @@ import { useId, useState } from "react";
 import type { InteractionBaseProps } from "../shared/types";
 import { focusTarget } from "../shared/types";
 import { Notation } from "../shared/Notation";
+import { SupportiveText } from "@/l10n/SupportiveText";
+import { messageTemplate } from "@/tutor/messages";
 import styles from "./MultipleChoice.module.css";
 
 export interface ChoiceOption {
@@ -33,7 +35,7 @@ export function MultipleChoice({
   disabled = false,
   state = "idle",
   submittedOptionId,
-  submitLabel = "Check",
+  submitLabel,
 }: MultipleChoiceProps) {
   const [selected, setSelected] = useState<string | undefined>(submittedOptionId);
   const labelId = useId();
@@ -85,7 +87,7 @@ export function MultipleChoice({
         })}
       </div>
       <button type="submit" className="btn btn-primary" disabled={disabled || !selected}>
-        {submitLabel}
+        {submitLabel ?? <SupportiveText template={messageTemplate("ui.check.button")} inline />}
       </button>
     </form>
   );

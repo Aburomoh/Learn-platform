@@ -182,6 +182,53 @@ describe("UiText and the resolver's labels", () => {
     expect(screen.getByRole("heading", { level: 2, name: "اكتمل التمرين" })).toBeInTheDocument();
   });
 
+  it("a label:value phrase never splits: the label and its number share one nowrap span (#705)", () => {
+    _setArabicMap(SHARED, { [messageTemplate("ui.summary.line")]: "{activity} · التحديات: {challenges} · المحاولات: {attempts} · {hints}", [messageTemplate("ui.summary.attempts.other")]: "{n}", [messageTemplate("ui.summary.challenges.other")]: "{n}", [messageTemplate("ui.summary.hints.zero")]: "بلا تلميحات" });
+    act(() => {
+      _setPrefs({ locale: "ar" });
+    });
+    const activity = multi.activities[0];
+    render(<ActivitySummary activity={activity} objectives={[]} attempts={7} hintsUsed={0} next={courseAction(course, empty)} topicHref="/t/" onRestart={() => {}} />);
+    const pairs = [...document.querySelectorAll("[class*='pair']")].map((el) => el.textContent);
+    expect(pairs).toContain("المحاولات: 7");
+    expect(pairs).toContain(`التحديات: ${activity.questions.length}`);
+    for (const el of document.querySelectorAll("[class*='pair']")) expect(el.querySelector("bdi[dir='ltr']")).not.toBeNull();
+  });
+
+  it("the rest of the chrome reads its #702 keys: Home headings, the footer, the skip menu's destination and the hint panel (#705)", async () => {
+    _setArabicMap(SHARED, {
+      [messageTemplate("ui.home.start-here")]: "ابدأ من هنا",
+      [messageTemplate("ui.home.your-courses")]: "مقرراتك",
+      [messageTemplate("ui.home.open-course")]: "افتح المقرر: {title}",
+      [messageTemplate("ui.foot.optional")]: "تدريب اختياري، بلا درجات",
+      [messageTemplate("ui.hint.rung-2")]: "تلميح أولي",
+      [messageTemplate("ui.hint.button")]: "تلميح",
+      [messageTemplate("ui.skip.confirm-note")]: "تخطّي هذا السؤال؟ الوجهة: {targetLabel}.",
+      [messageTemplate("ui.skip.target.practice")]: "التمرين التالي: {title}",
+    });
+    act(() => {
+      _setPrefs({ locale: "ar" });
+    });
+    const { HomeNext } = await import("./HomeNext");
+    const { Footer } = await import("./Chrome");
+    const { HintReveal } = await import("@/interactions/HintReveal/HintReveal");
+    const { SkipMenu } = await import("@/stage/SkipMenu");
+    render(<HomeNext courses={[course, { ...course, id: "other", offeringId: "o" }]} />);
+    expect(screen.getByRole("heading", { level: 1, name: "ابدأ من هنا" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "مقرراتك" })).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: `افتح المقرر: ${course.title}` }).length).toBeGreaterThan(0);
+    render(<Footer demo={false} />);
+    expect(screen.getByText("تدريب اختياري، بلا درجات")).toBeInTheDocument();
+    render(<HintReveal revealed={[{ rung: 2, text: "Not yet." }]} canRequest onRequest={() => {}} />);
+    expect(screen.getByText("تلميح أولي")).toBeInTheDocument();
+    render(<SkipMenu allowed targetLabel="the next practice, Binary addition" target={{ key: "ui.skip.target.practice", vars: { title: "Binary addition" } }} onSkip={() => {}} />);
+    screen.getByRole("button", { name: "More" }).click();
+    await act(async () => {});
+    screen.getAllByRole("button").find((b) => b.textContent?.includes("Skip to next question"))?.click();
+    await act(async () => {});
+    expect(document.body.textContent).toContain("الوجهة: التمرين التالي: Binary addition");
+  });
+
   it("the numeric hint: the catalogue part of the sentence is Arabic", () => {
     arabicOn();
     // the signed and decimal-places shapes are catalogue sentences; the plain base hints are not (ADR-0011 §6)

@@ -1,3 +1,7 @@
+"use client";
+
+import { resolveMessage } from "@/tutor/messages";
+import { useUiText } from "./uiText";
 import styles from "./r1.module.css";
 
 export type StepState = "done" | "current" | "todo";
@@ -14,9 +18,10 @@ const STATE_TEXT: Record<StepState, string> = { done: "done", current: "current"
  * One marker per challenge, in order (R1 redesign §4). Each state has its own shape (filled with a
  * check, ring, hairline ring) and hidden text, so colour is never the only signal.
  */
-export function ChallengeSteps({ steps, label = "Challenges" }: { steps: ChallengeStep[]; label?: string }) {
+export function ChallengeSteps({ steps, label }: { steps: ChallengeStep[]; label?: string }) {
+  const { t } = useUiText();
   return (
-    <ol className={styles.steps} aria-label={label}>
+    <ol className={styles.steps} aria-label={label ?? t("ui.topic.challenges")}>
       {steps.map((step, i) => (
         <li key={i} className={styles[step.state]} data-state={step.state} aria-current={step.state === "current" ? "step" : undefined}>
           <span className={styles.dot} aria-hidden="true" />
@@ -32,7 +37,7 @@ export function ChallengeSteps({ steps, label = "Challenges" }: { steps: Challen
 export function stepsFrom(questions: { id: string; label?: string }[], completedIds: readonly string[], showCurrent = true): ChallengeStep[] {
   const firstOpen = questions.findIndex((q) => !completedIds.includes(q.id));
   return questions.map((q, i) => ({
-    label: q.label ?? `Challenge ${i + 1}`,
+    label: q.label ?? resolveMessage("ui.stage.challenge-n", { n: i + 1 }),
     state: completedIds.includes(q.id) ? "done" : showCurrent && i === firstOpen ? "current" : "todo",
   }));
 }

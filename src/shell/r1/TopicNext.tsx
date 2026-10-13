@@ -9,7 +9,7 @@ import { practiceAction, topicAction } from "../primaryAction";
 import { hasMessage } from "@/tutor/messages";
 import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
 import { PrimaryAction, effortLine } from "./PrimaryAction";
-import { ActionText, LineText, UiText } from "./uiText";
+import { ActionText, LineText, UiText, useUiText } from "./uiText";
 import { pluralKey } from "@/tutor/messages";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
@@ -32,6 +32,7 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
   const done = [...effectiveDone(activity, record).completed];
   const finished = action.kind === "next-topic" || action.kind === "review";
   const several = topic.activities.length > 1;
+  const { t } = useUiText();
 
   return (
     <div className={styles.next} style={ready ? undefined : { visibility: "hidden" }} aria-busy={!ready} data-action={action.kind}>
@@ -46,10 +47,10 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
           {/* with several practices, say which one the steps belong to */}
           {several && (
             <p className={styles.stepsLabel}>
-              {activity.title} · <UiText k={pluralKey("ui.effort.short-challenges", activity.questions.length, "en")} vars={{ n: activity.questions.length }} />
+              <UiText k={pluralKey("ui.topic.practice-challenges", activity.questions.length, "en")} vars={{ title: activity.title, n: activity.questions.length }} />
             </p>
           )}
-          <ChallengeSteps steps={stepsFrom(activity.questions, done, inProgress(record, activity))} label={several ? `Challenges of ${activity.title}` : "Challenges"} />
+          <ChallengeSteps steps={stepsFrom(activity.questions, done, inProgress(record, activity))} label={several ? t("ui.topic.challenges-of", { title: activity.title }) : t("ui.topic.challenges")} />
         </div>
       )}
 
@@ -81,7 +82,8 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
                       {kinds.map((kind) => (
                         <span key={kind}>
                           {" · "}
-                          {hasMessage(`ui.kind.${kind}`) ? <UiText k={`ui.kind.${kind}`} /> : kind}
+                          {/* each kind word isolated (Auditor on #702): an Arabic word between English separators keeps its place */}
+                          <bdi>{hasMessage(`ui.kind.${kind}`) ? <UiText k={`ui.kind.${kind}`} /> : kind}</bdi>
                         </span>
                       ))}
                       {steps ? <> · {steps}</> : ""}
