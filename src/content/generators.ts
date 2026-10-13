@@ -11,7 +11,7 @@ type VariantInput = z.input<typeof VariantSchema>;
 export type ExplanationInput = VariantInput["explanation"];
 
 export const divisionHints: HintInput[] = [
-  { rung: 2, text: "Not yet. Do {dividend} ÷ 2 carefully: how many whole 2s fit in {dividend}?" },
+  { rung: 2, text: "Not yet. Do {dividend} ÷ 2 once more, carefully." },
   { rung: 3, text: "Each step: divide by 2. The whole-number result goes in the row below. What is left over (0 or 1) goes beside the number." },
   { rung: 4, text: "Is {dividend} even or odd? What does that tell you about the remainder?" },
   { rung: 5, text: "Work in this column only: {dividend}.", focus: "div-active", highlight: "div-active" },

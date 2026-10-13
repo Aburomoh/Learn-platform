@@ -7,8 +7,12 @@
 const VERDICT = /^(?:Not yet|Not quite|Not that one)\.\s+/;
 const VERDICT_AR = /^(?:ليس بعد|ليس تماماً|ليس تماما|ليس هذا)\.\s+/;
 
+// "once more" assumes a previous try (the division nudge): dropped with the verdict, so no string has to change
+const ONCE_MORE = /\s+once more,(?=\s+carefully)/;
+const ONCE_MORE_AR = /\s+مرة أخرى،(?=\s+بدقة)/;
+
 export function softenNudge(text: string): string {
-  const out = text.replace(VERDICT, "").replace(VERDICT_AR, "");
+  const out = text.replace(VERDICT, "").replace(VERDICT_AR, "").replace(ONCE_MORE, "").replace(ONCE_MORE_AR, "");
   if (out === text) return text;
   return out.charAt(0).toUpperCase() + out.slice(1);
 }

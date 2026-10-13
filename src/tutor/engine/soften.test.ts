@@ -11,7 +11,7 @@ const base = contextFromVariant(placeValue45);
 const ctx: ActivityContext = {
   ...base,
   hints: [
-    { rung: 2, text: "Not yet. Do {dividend} ÷ 2 carefully." },
+    { rung: 2, text: "Not yet. Do {dividend} ÷ 2 once more, carefully." },
     { rung: 3, text: "Each step: divide by 2." },
   ],
   vars: { ...base.vars, dividend: 26 },
@@ -35,6 +35,9 @@ describe("a nudge before any Check carries no verdict (#717)", () => {
     expect(softenNudge("Not quite. Look at the signs again.")).toBe("Look at the signs again.");
     expect(softenNudge("ليس بعد. احسب 26 ÷ 2 بدقة.")).toBe("احسب 26 ÷ 2 بدقة.");
     expect(softenNudge("ليس تماماً. انظر مرة أخرى.")).toBe("انظر مرة أخرى.");
+    expect(softenNudge("Not yet. Do 26 ÷ 2 once more, carefully.")).toBe("Do 26 ÷ 2 carefully.");
+    expect(softenNudge("ليس بعد. احسب 26 ÷ 2 مرة أخرى، بدقة.")).toBe("احسب 26 ÷ 2 بدقة.");
+    expect(softenNudge("Not yet. Count again, one at a time.")).toBe("Count again, one at a time.");
     expect(softenNudge("Not that one. Count the inputs first.")).toBe("Count the inputs first.");
     expect(softenNudge("ليس هذا. احسب عدد Inputs أولاً.")).toBe("احسب عدد Inputs أولاً.");
     expect(softenNudge("Each step: divide by 2.")).toBe("Each step: divide by 2.");
@@ -47,7 +50,7 @@ describe("a nudge before any Check carries no verdict (#717)", () => {
     expect(h.rung).toBe(2);
     expect(h.text).toBe("Do 26 ÷ 2 carefully.");
     expect(h.unchecked).toBe(true);
-    expect(h.template).toBe("Not yet. Do {dividend} ÷ 2 carefully."); // the approved string, for the Arabic lookup
+    expect(h.template).toBe("Not yet. Do {dividend} ÷ 2 once more, carefully."); // the approved string, for the Arabic lookup
   });
 
   it("a Hint after an unchecked edit is softened too", () => {
@@ -58,7 +61,7 @@ describe("a nudge before any Check carries no verdict (#717)", () => {
   it("after a wrong Check the verdict stays: the answer was marked", () => {
     const r = run([{ type: "ANSWER_SUBMITTED", correct: false }, { type: "HINT_REQUESTED" }]);
     const h = revealed(r.actions).find((a) => a.rung === 2);
-    expect(h?.text).toBe("Not yet. Do 26 ÷ 2 carefully.");
+    expect(h?.text).toBe("Not yet. Do 26 ÷ 2 once more, carefully.");
     expect(h?.unchecked).toBeUndefined();
   });
 });
