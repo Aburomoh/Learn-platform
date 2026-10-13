@@ -6,6 +6,7 @@ import { ChapterIndex, CourseTopics } from "@/shell/r1/CourseTopics";
 import { CourseTutor } from "@/shell/r1/CourseTutor";
 import { PageFrame } from "@/shell/r1/PageFrame";
 import { PageHeading } from "@/shell/r1/PageHeading";
+import { resolveMessage } from "@/tutor/messages";
 
 type Params = { course: string };
 
@@ -30,6 +31,8 @@ export default async function CoursePage({ params }: { params: Promise<Params> }
 
   return (
     <PageFrame
+      // the way up from a course is Home's catalogue (epic #670, owner refinement 2: no Courses page)
+      back={{ label: resolveMessage("ui.nav.all-courses"), href: "/#courses" }}
       demo={course.authority === "DEMO"}
       aside={
         <ChapterIndex course={course}>

@@ -36,6 +36,12 @@ export const en = {
   "ui.kind.state-diagram": "State diagram",
   "ui.kind.timing": "Timing diagram",
   "ui.kind.truth-table": "Fill the table",
+  // where am I (epic #670, #674): the location line and the way up from a course
+  "ui.nav.here": "You are here",
+  "ui.nav.show-path": "Show the whole path",
+  "ui.nav.all-courses": "All courses",
+  "ui.nav.courses-moved": "The courses are listed on the home page.",
+  "ui.nav.go-courses": "Go to the courses",
 
   // component sentences that used to be built in code (ADR-0011 §6): whole sentences, one per
   // count form (`.one` / `.other`; Arabic may add `.zero` `.two` `.few` `.many`), `{n}` the count

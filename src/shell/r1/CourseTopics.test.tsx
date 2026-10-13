@@ -141,6 +141,20 @@ describe("chapters (#198 §9, #232)", () => {
     expect(sections[1]).toHaveTextContent("Not started");
   });
 
+  it("a #chapter-<id> in the address opens that chapter on load (#674)", () => {
+    window.location.hash = `#chapter-${ch2.id}`;
+    Element.prototype.scrollIntoView ??= () => {};
+    try {
+      render(<CourseTopics course={course} />);
+      const target = document.getElementById(`chapter-${ch2.id}`) as HTMLDetailsElement;
+      expect(target.open).toBe(true);
+      // the chapter with the next step stays open too
+      expect((document.getElementById(`chapter-${ch1.id}`) as HTMLDetailsElement).open).toBe(true);
+    } finally {
+      window.location.hash = "";
+    }
+  });
+
   it("the chapter index marks the chapter with the next step and opens a closed chapter when followed", async () => {
     render(
       <>
