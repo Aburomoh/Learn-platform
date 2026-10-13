@@ -14,7 +14,7 @@ import { ActivitySummary } from "./ActivitySummary";
 import { KindPrefetch } from "@/kinds/ui";
 import { useHydrated } from "@/shell/useHydrated";
 import { RESUME_ATTR } from "./resumeMarker";
-import { ChallengeSteps, type ChallengeStep } from "@/shell/r1";
+import { ChallengeSteps, type ChallengeStep } from "@/shell/r1/ChallengeSteps";
 import { practiceHref, skipOffer, topicAction } from "@/shell/primaryAction";
 import { SkipMenu } from "./SkipMenu";
 import styles from "./Stage.module.css";

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Activity } from "@/content/schema";
 import { Notation } from "@/interactions/shared/Notation";
-import { PrimaryAction } from "@/shell/r1";
+import { PrimaryAction } from "@/shell/r1/PrimaryAction";
 import { resolveMessage, resolvePlural } from "@/tutor";
 import type { PrimaryAction as NextAction } from "@/shell/primaryAction";
 import styles from "./Stage.module.css";
