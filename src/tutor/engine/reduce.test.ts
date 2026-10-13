@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { reduce } from "./reduce";
-import { initialTutorState, canRequestScaffold, type TutorState, type ActivityContext } from "./state";
+import { initialTutorState, canRequestScaffold, legacyWalkthroughLosesWork, type TutorState, type ActivityContext } from "./state";
 import type { LearningEvent } from "./events";
 import type { TutorAction } from "./actions";
 import { contextFromVariant } from "../context";
@@ -75,16 +75,119 @@ describe("tutor engine: core rules", () => {
     expect(actions).toContainEqual({ type: "PULSE", target: "slot-32" });
   });
 
-  it("gate: no hint or explanation before the first attempt (unless hesitating)", () => {
+  it("gate: no hint before the student engages (\"try once first\"); Explain Slowly is never gated (#690)", () => {
     const h = run([{ type: "HINT_REQUESTED" }]);
     expect(h.state.hintLevel).toBe(0);
-    expect(says(h.actions).at(-1)?.messageKey).toBe("hint.try-first");
-    const e = run([{ type: "EXPLAIN_SLOWLY_REQUESTED" }]);
-    expect(e.state.stage).toBe("await_answer");
+    expect(types(h.actions)).not.toContain("REVEAL_HINT");
+    expect(says(h.actions).at(-1)?.messageKey).toBe("hint.try-first-or-stuck");
     expect(canRequestScaffold(initialTutorState)).toBe(false);
+    // instruction, not a hint: opens before any attempt, any engagement, any wait
+    const e = run([{ type: "EXPLAIN_SLOWLY_REQUESTED" }]);
+    expect(e.state.stage).toBe("explaining");
+    expect(e.actions).toContainEqual({ type: "ADVANCE_EXPLANATION", step: 0 });
   });
 
-  it("rule 4: hesitation over 45 s prompts once, then unlocks scaffolds", () => {
+  it("engagement: the first edit opens the hint gate, a completed step closes it again, the next edit reopens it (#690)", () => {
+    const opened = run([{ type: "ENGAGED" }]);
+    expect(opened.state.engaged).toBe(true);
+    expect(canRequestScaffold(opened.state)).toBe(true);
+    const hint = run([{ type: "HINT_REQUESTED" }], opened.state);
+    expect(types(hint.actions)).toContain("REVEAL_HINT");
+    expect(hint.state.grantedRungs).toEqual([2]);
+    const next = run([{ type: "STEP_COMPLETED" }], hint.state);
+    expect(next.state.engaged).toBe(false);
+    expect(canRequestScaffold(next.state)).toBe(false);
+    expect(says(run([{ type: "HINT_REQUESTED" }], next.state).actions).at(-1)?.messageKey).toBe("hint.try-first-or-stuck");
+    expect(canRequestScaffold(run([{ type: "ENGAGED" }], next.state).state)).toBe(true);
+  });
+
+  it("idle: after 45 s a quiet line only, once per attempt cycle; it opens no hint (#690)", () => {
+    const idle = run([{ type: "IDLE", seconds: 20 }, { type: "IDLE", seconds: 50 }, { type: "IDLE", seconds: 90 }]);
+    expect(says(idle.actions).filter((s) => s.messageKey === "idle.quiet")).toHaveLength(1);
+    expect(idle.actions).toContainEqual({ type: "CHANGE_EXPRESSION", expression: "reassuring" });
+    expect(types(idle.actions)).not.toContain("REVEAL_HINT");
+    expect(idle.state.engaged).toBe(false);
+    expect(canRequestScaffold(idle.state)).toBe(false);
+    expect(says(run([{ type: "HINT_REQUESTED" }], idle.state).actions).at(-1)?.messageKey).toBe("hint.try-first-or-stuck");
+    // a new attempt starts a new cycle
+    const again = run([{ type: "ANSWER_SUBMITTED", correct: false }, { type: "IDLE", seconds: 60 }], idle.state);
+    expect(says(again.actions).filter((s) => s.messageKey === "idle.quiet")).toHaveLength(1);
+  });
+
+  it("\"I am stuck\": engages, grants the lowest rung not yet granted, then offers a hint or Explain Slowly (#690)", () => {
+    const fresh = run([{ type: "STUCK_REQUESTED" }]);
+    expect(fresh.state.engaged).toBe(true);
+    expect(fresh.state.grantedRungs).toEqual([2]);
+    expect(says(fresh.actions).map((s) => s.messageKey)).toEqual(["stuck.start", "hint.rung-2", "stuck.offer"]);
+    expect(fresh.actions).toContainEqual({ type: "OFFER_HELP", options: ["hint", "explain-slowly"] });
+    expect(types(fresh.actions)).not.toContain("REQUEST_RETRY"); // not a wrong answer
+    expect(fresh.state.attempts).toBe(0); // and not a Check
+
+    // two wrong checks granted rung 3; rung 2 was never given: the lowest is still 2, and the level stays 3
+    const afterTwo = run([{ type: "ANSWER_SUBMITTED", correct: false }, { type: "ANSWER_SUBMITTED", correct: false }]);
+    expect(afterTwo.state.grantedRungs).toEqual([3]);
+    const stuck = run([{ type: "STUCK_REQUESTED" }], afterTwo.state);
+    expect(stuck.state.grantedRungs).toEqual([3, 2]);
+    expect(stuck.state.hintLevel).toBe(3);
+    // a Hint request then continues above the highest rung granted
+    expect(run([{ type: "HINT_REQUESTED" }], stuck.state).state.grantedRungs).toEqual([3, 2, 4]);
+  });
+
+  it("\"I am stuck\" with every rung granted offers Explain Slowly only", () => {
+    const all = ctx.hints.map((h) => h.rung);
+    const start: TutorState = { ...initialTutorState, engaged: true, grantedRungs: all, hintLevel: Math.max(...all) };
+    const r = run([{ type: "STUCK_REQUESTED" }], start);
+    expect(says(r.actions).map((s) => s.messageKey)).toContain("hints.exhausted");
+    expect(r.actions).toContainEqual({ type: "OFFER_HELP", options: ["explain-slowly"] });
+    expect(types(r.actions)).not.toContain("REVEAL_HINT");
+  });
+
+  it("reflex guard: a Hint or \"I am stuck\" tap within 5 s of the step appearing is ignored without a message (#690)", () => {
+    const engaged: TutorState = { ...initialTutorState, engaged: true };
+    for (const e of [{ type: "HINT_REQUESTED", sinceStepMs: 1200 }, { type: "STUCK_REQUESTED", sinceStepMs: 4999 }] as LearningEvent[]) {
+      const r = run([e], engaged);
+      expect(r.actions).toEqual([]);
+      expect(r.state).toEqual(engaged);
+    }
+    expect(types(run([{ type: "HINT_REQUESTED", sinceStepMs: 5000 }], engaged).actions)).toContain("REVEAL_HINT");
+    // Explain Slowly has no such guard
+    expect(run([{ type: "EXPLAIN_SLOWLY_REQUESTED" }]).state.stage).toBe("explaining");
+  });
+
+  it("Explain Slowly: not on a finished question, and not twice while one is open", () => {
+    const done = run([{ type: "ANSWER_SUBMITTED", correct: true }, { type: "EXPLAIN_SLOWLY_REQUESTED" }]);
+    expect(done.state.stage).toBe("complete");
+    expect(types(done.actions)).not.toContain("ADVANCE_EXPLANATION");
+    const open = run([{ type: "EXPLAIN_SLOWLY_REQUESTED" }]);
+    const second = reduce(open.state, { type: "EXPLAIN_SLOWLY_REQUESTED" }, ctx);
+    expect(second.actions).toEqual([]);
+    expect(second.state).toEqual(open.state);
+  });
+
+  it("interim: a legacy walkthrough past step 0 asks once before it restarts the question (#690, §2.6)", () => {
+    const later: ActivityContext = { ...ctx, stepIndex: 2 };
+    expect(legacyWalkthroughLosesWork(later)).toBe(true);
+    expect(legacyWalkthroughLosesWork(ctx)).toBe(false);
+    expect(legacyWalkthroughLosesWork({ stepIndex: 0 })).toBe(false);
+    const ask = run([{ type: "EXPLAIN_SLOWLY_REQUESTED" }], initialTutorState, later);
+    expect(ask.state.stage).toBe("await_answer");
+    expect(ask.actions).toContainEqual({ type: "CONFIRM_RESTART" });
+    expect(says(ask.actions).at(-1)?.messageKey).toBe("explain.confirm-restart");
+    const go = run([{ type: "EXPLAIN_SLOWLY_REQUESTED", confirmed: true }], initialTutorState, later);
+    expect(go.state.stage).toBe("explaining");
+    expect(types(go.actions)).not.toContain("CONFIRM_RESTART");
+  });
+
+  it("the new tutor strings are in the catalog and carry no slot", () => {
+    for (const key of ["hint.try-first-or-stuck", "idle.quiet", "stuck.start", "stuck.offer", "explain.confirm-restart"]) {
+      expect(hasMessage(key), key).toBe(true);
+    }
+    for (const a of [run([{ type: "STUCK_REQUESTED" }]).actions, run([{ type: "IDLE", seconds: 60 }]).actions]) {
+      for (const s of says(a)) expect(s.text, s.messageKey).not.toMatch(/\{/);
+    }
+  });
+
+  it("legacy HESITATION (until the runner sends ENGAGED and IDLE, learn 1b): prompts once, then unlocks scaffolds", () => {
     const { state, actions } = run([
       { type: "HESITATION", seconds: 20 },
       { type: "HESITATION", seconds: 50 },
