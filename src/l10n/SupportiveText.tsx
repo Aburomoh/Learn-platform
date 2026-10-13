@@ -32,6 +32,8 @@ export interface SupportiveTextProps {
   course?: string;
   /** Render inline (inside a sentence) instead of as its own text block. */
   inline?: boolean;
+  /** Applied to the text in either language before its slots are filled (a hint shown without its verdict, #717). */
+  transform?: (text: string) => string;
 }
 
 /**
@@ -39,13 +41,13 @@ export interface SupportiveTextProps {
  * Arabic is on and translated, else the English exactly as today. Arabic is `dir="rtl" lang="ar"` on
  * this element only, with English runs in `<bdi dir="ltr">`.
  */
-export function SupportiveText({ template, vars = {}, course, inline = false }: SupportiveTextProps) {
+export function SupportiveText({ template, vars = {}, course, inline = false, transform }: SupportiveTextProps) {
   const { translate } = useArabic(course);
   const text = translate(template);
-  if (text === template) return <Notation text={fill(template, vars)} />;
+  if (text === template) return <Notation text={fill(transform ? transform(template) : template, vars)} />;
   // the translation may hold no Arabic letter of its own ("+{n}", "{activity} · {attempts}"): it is
   // still the owner's text, and its direction follows what the filled line holds (#710)
-  const filled = fill(text, vars);
+  const filled = fill(transform ? transform(text) : text, vars);
   if (!isArabic(filled)) return <Notation text={filled} />;
   return (
     <span dir="rtl" lang="ar" className={`${styles.ar} ${inline ? styles.inline : ""}`}>

@@ -33,6 +33,27 @@ describe("HintReveal", () => {
     expect(screen.queryByRole("button")).toBeNull();
   });
 
+  it("a hint granted before any Check shows without its verdict, in English and in Arabic (#717)", async () => {
+    const { _setArabicMap, SHARED, _resetArabic } = await import("@/l10n/arabic");
+    const { _setPrefs } = await import("@/learner/store");
+    const { act } = await import("@testing-library/react");
+    _resetArabic();
+    const template = "Not yet. Do {n} ÷ 2 carefully.";
+    render(<HintReveal revealed={[{ rung: 2, text: "Do 26 ÷ 2 carefully.", template, vars: { n: 26 }, unchecked: true }]} />);
+    expect(screen.getByRole("listitem")).toHaveTextContent("Do 26 ÷ 2 carefully.");
+    expect(screen.getByRole("listitem")).not.toHaveTextContent("Not yet");
+    _setArabicMap(SHARED, { [template]: "ليس بعد. احسب {n} ÷ 2 بدقة." });
+    act(() => {
+      _setPrefs({ locale: "ar" });
+    });
+    expect(screen.getByRole("listitem")).toHaveTextContent("احسب 26 ÷ 2 بدقة.");
+    expect(screen.getByRole("listitem")).not.toHaveTextContent("ليس بعد");
+    act(() => {
+      _setPrefs({ locale: "en" });
+    });
+    _resetArabic();
+  });
+
   it("offers Explain slowly when a handler is given", async () => {
     const onExplain = vi.fn();
     render(<HintReveal revealed={[]} canRequest onRequest={() => {}} onExplainSlowly={onExplain} />);

@@ -23,7 +23,7 @@ export interface RunnerState {
   expression: Expression;
   message: string;
   /** The English template and slot values behind `message`, so the UI can show it in the learner's language (ADR-0011). */
-  messageSource?: { template: string; vars: TemplateVars };
+  messageSource?: { template: string; vars: TemplateVars; unchecked?: boolean };
   hints: RevealedHint[];
   /** Non-null while Explain Slowly is running. */
   explanation: { step: number; prediction?: PredictionResult } | null;
@@ -184,14 +184,14 @@ export function createRunnerReducer(activity: Activity) {
       switch (a.type) {
         case "SAY":
           next.message = a.text;
-          next.messageSource = { template: a.template, vars: a.vars };
+          next.messageSource = { template: a.template, vars: a.vars, ...(a.unchecked ? { unchecked: true } : {}) };
           next.messageSeq += 1;
           break;
         case "CHANGE_EXPRESSION":
           next.expression = a.expression;
           break;
         case "REVEAL_HINT":
-          if (!next.hints.some((h) => h.rung === a.rung)) next.hints = [...next.hints, { rung: a.rung, text: a.text, template: a.template, vars: a.vars }];
+          if (!next.hints.some((h) => h.rung === a.rung)) next.hints = [...next.hints, { rung: a.rung, text: a.text, template: a.template, vars: a.vars, ...(a.unchecked ? { unchecked: true } : {}) }];
           break;
         case "ADVANCE_EXPLANATION":
           next.explanation = { step: a.step };

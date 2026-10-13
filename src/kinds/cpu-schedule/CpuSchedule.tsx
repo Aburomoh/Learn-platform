@@ -324,7 +324,12 @@ export function CpuSchedule({ id, spec, segments, results, goals, done, state = 
                 if (activeColumn === column)
                   return (
                     <td key={column} className={wrong && wrongFirst === i ? styles.wrongCell : ""} {...focusTarget(`cell-${column}-${j.id}`)}>
-                      <input form={formId} className={`${styles.cell} mono`} inputMode="decimal" autoComplete="off" aria-label={`${column === "finish" ? "Finish time" : "Turnaround"} of ${j.id}`} aria-invalid={(wrong && wrongFirst === i) || undefined} value={cells[i] ?? ""} disabled={!editing} onChange={(e) => setCells((c) => c.map((v, k) => (k === i ? (e.target.value.trim() === "" ? null : Number(e.target.value.replace(/[^0-9.]/g, ""))) : v)))} />
+                      <input form={formId} className={`${styles.cell} mono`} inputMode="decimal" autoComplete="off" aria-label={`${column === "finish" ? "Finish time" : "Turnaround"} of ${j.id}`} aria-invalid={(wrong && wrongFirst === i) || undefined} value={cells[i] ?? ""} disabled={!editing} onChange={(e) => {
+                          // the value is read in the handler, not the updater: a replayed edit (#708) is restored by then
+                          const raw = e.target.value;
+                          const next = raw.trim() === "" ? null : Number(raw.replace(/[^0-9.]/g, ""));
+                          setCells((c) => c.map((v, k) => (k === i ? next : v)));
+                        }} />
                     </td>
                   );
                 return (

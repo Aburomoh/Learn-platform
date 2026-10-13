@@ -198,6 +198,13 @@ describe("engagement, I'm stuck, idle and the restart warning (learn 1b, #691)",
 
   it("I'm stuck engages, grants the lowest rung not yet granted and offers a hint and Explain slowly; the offer lasts until the next event", () => {
     const s = run([{ type: "OPEN" }, { type: "STUCK" }]);
+    // granted before any Check: the card and the bubble carry the flag (#717)
+    expect(s.hints[0].unchecked).toBe(true);
+    expect(s.hints[0].text).not.toMatch(/^Not yet/);
+    // the bubble ends on the offer line; the softened hint line before it carried the flag
+    expect(reducer(run([{ type: "OPEN" }, { type: "ENGAGED" }]), { type: "HINT" }).messageSource?.unchecked).toBe(true);
+    const checked = run([{ type: "OPEN" }, step(0, 1, 1), { type: "HINT" }]);
+    expect(checked.hints[0].unchecked).toBeUndefined();
     expect(s.tutor.engaged).toBe(true);
     expect(s.hints.map((h) => h.rung)).toEqual([2]);
     expect(s.offer).toEqual(["hint", "explain-slowly"]);

@@ -3,6 +3,7 @@
 import type { TemplateVars } from "@/content/template";
 import { SupportiveText } from "@/l10n";
 import { messageTemplate } from "@/tutor/messages";
+import { softenNudge } from "@/tutor";
 import styles from "./HintReveal.module.css";
 
 export interface RevealedHint {
@@ -12,6 +13,8 @@ export interface RevealedHint {
   /** Its unfilled template and slot values, for the learner's language (ADR-0011); absent in old records. */
   template?: string;
   vars?: TemplateVars;
+  /** Granted before any Check on this step (#717): shown without its leading verdict, in either language. */
+  unchecked?: boolean;
 }
 
 export interface HintRevealProps {
@@ -66,7 +69,7 @@ export function HintReveal({ revealed, diagnosis, canRequest = true, lockedReaso
             <li key={h.rung} className={styles.item}>
               <span className={styles.rung}>{RUNG_LABEL[h.rung] ?? `Hint ${h.rung}`}</span>
               <span>
-                <SupportiveText template={h.template ?? h.text} vars={h.vars} course={course} />
+                <SupportiveText template={h.template ?? h.text} vars={h.vars} course={course} transform={h.unchecked ? softenNudge : undefined} />
               </span>
             </li>
           ))}
