@@ -11,7 +11,7 @@ const base = {
     { id: "s2", say: "Two." },
   ],
 };
-const detectors = ["arrival-ignored", "fcfs-under-sjn", "longest-first", "not-preempted", "preempted-nonpreemptive", "end-past-remaining", "priority-reversed", "rr-queue-order", "turnaround-as-finish", "average-wrong-count"];
+const detectors = ["arrival-ignored", "fcfs-under-sjn", "sjn-under-fcfs", "longest-first", "not-preempted", "preempted-nonpreemptive", "end-past-remaining", "priority-reversed", "rr-queue-order", "turnaround-as-finish", "average-wrong-count"];
 const misconceptions = detectors.map((type) => ({ id: type, title: type, nudgeKey: type, detect: { type } }));
 const variant = (spec: Record<string, unknown>): Variant => VariantSchema.parse({ id: "v", spec: { kind: "cpu-schedule", ...spec }, misconceptions, ...base });
 const grade = (v: Variant, step: number, a: Omit<CpuScheduleAnswer, "kind" | "step">) => cpuSchedule.grade(v as never, { kind: "cpu-schedule", step, ...a });
@@ -41,6 +41,12 @@ describe("cpu-schedule goals (Ch4 s.21, SJN)", () => {
     expect(grade(sjn, 2, { job: "D" })).toMatchObject({ correct: false, misconceptionId: "longest-first" });
     expect(grade(sjn, 0, { job: "B" })).toMatchObject({ correct: false, misconceptionId: "arrival-ignored" }); // B arrives at 1
     expect(grade(sjn, 0, { job: "idle" })).toMatchObject({ correct: false, misconceptionId: "arrival-ignored" });
+  });
+
+  it("FCFS: the shortest job taken instead of the earliest arrival is named (#728)", () => {
+    const fcfs = variant({ policy: "fcfs", jobs: J([["A", 0, 15], ["B", 0, 2], ["C", 0, 1]]) });
+    expect(grade(fcfs, 0, { job: "A" })).toMatchObject({ correct: true, partial: true });
+    expect(grade(fcfs, 0, { job: "C" })).toMatchObject({ correct: false, misconceptionId: "sjn-under-fcfs" });
   });
 
   it("grades the end: a job stopped early under a non-preemptive policy", () => {

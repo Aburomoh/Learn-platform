@@ -161,6 +161,10 @@ export const cpuSchedule: KindLogic<CpuScheduleSpec, CpuScheduleAnswer> = {
         if (spec.policy === "srt" && picked === previous && left[picked] > 0) slip = "not-preempted";
         else if (picked === earliest) slip = "fcfs-under-sjn";
         else if (picked === longest) slip = "longest-first";
+      } else if (spec.policy === "fcfs") {
+        // the classic mix-up in a topic that teaches both: the shortest ready job taken instead of the earliest arrival
+        const shortest = ready.reduce((a, b) => (left[b] < left[a] ? b : a));
+        if (picked === shortest) slip = "sjn-under-fcfs";
       } else if (spec.policy === "priority") {
         const reversed = ready.reduce((a, b) => ((byId[b].priority ?? 0) > (byId[a].priority ?? 0) ? b : a));
         if (picked === reversed) slip = "priority-reversed";

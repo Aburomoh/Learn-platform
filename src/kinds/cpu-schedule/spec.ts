@@ -51,6 +51,8 @@ export const cpuScheduleDetectors = [
   z.object({ type: z.literal("arrival-ignored") }),
   /** SJN/SRT: took the earliest arrival instead of the shortest. */
   z.object({ type: z.literal("fcfs-under-sjn") }),
+  /** FCFS: took the shortest job instead of the earliest arrival (#728). */
+  z.object({ type: z.literal("sjn-under-fcfs") }),
   /** SJN/SRT: took the longest job instead of the shortest. */
   z.object({ type: z.literal("longest-first") }),
   /** SRT: kept the running job past a shorter arrival; RR: ran past the quantum. */
