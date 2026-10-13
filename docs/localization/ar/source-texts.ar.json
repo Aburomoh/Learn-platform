@@ -76424,5 +76424,68 @@
       "{n}"
     ],
     "arabic": "التحدي {n}"
+  },
+  {
+    "id": "catalog.ui.nav.practices-count",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Practices in this topic ({k} of {n})",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #719's four keys (QA: the navigator stays English in Arabic without them). Label:value, no brackets. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{k}",
+      "{n}"
+    ],
+    "arabic": "التمارين في هذا الموضوع: {k} من {n}"
+  },
+  {
+    "id": "catalog.ui.row.here",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Here",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #719's four keys (QA: the navigator stays English in Arabic without them). Label:value, no brackets. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "هنا"
+  },
+  {
+    "id": "catalog.ui.summary.another",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Another practice in this topic",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #719's four keys (QA: the navigator stays English in Arabic without them). Label:value, no brackets. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تمرين آخر في هذا الموضوع"
+  },
+  {
+    "id": "catalog.ui.summary.course-map",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Course map",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #719's four keys (QA: the navigator stays English in Arabic without them). Label:value, no brackets. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "خريطة المقرر"
   }
 ]
