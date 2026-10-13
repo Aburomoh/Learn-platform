@@ -138,7 +138,49 @@ QA's real render of #702 on #710 (69e7c6d) shows English text on the same screen
 | same | Practise again | تدرّب مرة أخرى | The approved package uses التدرّب. |
 | same | Back to topic | العودة إلى الموضوع | |
 
-Not drafted here (course text or other scope): the objective lists of "You can now", question prompts, the skip menu and "Stuck? You skipped ahead…" notes (`SkipMenu.tsx`, `ActivityRunner.tsx`), and the settings form. Say if the owner wants them as a further addendum.
+### 8b. The rest of the chrome on the practice screen and the global chrome
+
+Owner chose (a) on #702: these join the batch. Same rules. "Check", "Hint" and the other buttons are the app's own words, not course text. Bit stays English (glossary). The kind-specific labels inside the interactions (column headings, "Result", "Remainder", figure captions) are drawn by the figures and are a separate list if the owner wants it.
+
+| Where (source) | English | Proposed Arabic | Notes |
+|---|---|---|---|
+| Footer (`Chrome.tsx`) | Demo content | محتوى تجريبي | |
+| same | Optional practice, not graded | تدريب اختياري، بلا درجات | |
+| same | Progress stays in this browser | يبقى تقدّمك في هذا المتصفح | |
+| Profile menu (`ProfileMenu.tsx`) | Profile and settings | الملف الشخصي والإعدادات | Accessible name. |
+| same | Guest | ضيف | |
+| same | You are a guest. | أنت ضيف. | |
+| same | Your progress stays in this browser. Nothing is sent to a server. | يبقى تقدّمك في هذا المتصفح. لا يُرسل أي شيء إلى خادم. | |
+| same | Appearance | المظهر | |
+| same | Light / Dark / Match device | فاتح / داكن / حسب الجهاز | «الجهاز» here is the user's own device, not the OS device of the course. |
+| same | Settings | الإعدادات | |
+| Language toggle | Language | اللغة | Accessible name; the choices «EN» and «عربي» stay as they are. |
+| Course page | Chapters | Chapters | **decide**: «Chapter» stays English (owner, #697), so the plural heading stays «Chapters» (or «الـ Chapters»). |
+| Topic page (`MeetCard.tsx`) | How it works | كيف يعمل | |
+| Home (`HomeNext.tsx`) | Open course: {title} | افتح المقرر: {title} | Accessible name. |
+| Practice header (`ActivityRunner.tsx`) | Challenge {k} of {n} | التحدي {k} من {n} | The step label that may follow stays English (course text). |
+| same | Next steps | الخطوات التالية | Accessible name of the buttons after a correct answer. |
+| same | Try a similar one | جرّب سؤالًا مشابهًا | |
+| same | Next challenge / Finish | التحدي التالي / إنهاء | |
+| Hint panel (`HintReveal.tsx`) | Hint / Another hint | تلميح / تلميح آخر | |
+| same | Explain slowly | اشرح ببطء | |
+| same | Hints | التلميحات | Accessible name. |
+| Hint cards | Nudge · Concept · Question · Look here · Break it down · Similar example · Guided · Full explanation | تلميح أولي · المفهوم · سؤال موجّه · انظر هنا · قسّمها · مثال مشابه · بإرشاد · الشرح الكامل | The ladder's names, one per rung. |
+| Check buttons (interactions) | Check / Check step / Check bits / Check groups / Check digit | تحقّق / تحقّق من الخطوة / تحقّق من الـ Bits / تحقّق من المجموعات / تحقّق من الرقم | Bit stays English (glossary). |
+| Explanation (`QuestionView.tsx`) | Explanation | الشرح | Accessible name. |
+| same | Question | السؤال | Accessible name. |
+| same | Step {k} of {n} | الخطوة {k} من {n} | |
+| same | Continue / Now I try | تابع / الآن أجرّب أنا | |
+| Skip menu (`SkipMenu.tsx`) | More | المزيد | Accessible name. |
+| same | Skip to next question | تخطَّ إلى السؤال التالي | |
+| same | Skip this question? You can come back any time. This goes to {targetLabel}. | تخطّي هذا السؤال؟ يمكنك العودة إليه في أي وقت. الوجهة: {targetLabel}. | Label:value, so the destination phrase needs no case. |
+| same | Confirm skip | تأكيد التخطي | Accessible name. |
+| same | Skip / Cancel | تخطَّ / إلغاء | |
+| Skip destinations | the next question · the next practice, {title} · the next topic, {title} · the course page | السؤال التالي · التمرين التالي: {title} · الموضوع التالي: {title} · صفحة المقرر | Written without the article so they fit after «الوجهة:». |
+| Return offers (`ActivityRunner.tsx`) | Stuck? You skipped {label}; it leads here. Go back any time. | عالق؟ لقد تخطّيت {label}؛ فهو يقود إلى هنا. يمكنك الرجوع في أي وقت. | {label} is a challenge label (English, isolated). |
+| same | Stuck? You skipped ahead in {title}; it covers this. Go back any time. | عالق؟ لقد تخطّيت جزءًا في {title}؛ فهو يغطي هذا. يمكنك الرجوع في أي وقت. | {title} stays English, isolated. |
+
+Not drafted here (course text or other scope): the objective lists of "You can now", question prompts, the labels drawn inside the figures and interactions, and the settings page (`SettingsForm.tsx`, long explanatory text). Say if the owner wants any of them as a further addendum.
 
 ## Still to come (added as the PRs land)
 
