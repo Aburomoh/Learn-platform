@@ -14,7 +14,7 @@
  */
 import type { Activity, Course, Topic } from "@/content/schema";
 import { messageTemplate, resolveMessage } from "@/tutor/messages";
-import { inProgress, type ActivityProgress, type OfferingProgress } from "@/learner/progress";
+import { effectiveStatus, inProgress, type ActivityProgress, type OfferingProgress } from "@/learner/progress";
 
 export interface ActionLink {
   label: string;
@@ -49,8 +49,9 @@ const topicsOf = (course: Course): Topic[] => course.modules.flatMap((m) => m.to
 /** `new`, `started` (in progress, ADR-0013) or `completed`; `skipped` and visited-only read as `new`. */
 function statusOf(progress: Progress, activity: Activity): ActivityProgress["status"] {
   const record = progress.activities[activity.id];
-  if (record?.status === "completed") return "completed";
-  return inProgress(record) ? "started" : "new";
+  // completed also by credit (§6.1 rule 6); started only when meaningful (ADR-0013), counted through effectiveDone (rule 7)
+  if (effectiveStatus(activity, record) === "completed") return "completed";
+  return inProgress(record, activity) ? "started" : "new";
 }
 
 /** The practice a topic's button is about: its first unfinished one, else its first. */
@@ -107,7 +108,7 @@ export function courseAction(course: Course, progress: Progress): PrimaryAction 
   for (const topic of topics)
     for (const activity of topic.activities) {
       const record = progress.activities[activity.id];
-      if (record && inProgress(record) && (!latest || record.lastAt > latest.at)) latest = { topic, activity, at: record.lastAt };
+      if (record && inProgress(record, activity) && (!latest || record.lastAt > latest.at)) latest = { topic, activity, at: record.lastAt };
     }
   if (latest) return { kind: "continue", primary: actionLink("continue", latest.activity.title, practiceHref(course, latest.topic, latest.activity)), topic: latest.topic, activity: latest.activity };
 

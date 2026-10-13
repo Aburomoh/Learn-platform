@@ -117,12 +117,12 @@ test("C6 expression tree: sequential steps, concurrent steps and processors", as
   await expectCorrect(page);
 
   await page.goto("/courses/cpet181/concurrent-programming/concurrent-steps/");
-  const expr2 = (await mainText(page)).match(/A = ([^\n]*?) with as many processors/)![1];
-  await typeAnswer(page, parse(expr2).depth);
-  await expectCorrect(page);
-  // operations in step 1, then in step 2, then the processors of the busiest step (#665)
-  for (const answer of [parse(expr2).level(1), parse(expr2).level(2), parse(expr2).width]) {
-    await page.getByRole("button", { name: /Next challenge/ }).click();
+  // operations in step 1, then in step 2, then the steps of the whole chain, then the processors of the busiest step
+  // (#665; the level questions come first since #692)
+  const expr2 = (await mainText(page)).match(/A = ([^\n]*?)\. Every operation runs/)![1];
+  const t = parse(expr2);
+  for (const [i, answer] of [t.level(1), t.level(2), t.depth, t.width].entries()) {
+    if (i) await page.getByRole("button", { name: /Next challenge/ }).click();
     await typeAnswer(page, answer);
     await expectCorrect(page);
   }

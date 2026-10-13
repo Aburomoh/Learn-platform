@@ -7,6 +7,7 @@ import { HintReveal } from "@/interactions/HintReveal/HintReveal";
 import { canRequestScaffold } from "@/tutor";
 import { resolveMessage } from "@/tutor";
 import { TutorPanel, TutorPosePreload, useFocusEffects } from "@/tutor/ui";
+import { effectiveDone, effectiveStatus } from "@/learner/progress";
 import { useOfferingProgress, usePrefs, getProgressStore, recordAttempt, completeActivity, completeQuestion, markExplained, skipQuestion, skippedAhead, flushPendingWrites } from "@/learner";
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
@@ -37,8 +38,8 @@ function isReview(): boolean {
 /** Where this visit starts: Continue resumes, Review or a finished practice starts at challenge 1. */
 function startState(offeringId: string, activity: Activity): RunnerState {
   const record = getProgressStore(offeringId).get().activities[activity.id];
-  if (isReview() || !record || record.status === "completed") return initialRunnerState(activity);
-  return resumeRunnerState(activity, record.completedQuestions ?? []);
+  if (isReview() || !record || effectiveStatus(activity, record) === "completed") return initialRunnerState(activity);
+  return resumeRunnerState(activity, [...effectiveDone(activity, record).completed]);
 }
 
 /**
@@ -198,7 +199,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
     const i = activity.questions.findIndex((q, k) => k < state.qIndex && !state.completed[k] && ids.includes(q.id));
     return i >= 0 ? { index: i, label: activity.questions[i].label ?? `Challenge ${i + 1}` } : undefined;
   })();
-  const skippedBefore = skippedHere ? undefined : topic.activities.find((a, i) => i < topic.activities.findIndex((x) => x.id === activity.id) && skippedAhead(progress.activities[a.id]));
+  const skippedBefore = skippedHere ? undefined : topic.activities.find((a, i) => i < topic.activities.findIndex((x) => x.id === activity.id) && skippedAhead(progress.activities[a.id], a));
 
   // One marker per challenge: finished ones done, the one on screen current.
   const steps: ChallengeStep[] = activity.questions.map((q, i) => ({
