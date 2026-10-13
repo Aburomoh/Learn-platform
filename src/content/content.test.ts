@@ -1031,6 +1031,26 @@ describe("authored truth is internally consistent", () => {
     for (const { path, variant } of allVariants()) expect(variant.prompt, path).not.toMatch(/\bthe same (circuit|design|diagram|table|map|figure)/i);
   });
 
+  it("a prompt with a back-reference cue (now, next, earlier, again, the same) names the quantity it works on (#672)", () => {
+    // a safety net for direct entry: "Now add A and B" is unanswerable unless the numbers or the expression are on the page.
+    // In a multiple-choice concept question "next" is ordinary English ("before the next starts"), so only a sentence-opening cue counts there.
+    const cue = /\b(?:now|next|earlier|previous|again|the same)\b/i;
+    const opening = /(?:^|[.?!:]\s+)(?:now|next|then|again)\b/i;
+    const names = /[=\d]/;
+    // these kinds draw the givens themselves (jobs, memory, table, diagram), so the quantity is on the page
+    const draws = ["cpu-schedule", "memory-map", "truth-table", "state-diagram", "kmap", "timing", "circuit-predict", "device"];
+    const missing: string[] = [];
+    for (const { path, variant } of allVariants()) {
+      const cues = variant.spec.kind === "multiple-choice" ? opening.test(variant.prompt) : cue.test(variant.prompt);
+      if (cues && !names.test(variant.prompt) && !variant.figure && !draws.includes(variant.spec.kind)) missing.push(`${path}: ${variant.prompt.slice(0, 110)}`);
+      // digits alone are not enough: "add A and the 2's complement of B: 1101 + 0111" names numbers but not what A and B are
+      const letters = /\b[AB]\b(?![′'’])/.test(variant.prompt);
+      const defined = /\bA\s*[−=:+-]/.test(variant.prompt);
+      if (cues && letters && !defined && !variant.figure && !draws.includes(variant.spec.kind)) missing.push(`${path}: A/B not defined: ${variant.prompt.slice(0, 90)}`);
+    }
+    expect(missing).toEqual([]);
+  });
+
   it("a prompt that names \"the <X> table\" shows a table: a table figure, a table kind, or a memory-table figure (#618)", () => {
     // a safety net, not the rule (PEDAGOGY, question context): every prompt is written to show what it names
     const names = /\b(?:the|this|that)\s+(?:[\w'′()+-]+\s+){0,3}?table\b/i;

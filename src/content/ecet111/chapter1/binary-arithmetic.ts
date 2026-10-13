@@ -298,7 +298,7 @@ function addTwosVariant(set: SubtractionSet): VariantInput {
   const s = subtractionBits(set);
   return {
     id: set.id,
-    prompt: `Now add A and the 2's complement of B, one column at a time: ${s.A} + ${s.twos}.`,
+    prompt: `A − B = ${set.a} − ${set.b}. Add A and the 2's complement of B, one column at a time: ${s.A} + ${s.twos}.`,
     spec: { kind: "column-addition", a: s.A, b: s.twos, answer: s.sum },
     vars: subtractionVars(set),
     hints: columnHints,
