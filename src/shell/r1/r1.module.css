@@ -768,7 +768,7 @@
 }
 
 .locationSep {
-  padding: 0 var(--space-2);
+  white-space: pre;
 }
 
 .locationLink {

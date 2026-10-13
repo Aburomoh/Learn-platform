@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getTopic, listTopicParams } from "@/content";
 import { CourseTutor, MeetCard, PageFrame, PageHeading, PreviewBoard, TopicNext } from "@/shell/r1";
-import { LocationLine, chapterShort } from "@/shell/r1/LocationLine";
+import { LocationLine } from "@/shell/r1/LocationLine";
+import { chapterShort } from "@/shell/location";
 import styles from "@/shell/r1/r1.module.css";
 import { Notation } from "@/interactions/shared/Notation";
 

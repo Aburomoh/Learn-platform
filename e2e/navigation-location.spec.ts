@@ -57,6 +57,8 @@ for (const [width, height] of [
 }
 
 test("topic page: the location line replaces the eyebrow; the course and chapter are links, the topic is the current place (#674)", async ({ page }) => {
+  // at full width every segment shows (phones collapse the first one: the practice test above covers that)
+  await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/courses/ecet111/binary-arithmetic/");
   const nav = page.getByRole("navigation", { name: "You are here" });
   await expect(nav).toHaveText(/ECET 111 · Chapter 1 · Binary arithmetic/);

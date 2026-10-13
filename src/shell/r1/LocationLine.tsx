@@ -35,7 +35,7 @@ export function LocationLine({ segments }: { segments: Crumb[] }) {
           <li key={`${i}-${s.label}`} className={styles.locationItem} data-collapsed={i < collapsed ? "" : undefined}>
             {i > 0 && (
               <span aria-hidden="true" className={styles.locationSep}>
-                ·
+                {" · "}
               </span>
             )}
             {s.href ? (
@@ -53,6 +53,3 @@ export function LocationLine({ segments }: { segments: Crumb[] }) {
     </nav>
   );
 }
-
-/** "Chapter 2 · Boolean Algebra and Logic Gates" → "Chapter 2": the short name for the line. */
-export const chapterShort = (title: string) => title.split("·")[0].trim();

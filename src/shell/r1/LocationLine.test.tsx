@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { LocationLine, chapterShort } from "./LocationLine";
+import { chapterShort } from "../location";
+import { LocationLine } from "./LocationLine";
 
 const segments = [
   { label: "ECET 111", href: "/courses/ecet111/" },
@@ -22,7 +23,8 @@ describe("LocationLine (epic #670, #674)", () => {
       ["Binary arithmetic", "/courses/ecet111/binary-arithmetic"],
     ]);
     expect(within(nav).getByText("Subtraction by 2's complement")).toHaveAttribute("aria-current", "page");
-    expect(nav).toHaveTextContent("ECET 111 · Chapter 1 · Binary arithmetic · Subtraction by 2's complement");
+    // real spaces around the separators: copied text and text matchers read the line as written
+    expect(nav.textContent).toContain("ECET 111 · Chapter 1 · Binary arithmetic · Subtraction by 2's complement");
   });
 
   it("marks all but the two nearest segments as collapsed (phones hide them) until the … button opens the whole path", async () => {
