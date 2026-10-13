@@ -1,6 +1,6 @@
 # Arabic batch for the new navigation labels (#676, epic #670)
 
-**Status: REVISED per the owner's decisions of 2026-10-13 (#697), for final approval. Nothing here ships until the owner approves it.** The real strings are in the draft PR #699's package files so QA can render them. Content Engineer, 2026-10-13, main @ f53dec5.
+**Status: REVISED per the owner's decisions of 2026-10-13 (#697), for final approval. Nothing here ships until the owner approves it.** The real strings are in the draft PR #702's package files so QA can render them. Content Engineer, 2026-10-13, main @ f53dec5.
 
 How to read it: `key · English · proposed Arabic · notes`. A row marked **decide** needs the owner. Every `{slot}` is kept exactly. Digits are Western. The rules are the owner's (REQUIREMENTS.md): Modern Standard Arabic, slightly conversational; English technical terms stay English and are LTR-isolated; no machine translation. Terms follow `TECHNICAL_GLOSSARY_AR.md`; "Course", "Chapter" and "Topic" stay English (owner, 2026-10-13, #676), written with the `الـ` prefix as the approved package does («الـ Processors»). Address is the masculine imperative, as the approved package does (جرّب، ابحث).
 
