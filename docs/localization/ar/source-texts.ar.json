@@ -74633,7 +74633,7 @@
       "{attempts}",
       "{hints}"
     ],
-    "arabic": "{activity}: {challenges}، {attempts}، {hints}."
+    "arabic": "{activity}. {challenges}، {attempts}، {hints}."
   },
   {
     "id": "catalog.ui.summary.challenges.one",
@@ -74718,7 +74718,7 @@
     "slots": [
       "{n}"
     ],
-    "arabic": "التحديات التي استُخدمت فيها تلميحات: {n}"
+    "arabic": "تحديات احتاجت إلى تلميحات: {n}"
   },
   {
     "id": "catalog.ui.summary.hints.other",
@@ -74735,7 +74735,7 @@
     "slots": [
       "{n}"
     ],
-    "arabic": "التحديات التي استُخدمت فيها تلميحات: {n}"
+    "arabic": "تحديات احتاجت إلى تلميحات: {n}"
   },
   {
     "id": "catalog.ui.numeric.decimal",
