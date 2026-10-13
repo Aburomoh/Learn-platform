@@ -11,7 +11,7 @@ import { effectiveDone, effectiveStatus } from "@/learner/progress";
 import { useOfferingProgress, usePrefs, getProgressStore, recordAttempt, completeActivity, completeQuestion, markExplained, skipQuestion, skippedAhead, flushPendingWrites } from "@/learner";
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
-import { ActivitySummary } from "./ActivitySummary";
+import { ActivitySummary, practiceObjectives } from "./ActivitySummary";
 import { useUiText } from "@/shell/r1/uiText";
 import { KindPrefetch } from "@/kinds/ui";
 import { useHydrated } from "@/shell/useHydrated";
@@ -217,7 +217,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         <div className={styles.layout}>
           <ActivitySummary
             activity={activity}
-            objectives={topic.objectives.map((o) => o.text)}
+            objectives={practiceObjectives(topic, activity)}
             attempts={activityProgress?.attempts ?? 0}
             hintsUsed={state.hintsUsedTotal}
             next={topicAction(course, topic, finished)}
