@@ -65,13 +65,13 @@ These are on main already and have no Arabic, because the pre-catalog versions h
 
 | Key | English | Proposed Arabic | Notes |
 |---|---|---|---|
-| `ui.summary.line` | {activity}: {challenges}, {attempts}, {hints}. | {activity}: {challenges}، {attempts}، {hints}. | Arabic comma. |
+| `ui.summary.line` | {activity}: {challenges}, {attempts}, {hints}. | {activity}. {challenges}، {attempts}، {hints}. | Arabic comma; a full stop after the title, so label:value parts do not follow a colon (QA 3c). |
 | `ui.summary.challenges.one` | {n} challenge | التحديات: {n} | |
 | `ui.summary.challenges.other` | {n} challenges | التحديات: {n} | The package already says التحدي. |
 | `ui.summary.attempts.one` | {n} attempt | المحاولات: {n} | |
 | `ui.summary.attempts.other` | {n} attempts | المحاولات: {n} | |
-| `ui.summary.hints.one` | hints used on {n} challenge | التحديات التي استُخدمت فيها تلميحات: {n} | Zero form is already approved: «لم تحتج إلى تلميحات». |
-| `ui.summary.hints.other` | hints used on {n} challenges | التحديات التي استُخدمت فيها تلميحات: {n} | |
+| `ui.summary.hints.one` | hints used on {n} challenge | تحديات احتاجت إلى تلميحات: {n} | Zero form is already approved: «لم تحتج إلى تلميحات». |
+| `ui.summary.hints.other` | hints used on {n} challenges | تحديات احتاجت إلى تلميحات: {n} | |
 | `ui.numeric.decimal` | digits 0 to 9 | أرقام من 0 إلى 9 | |
 | `ui.numeric.decimal.signed` | digits 0 to 9, a leading minus sign | أرقام من 0 إلى 9، وإشارة ناقص في البداية | |
 | `ui.numeric.decimal.places.one` | digits 0 to 9, and up to {n} decimal place after the point | أرقام من 0 إلى 9. أقصى عدد للمنازل العشرية بعد الفاصلة: {n} | Spoken by a screen reader: «الفاصلة» as in the glossary's binary point. |
