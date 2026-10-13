@@ -28,3 +28,4 @@ Status: Accepted · Date: YYYY-MM-DD · Owner: <role>
 | 0009 | Figures on the variant |
 | 0010 | Team V2 and one dispatcher |
 | 0011 | Arabic for supportive text, English for everything else |
+| 0012 | Educational Integrity & Learner Experience Auditor (amends 0010) |

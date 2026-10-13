@@ -30,6 +30,10 @@ former Technical Lead, Product Manager and Director.
 - Team health: dispatcher running, stale wakes, recovering the same permanent role.
 - Starting on-demand specialists for a named task.
 - Preview and production decisions (production only with the owner's approval).
+- Answering every **CRITICAL EDUCATIONAL RISK** finding (`audit:critical`, ADR-0012) promptly on the issue,
+  within the next Lead wake: `Lead response: Accept-fix (#PR/owner) | Scheduled (#issue, when) | Waived (reason)`.
+  A CRITICAL does not block a release, but list any open CRITICAL findings, with their responses, in the
+  owner's release note. Wake the Auditor for a learner-POV pass on each release candidate.
 
 ## You Do Not Own
 Watching GitHub (dispatcher), QA, authors' conflicts, hands-on DevOps, writing content or UI.
