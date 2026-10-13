@@ -695,8 +695,11 @@
   text-align: right;
 }
 
+/* on phones the row links sit under the text, flush with it (QA note on #682): no inline padding */
 @media (max-width: 640px) {
-  .practiceList .rowActionWrap {
+  .practiceList .rowActionWrap,
+  .rowActions .rowAction {
+    padding-inline: 0;
     text-align: left;
   }
 }
