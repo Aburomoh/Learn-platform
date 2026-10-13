@@ -310,8 +310,8 @@ UI added nine keys in #714 that section 8c did not have. Same rules: label:value
 | `ui.home.first-route` | Practice for {owner}'s courses. No account needed. | تدريب على مقررات {owner}. لا حاجة إلى حساب. | {owner} is the instructor's name, LTR-isolated. |
 | `ui.home.chapters.one/.other` | {n} chapter(s) | Chapters: {n} | «Chapter» stays English. |
 | `ui.home.topics.one/.other` | {n} topic(s) | المواضيع: {n} | |
-| `ui.home.done` | {n} done | المنجز: {n} | On a course row, next to the counts above. |
-| `ui.home.started` | {n} started | جارٍ: {n} | «جارٍ» as for «In progress». |
+| `ui.home.done` | {n} done | المنجزة: {n} | On a course row, next to the counts above. |
+| `ui.home.started` | {n} started | الجارية: {n} | Counts of topics agree with المواضيع (Auditor); a single status stays «جارٍ». |
 | `ui.home.open-course-short` | Open course | افتح المقرر | The visible link text. |
 | `ui.stage.challenge-n` | Challenge {n} | التحدي {n} | |
 
