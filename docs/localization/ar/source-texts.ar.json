@@ -74911,157 +74911,6 @@
     "arabic": "هذا شرح بمثال محلول. بعده تبدأ هذا السؤال من جديد بأرقام جديدة. هل نتابع؟"
   },
   {
-    "id": "catalog.ui.topic.done",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "{done} of {total} challenges done",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. course row and topic row.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [
-      "{done}",
-      "{total}"
-    ],
-    "arabic": "التحديات المنجزة: {done} من {total}"
-  },
-  {
-    "id": "catalog.ui.topic.skipped",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "skipped ahead",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. appended after ' · '.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [],
-    "arabic": "تخطّيت بعضها"
-  },
-  {
-    "id": "catalog.ui.topic.in-progress.one",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "In progress · {done} of {n} topic done",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. {n} is the topic count.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [
-      "{done}",
-      "{n}"
-    ],
-    "arabic": "جارٍ · المواضيع المنجزة: {done} من {n}"
-  },
-  {
-    "id": "catalog.ui.topic.in-progress.other",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "In progress · {done} of {n} topics done",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. same string as one.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [
-      "{done}",
-      "{n}"
-    ],
-    "arabic": "جارٍ · المواضيع المنجزة: {done} من {n}"
-  },
-  {
-    "id": "catalog.ui.topic.short-practices",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "{n} short practices · about {m} min",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [
-      "{n}",
-      "{m}"
-    ],
-    "arabic": "التمارين القصيرة: {n} · المدة: نحو {m} د"
-  },
-  {
-    "id": "catalog.ui.status.completed",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "Completed",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [],
-    "arabic": "مكتمل"
-  },
-  {
-    "id": "catalog.ui.topic.completed-note",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "Completed. You can review it any time.",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [],
-    "arabic": "اكتمل. يمكنك مراجعته في أي وقت."
-  },
-  {
-    "id": "catalog.ui.topic.about-min",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "About {m} min",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [
-      "{m}"
-    ],
-    "arabic": "المدة: نحو {m} د"
-  },
-  {
-    "id": "catalog.ui.topic.about-min.lower",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "about {m} min",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. row status.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [
-      "{m}"
-    ],
-    "arabic": "المدة: نحو {m} د"
-  },
-  {
     "id": "catalog.ui.topic.practice-challenges.one",
     "course": "shared",
     "chapter": "(component text)",
@@ -75098,91 +74947,6 @@
     "arabic": "{title} · التحديات القصيرة: {n}"
   },
   {
-    "id": "catalog.ui.topic.short-challenges.one",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "{n} short challenge",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [
-      "{n}"
-    ],
-    "arabic": "التحديات القصيرة: {n}"
-  },
-  {
-    "id": "catalog.ui.topic.short-challenges.other",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "{n} short challenges",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. same string as one.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [
-      "{n}"
-    ],
-    "arabic": "التحديات القصيرة: {n}"
-  },
-  {
-    "id": "catalog.ui.topic.effort.one",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "{n} short challenge · about {m} min",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. under the button.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [
-      "{n}",
-      "{m}"
-    ],
-    "arabic": "التحديات القصيرة: {n} · المدة: نحو {m} د"
-  },
-  {
-    "id": "catalog.ui.topic.effort.other",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "{n} short challenges · about {m} min",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. same string as one.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [
-      "{n}",
-      "{m}"
-    ],
-    "arabic": "التحديات القصيرة: {n} · المدة: نحو {m} د"
-  },
-  {
-    "id": "catalog.ui.topic.practices-heading",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "Practices in this topic",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [],
-    "arabic": "التمارين في هذا الموضوع"
-  },
-  {
     "id": "catalog.ui.topic.challenges-of",
     "course": "shared",
     "chapter": "(component text)",
@@ -75213,25 +74977,6 @@
     "occurrence_ids": [],
     "slots": [],
     "arabic": "التحديات"
-  },
-  {
-    "id": "catalog.ui.home.challenge-left",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "Challenge {k} of {n} · about {m} min left",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [
-      "{k}",
-      "{n}",
-      "{m}"
-    ],
-    "arabic": "التحدي {k} من {n} · المتبقي: نحو {m} د"
   },
   {
     "id": "catalog.ui.home.welcome-back",
@@ -75339,51 +75084,6 @@
       "{title}"
     ],
     "arabic": "افتح المقرر: {title}"
-  },
-  {
-    "id": "catalog.ui.summary.complete",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "Practice complete",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. also the accessible name.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [],
-    "arabic": "اكتمل التمرين"
-  },
-  {
-    "id": "catalog.ui.summary.again",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "Practise again",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [],
-    "arabic": "تدرّب مرة أخرى"
-  },
-  {
-    "id": "catalog.ui.summary.back",
-    "course": "shared",
-    "chapter": "(component text)",
-    "topic": "(any topic using this interaction)",
-    "type": "ui-label",
-    "source_file": "src/tutor/messages/en.ts",
-    "english": "Back to topic",
-    "technical_terms": [],
-    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
-    "occurrences": 1,
-    "occurrence_ids": [],
-    "slots": [],
-    "arabic": "العودة إلى الموضوع"
   },
   {
     "id": "catalog.ui.foot.demo",
@@ -76195,5 +75895,383 @@
       "{title}"
     ],
     "arabic": "هل تواجه صعوبة؟ لقد تخطّيت جزءًا في {title}؛ وفيه شرح لهذا. يمكنك الرجوع في أي وقت."
+  },
+  {
+    "id": "catalog.ui.status.completed",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Completed",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "مكتمل"
+  },
+  {
+    "id": "catalog.ui.status.not-started",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Not started",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "لم يبدأ بعد"
+  },
+  {
+    "id": "catalog.ui.status.coming-soon",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Not started · Coming soon",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "لم يبدأ بعد · قريبًا"
+  },
+  {
+    "id": "catalog.ui.status.challenges-done",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{done} of {total} challenges done",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{done}",
+      "{total}"
+    ],
+    "arabic": "التحديات المنجزة: {done} من {total}"
+  },
+  {
+    "id": "catalog.ui.status.challenges-done-skipped",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{done} of {total} challenges done · skipped ahead",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{done}",
+      "{total}"
+    ],
+    "arabic": "التحديات المنجزة: {done} من {total} · تخطّيت بعضها"
+  },
+  {
+    "id": "catalog.ui.status.chapter-progress.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "In progress · {done} of {n} topic done",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{done}",
+      "{n}"
+    ],
+    "arabic": "جارٍ · المواضيع المنجزة: {done} من {n}"
+  },
+  {
+    "id": "catalog.ui.status.chapter-progress.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "In progress · {done} of {n} topics done",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{done}",
+      "{n}"
+    ],
+    "arabic": "جارٍ · المواضيع المنجزة: {done} من {n}"
+  },
+  {
+    "id": "catalog.ui.effort.practices",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} short practices · about {minutes} min",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}",
+      "{minutes}"
+    ],
+    "arabic": "التمارين القصيرة: {n} · المدة: نحو {minutes} د"
+  },
+  {
+    "id": "catalog.ui.effort.challenges.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} short challenge · about {minutes} min",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}",
+      "{minutes}"
+    ],
+    "arabic": "التحديات القصيرة: {n} · المدة: نحو {minutes} د"
+  },
+  {
+    "id": "catalog.ui.effort.challenges.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} short challenges · about {minutes} min",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}",
+      "{minutes}"
+    ],
+    "arabic": "التحديات القصيرة: {n} · المدة: نحو {minutes} د"
+  },
+  {
+    "id": "catalog.ui.effort.short-challenges.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} short challenge",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "التحديات القصيرة: {n}"
+  },
+  {
+    "id": "catalog.ui.effort.short-challenges.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} short challenges",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "التحديات القصيرة: {n}"
+  },
+  {
+    "id": "catalog.ui.effort.minutes",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "about {n} min",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "المدة: نحو {n} د"
+  },
+  {
+    "id": "catalog.ui.effort.minutes-lead",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "About {n} min",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "المدة: نحو {n} د"
+  },
+  {
+    "id": "catalog.ui.effort.remaining",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Challenge {next} of {total} · about {left} min left",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{next}",
+      "{total}",
+      "{left}"
+    ],
+    "arabic": "التحدي {next} من {total} · المتبقي: نحو {left} د"
+  },
+  {
+    "id": "catalog.ui.effort.completed-topic",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Completed. You can review it any time.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اكتمل. يمكنك مراجعته في أي وقت."
+  },
+  {
+    "id": "catalog.ui.effort.completed-all",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Completed. You can review any topic.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اكتمل. يمكنك مراجعة أي موضوع."
+  },
+  {
+    "id": "catalog.ui.row.in-progress",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "In progress",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "جارٍ"
+  },
+  {
+    "id": "catalog.ui.row.up-next",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Up next",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "التالي"
+  },
+  {
+    "id": "catalog.ui.topic.practices-in",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Practices in this topic",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "التمارين في هذا الموضوع"
+  },
+  {
+    "id": "catalog.ui.summary.title",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Practice complete",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اكتمل التمرين"
+  },
+  {
+    "id": "catalog.ui.summary.again",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Practise again",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تدرّب مرة أخرى"
+  },
+  {
+    "id": "catalog.ui.summary.back",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Back to topic",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "العودة إلى الموضوع"
   }
 ]
