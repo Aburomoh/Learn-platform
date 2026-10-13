@@ -78,6 +78,8 @@ const dropNots = (e: BoolExpr) => mapExpr(e, (x) => (x.type === "not" ? x.arg : 
 const sameCells = (a: (Cell | null)[], b: Cell[]) => a.length === b.length && a.every((v, i) => v === b[i]);
 
 export const truthTable: KindLogic<TruthTableSpec, TruthTableAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const find = (type: string) => variant.misconceptions.find((m) => m.detect.type === type)?.id;

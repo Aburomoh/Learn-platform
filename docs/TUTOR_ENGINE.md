@@ -15,8 +15,9 @@ Pure function: same inputs → same outputs. Unit-tested without React.
   - `ENGAGED`: the first edit of a field in the current step; sent once per step by the runner.
   - `STUCK_REQUESTED {sinceStepMs?}`: "I am stuck".
   - `IDLE {seconds}`: the runner's idle clock; every input resets it.
-  - `HESITATION {seconds}` is deprecated: the pre-#690 runner sends it and it keeps its old gate-opening
-    until the runner sends `ENGAGED` and `IDLE` (learn 1b), then it is removed.
+  - `HESITATION {seconds}` is deprecated and **no longer sent**: since learn 1b (#691) the runner sends
+    `ENGAGED` (first edit on a field or cell kind, `engageOn: "input"`), `IDLE` and `STUCK_REQUESTED`.
+    The event and its rule can be removed from the engine (Content).
 - **TutorState**: `attempts`, `engaged`, `idlePrompted`, `hintLevel` (0–9 ladder rung), `stage` (`await_answer` |
   `await_retry` | `explaining` | `complete`), `explanationStep`, `lastMisconception`.
 - **ActivityContext**: the activity's hints, explanation steps, misconception map, variables, and

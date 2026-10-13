@@ -126,6 +126,8 @@ export function goals(spec: CpuScheduleSpec): Goal[] {
 const fmt = (v: number) => (Number.isInteger(v) ? String(v) : String(round2(v)));
 
 export const cpuSchedule: KindLogic<CpuScheduleSpec, CpuScheduleAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const all = goals(spec);

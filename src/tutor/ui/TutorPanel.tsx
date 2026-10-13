@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { fill, type TemplateVars } from "@/content/template";
 import { useArabic } from "@/l10n/arabic";
+import { softenNudge } from "../engine/soften";
 import { isArabic } from "@/l10n/bidi";
 import type { Expression } from "../engine/actions";
 import { product } from "../../../config/product";
@@ -16,7 +17,7 @@ export interface TutorPanelProps {
   /** The filled English message. */
   message: string;
   /** Its unfilled template and slot values: with Arabic on, the bubble shows the Arabic for the template (ADR-0011). */
-  source?: { template: string; vars: TemplateVars };
+  source?: { template: string; vars: TemplateVars; unchecked?: boolean };
   course?: string;
   /** Changes whenever the tutor speaks, even if the text repeats. Defaults to the text itself. */
   messageSeq?: number;
@@ -42,7 +43,8 @@ export function TutorPanel({ name, expression, message, source, course, messageS
   const template = source?.template ?? message;
   const arabic = translate(template);
   const lang = arabic !== template && isArabic(arabic) ? "ar" : "en";
-  const shownMessage = lang === "ar" ? fill(arabic, source?.vars ?? {}) : message;
+  // a hint granted before any Check is shown without its verdict in either language (#717); the English `message` already is
+  const shownMessage = lang === "ar" ? fill(source?.unchecked ? softenNudge(arabic) : arabic, source?.vars ?? {}) : message;
   const panelRef = useRef<HTMLElement>(null);
   const key = messageSeq ?? message;
   // The collapsed/expanded choice belongs to one message; a new message starts open again.

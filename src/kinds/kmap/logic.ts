@@ -115,6 +115,8 @@ function binaryOrderSlip(spec: KmapSpec, truth: Cell[]): Cell[] {
 }
 
 export const kmap: KindLogic<KmapSpec, KmapAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const n = spec.vars.length;

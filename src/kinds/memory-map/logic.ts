@@ -141,6 +141,8 @@ const fitName = (spec: MemoryMapSpec) => (spec.fit === "first" ? "first-fit" : "
 const schemeName = (spec: MemoryMapSpec) => (spec.scheme === "fixed" ? "fixed partitions" : spec.scheme === "dynamic" ? "dynamic partitions" : "relocatable dynamic partitions");
 
 export const memoryMap: KindLogic<MemoryMapSpec, MemoryMapAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const all = goals(spec);

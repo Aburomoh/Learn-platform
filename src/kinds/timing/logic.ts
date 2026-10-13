@@ -81,6 +81,8 @@ export function outputLevels(spec: TimingSpec): Bit[][] {
 const same = (a: Bit[], b: Bit[]) => a.length === b.length && a.every((x, i) => x === b[i]);
 
 export const timing: KindLogic<TimingSpec, TimingAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const edges = activeEdges(spec);

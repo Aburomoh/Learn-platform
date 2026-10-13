@@ -26,6 +26,7 @@ import type { device, DeviceAnswer } from "./device/logic";
 import type { timing, TimingAnswer } from "./timing/logic";
 import type { stateDiagram, StateDiagramAnswer } from "./state-diagram/logic";
 import type { truthTable, TruthTableAnswer } from "./truth-table/logic";
+import type { EngagePolicy } from "./types";
 
 /** Each kind's logic module, loaded on first use. */
 export const kindLoaders = {
@@ -82,6 +83,15 @@ export function loadAllKinds(): Promise<void> {
 export function kindLogic<K extends RegisteredKind>(kind: K): LogicOf<K> {
   if (!loaded.has(kind)) throw new Error(`Logic of kind "${kind}" is not loaded (wrap the runner in KindLogicGate, or call loadKinds)`);
   return loaded.get(kind) as LogicOf<K>;
+}
+
+/**
+ * When a kind's student counts as engaged (ADR-0008 amendment 1, #691): the kind's declared
+ * `engageOn`, else `"check"` (single-pick kinds, and any kind whose logic is not loaded).
+ */
+export function engagePolicy(kind: string): EngagePolicy {
+  if (!isRegisteredKind(kind) || !loaded.has(kind)) return "check";
+  return (loaded.get(kind) as { engageOn?: EngagePolicy }).engageOn ?? "check";
 }
 
 /** Whether a loaded kind answers one step at a time (ADR-0007). */

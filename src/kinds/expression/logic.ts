@@ -37,6 +37,8 @@ const swapAndOr = (e: BoolExpr): BoolExpr =>
   e.type === "and" ? { type: "or", args: e.args.map(swapAndOr) } : e.type === "or" ? { type: "and", args: e.args.map(swapAndOr) } : e.type === "xor" ? { ...e, args: e.args.map(swapAndOr) } : e.type === "not" ? { ...e, arg: swapAndOr(e.arg) } : e;
 
 export const expression: KindLogic<ExpressionSpec, ExpressionAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const find = (type: string) => variant.misconceptions.find((m) => m.detect.type === type)?.id;

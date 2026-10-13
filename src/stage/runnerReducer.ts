@@ -23,10 +23,16 @@ export interface RunnerState {
   expression: Expression;
   message: string;
   /** The English template and slot values behind `message`, so the UI can show it in the learner's language (ADR-0011). */
-  messageSource?: { template: string; vars: TemplateVars };
+  messageSource?: { template: string; vars: TemplateVars; unchecked?: boolean };
   hints: RevealedHint[];
   /** Non-null while Explain Slowly is running. */
   explanation: { step: number; prediction?: PredictionResult } | null;
+  /** After "I'm stuck" (engine `OFFER_HELP`, #691): the choices offered until the next event. */
+  offer?: ("hint" | "explain-slowly")[];
+  /** The one-time warning before a legacy walkthrough restarts a multi-step question (engine `CONFIRM_RESTART`, #690 §2.6). */
+  confirmRestart: boolean;
+  /** The tutor line the warning replaced, so "Not now" can bring it back (Auditor on #716). */
+  beforeWarning?: { message: string; messageSource?: RunnerState["messageSource"] };
   /** Completed steps inside a multi-step question (repeated-division, circuit-predict). */
   stepIndex: number;
   /** Last graded answer on the current variant. */
@@ -48,8 +54,18 @@ export interface RunnerState {
 export type RunnerAction =
   | { type: "OPEN" }
   | { type: "SUBMIT"; answer: Answer }
-  | { type: "HINT" }
-  | { type: "EXPLAIN" }
+  /** `sinceStepMs`: how long ago the step appeared, for the engine's reflex guard (sent before the first Check only). */
+  | { type: "HINT"; sinceStepMs?: number }
+  /** "I'm stuck" (#691, §2.4): engagement plus the lowest rung not yet granted. */
+  | { type: "STUCK"; sinceStepMs?: number }
+  /** The first edit of a field in the current step (#691, §2.1). */
+  | { type: "ENGAGED" }
+  /** The idle clock (#691, H2): a quiet line at 45 s, once; every input resets it. */
+  | { type: "IDLE"; seconds: number }
+  /** `confirmed`: the student accepted the restart warning. */
+  | { type: "EXPLAIN"; confirmed?: boolean }
+  /** "Not now" on the restart warning. */
+  | { type: "CANCEL_EXPLAIN" }
   | { type: "PREDICT"; index: number }
   | { type: "CONTINUE" }
   | { type: "RETRY_VARIANT" }
@@ -58,7 +74,6 @@ export type RunnerAction =
   | { type: "SKIP_QUESTION" }
   /** Back to a question skipped earlier in this practice (#623). */
   | { type: "GO_TO_QUESTION"; index: number }
-  | { type: "HESITATION"; seconds: number }
   | { type: "RESTART" };
 
 const EFFECT_TYPES = new Set<TutorAction["type"]>(["FOCUS", "HIGHLIGHT", "PULSE", "RESET_INTERACTION", "ADVANCE_EXPLANATION", "COMPLETE", "STEP_DONE"]);
@@ -115,7 +130,7 @@ export function hasAnotherVariant(activity: Activity, s: Pick<RunnerState, "qInd
 
 /** Another question of the practice on its due variant, with a fresh tutor; the caller then runs ACTIVITY_OPENED (NEXT_QUESTION, the skip, the way back). */
 function openQuestion(activity: Activity, s: RunnerState, target: number): RunnerState {
-  return { ...s, qIndex: target, vIndex: followVariant(activity, s, target), hints: [], last: undefined, explanation: null, stepIndex: 0, tutor: initialTutorState, interactionKey: s.interactionKey + 1 };
+  return { ...s, qIndex: target, vIndex: followVariant(activity, s, target), hints: [], last: undefined, explanation: null, offer: undefined, confirmRestart: false, stepIndex: 0, tutor: initialTutorState, interactionKey: s.interactionKey + 1 };
 }
 
 export function initialRunnerState(activity: Activity): RunnerState {
@@ -129,6 +144,7 @@ export function initialRunnerState(activity: Activity): RunnerState {
     message: "",
     hints: [],
     explanation: null,
+    confirmRestart: false,
     stepIndex: 0,
     interactionKey: 0,
     attemptSeq: 0,
@@ -159,25 +175,33 @@ export function createRunnerReducer(activity: Activity) {
   function runTutor(s: RunnerState, event: LearningEvent): RunnerState {
     const variant = currentVariant(activity, s);
     // Hints may differ per kind of step (ADR-0007 §3): ask the step contract for this step's ladder.
-    const ctx = { ...contextFromVariant(variant, "en", stepVars(variant, s.stepIndex), stepTag(variant.spec, s.stepIndex)), hints: hintsForStep(variant, s.stepIndex), hasOtherVariant: hasAnotherVariant(activity, s) };
+    const ctx = { ...contextFromVariant(variant, "en", stepVars(variant, s.stepIndex), stepTag(variant.spec, s.stepIndex)), hints: hintsForStep(variant, s.stepIndex), hasOtherVariant: hasAnotherVariant(activity, s), stepIndex: s.stepIndex };
     const { state: tutor, actions } = reduce(s.tutor, event, ctx);
-    let next: RunnerState = { ...s, tutor };
+    // an offer and a restart warning last until the next event (#691)
+    let next: RunnerState = { ...s, tutor, offer: undefined, confirmRestart: false };
     const effects: TutorAction[] = [];
     for (const a of actions) {
       switch (a.type) {
         case "SAY":
           next.message = a.text;
-          next.messageSource = { template: a.template, vars: a.vars };
+          next.messageSource = { template: a.template, vars: a.vars, ...(a.unchecked ? { unchecked: true } : {}) };
           next.messageSeq += 1;
           break;
         case "CHANGE_EXPRESSION":
           next.expression = a.expression;
           break;
         case "REVEAL_HINT":
-          if (!next.hints.some((h) => h.rung === a.rung)) next.hints = [...next.hints, { rung: a.rung, text: a.text, template: a.template, vars: a.vars }];
+          if (!next.hints.some((h) => h.rung === a.rung)) next.hints = [...next.hints, { rung: a.rung, text: a.text, template: a.template, vars: a.vars, ...(a.unchecked ? { unchecked: true } : {}) }];
           break;
         case "ADVANCE_EXPLANATION":
           next.explanation = { step: a.step };
+          break;
+        case "OFFER_HELP":
+          next.offer = a.options;
+          break;
+        case "CONFIRM_RESTART":
+          next.confirmRestart = true;
+          next.beforeWarning = { message: s.message, messageSource: s.messageSource };
           break;
         case "SWITCH_VARIANT": {
           // New numbers for the same question, preferring ones not yet explained; hints shown were for the old ones.
@@ -230,10 +254,31 @@ export function createRunnerReducer(activity: Activity) {
       }
 
       case "HINT":
-        return runTutor(s, { type: "HINT_REQUESTED" });
+        return runTutor(s, { type: "HINT_REQUESTED", sinceStepMs: action.sinceStepMs });
 
-      case "EXPLAIN":
-        return runTutor({ ...s, last: undefined }, { type: "EXPLAIN_SLOWLY_REQUESTED" });
+      case "STUCK":
+        return runTutor(s, { type: "STUCK_REQUESTED", sinceStepMs: action.sinceStepMs });
+
+      case "ENGAGED":
+        return s.tutor.engaged || s.tutor.stage === "complete" || s.tutor.stage === "explaining" ? s : runTutor(s, { type: "ENGAGED" });
+
+      case "IDLE": {
+        // the clock is not the student: an offer or a restart warning on screen stays until they act (Reviewer, #716)
+        const next = runTutor(s, { type: "IDLE", seconds: action.seconds });
+        return { ...next, offer: s.offer, confirmRestart: s.confirmRestart };
+      }
+
+      case "EXPLAIN": {
+        // the last feedback clears only once the walkthrough really opens (the warning keeps it)
+        const next = runTutor(s, { type: "EXPLAIN_SLOWLY_REQUESTED", confirmed: action.confirmed });
+        return next.tutor.stage === "explaining" ? { ...next, last: undefined } : next;
+      }
+
+      case "CANCEL_EXPLAIN": {
+        // the question in the bubble goes with its buttons: back to the line before it
+        const before = s.beforeWarning;
+        return { ...s, confirmRestart: false, beforeWarning: undefined, ...(before ? { message: before.message, messageSource: before.messageSource, messageSeq: s.messageSeq + 1 } : {}) };
+      }
 
       case "PREDICT": {
         if (!s.explanation) return s;
@@ -274,9 +319,6 @@ export function createRunnerReducer(activity: Activity) {
 
       case "GO_TO_QUESTION":
         return action.index === s.qIndex || s.completed[action.index] ? s : runTutor(openQuestion(activity, s, action.index), { type: "ACTIVITY_OPENED" });
-
-      case "HESITATION":
-        return runTutor(s, { type: "HESITATION", seconds: action.seconds });
 
       case "RESTART": {
         const fresh = initialRunnerState(activity);

@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "r
 import type { Activity, Course, Topic } from "@/content/schema";
 import { product } from "../../config/product";
 import { HintReveal } from "@/interactions/HintReveal/HintReveal";
-import { canRequestScaffold } from "@/tutor";
 import { resolveMessage } from "@/tutor";
+import { engagePolicy } from "@/kinds";
 import { TutorPanel, TutorPosePreload, useFocusEffects } from "@/tutor/ui";
 import { effectiveDone, effectiveStatus } from "@/learner/progress";
 import { useOfferingProgress, usePrefs, getProgressStore, recordAttempt, completeActivity, completeQuestion, markExplained, skipQuestion, skippedAhead, flushPendingWrites } from "@/learner";
@@ -21,6 +21,7 @@ import { RESUME_ATTR } from "./resumeMarker";
 import { ChallengeSteps, type ChallengeStep } from "@/shell/r1/ChallengeSteps";
 import { practiceHref, skipOffer, topicAction } from "@/shell/primaryAction";
 import { SkipMenu } from "./SkipMenu";
+import { StageControls } from "./StageControls";
 import styles from "./Stage.module.css";
 
 export interface ActivityRunnerProps {
@@ -29,7 +30,8 @@ export interface ActivityRunnerProps {
   activity: Activity;
 }
 
-const HESITATION_TICK_MS = 15_000;
+/** The idle clock is sampled this often; the engine speaks once at 45 s (#691, H2). */
+const IDLE_TICK_MS = 15_000;
 
 
 /** Review links carry `?review=1`: restart at challenge 1 instead of resuming. */
@@ -157,7 +159,8 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
     updateProgress((p) => completeActivity(p, activity.id, state.hintsUsedTotal === 0));
   }, [state.done, state.hintsUsedTotal, activity.id, updateProgress]);
 
-  // Hesitation: time since the last meaningful interaction, sampled every 15 s.
+  // Idle (#691, H2): time since the last interaction, sampled every 15 s; the engine says one quiet
+  // line at 45 s and opens nothing. Every input resets the clock (below).
   const lastInteraction = useRef(0);
   const touch = useCallback(() => {
     lastInteraction.current = Date.now();
@@ -166,10 +169,29 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
     if (state.tutor.stage === "complete" || state.tutor.stage === "explaining" || state.done) return;
     lastInteraction.current = Date.now();
     const t = window.setInterval(() => {
-      dispatch({ type: "HESITATION", seconds: Math.round((Date.now() - lastInteraction.current) / 1000) });
-    }, HESITATION_TICK_MS);
+      dispatch({ type: "IDLE", seconds: Math.round((Date.now() - lastInteraction.current) / 1000) });
+    }, IDLE_TICK_MS);
     return () => window.clearInterval(t);
   }, [state.tutor.stage, state.done, state.qIndex, state.interactionKey]);
+
+  // When the current step appeared (#691, H5): a Hint or "I'm stuck" tap in its first 5 s is a
+  // reflex, ignored by the engine. Only before the first Check: a wrong Check is a deliberate student.
+  const stepShownAt = useRef(0);
+  useEffect(() => {
+    stepShownAt.current = Date.now();
+  }, [state.qIndex, state.stepIndex, state.interactionKey]);
+  const sinceStep = () => (state.tutor.attempts === 0 ? Date.now() - stepShownAt.current : undefined);
+
+  // Engagement (#691, §2.1): on a field or cell kind the first edit of the step engages it (hints
+  // open without a Check); on a single-pick kind only a Check does. The stage listens for any
+  // `input` / `change` so no kind has to report its edits; `onInput` (ADR-0008 amendment 1) is the
+  // same signal with the exact target. Every edit also resets the idle clock. Bubble phase, never
+  // capture: a state change before the field's own handler runs makes React restore the controlled
+  // value first, and the first edit would read as empty.
+  const onEdit = useCallback(() => {
+    touch();
+    if (engagePolicy(variant.spec.kind) === "input") dispatch({ type: "ENGAGED" });
+  }, [touch, variant.spec.kind]);
 
   const act = useCallback(
     (a: Parameters<typeof dispatch>[0]) => {
@@ -180,7 +202,6 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
   );
 
   const stage = state.tutor.stage;
-  const scaffoldsOpen = canRequestScaffold(state.tutor);
   const activityProgress = progress.activities[activity.id];
 
   // Explain Slowly opened: remembered on the practice record (#579); it no longer gates anything since #661.
@@ -251,7 +272,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         <TutorPanel name={product.owner.shortName} expression={state.expression} message={state.message} source={state.messageSource} course={course.id} messageSeq={state.messageSeq} typingSpeed={prefs.typingSpeed} />
       </div>
 
-      <div className={styles.stage} ref={stageRef} data-testid="learning-stage" data-stage={stage}>
+      <div className={styles.stage} ref={stageRef} data-testid="learning-stage" data-stage={stage} data-engaged={state.tutor.engaged || state.tutor.attempts > 0 || undefined} onInput={onEdit} onChange={onEdit}>
         <div className={styles.stageHead}>
           <p className={styles.eyebrow}>
             <UiText k="ui.stage.challenge-of" vars={{ k: state.qIndex + 1, n: activity.questions.length }} />
@@ -271,6 +292,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
           onSubmit={(answer) => act({ type: "SUBMIT", answer })}
           onPredict={(i) => act({ type: "PREDICT", index: i })}
           onContinue={() => act({ type: "CONTINUE" })}
+          onInput={onEdit}
         />
 
         {state.last && !state.last.result.correct && skippedHere && stage !== "explaining" && (
@@ -287,15 +309,22 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         )}
 
         {stage !== "explaining" && stage !== "complete" && (
-          <HintReveal
-            revealed={state.hints}
-            canRequest={scaffoldsOpen && state.tutor.hintLevel < 9}
-            lockedReason={!scaffoldsOpen ? t("ui.stage.try-first") : undefined}
-            skipMenu={<SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} target={skip.target} onSkip={doSkip} />}
-            course={course.id}
-            onRequest={() => act({ type: "HINT" })}
-            onExplainSlowly={scaffoldsOpen ? () => act({ type: "EXPLAIN" }) : undefined}
-          />
+          <>
+            {/* the named mistake stays as the first card beside every hint (#700) */}
+            <HintReveal revealed={state.hints} diagnosis={state.tutor.diagnosis} course={course.id} />
+            <StageControls
+              hasHints={state.hints.length > 0}
+              offer={state.offer}
+              confirmRestart={state.confirmRestart}
+              onHint={() => act({ type: "HINT", sinceStepMs: sinceStep() })}
+              onStuck={() => act({ type: "STUCK", sinceStepMs: sinceStep() })}
+              onExplain={() => act({ type: "EXPLAIN" })}
+              onConfirmExplain={() => act({ type: "EXPLAIN", confirmed: true })}
+              onCancelExplain={() => act({ type: "CANCEL_EXPLAIN" })}
+            >
+              <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} target={skip.target} onSkip={doSkip} />
+            </StageControls>
+          </>
         )}
 
         {stage === "complete" && (

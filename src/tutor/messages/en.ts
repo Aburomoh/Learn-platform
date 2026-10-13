@@ -169,6 +169,12 @@ export const en = {
   "ui.stage.try-first": "Try once first",
   "ui.stage.correct": "Correct.",
   "ui.stage.incorrect": "Not correct yet.",
+  // the help row under the stage (learning architecture §7.3, #691)
+  "ui.stage.stuck": "I'm stuck",
+  "ui.stage.show-hint": "Show a hint",
+  "ui.stage.go-ahead": "Go ahead",
+  "ui.stage.not-now": "Not now",
+  "ui.stage.diagnosis": "What went wrong",
 
   "open": "Give it a try. I will step in only if you want me to.",
   "wrong.first": "Not quite. Look at it once more and try again.",

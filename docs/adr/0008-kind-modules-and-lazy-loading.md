@@ -46,3 +46,18 @@ One more indirection when reading the stage code; the registry file is the map.
 ## Alternatives considered
 Keep hand-wiring and raise the budget (cost rule violated, conflicts continue). One generic
 data-driven interaction (ADR-0007 already rejected it as premature).
+
+## Amendment 1 — engagement contract (2026-10-13, #691; learning architecture §2.1, §4.5)
+Two optional, backward-compatible additions. A kind that declares neither behaves as before.
+- **`KindLogic.engageOn?: "input" | "check"`** (default `"check"`). Field and cell kinds declare
+  `"input"`: the first edit of a field in the current step engages it, so the hint ladder opens
+  without a Check. Single-pick kinds (multiple-choice, state-diagram, device, circuit-predict)
+  stay on `"check"`: the first tap is the answer, so a Check is the engagement. `engagePolicy(kind)`
+  in `src/kinds/index.ts` reads it from the loaded logic.
+- **`PracticeProps.onInput?: (targetId: string) => void`**: a kind may report every edit with the
+  edited element's `data-focus-target` id. The runner derives `ENGAGED` (once per step) and resets
+  the idle clock from it. The runner also listens for `input` / `change` events on the stage, so a
+  kind that does not call `onInput` still engages on its first edit; reporting it only adds the exact
+  target for focus return (lesson step, amendment 2). No timer opens hints any more.
+- Tests: the reducer tests cover a kind without the additions (Check-only engagement) and one with
+  `engageOn: "input"`; the e2e covers Explain Slowly before any attempt, Hint after the first input and "I'm stuck".

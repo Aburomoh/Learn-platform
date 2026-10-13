@@ -33,10 +33,19 @@ export interface StepContract<S> {
 /** A variant whose spec is known to be of one kind. */
 export type VariantOf<S> = Omit<Variant, "spec"> & { spec: S };
 
+/** When a student counts as engaged with a step (ADR-0008 amendment 1, #691): the first edit of a field, or only a Check. */
+export type EngagePolicy = "input" | "check";
+
 /** Runtime logic of a kind: deterministic grading and, for multi-step kinds, the step contract. */
 export interface KindLogic<S, A> {
   grade(variant: VariantOf<S>, answer: A): GradeResult;
   steps?: StepContract<S>;
+  /**
+   * Engagement policy (learning architecture §2.1). Field and cell kinds declare `"input"`: the
+   * first edit engages the step, so hints open without a Check. Single-pick kinds (a tap is the
+   * answer) declare nothing or `"check"`: today's behaviour, minus the timer.
+   */
+  engageOn?: EngagePolicy;
 }
 
 export type AnswerState = "idle" | "correct" | "incorrect";
@@ -52,6 +61,13 @@ export interface PracticeProps<S, A> {
   stepIndex: number;
   locked: boolean;
   onSubmit: (answer: A) => void;
+  /**
+   * Optional (ADR-0008 amendment 1, #691): a kind may report every edit with the edited element's
+   * `data-focus-target` id. The runner also listens for `input` / `change` on the stage, so a kind
+   * that ignores this still engages on its first edit; reporting it only adds the exact target
+   * for focus return.
+   */
+  onInput?: (targetId: string) => void;
 }
 
 /** Props of a kind's Explain Slowly visual. `stage` is the authored state of the current step. */

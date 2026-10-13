@@ -4,6 +4,8 @@ import type { PlaceValueSpec } from "./spec";
 export type PlaceValueAnswer = { kind: "place-value"; digits: (0 | 1 | null)[] };
 
 export const placeValue: KindLogic<PlaceValueSpec, PlaceValueAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const digits = answer.digits.map((d) => d ?? 0);

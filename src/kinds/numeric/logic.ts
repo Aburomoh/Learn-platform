@@ -4,6 +4,8 @@ import type { NumericSpec } from "./spec";
 export type NumericAnswer = { kind: "numeric"; text: string };
 
 export const numeric: KindLogic<NumericSpec, NumericAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const text = normaliseNumeric(answer.text, spec.base);

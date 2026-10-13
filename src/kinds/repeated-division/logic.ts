@@ -4,6 +4,8 @@ import type { RepeatedDivisionSpec } from "./spec";
 export type RepeatedDivisionAnswer = { kind: "repeated-division"; step: number; quotient: number; remainder: number };
 
 export const repeatedDivision: KindLogic<RepeatedDivisionSpec, RepeatedDivisionAnswer> = {
+  // a field or cell kind: the first edit engages the step (learning architecture §2.1, #691)
+  engageOn: "input",
   grade(variant, answer) {
     const spec = variant.spec;
     const step = spec.steps[answer.step];
