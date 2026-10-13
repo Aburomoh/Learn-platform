@@ -84,8 +84,27 @@ A student has **engaged with the current step** when any one of these happens on
 2. **Check:** a graded Check, right or wrong (today's `attempts > 0`).
 3. **"I'm stuck"** (§2.4).
 
-Typing, tapping a cell, choosing an option and dragging all count as input. Focusing a field or scrolling does not.
+Typing, tapping a cell and dragging all count as input. Focusing a field or scrolling does not.
 Every input event also **resets the idle clock** (fixes RC2).
+
+**Check-only engagement for single-pick kinds** (Reviewer's suggestion, accepted): when the answer is a single pick, the first
+input is the answer itself, so "first input = engaged" would make "Try once first" a one-tap formality. These kinds declare
+`engageOn: "check"`: multiple-choice, state-diagram, device and circuit-predict picks, row-select, and mux-pairs. Field and
+cell kinds declare `engageOn: "input"`. A kind that declares nothing defaults to `"check"`, which is today's behaviour minus
+the timer (§4.5 contract).
+
+**New tutor-engine inputs** (for `docs/TUTOR_ENGINE.md`):
+
+| Event | Effect |
+|---|---|
+| `ENGAGED` | sets `engaged`, once per step. `canRequestScaffold` reads `attempts > 0 \|\| engaged` (replaces `hesitationPrompted`) |
+| `STUCK_REQUESTED` | sets `engaged` (subject to H5), then grants the lowest rung not yet granted (S2) |
+| `IDLE` | replaces `HESITATION`. It only says the idle line and opens nothing. Every input resets the clock |
+| `DETOUR_OPENED {section}` | `stage = "explaining"`, `afterExplanation` pending, `hintsEverUsed = true` |
+| `DETOUR_CLOSED` | back to the stage held before the detour, with `afterExplanation = true` (the #663 aha), and **no** `SWITCH_VARIANT` / `RESET_INTERACTION` |
+
+`STEP_COMPLETED` also clears `engaged`, as it already clears `attempts`.
+`EXPLAIN_SLOWLY_REQUESTED` stays for the legacy walkthrough (§2.6) and loses the `canRequestScaffold` check.
 
 ### 2.2 Hint availability
 - **H1. Open on engagement.** The Hint button works once the student has engaged with the current step. Before that, pressing it
@@ -106,7 +125,11 @@ Every input event also **resets the idle clock** (fixes RC2).
 - **E1. Always available**, whenever a question is open and not in the middle of grading. This includes before any attempt, on any
   step, and after hints. It is never gated by H1–H5.
 - **E2. It opens the lesson section** mapped to the current step (`lessonRef`, §4.3). Where no lesson exists yet, it falls back to
-  today's per-variant explanation, with today's behaviour (variant switch). The fallback is temporary (§6).
+  today's per-variant explanation, with today's behaviour (variant switch, step 0). The fallback is temporary (§6), and §2.6 states
+  exactly what it means until then.
+- **Decision record.** On 2026-10-11 the owner reversed an earlier change that had opened Hint and Explain Slowly before any attempt
+  (#661 comment, reverted in #662 at cd6f68a), so "Try once first" was kept for both. **Owner point 3 on #684 supersedes that
+  reversal for Explain Slowly only.** Hints keep "Try once first" (H1). The owner confirms this knowingly with §2.6 in view.
 - **E3. The tutor may offer it and never forces it.** The offer appears after the **second** wrong check on the same chunk, alongside
   the hint rung: "Want to go back over how this works?" The student chooses.
 - **E4. Return.** "Back to my step" is always visible during the lesson, so it never traps. Return lands on the same activity,
@@ -128,7 +151,7 @@ Every input event also **resets the idle clock** (fixes RC2).
 ### 2.5 Interaction with progress, evidence and `explained`
 Storage stays `cet-learn:v1:progress:<offering>` v1 (ADR-0005). Only the meanings below are added; no fields are added or changed.
 
-| Event | `attempts` | `hintsUsed` / `independent` | `MasteryEvidence` | `explained` (skip gate) | `lastAt` (IA §7.2) |
+| Event | `attempts` | `hintsUsed` / `independent` | `MasteryEvidence` | `explained` (recorded; no reader since #662) | `lastAt` (IA §7.2) |
 |---|---|---|---|---|---|
 | Input (engaged) | — | — | — | — | — (not meaningful) |
 | Check | +1 (as today) | — | one record (as today) | — | bumped |
@@ -144,10 +167,29 @@ Storage stays `cet-learn:v1:progress:<offering>` v1 (ADR-0005). Only the meaning
   ask for it later as a versioned addition.
 - **Meaningful progress (IA §7.1) is unchanged:** an attempt or a completed question. Opening a lesson, being engaged, saying
   "I'm stuck" and drafts are never meaningful on their own.
-- **The skip gate** ("one practice first-try correct, no Explain Slowly") keeps reading `explained`, which is set only from
-  questions, so browsing lessons never blocks the skip.
+- **`explained`** is still recorded from questions only. Nothing reads it as a gate since #662, which removed the skip gate.
+  Lesson browsing never sets it. If the Auditor wants a "learned before practising" signal, that is a separate, later addition.
 - **Declared entries (#678 C1–C5):** unchanged. An entered step has its own `lessonRef`, so Explain Slowly there teaches that step
   only and never the earlier ones (C5, criterion 3).
+
+### 2.6 The interim: steps that have no lesson yet
+§9 step 1 ungates Explain Slowly before any lesson exists. Until a step has a `lessonRef`, **E4, E5 and the §8 mitigation
+"a lesson never shows live numbers" do not hold for that step.** Plainly:
+- Explain Slowly opens today's per-variant walkthrough, which **walks the live numbers**, and now it can do so before any attempt.
+- When the walkthrough ends, the runner still switches variant and **resets to step 0**. Completed steps of a multi-step question
+  are lost, as today.
+
+**Decision: keep the reset for legacy walkthroughs; do not suppress the variant switch.** The reason: a legacy walkthrough walks
+the whole procedure on the live numbers, including the answers to later steps. Staying on the same variant would let a revealed
+answer complete the question, which breaks #42. Switching is the only thing that keeps the worked example a worked example.
+Opened before an attempt, it becomes "a worked example on these numbers, then your own try on new ones". That is the same flow
+students already get after Explain Slowly today.
+
+Two interim safeguards:
+1. **Warn before losing work.** On a multi-step question with `stepIndex > 0`, opening a legacy walkthrough first asks once:
+   "This walks through a worked example. Afterwards you start this question again with new numbers. Go ahead?" There is no
+   prompt at step 0 or on single-answer kinds, because nothing is lost there.
+2. **Lessons for long multi-step kinds come early in migration** (§6), because that is where the reset costs the most.
 
 ---
 
@@ -157,31 +199,73 @@ Storage stays `cet-learn:v1:progress:<offering>` v1 (ADR-0005). Only the meaning
 - **Binary/ternary cells** (0/1/X, row picks): a chunk must hold enough cells that blind trial costs more than reasoning. The
   minimum is **8 cells** (≥ 256 combinations).
   - After a wrong check, the first wrong cell is marked only from the **second** wrong check on that chunk. The first gets the
-    misconception nudge and the count, as today.
+    misconception nudge and the count. **This changes today's guard**, which marks `wrongCells.first` on the first wrong check
+    (truth-table and kmap READMEs).
   - Every wrong check costs evidence. It is never independent.
-- **Numeric / expression fields**: guessing is impractical, so a chunk may be **one item**, and the partially filled chunk may be
-  checked ("check what I have"). The chunk is done when all its items are right.
+- **Numeric / expression fields**: guessing is impractical, so a chunk may be **one item**: one number per step. There is no
+  partial "check what I have" (§3.1).
 - **Single pick from 2–4 options**: unchanged. The guard is the wrong-check ladder, not chunk size.
 
 | Kind | Current unit (Lead fact 1) | Proposed reasoning unit | Why it doesn't invite guessing |
 |---|---|---|---|
-| **kmap**, fill | all 8/16 cells, including 0s | **(a)** From Σ: *place the 1s (and Xs)* as one chunk. Unfilled cells are taken as 0 at the check, or filled by one "rest are 0" tap once the 1s are right (UX). **(b)** From an expression (`km.q.from-expression`): **one product term at a time**, by tapping the cells the term covers. Then group → term → F, as today (owner: populate → verify → group → verify → expression) | (a) the student must locate every minterm. The answer is a set out of 2^8–2^16, and the count plus the first-wrong rule from the 2nd check keeps feedback coarse. (b) a term covers 2–4 cells out of 8/16, so trial is costly, and the unit is exactly the expansion skill |
+| **kmap**, fill | all 8/16 cells, including 0s | **(a)** From Σ: *place the 1s (and Xs)* as one step (`fill`). Empty cells grade as 0. The quiet "Fill the rest with 0" tap (§7.3) is ungraded and is not needed for grouping. **(b)** From an expression (`km.q.from-expression`): **one product term per step** (new tag `term-cells`), by tapping the cells the term covers. Then group → term → F, as today (owner: populate → verify → group → verify → expression) | (a) the student must locate every minterm. The answer is a set out of 2^8–2^16, and the count plus the first-wrong rule from the 2nd check keeps feedback coarse. (b) a term covers 2–4 cells out of 8/16, so trial is costly, and the unit is exactly the expansion skill |
 | **kmap**, group / term / F | one group, one term, F | unchanged | each is already one reasoning unit |
 | **truth-table**, fill, ≤ 8 rows | one column | unchanged | 8 cells meets the minimum |
-| **truth-table**, fill, > 8 rows (three-JK, 4-input) | one 16-row column | **one 8-row block per column**, split on the most significant input (first half then second half, with a visible separator). Same column goal, same step tag. The block is a sub-chunk inside the step (ADR-0007: the step contract is unchanged, `grade` returns `partial` for the first block) | 8 binary cells per block (256 combinations). The split follows the table's own structure, so it is a meaningful half, not an arbitrary cut |
+| **truth-table**, fill, > 8 rows (three-JK, 4-input) | one 16-row column | **one 8-row block per column**, split on the most significant input (first half then second half, with a visible separator). **Each block is a step of the step contract** (§3.1): same `column` tag, `stepVars` adds `rows` ("1–8"), `columnNumber` and `columnCount` | 8 binary cells per block (256 combinations). The split follows the table's own structure, so it is a meaningful half, not an arbitrary cut |
 | **truth-table**, three-JK as a whole | 10 column steps in one question | **split into three questions on one variant set (#141):** JK inputs (6 columns) → next state (3 columns) → output y (1 column). Each later question shows the earlier columns as `given` (#568 type B) | not a guessing issue. Each question is one skill, `completedQuestions` records the stage, so resume loses at most one stage, and §5 item 5 is resolved |
 | **truth-table**, row-select / mux-pairs | one pick set / one pair | unchanged | one pair is one decision. The ladder guards it |
-| **cpu-schedule**, column of all jobs | finish / turnaround column | **numeric columns: one job per check, or check what I have** (graded cells lock when right). Radio and segment steps unchanged | numeric: one finish time cannot be guessed |
-| **base-to-decimal**, row | every entry of a row | **weights row: unchanged** (one idea, powers of the base). **Terms row: check what I have** (numeric) | weights are a single pattern, so one check per row is right. Terms are numeric |
+| **cpu-schedule**, column of all jobs | finish / turnaround column | **numeric columns: one job per step** ("Check B's finish"). Earlier jobs show as done, the same way done columns do today. Radio and segment steps are unchanged | numeric: one finish time cannot be guessed |
+| **base-to-decimal**, row | every entry of a row | **unchanged** (weights row, terms row, sum) | one entry per digit, so a row is short. Each row applies one pattern (powers, then digit × weight), so one check per row is the reasoning unit |
 | **column-addition** | one column (sum + carry) | unchanged | the slides' unit. Binary sum + carry has 4 combinations, but the arithmetic is the skill and the ladder guards it |
 | **timing** | every Q pick for one clock edge | unchanged | one edge is the reasoning unit, and it has several Q values |
 | **memory-map** | one event | unchanged | already the unit |
 | **state-diagram, device, circuit-predict, derivation, repeated-division, bit-grouping** | one pick / line | unchanged | already the unit |
 | **expression, multiple-choice, numeric, place-value** | whole answer | unchanged **as a check unit**. Where the answer hides several skills, the fix is **content** (L1/L2/L3, §5), not a smaller check | a whole answer to a single-skill question is the unit. Splitting a hidden multi-skill question belongs to the practice, not the kind |
 
-Kinds whose check unit changes: **kmap (fill), truth-table (> 8 rows; three-JK split), cpu-schedule (numeric columns),
-base-to-decimal (terms row)**. Each change stays within ADR-0007 (sub-chunks are `partial` grades of one step) and ADR-0008
-(inside the kind folder).
+Kinds whose check unit changes: **kmap (fill), truth-table (> 8 rows; three-JK split), cpu-schedule (numeric columns)**.
+Each change is a new step count in the kind's `steps` (ADR-0007 unchanged, §3.1) and stays inside the kind folder (ADR-0008).
+
+### 3.1 Sub-chunks are steps (Reviewer item 1)
+In the runner, `correct && partial` advances `stepIndex` and clears `hints` (`runnerReducer.ts:219-221`), so a `partial` grade
+*is* a new step. There were two options:
+- **(a) blocks are steps of the step contract**: `stepCount`, `stepTag` and `stepVars` include them;
+- **(b) a new `GradeResult` field** for progress inside a step, which the runner handles without advancing (an ADR-0007
+  amendment).
+
+**Recommendation: (a).**
+- **No runner or tutor-engine change.** ADR-0007 already is this contract: one step per goal, `partial` until the last.
+- `hintsByStep` keys by tag, so blocks of one column share the column's ladder text, and `stepVars.rows` lets it say which rows.
+- **Pedagogically it is the owner's rule.** Rows 9–16 are a new goal once rows 1–8 are right ("each step is a goal by itself").
+- (b) would add a third runner outcome (right, not done, do not advance), plus hint-retention rules, for no learning gain.
+
+**What resets per block.** Like any step:
+- the ladder level, the revealed hints and `attempts` reset;
+- `engaged` resets, so the gate reopens on the first input in the new block (H3), which is no wait at all;
+- the E3 offer counts wrong checks per block.
+
+A student who needed rung 4 on rows 1–8 starts rows 9–16 at rung 0. That is right: the second half is usually where the student
+shows the first half has clicked.
+
+**What the goal chip counts.** **Columns, not blocks.** The chip reads "Now: rows 9–16 of column Q_A(t+1) · 4 of 10 columns",
+from `stepVars` (`rows`, `columnNumber`, `columnCount`). Students think in columns, and blocks are a pacing device. The step dots
+follow the same rule: one dot per column, half-filled after its first block. This is a view rule over `stepVars`, not a contract
+change. A kind with no `columnNumber` keeps one dot per step.
+
+**"Check what I have" is dropped.** Under (a), a numeric column becomes one job per step, so a check never grades a mix of right
+and wrong cells. The rules stay as today:
+- a check is one attempt;
+- right advances; wrong keeps the value and climbs the ladder;
+- one `MasteryEvidence` record per check, with `correct`, `hintsUsed` and `misconceptionId`, as today per step.
+
+If the Lead ever wants it back, it needs (b) and these rules:
+- it grades filled cells only;
+- right cells lock, wrong cells keep their value with the error mark, empty cells stay open;
+- it counts as one attempt only if at least one cell is wrong;
+- it writes one evidence record with `correct: false` if any cell is wrong.
+
+**Evidence volume.** Smaller steps mean more checks, and so more `MasteryEvidence` records per question. They are capped at
+`EVIDENCE_CAP = 20` per concept with decay, so one three-JK question can now fill a concept's window. Flagged for the Auditor and
+the learner model. No change is proposed here.
 
 ---
 
@@ -259,6 +343,22 @@ Two cases. **UX chose case A** (§7.1): the lesson opens in the same page and th
 |---|---|---|
 | **A. The runner stays mounted** (the lesson is shown over or beside the problem in the same page) | Explain Slowly must **not** dispatch `SWITCH_VARIANT` / `RESET_INTERACTION` when a lesson section exists. The runner keeps a `detour: SectionRef \| null` instead of `explanation`. Kind views keep their own state because the key does not change | **none.** State lives in memory, with no format change |
 | **B. The runner unmounts** (a lesson route, or leaving and coming back) | kinds must expose their draft as serialisable data. This is a small `draft` / `onDraft` contract in `KindModule` (ADR-0008 amendment), and the runner restores from a snapshot | **a versioned addition:** a *separate* key `cet-learn:v1:draft:<offering>`, one snapshot per activity `{ questionId, variantId, stepIndex, chunk, draft, hintLevel, at }`. Dropped when the question completes. Ignored if the variant id or step count no longer matches the content. Capped (e.g. 20 activities). The progress v1 format is **not** touched |
+
+**Case A is storage-free but not contract-free** (Reviewer item 2). It needs one ADR-0008 amendment. Every addition is
+optional, and a kind that ignores them behaves as today. Today's `PracticeProps` are `variant, prompt, state, last, stepIndex,
+locked, onSubmit` (`src/kinds/types.ts:45-55`).
+
+| Addition | Direction | Shape | If a kind ignores it |
+|---|---|---|---|
+| Engagement and last input | kind → runner | `onInput?: (targetId: string) => void`, called on every edit with the edited element's `data-focus-target` id. The runner derives `ENGAGED` (first call per step), resets the idle clock (every call) and records the last target | engagement falls back to Check only, and focus return falls back to the chunk's first empty cell, then Check |
+| Engagement policy | module | `KindModule.engageOn?: "input" \| "check"` (§2.1), default `"check"` | today's behaviour, minus the timer |
+| Focus return | runner → kind | **none new.** It reuses the existing `FOCUS` effect with the recorded target id (`EFFECT_TYPES`, `runnerReducer.ts`) | — |
+| Paused, read-only problem (1280 panel, 768 overlay) | runner → kind | `paused?: boolean`: inputs `aria-disabled`/`readonly`, no `onInput`, no Check. Kept apart from `locked`, which means "done" and carries the done styling | the runner makes the stage `inert` at every width (case A at 390 already does) |
+| Chunk-named Check label, goal chip, dots | content → view | **no type change.** The kind renders its own Check, so it reads `stepVars.checkLabel` (a message key plus `rows`, `columnLabel`, `termLabel`) and `columnNumber` / `columnCount` from the step contract. Vars are already a record | the label stays "Check" |
+| Locked earlier blocks and jobs | kind-internal | **none.** Under §3.1 they are earlier steps, rendered done from `stepIndex` the way done columns are today | — |
+
+§7.6's "Storage: none" therefore means: **storage none; contract: the additions above** (ADR-0008 amendment, with tests that
+a kind without them still passes).
 
 - I recommend **A first**: it meets the owner's return rule with no storage change. B is worth doing on its own merits, because
   Continue then resumes mid-step. That fixes the "leaving loses work" half of RC5.
@@ -347,7 +447,8 @@ Today each variant has an `explanation` (≥ 2 screens, over the live numbers): 
 - Arabic for every new string, sent as one batch through the Lead (ADR-0011, #634 glossary).
 
 **Order of migration** (pain first):
-1. the §5 P1/P2 sections (they are needed by the new L1/L2 questions anyway);
+1. the §5 P1/P2 sections (they are needed by the new L1/L2 questions anyway), together with the **long multi-step kinds**
+   (truth-table, column-addition, kmap, cpu-schedule). The interim reset (§2.6) costs the most there;
 2. CPET 181 chapter by chapter: all two-screen, no check;
 3. ECET 111 two-screen topics (Laws and rules, De Morgan, Minterms, Analysing clocked circuits);
 4. the rest.
@@ -355,6 +456,55 @@ Today each variant has an `explanation` (≥ 2 screens, over the live numbers): 
 **After migration:** when every step of a question resolves to a lesson, `variant.explanation` can become optional. That is a schema
 relaxation, with a content test switch per question, so it is not big-bang. The per-variant walkthrough of the live numbers is then
 retired. Rung 8/9 hints remain the "your numbers" help inside the problem.
+
+### 6.1 Content-id changes and stored progress (Reviewer item 5)
+The three-JK split, the §5 reorders and the new L1/L2 questions change ids and order in practices that students already have
+progress in. Stored progress holds question ids (`completedQuestions`, `skippedQuestions`) and a practice `status`.
+
+Today's readers differ:
+- `CourseTopics` counts the raw `completedQuestions.length` (`CourseTopics.tsx:35`);
+- `TopicNext` treats `completed` as all done (`TopicNext.tsx:28`);
+- resume uses first-unfinished in content order (`progress.ts`, `firstUnfinishedQuestion`).
+
+Rules (ADR-0002: ids are stable):
+
+1. **Ids are permanent and never reused.** A question whose skill or shape changes gets a new id. The old id is retired, never
+   recycled for other content.
+2. **Never rewrite storage.** No migration writes to `cet-learn:v1:progress:*`. Unknown ids stay in the stored lists untouched,
+   so a rollback still reads them. Every reader goes through **one helper**,
+   `effectiveDone(activity, record) → { completed: Set, skipped: Set }`:
+   - it intersects the stored lists with the current `activity.questions`;
+   - it applies rule 3;
+   - `CourseTopics`, `TopicNext`, `HomeNext`, `firstUnfinishedQuestion` and `resumeRunnerState` all use it.
+
+   This fixes today's raw count, under which a retired id would show "4 of 3".
+3. **Credit by declaration.** A new question may declare `creditedBy?: string[]`, a list of question ids (live or retired) whose
+   stored completion counts as its own. It is resolved at read time and never written. Then:
+   - **Split:** the three new three-JK questions declare `creditedBy: ["j3.q.table"]`. A student who finished the old table has all
+     three done.
+   - **L1/L2 scaffolds** declare `creditedBy: [<their L3 id>]`. A student who already finished the combined question is not sent
+     back to its easier parts.
+   - A retired id in `skippedQuestions` gives **no** credit and no "skipped ahead" badge: its successors are simply unfinished.
+4. **A `completed` practice that gains questions stays completed.** Completion was earned, and topic completion and mastery are
+   not demoted.
+   - The new questions show as open dots in the practice strip and can be opened from the practice page (Review).
+   - Continue never targets them, because Continue picks `started` practices (IA §7.2). The topic page does not re-recommend the
+     practice.
+5. **A `started` practice that gains or reorders questions** resumes at the first question in the **new** content order that
+   `effectiveDone` does not mark done.
+   - New scaffolds inserted before a not-yet-done L3 are therefore met first. That is intended: they are the steps toward it.
+   - Scaffolds before an L3 that is already done are credited (rule 3), so they are not met.
+   - Stored lists are sets, so a pure reorder changes only which open question comes first.
+6. **A started practice that becomes effectively complete** through credit reads as complete. The stored `status` updates on the
+   next write (any `completeQuestion` in it). Until then, readers treat it as completed.
+7. **Guards (content tests):**
+   - a committed snapshot of question ids per activity (`src/content/question-ids.snapshot.json`);
+   - a test fails when a snapshot id disappears unless some live question lists it in `creditedBy`, or it is listed in a small
+     `RETIRED_WITHOUT_CREDIT` set with a reason;
+   - the snapshot is updated in the same PR, so the change is visible in review;
+   - a unit test for `effectiveDone` covering unknown ids, a split, a credited scaffold and a reorder.
+
+These need one schema field (`creditedBy`, optional) and one helper. Both must land **before** the first id change (§9 step 3).
 
 ---
 
@@ -385,9 +535,20 @@ Detour geometry (no new breakpoints: ≤640, <900, ≥900):
 - **1280**: a **side panel that takes the tutor column** (≥900 the R1 aside), widened to 440 px; the problem stays in the main column,
   read-only (fields `aria-disabled`, Check hidden, goal chip reads "Paused · lesson open"). Not modal: `role="region"
   aria-label="Lesson"`. Mr. Mohanad moves from the aside into the panel header, so the lesson is still him teaching.
-- The sheet pushes one history entry with the hash `#lesson=<lesson>/<section>`; **browser Back closes the lesson** (popstate →
-  `detour: null`), which is what phone users press. The hash is not a route; a reload with the hash opens the lesson over a fresh
-  runner at step 0, the same loss as any reload today (case B fixes it later, §9 step 7).
+- The sheet pushes one history entry that adds `lesson=<lesson>/<section>` to the fragment. **Browser Back closes the lesson**
+  (popstate → `detour: null`), which is what phone users press. The fragment is not a route.
+- **One fragment grammar** for the practice page (Reviewer item 3), shared with the declared entry `#q=` (IA §8.4, S3). The hash is
+  parsed as URL parameters: `#q=<questionId>&lesson=<lesson>/<section>`. Either key may be absent, so `#q=fx.q.best` and
+  `#lesson=minterms/expand-a-term` are both valid. Unknown keys are ignored. Opening a detour adds `lesson=` and keeps any `q=`;
+  closing it removes only `lesson=`.
+- **Precedence on load or reload:**
+  1. `q` positions the runner. It must name a declared entry of this practice, otherwise it is ignored. It wins over a `started`
+     record (IA §7.2), and nothing is written until an answer.
+  2. Then `lesson`, if it resolves, opens the detour **over** that runner state. It never moves the runner and writes nothing.
+  3. A reload loses in-memory work, as any reload does today, so the runner is at the entry step (or the resume point) and not the
+     pre-reload step. Case B fixes that later (§9 step 7).
+  4. `?review=1` (query) keeps its meaning and still wins over a `started` record. With both `?review=1` and `#q=`, `q` decides the
+     start question.
 - Problem and lesson never share a surface colour: the lesson body sits on `--surface-2` with a dashed border, eyebrow **Lesson ·**
   `<lesson> › <section>`, and every lesson stage carries the tag "Example numbers". The live problem never shows that tag.
 
@@ -418,7 +579,7 @@ Action row under the stage, same at every width (wraps to two rows at 390):
 Hint        I'm stuck        Explain slowly        ⋯    ← quiet text buttons, 44 px targets; ⋯ = skip menu, as today
 ```
 
-- **Check names its chunk**: "Check column Q(t+1)", "Check rows 1–8", "Check the 1s", "Check group 2", "Check what I have",
+- **Check names its chunk**: "Check column Q(t+1)", "Check rows 1–8", "Check the 1s", "Check group 2", "Check B's finish",
   "Check" alone for single-answer kinds. The label comes from the step tag plus sub-chunk (§3), so the strip, the goal chip and the
   button all say the same thing. Disabled state as today (`aria-disabled`, never hidden) until the chunk's rule is met.
 - **Goal chip** above the stage, left-aligned under the prompt: `Now: rows 1–8 of column Q(t+1) · 3 of 10 columns`. This is the
@@ -444,9 +605,10 @@ Chunk boundaries on the stage:
   faint "·" and the Check is "Check the 1s"; when right, a one-tap quiet action **"Fill the rest with 0"** writes the 0s visibly
   (no auto-fill without the tap, so the student sees the map complete). Per-term variant (§3 b): the current product term is the
   goal chip ("Now: the cells x′z covers") and Check reads "Check x′z".
-- **cpu-schedule numeric columns**: Check reads "Check what I have"; graded-right cells lock (tick, read-only), wrong cells get the
-  error outline and keep their value, empty cells stay open. The column header carries the goal ("Finish times").
-- **base-to-decimal terms row**: same "Check what I have" treatment; the weights row above it is locked once right.
+- **cpu-schedule numeric columns** (one job per step, §3.1): the current job's cell has the halo and Check reads "Check B's
+  finish". Earlier jobs' cells show as done (tick, read-only), and later ones are dim. The column header carries the goal
+  ("Finish times").
+- **base-to-decimal**: unchanged (one row per check).
 
 ### 7.4 Lesson screen types
 
@@ -569,6 +731,8 @@ Before the practice (any width), the same stage with the K-map phase strip, for 
 ```
 
 **Storage:** none. Case A needs no new key and no ADR-0005 amendment; the only new runner field is `detour` (in memory).
+**Contract:** the optional kind ↔ runner additions listed in §4.5 (an ADR-0008 amendment): `onInput`, `engageOn`, `paused`,
+`stepVars.checkLabel` / `columnNumber`, focus return via the existing `FOCUS` effect.
 Case B (draft key) stays a later, separate step (§9 step 7) and does not change anything drawn here.
 
 ---
@@ -581,17 +745,23 @@ Case B (draft key) stays a later, separate step (§9 step 7) and does not change
 | "I'm stuck" used as a reflex | lowest rung only, one rung per request, 5 s guard (H5), recorded as help |
 | Smaller binary chunks invite trial | 8-cell minimum, first wrong cell marked only from the 2nd wrong check, evidence cost (§3) |
 | A lesson number collides with a variant's answer | content test (§4.4) |
-| Legacy fallback still loses the steps | temporary, and it disappears per question as its sections land. P1 sections first |
+| Interim: ungated legacy Explain Slowly walks the live numbers and resets to step 0 (§2.6) | the variant switch is kept (#42). A one-time warning appears when `stepIndex > 0`. Lessons for long multi-step kinds come first. The owner confirms the #684 point 3 change with this in view |
 | Storage | progress v1 unchanged. Case B adds a **separate** draft key, versioned and tolerant (an unknown variant or step count means ignore and start at step 0), and needs an ADR-0005 amendment |
 | Schema | additive and optional (`lessonRefs`, `alsoNeeds`, lessons). Old content validates unchanged. `explanation` stays required until §6 relaxes it per question |
 | Bundle size | lessons are lazy data chunks loaded on Explain Slowly or on lesson open, never in the activity's first load (ADR-0008, #683 option C) |
 | Interplay with #670 | `explained` and `lastAt` rules unchanged from IA §7/§12.3. `#q=` entry wins over a draft snapshot. Entered steps teach only their own section (#678 C5) |
 | Authoring and Arabic volume | the automatable map (§6) cuts drafting. Authored screens are batched per chapter, and Arabic goes in one batch per release |
-| ADR-0007 `partial` semantics with sub-chunks | a sub-chunk is a `partial` grade of the same step tag, so the tutor ladder and `hintsByStep` keep working. Reviewer to confirm |
+| Sub-chunks vs the runner | blocks are steps of the contract (§3.1), so there is no runner or `GradeResult` change. The ladder resets per block, and the chip counts columns |
+| Content-id changes vs stored progress | the §6.1 rules: permanent ids, no storage writes, `effectiveDone` with `creditedBy`, and an id snapshot test |
+| `#q=` and `#lesson=` collide | one fragment grammar, `#q=…&lesson=…`, with a defined precedence (§7.1) |
 
 Docs that change once this is approved: `docs/PEDAGOGY.md` (gate rules, Explain Slowly, chunk rule), `docs/TUTOR_ENGINE.md`, a new
-ADR "Lessons and lesson references" (§4), and amendments to ADR-0007 (sub-chunks), ADR-0008 (kind draft contract, case B only) and
-ADR-0005 (draft key, case B only).
+ADR "Lessons and lesson references" (§4), and these amendments:
+- ADR-0008: the case A kind ↔ runner additions (§4.5), plus the draft contract for case B only;
+- ADR-0002: `creditedBy` and the id rules (§6.1);
+- ADR-0005: the draft key, case B only.
+
+ADR-0007 needs **no** amendment (§3.1).
 
 ---
 
@@ -603,9 +773,18 @@ ADR-0005 (draft key, case B only).
    - "I'm stuck";
    - the 45 s idle no longer gates.
 
-   Smallest change, largest relief. Legacy explanations keep the variant switch for now.
-2. **Cheap content fixes:** reorders (§5 items 3, 18) and the `an.q.ex-table` prompt.
-3. **Chunk changes** (§3): K-map "1s first" / per term, truth-table 8-row blocks, three-JK split, numeric "check what I have".
+   Smallest change, largest relief. This step includes:
+   - the new engine events (§2.1);
+   - the `onInput` / `engageOn` part of the ADR-0008 amendment (§4.5);
+   - the interim stated in §2.6: legacy walkthroughs keep the variant switch and the reset, behind a one-time warning when
+     `stepIndex > 0`.
+
+   The owner confirms that point 3 on #684 supersedes the 2026-10-11 "Try once first" reversal for Explain Slowly.
+2. **Id rules, then cheap content fixes.** First the `creditedBy` field, the `effectiveDone` helper and the id snapshot test
+   (§6.1). Then the reorders (§5 items 3, 18) and the `an.q.ex-table` prompt.
+3. **Chunk changes** (§3): K-map "1s first" / per term, truth-table 8-row blocks, three-JK split, cpu-schedule one job per step.
+   All are step-count changes inside kinds (§3.1). The three-JK split and the reorders first need the §6.1 id rules
+   (`creditedBy`, reader helper, id snapshot test).
 4. **Lesson ADR and schema** (`Lesson`, `lessonRefs`, `alsoNeeds`, tests), plus the **case A detour**: no variant switch when a
    section exists. UX §7 decided first.
 5. **Pilot lessons with the P1 audit:**
