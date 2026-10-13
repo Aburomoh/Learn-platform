@@ -271,6 +271,36 @@ They are in draft PR #702 (maps rebuilt) with a catalog key each in `src/tutor/m
 | `ui.return.challenge` | Stuck? You skipped {label}; it leads here. Go back any time. | هل تواجه صعوبة؟ لقد تخطّيت {label}؛ وهو يمهّد لهذا السؤال. يمكنك الرجوع في أي وقت. |
 | `ui.return.practice` | Stuck? You skipped ahead in {title}; it covers this. Go back any time. | هل تواجه صعوبة؟ لقد تخطّيت جزءًا في {title}؛ وفيه شرح لهذا. يمكنك الرجوع في أي وقت. |
 
+### 8d. The keys #710 defines (they replace the same-concept rows of 8c)
+
+#710 (UI) put the course, topic, Home and summary chrome into the catalogue with its own key names and slot names. The package matches by the exact English, so #702 carries Arabic for **its** templates; the same-concept draft keys of 8c (`ui.topic.done`, `ui.topic.skipped`, `ui.topic.in-progress.*`, `ui.topic.short-practices`, `ui.topic.about-min*`, `ui.topic.effort.*`, `ui.topic.short-challenges.*`, `ui.topic.completed-note`, `ui.topic.practices-heading`, `ui.home.challenge-left`, `ui.status.completed`, `ui.summary.complete`/`can-now`/`again`/`back`) were removed from `en.ts` and the package. New in #710 and not in 8: «Not started», «Not started · Coming soon», «Completed. You can review any topic.», «In progress» and «Up next» (rows). «You can now:» keeps its approved Arabic. The rest of 8c (Home headings, the runner, hint panel, Check buttons, explanation, skip menu, profile and footer) are still hard-coded and are for UI to wire with the 8c key names.
+
+| Key | English | Arabic |
+|---|---|---|
+| `ui.status.completed` | Completed | مكتمل |
+| `ui.status.not-started` | Not started | لم يبدأ بعد |
+| `ui.status.coming-soon` | Not started · Coming soon | لم يبدأ بعد · قريبًا |
+| `ui.status.challenges-done` | {done} of {total} challenges done | التحديات المنجزة: {done} من {total} |
+| `ui.status.challenges-done-skipped` | {done} of {total} challenges done · skipped ahead | التحديات المنجزة: {done} من {total} · تخطّيت بعضها |
+| `ui.status.chapter-progress.one/.other` | In progress · {done} of {n} topic(s) done | جارٍ · المواضيع المنجزة: {done} من {n} |
+| `ui.effort.practices` | {n} short practices · about {minutes} min | التمارين القصيرة: {n} · المدة: نحو {minutes} د |
+| `ui.effort.challenges.one/.other` | {n} short challenge(s) · about {minutes} min | التحديات القصيرة: {n} · المدة: نحو {minutes} د |
+| `ui.effort.short-challenges.one/.other` | {n} short challenge(s) | التحديات القصيرة: {n} |
+| `ui.effort.minutes` | about {n} min | المدة: نحو {n} د |
+| `ui.effort.minutes-lead` | About {n} min | المدة: نحو {n} د |
+| `ui.effort.remaining` | Challenge {next} of {total} · about {left} min left | التحدي {next} من {total} · المتبقي: نحو {left} د |
+| `ui.effort.completed-topic` | Completed. You can review it any time. | اكتمل. يمكنك مراجعته في أي وقت. |
+| `ui.effort.completed-all` | Completed. You can review any topic. | اكتمل. يمكنك مراجعة أي موضوع. |
+| `ui.row.in-progress` | In progress | جارٍ |
+| `ui.row.up-next` | Up next | التالي |
+| `ui.topic.practices-in` | Practices in this topic | التمارين في هذا الموضوع |
+| `ui.summary.title` | Practice complete | اكتمل التمرين |
+| `ui.summary.you-can` | You can now: | يمكنك الآن: (approved) |
+| `ui.summary.again` | Practise again | تدرّب مرة أخرى |
+| `ui.summary.back` | Back to topic | العودة إلى الموضوع |
+
+New wording to check: «لم يبدأ بعد», «قريبًا», «التالي» (a row that is next), «اكتمل. يمكنك مراجعة أي موضوع.».
+
 Not drafted here (course text or other scope): the objective lists of "You can now", question prompts, the labels drawn inside the figures and interactions, and the settings page (`SettingsForm.tsx`, long explanatory text). Say if the owner wants any of them as a further addendum.
 
 ## Still to come (added as the PRs land)
