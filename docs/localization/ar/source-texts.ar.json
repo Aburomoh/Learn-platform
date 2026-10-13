@@ -16868,7 +16868,7 @@
       "paging-segmentation/virtual-memory/vm.q.virtual/v1#hints[2]"
     ],
     "slots": [],
-    "arabic": "يمكن أن تكون Job أكبر من Main Memory. Job Size غير محدود بحجم Main Memory."
+    "arabic": "يمكن أن تكون Job أكبر من Main Memory، إذ إنّ Job Size غير محدود بحجم Main Memory."
   },
   {
     "id": "cpet181.paging-segmentation.virtual-memory.vm.q.virtual.v2.explanation[1].say",
@@ -24344,7 +24344,7 @@
       "cpet181/paged-translation"
     ],
     "slots": [],
-    "arabic": "هذا هو الجزء الآخر من الـ Address. Page Number هو Quotient وDisplacement هو Remainder."
+    "arabic": "هذا هو الجزء الآخر من الـ Address. فالـ Page Number هو Quotient، والـ Displacement هو Remainder."
   },
   {
     "id": "ecet111.analysis.analysis-diagram.an.q.diagram.cd.explanation[0].say",
@@ -55531,7 +55531,7 @@
     "slots": [
       "gateInputs"
     ],
-    "arabic": "هذا هو الـ Gate. Inputs الخاصة به هي {gateInputs}."
+    "arabic": "هذا هو الـ Gate، ومداخله (Inputs) هي {gateInputs}."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v101.hints[4]",
@@ -70156,7 +70156,7 @@
       "ecet111/binary-arithmetic"
     ],
     "slots": [],
-    "arabic": "هذا هو 2's Complement. ‏1's Complement يعكس الـ Bits فقط؛ لا يضيف شيئاً."
+    "arabic": "هذا هو 2's Complement. أمّا 1's Complement فيعكس الـ Bits فقط، ولا يضيف شيئًا."
   },
   {
     "id": "tutor.cx.bar-misplaced",
@@ -70547,7 +70547,7 @@
       "ecet111/analysis"
     ],
     "slots": [],
-    "arabic": "انظر مرة أخرى إلى علامتي AND وOR. ‏AND يحتاج كل الأجزاء = 1؛ أما OR فيكفيه جزء واحد."
+    "arabic": "انظر مرة أخرى إلى علامتي AND وOR. فـ AND يحتاج كل الأجزاء = 1، أمّا OR فيكفيه جزء واحد."
   },
   {
     "id": "tutor.expr.unreadable",
@@ -70710,7 +70710,7 @@
       "ecet111/timing"
     ],
     "slots": [],
-    "arabic": "T لا تُنسخ إلى Q. ‏T = 1 يعني Complement: ما قيمة Q′ هنا؟"
+    "arabic": "T لا تُنسخ إلى Q. فـ T = 1 يعني Complement: ما قيمة Q′ هنا؟"
   },
   {
     "id": "tutor.ff.zero-rows",
@@ -72150,7 +72150,7 @@
       "ecet111/three-jk"
     ],
     "slots": [],
-    "arabic": "انظر مرة أخرى إلى علامتي AND وOR. ‏AND يحتاج كل الأجزاء = 1؛ أما OR فيكفيه جزء واحد."
+    "arabic": "انظر مرة أخرى إلى علامتي AND وOR. فـ AND يحتاج كل الأجزاء = 1، أمّا OR فيكفيه جزء واحد."
   },
   {
     "id": "tutor.tt.not-missing",
