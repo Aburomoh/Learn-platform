@@ -2,7 +2,7 @@
 
 **Status: REVISED per the owner's decisions of 2026-10-13 (#697), for final approval. Nothing here ships until the owner approves it.** The real strings are in the draft PR #702's package files so QA can render them. Content Engineer, 2026-10-13, main @ f53dec5.
 
-How to read it: `key · English · proposed Arabic · notes`. A row marked **decide** needs the owner. Every `{slot}` is kept exactly. Digits are Western. The rules are the owner's (REQUIREMENTS.md): Modern Standard Arabic, slightly conversational; English technical terms stay English and are LTR-isolated; no machine translation. Terms follow `TECHNICAL_GLOSSARY_AR.md`; "Courses" is «المقررات», with no hybrid «الـ Courses» form (owner decision 1, #697). "Chapter" and "Topic" stay English for now, written with the `الـ` prefix (owner, 2026-10-13); both are asked again below, together with "Bits". Address is the masculine imperative, as the approved package does (جرّب، ابحث).
+How to read it: `key · English · proposed Arabic · notes`. A row marked **decide** needs the owner. Every `{slot}` is kept exactly. Digits are Western. The rules are the owner's (REQUIREMENTS.md): Modern Standard Arabic, slightly conversational; English technical terms stay English and are LTR-isolated; no machine translation. Terms follow `TECHNICAL_GLOSSARY_AR.md`; "Courses" is «المقررات», with no hybrid «الـ Courses» form (owner decision 1, #697). "Topic" is «الموضوع» in navigation (owner, #697); "Chapter" stays English («Chapter 1») and «جمّع الـ Bits» keeps the course term. Address is the masculine imperative, as the approved package does (جرّب، ابحث).
 
 How it ships after approval: one PR appends these entries (id = `ui.<key>`, type `ui-label`, no course, so they go to the shared map) to `source-texts.json` and `source-texts.ar.json`; `scripts/build-l10n.mjs` builds the maps; `localization.ar.test.ts` keeps the pair in step. Until then the app shows the English.
 
@@ -29,8 +29,8 @@ The location line itself («ECET 111 · Chapter 1 · Binary arithmetic») needs 
 | `ui.action.start` | Start · {title} | ابدأ · {title} | |
 | `ui.action.continue` | Continue · {title} | تابع · {title} | The package uses واصل and المتابعة in running text; a button label is shorter. |
 | `ui.action.review` | Review · {title} | راجع · {title} | |
-| `ui.action.next-topic` | Next topic · {title} | الـ Topic التالي · {title} | "Topic" stays English (approved package). |
-| `ui.action.open-topic` | Open topic | افتح الـ Topic | |
+| `ui.action.next-topic` | Next topic · {title} | الموضوع التالي · {title} | Owner decision, #697: Topic is «الموضوع» in navigation. |
+| `ui.action.open-topic` | Open topic | افتح الموضوع | Owner decision, #697. |
 | `ui.action.recommended` | Recommended next | الخطوة التالية المقترحة | Owner decision 2. |
 | `ui.topic.practices` | Practices: {titles} | التمارين: {titles} | Owner decision 2: تمرين / تمارين. Titles stay English. |
 | `ui.row.more` | +{n} more | +{n} | Auditor 3b: «أخرى: n» reads «1 :أخرى» at the end of an English list; «+n» needs no plural. UI: nowrap. |
@@ -104,7 +104,7 @@ In these seven approved strings two English terms meet across a full stop and re
 | `tutor.ff.t-as-d` | T لا تُنسخ إلى Q. T = 1 يعني Complement: ما قيمة Q′ هنا؟ | T لا تُنسخ إلى Q. فـ T = 1 يعني Complement: ما قيمة Q′ هنا؟ |
 | `tutor.vm.quotient-remainder-swap` | …الـ Address. Page Number هو Quotient وDisplacement هو Remainder. | …الـ Address. فالـ Page Number هو Quotient، والـ Displacement هو Remainder. |
 | cpet181 `vm.q.virtual.v1.hints[2]` | …Main Memory. Job Size غير محدود بحجم Main Memory. | …Main Memory، إذ إنّ Job Size غير محدود بحجم Main Memory. |
-| ecet111 `lg.q.predict.v101.hints[3]` | هذا هو الـ Gate. Inputs الخاصة به هي {gateInputs}. | هذا هو الـ Gate، ومداخله (Inputs) هي {gateInputs}. **decide**: «Inputs» in the glossary form `English (Arabic)` here, or «أمّا Inputs الخاصة به فهي {gateInputs}.» |
+| ecet111 `lg.q.predict.v101.hints[3]` | هذا هو الـ Gate. Inputs الخاصة به هي {gateInputs}. | هذا هو الـ Gate، ومداخله (Inputs) هي {gateInputs}. Owner chose this form (#697). |
 
 The same pattern exists in 73 more approved strings (`npm run l10n:drift`, UNTRANSLATED.md section "English terms that meet across a full stop"). Many are the "TERM. Gloss is TERM" hint shape. Say whether the Auditor should propose fixes for all of them.
 
@@ -118,4 +118,4 @@ The same pattern exists in 73 more approved strings (`npm run l10n:drift`, UNTRA
 
 1. المقررات; no «الـ + English plural». 2. «الخطوة التالية المقترحة»; تمرين / تمارين. 3. «المكوّن» for a generic component; «Device (جهاز)» for the course concept. 4. Label:value plurals. 5. Titles stay English. 6. RTL rendering is checked by QA on the draft strings PR.
 
-Open questions for the owner (Auditor, #697): the hybrid forms «الـ Topic التالي» / «افتح الـ Topic» (section 2) and «جمّع الـ Bits» (section 3) are the form decision 1 removed for Courses. If they go Arabic: «الموضوع التالي» / «افتح الموضوع», «جمّع البتات» (or keep the glossary term). And "Chapter" in the location line is a label, not a title, so decision 5 does not cover it: keep «Chapter 1» or write it in Arabic?
+7. Owner, 2026-10-13 (#697): Topic is Arabic in navigation («الموضوع التالي · {title}», «افتح الموضوع»); "Chapter" in the location line stays English; «جمّع الـ Bits» stays; `lg.q.predict.v101.hints[3]` takes «هذا هو الـ Gate، ومداخله (Inputs) هي {gateInputs}.»
