@@ -3,7 +3,7 @@ import { act, render, screen, within } from "@testing-library/react";
 import { courses, getCourse } from "@/content";
 import type { Course } from "@/content/schema";
 import { clearLocalData, getProgressStore } from "@/learner";
-import { completeQuestion, emptyProgress, startActivity } from "@/learner/progress";
+import { completeQuestion, emptyProgress, markExplained, recordAttempt, startActivity } from "@/learner/progress";
 import { product } from "../../../config/product";
 import { HomeNext, pickCourse, remainingCue, rowActionLabel } from "./HomeNext";
 import { courseAction } from "../primaryAction";
@@ -28,16 +28,32 @@ describe("remainingCue", () => {
 
 describe("pickCourse: one course today, a list later", () => {
   const other: Course = { ...course, id: "other", code: "OTHER 101", offeringId: "other.2026" };
-  const started = (c: Course, at: number) => startActivity(emptyProgress(c.offeringId), c.modules[0].topics[0].activities[0].id, at);
+  const firstOf = (c: Course) => c.modules[0].topics[0].activities[0];
+  /** One attempt at `at`: meaningful progress (ADR-0013). */
+  const started = (c: Course, at: number) => recordAttempt(emptyProgress(c.offeringId), { activityId: firstOf(c).id, questionId: firstOf(c).questions[0].id, conceptId: "c", correct: false, hintsUsed: 0 }, at);
+  /** Opened only (the shape older builds wrote on mount), or Explain Slowly alone: not progress. */
+  const visited = (c: Course, at: number) => startActivity(emptyProgress(c.offeringId), firstOf(c).id, at);
+  const explained = (c: Course, at: number) => markExplained(visited(c, at), firstOf(c).id);
 
   it("leads with the first course when nothing is in progress", () => {
     expect(pickCourse([course, other], (c) => emptyProgress(c.offeringId)).course.id).toBe(course.id);
   });
 
-  it("leads with the course whose practice was touched most recently", () => {
+  it("leads with the course whose practice has the newest meaningful lastAt", () => {
     const progress = { [course.id]: started(course, 10), other: started(other, 20) };
     expect(pickCourse([course, other], (c) => progress[c.id]).course.id).toBe("other");
     expect(pickCourse([course, other], (c) => (c.id === course.id ? started(course, 10) : emptyProgress(c.offeringId))).course.id).toBe(course.id);
+  });
+
+  it("a look at another course, or an explanation read there, never switches the active course (ADR-0013 rule 5, journey F)", () => {
+    const looked = { [course.id]: started(course, 10), other: visited(other, 20) };
+    expect(pickCourse([course, other], (c) => looked[c.id]).course.id).toBe(course.id);
+    const read = { [course.id]: started(course, 10), other: explained(other, 20) };
+    expect(pickCourse([course, other], (c) => read[c.id]).course.id).toBe(course.id);
+    // visited only everywhere: the first course, with Start
+    const pick = pickCourse([course, other], (c) => (c.id === "other" ? visited(other, 20) : emptyProgress(c.offeringId)));
+    expect(pick.course.id).toBe(course.id);
+    expect(pick.action.kind).toBe("start");
   });
 });
 
@@ -63,6 +79,19 @@ describe("HomeNext", () => {
     expect(document.querySelector("[data-primary-action]")).toHaveTextContent("Continue");
     expect(screen.queryByRole("list", { name: "Challenges" })).not.toBeInTheDocument();
     expect(screen.getByText(new RegExp(`Challenge 2 of ${practice.questions.length} · about \\d+ min left`))).toBeInTheDocument();
+  });
+
+  it("visited only: still 'Start here', Start on the first topic and no 'started' count on the row (ADR-0013, journey E)", () => {
+    act(() => {
+      getProgressStore(course.offeringId).set((p) => markExplained(startActivity(p, practice.id), practice.id));
+    });
+    render(<HomeNext courses={courses} />);
+    expect(screen.getByRole("heading", { level: 1, name: "Start here" })).toBeInTheDocument();
+    expect(document.querySelector("[data-home]")).toHaveAttribute("data-home", "first");
+    expect(document.querySelector("[data-primary-action]")).toHaveTextContent(`Start · ${practice.title}`);
+    const row = screen.getByRole("region", { name: "Your courses" }).querySelector(`[data-course='${course.id}']`)!;
+    expect(row.getAttribute("data-action")).toBe("start");
+    expect(row.textContent).not.toMatch(/started/);
   });
 
   it("lists every course as a plain row with its own Start / Continue and a quiet 'Open course'; the catalogue is #courses (#675)", () => {

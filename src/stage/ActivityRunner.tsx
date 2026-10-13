@@ -7,7 +7,7 @@ import { HintReveal } from "@/interactions/HintReveal/HintReveal";
 import { canRequestScaffold } from "@/tutor";
 import { resolveMessage } from "@/tutor";
 import { TutorPanel, TutorPosePreload, useFocusEffects } from "@/tutor/ui";
-import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordAttempt, completeActivity, completeQuestion, markExplained, skipQuestion, skippedAhead, flushPendingWrites } from "@/learner";
+import { useOfferingProgress, usePrefs, getProgressStore, recordAttempt, completeActivity, completeQuestion, markExplained, skipQuestion, skippedAhead, flushPendingWrites } from "@/learner";
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
 import { ActivitySummary } from "./ActivitySummary";
@@ -98,14 +98,14 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
   const question = activity.questions[state.qIndex];
   const variant = currentVariant(activity, state);
 
-  // Open once: tutor greeting + progress "started".
+  // Open once: tutor greeting. Nothing is written to progress on mount (ADR-0013): a look at a
+  // practice is not study; the first attempt or finished challenge creates the record.
   const opened = useRef(false);
   useEffect(() => {
     if (opened.current) return;
     opened.current = true;
     dispatch({ type: "OPEN" });
-    updateProgress((p) => startActivity(p, activity.id));
-  }, [activity.id, updateProgress]);
+  }, []);
 
   // Apply DOM effects after render, once per effect batch.
   const appliedSeq = useRef(0);
