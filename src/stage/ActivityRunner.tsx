@@ -230,6 +230,8 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
             hintsUsed={state.hintsUsedTotal}
             next={topicAction(course, topic, finished)}
             topicHref={`/courses/${course.id}/${topic.id}/`}
+            practicesHref={topic.activities.length > 1 ? `/courses/${course.id}/${topic.id}/#practices` : undefined}
+            courseHref={`/courses/${course.id}/`}
             onRestart={() => act({ type: "RESTART" })}
           />
           <div className={styles.tutor}>
