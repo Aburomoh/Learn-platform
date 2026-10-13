@@ -116,7 +116,7 @@ QA's real render of #702 on #710 (69e7c6d) shows English text on the same screen
 |---|---|---|---|
 | Course row, topic status (`CourseTopics.tsx`) | {done} of {total} challenges done | التحديات المنجزة: {done} من {total} | Label:value. |
 | same | · skipped ahead | · تخطّيت بعضها | Appended to the line above; "skipped" is the learner's own act. |
-| same | In progress · {done} of {total} topics done | قيد المتابعة · المواضيع المنجزة: {done} من {total} | |
+| same | In progress · {done} of {total} topics done | جارٍ · المواضيع المنجزة: {done} من {total} | Auditor §8: «جارٍ», not «قيد المتابعة». |
 | same | {n} short practices · about {m} min | التمارين القصيرة: {n} · المدة: نحو {m} د | |
 | same, topic page row | Completed | مكتمل | |
 | Topic page, effort (`TopicNext.tsx`) | Completed. You can review it any time. | اكتمل. يمكنك مراجعته في أي وقت. | |
@@ -134,7 +134,7 @@ QA's real render of #702 on #710 (69e7c6d) shows English text on the same screen
 | same, first visit | Start here | ابدأ من هنا | |
 | same | Your course / Your courses | مقررك / مقرراتك | Decision 1: مقرر, no hybrid form. |
 | End of a practice (`ActivitySummary.tsx`) | Practice complete | اكتمل التمرين | Also the section's accessible name. |
-| same | You can now: | أصبحت قادرًا الآن على: | The learner's objectives follow, in English (objectives are course text). |
+| same | You can now: | يمكنك الآن: | **Already approved** in the package (component text); kept. The Auditor's alternative «تستطيع الآن:» (reads like the English, no gender-marked adjective) is a change to an approved string: **decide**. |
 | same | Practise again | تدرّب مرة أخرى | The approved package uses التدرّب. |
 | same | Back to topic | العودة إلى الموضوع | |
 
@@ -146,7 +146,7 @@ Owner chose (a) on #702: these join the batch. Same rules. "Check", "Hint" and t
 |---|---|---|---|
 | Footer (`Chrome.tsx`) | Demo content | محتوى تجريبي | |
 | same | Optional practice, not graded | تدريب اختياري، بلا درجات | |
-| same | Progress stays in this browser | يبقى تقدّمك في هذا المتصفح | |
+| same | Progress stays in this browser | يبقى تقدّمك في هذا المتصفح | **decide**: or «يُحفظ تقدّمك في هذا المتصفح فقط» (Auditor, #686), which says more plainly that nothing leaves the browser. |
 | Profile menu (`ProfileMenu.tsx`) | Profile and settings | الملف الشخصي والإعدادات | Accessible name. |
 | same | Guest | ضيف | |
 | same | You are a guest. | أنت ضيف. | |
@@ -155,7 +155,7 @@ Owner chose (a) on #702: these join the batch. Same rules. "Check", "Hint" and t
 | same | Light / Dark / Match device | فاتح / داكن / حسب الجهاز | «الجهاز» here is the user's own device, not the OS device of the course. |
 | same | Settings | الإعدادات | |
 | Language toggle | Language | اللغة | Accessible name; the choices «EN» and «عربي» stay as they are. |
-| Course page | Chapters | Chapters | **decide**: «Chapter» stays English (owner, #697), so the plural heading stays «Chapters» (or «الـ Chapters»). |
+| Course page | Chapters | Chapters | «Chapter» stays English (owner, #697), so the plural heading stays «Chapters» (Auditor: no «الـ»). |
 | Topic page (`MeetCard.tsx`) | How it works | كيف يعمل | |
 | Home (`HomeNext.tsx`) | Open course: {title} | افتح المقرر: {title} | Accessible name. |
 | Practice header (`ActivityRunner.tsx`) | Challenge {k} of {n} | التحدي {k} من {n} | The step label that may follow stays English (course text). |
@@ -165,7 +165,7 @@ Owner chose (a) on #702: these join the batch. Same rules. "Check", "Hint" and t
 | Hint panel (`HintReveal.tsx`) | Hint / Another hint | تلميح / تلميح آخر | |
 | same | Explain slowly | اشرح ببطء | |
 | same | Hints | التلميحات | Accessible name. |
-| Hint cards | Nudge · Concept · Question · Look here · Break it down · Similar example · Guided · Full explanation | تلميح أولي · المفهوم · سؤال موجّه · انظر هنا · قسّمها · مثال مشابه · بإرشاد · الشرح الكامل | The ladder's names, one per rung. |
+| Hint cards | Nudge · Concept · Question · Look here · Break it down · Similar example · Guided · Full explanation | تلميح أولي · المفهوم · السؤال · انظر هنا · قسّمها إلى خطوات أبسط · مثال مشابه · حلّ موجّه · الشرح الكامل | The ladder's names, one per rung. «Break it down», «Similar example» and «Full explanation» are **already approved** (kept); the Auditor proposes «تقسيم المسألة» for the first (an imperative with an unexplained ـها reads like an order): **decide**. «Question» is one English word for the card and the section name, so one Arabic («السؤال»). «Guided» → «حلّ موجّه» (Auditor). |
 | Check buttons (interactions) | Check / Check step / Check bits / Check groups / Check digit | تحقّق / تحقّق من الخطوة / تحقّق من الـ Bits / تحقّق من المجموعات / تحقّق من الرقم | Bit stays English (glossary). |
 | Explanation (`QuestionView.tsx`) | Explanation | الشرح | Accessible name. |
 | same | Question | السؤال | Accessible name. |
@@ -177,8 +177,99 @@ Owner chose (a) on #702: these join the batch. Same rules. "Check", "Hint" and t
 | same | Confirm skip | تأكيد التخطي | Accessible name. |
 | same | Skip / Cancel | تخطَّ / إلغاء | |
 | Skip destinations | the next question · the next practice, {title} · the next topic, {title} · the course page | السؤال التالي · التمرين التالي: {title} · الموضوع التالي: {title} · صفحة المقرر | Written without the article so they fit after «الوجهة:». |
-| Return offers (`ActivityRunner.tsx`) | Stuck? You skipped {label}; it leads here. Go back any time. | عالق؟ لقد تخطّيت {label}؛ فهو يقود إلى هنا. يمكنك الرجوع في أي وقت. | {label} is a challenge label (English, isolated). |
-| same | Stuck? You skipped ahead in {title}; it covers this. Go back any time. | عالق؟ لقد تخطّيت جزءًا في {title}؛ فهو يغطي هذا. يمكنك الرجوع في أي وقت. | {title} stays English, isolated. |
+| Return offers (`ActivityRunner.tsx`) | Stuck? You skipped {label}; it leads here. Go back any time. | هل تواجه صعوبة؟ لقد تخطّيت {label}؛ وهو يمهّد لهذا السؤال. يمكنك الرجوع في أي وقت. | {label} is a challenge label (English, isolated). |
+| same | Stuck? You skipped ahead in {title}; it covers this. Go back any time. | هل تواجه صعوبة؟ لقد تخطّيت جزءًا في {title}؛ وفيه شرح لهذا. يمكنك الرجوع في أي وقت. | {title} stays English, isolated. |
+
+### 8c. Where these strings are in the draft package
+
+They are in draft PR #702 (maps rebuilt) with a catalog key each in `src/tutor/messages/en.ts`. The two already-approved strings above keep their approved Arabic; the Auditor's alternatives are owner decisions. Almost all are hard-coded in components today, so a عربي screen shows them only when UI reads these keys through the Arabic layer (as #710 does for the navigation labels). The label:value count families have one string for `one` and `other`.
+
+| Key | English | Arabic |
+|---|---|---|
+| `ui.topic.done` | {done} of {total} challenges done | التحديات المنجزة: {done} من {total} |
+| `ui.topic.skipped` | skipped ahead | تخطّيت بعضها |
+| `ui.topic.in-progress.one` | In progress · {done} of {n} topic done | جارٍ · المواضيع المنجزة: {done} من {n} |
+| `ui.topic.in-progress.other` | In progress · {done} of {n} topics done | جارٍ · المواضيع المنجزة: {done} من {n} |
+| `ui.topic.short-practices` | {n} short practices · about {m} min | التمارين القصيرة: {n} · المدة: نحو {m} د |
+| `ui.status.completed` | Completed | مكتمل |
+| `ui.topic.completed-note` | Completed. You can review it any time. | اكتمل. يمكنك مراجعته في أي وقت. |
+| `ui.topic.about-min` | About {m} min | المدة: نحو {m} د |
+| `ui.topic.about-min.lower` | about {m} min | المدة: نحو {m} د |
+| `ui.topic.practice-challenges.one` | {title} · {n} short challenge | {title} · التحديات القصيرة: {n} |
+| `ui.topic.practice-challenges.other` | {title} · {n} short challenges | {title} · التحديات القصيرة: {n} |
+| `ui.topic.short-challenges.one` | {n} short challenge | التحديات القصيرة: {n} |
+| `ui.topic.short-challenges.other` | {n} short challenges | التحديات القصيرة: {n} |
+| `ui.topic.effort.one` | {n} short challenge · about {m} min | التحديات القصيرة: {n} · المدة: نحو {m} د |
+| `ui.topic.effort.other` | {n} short challenges · about {m} min | التحديات القصيرة: {n} · المدة: نحو {m} د |
+| `ui.topic.practices-heading` | Practices in this topic | التمارين في هذا الموضوع |
+| `ui.topic.challenges-of` | Challenges of {title} | تحديات {title} |
+| `ui.topic.challenges` | Challenges | التحديات |
+| `ui.home.challenge-left` | Challenge {k} of {n} · about {m} min left | التحدي {k} من {n} · المتبقي: نحو {m} د |
+| `ui.home.welcome-back` | Welcome back | أهلًا بعودتك |
+| `ui.home.pick-up` | Pick up where you left off | أكمل من حيث توقفت |
+| `ui.home.finished-all` | You have finished every topic | أنهيت كل المواضيع |
+| `ui.home.start-here` | Start here | ابدأ من هنا |
+| `ui.home.your-course` | Your course | مقررك |
+| `ui.home.your-courses` | Your courses | مقرراتك |
+| `ui.home.open-course` | Open course: {title} | افتح المقرر: {title} |
+| `ui.summary.complete` | Practice complete | اكتمل التمرين |
+| `ui.summary.can-now` | You can now: | تستطيع الآن: |
+| `ui.summary.again` | Practise again | تدرّب مرة أخرى |
+| `ui.summary.back` | Back to topic | العودة إلى الموضوع |
+| `ui.foot.demo` | Demo content | محتوى تجريبي |
+| `ui.foot.optional` | Optional practice, not graded | تدريب اختياري، بلا درجات |
+| `ui.foot.local` | Progress stays in this browser | يبقى تقدّمك في هذا المتصفح |
+| `ui.profile.menu` | Profile and settings | الملف الشخصي والإعدادات |
+| `ui.profile.guest` | Guest | ضيف |
+| `ui.profile.you-are-guest` | You are a guest. | أنت ضيف. |
+| `ui.profile.local` | Your progress stays in this browser. Nothing is sent to a server. | يبقى تقدّمك في هذا المتصفح. لا يُرسل أي شيء إلى خادم. |
+| `ui.profile.appearance` | Appearance | المظهر |
+| `ui.profile.light` | Light | فاتح |
+| `ui.profile.dark` | Dark | داكن |
+| `ui.profile.system` | Match device | حسب الجهاز |
+| `ui.profile.settings` | Settings | الإعدادات |
+| `ui.nav.language` | Language | اللغة |
+| `ui.nav.chapters` | Chapters | Chapters |
+| `ui.topic.how-it-works` | How it works | كيف يعمل |
+| `ui.stage.challenge-of` | Challenge {k} of {n} | التحدي {k} من {n} |
+| `ui.stage.next-steps` | Next steps | الخطوات التالية |
+| `ui.stage.try-similar` | Try a similar one | جرّب سؤالًا مشابهًا |
+| `ui.stage.next-challenge` | Next challenge | التحدي التالي |
+| `ui.stage.finish` | Finish | إنهاء |
+| `ui.hint.button` | Hint | تلميح |
+| `ui.hint.another` | Another hint | تلميح آخر |
+| `ui.hint.explain` | Explain slowly | اشرح ببطء |
+| `ui.hint.list` | Hints | التلميحات |
+| `ui.hint.rung-2` | Nudge | تلميح أولي |
+| `ui.hint.rung-3` | Concept | المفهوم |
+| `ui.hint.rung-4` | Question | السؤال |
+| `ui.hint.rung-5` | Look here | انظر هنا |
+| `ui.hint.rung-6` | Break it down | تقسيم المسألة |
+| `ui.hint.rung-7` | Similar example | مثال مشابه |
+| `ui.hint.rung-8` | Guided | حلّ موجّه |
+| `ui.hint.rung-9` | Full explanation | الشرح الكامل |
+| `ui.check.button` | Check | تحقّق |
+| `ui.check.step` | Check step | تحقّق من الخطوة |
+| `ui.check.bits` | Check bits | تحقّق من الـ Bits |
+| `ui.check.groups` | Check groups | تحقّق من المجموعات |
+| `ui.check.digit` | Check digit | تحقّق من الرقم |
+| `ui.explain.section` | Explanation | الشرح |
+| `ui.question.section` | Question | السؤال |
+| `ui.explain.step` | Step {k} of {n} | الخطوة {k} من {n} |
+| `ui.explain.continue` | Continue | تابع |
+| `ui.explain.now-i-try` | Now I try | الآن أجرّب أنا |
+| `ui.skip.more` | More | المزيد |
+| `ui.skip.to-next` | Skip to next question | تخطَّ إلى السؤال التالي |
+| `ui.skip.confirm-note` | Skip this question? You can come back any time. This goes to {targetLabel}. | تخطّي هذا السؤال؟ يمكنك العودة إليه في أي وقت. الوجهة: {targetLabel}. |
+| `ui.skip.confirm` | Confirm skip | تأكيد التخطي |
+| `ui.skip.go` | Skip | تخطَّ |
+| `ui.skip.cancel` | Cancel | إلغاء |
+| `ui.skip.target.question` | the next question | السؤال التالي |
+| `ui.skip.target.practice` | the next practice, {title} | التمرين التالي: {title} |
+| `ui.skip.target.topic` | the next topic, {title} | الموضوع التالي: {title} |
+| `ui.skip.target.course` | the course page | صفحة المقرر |
+| `ui.return.challenge` | Stuck? You skipped {label}; it leads here. Go back any time. | هل تواجه صعوبة؟ لقد تخطّيت {label}؛ وهو يمهّد لهذا السؤال. يمكنك الرجوع في أي وقت. |
+| `ui.return.practice` | Stuck? You skipped ahead in {title}; it covers this. Go back any time. | هل تواجه صعوبة؟ لقد تخطّيت جزءًا في {title}؛ وفيه شرح لهذا. يمكنك الرجوع في أي وقت. |
 
 Not drafted here (course text or other scope): the objective lists of "You can now", question prompts, the labels drawn inside the figures and interactions, and the settings page (`SettingsForm.tsx`, long explanatory text). Say if the owner wants any of them as a further addendum.
 
