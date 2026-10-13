@@ -1,6 +1,6 @@
 # CET Interactive Learning Platform — Agent Team
 
-This directory defines the AI development organization: **Team V2** (owner, 2026-10-06; `agents/TEAM_V2.md`, ADR-0010).
+This directory defines the AI development organization: **Team V2** (owner, 2026-10-06; `agents/TEAM_V2.md`, ADR-0010, amended by ADR-0012).
 
 ## Authority
 Owner: Dr. Mohannad Abu-Romoh  
@@ -19,7 +19,7 @@ Agent memory is useful context. Repository artifacts are authoritative context.
 7. Edit your comment on #519 before stopping (no state-file PRs).
 
 ## Team (V2)
-Permanent: Lead · Content Engineer · UI / Interaction Engineer · Independent Reviewer · Independent QA.
+Permanent: Lead · Content Engineer · UI / Interaction Engineer · Independent Reviewer · Independent QA · Educational Integrity & Learner Experience Auditor (audit-only, ADR-0012).
 On demand (started by the Lead for one task): Pedagogy · UX (Fable) · Material Analyst · Security · Performance · DevOps.
 Retired Team V1 charters and state: `/agents/retired/` (read-only history).
 

@@ -1,6 +1,6 @@
-# Team V2 (owner-approved 2026-10-06; ADR-0010)
+# Team V2 (owner-approved 2026-10-06; ADR-0010, amended by ADR-0012)
 
-Five permanent roles, six on-demand specialists, and one non-LLM dispatcher. Git, issues and docs are
+Six permanent roles (the five below plus the Educational Integrity Auditor, ADR-0012), six on-demand specialists, and one non-LLM dispatcher. Git, issues and docs are
 authoritative; conversation memory is secondary. State lives on the pinned **state board #519** (one
 comment per role, edited in place). The Team V1 charters and state files are archived, read-only, in
 `agents/retired/`.
@@ -15,10 +15,23 @@ comment per role, edited in place). The Team V1 charters and state files are arc
 | **Does NOT own** | watching (the dispatcher does), QA, conflict resolution, DevOps work, writing content or UI | UI, merge, review | content data, grading logic, merge, review | merging, writing the change it reviews | routine content PRs, merging, writing fixes |
 | **Inherits from V1** | Technical Lead, Product Manager, Director (and day-to-day DevOps decisions) | Backend / Data Engineer, AI Tutor Engineer | Frontend / Interaction Engineer, routine UX verdicts | Code / Architecture Reviewer, routine Pedagogy checks | QA / Test Engineer, Performance budget check in gates |
 
+## Educational Integrity & Learner Experience Auditor (ADR-0012)
+
+| | Educational Integrity Auditor |
+|---|---|
+| **Slug / label** | `educational-auditor` / `wake:auditor` (short name `auditor`) |
+| **Model class** | strongest reasoning |
+| **Owns** | **audit the result**, from the learner's point of view, across all roles' output, on both unreleased work (steer early) and the live site (audit the final result): whether learning works end to end, objective/exercise fit, hidden prerequisites, cognitive load, feedback/hint/lesson quality, autonomy and direct-entry safety, difficulty progression, cross-course consistency, assessment validity, Arabic/English fidelity; **offers** Arabic translations and corrections as proposals (#686) |
+| **Does NOT own** | per-PR correctness and answer verification (Reviewer), browser regression and gates (QA), new learning rules and chapter sign-off (Pedagogy), writing code, UI or content, merging; never edits files or opens PRs |
+| **Findings** | issues labelled `audit` + `audit:critical` / `audit:major` / `audit:minor`, one owner role each; the owner fixes, the Auditor confirms from the student's view |
+
+Charter: `agents/educational_auditor.md`. Content applies translation proposals; the owner approves every translation.
+
 ## Gates (per PR)
 - **Reviewer: always** (the default gate). For routine content on tested kinds the Reviewer verifies every answer once and its approval is enough (plus green CI).
 - **QA: by risk only**: new kinds, new or changed screens, behaviour changes, bug fixes, chapter gates, final audits. Never on routine content.
 - **Pedagogy: only** for new learning behaviour, new scaffolding/explanation rules, or deviation from an approved pack. Called by the Lead.
+- **Auditor: never blocks merges or releases.** Advisory comments on learning-behaviour PRs, early steering on unreleased work (open PRs, previews, main), a learner-POV pass on release candidates, and audits of the live site. A **CRITICAL EDUCATIONAL RISK** (`audit:critical`) needs a prompt Lead response on the issue (`Accept-fix | Scheduled | Waived`); the Lead lists open CRITICAL findings with their responses in the owner's release note.
 - **No standing UX, Performance or Security gate.** The UI engineer posts renders; the bundle budget is checked in CI and at gates; Security and Performance are called by the Lead when a change touches their area.
 - Answers are recomputed **once**: by the Reviewer on PRs, by QA at chapter gates (owner A2 for computed content), never both on the same PR.
 - **Structured verdicts** (`Verdict: <Role> · <SHA> · Approved | Changes needed` + `Checks:`) on GitHub; a new push invalidates them where it changes what was checked.
@@ -45,7 +58,8 @@ comment per role, edited in place). The Team V1 charters and state files are arc
 | Per-role state files and state PRs | state board #519 (no PRs) |
 
 ## Operating rules
-- **One dispatcher** (`npm run dispatch:start`, one per machine) polls GitHub; each permanent session runs only a passive listener on its own inbox (`node scripts/inbox.mjs <role>` as a background Bash command; it completes once per real wake and is started again after acting; no model turns while idle). On-demand wakes, stale wakes (over 30 min) and dispatcher errors go to the Lead's inbox. `npm run wake:health` shows everything.
+- **One dispatcher** (`npm run dispatch:start`, one per machine) polls GitHub; each permanent session runs only a passive listener on its own inbox (`node scripts/inbox.mjs <role>` as a background Bash command; it completes once per real wake and is started again after acting; no model turns while idle). On-demand wakes, stale wakes (over 30 min), `audit:critical` findings and dispatcher errors go to the Lead's inbox. `npm run wake:health` shows everything.
+- **Auditor lane:** one finding, one owner. The Auditor talks directly to the owning role and copies the Lead only for MAJOR or CRITICAL; merge and operational authority stay with the Lead; owner decisions override everyone.
 - **No stacked branches.** Every PR is cut from `origin/main`; the next PR starts after the previous merges. Authors resolve their own conflicts.
 - **No state-file PRs.** Update your comment on #519 instead.
 - **One PR per coherent learning unit.**
