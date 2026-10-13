@@ -62,7 +62,9 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
               // plain words and the step labels, so the student knows what a practice is before entering
               const status = own.kind === "review" ? "Completed" : own.kind === "continue" ? `${count} of ${a.questions.length} challenges done` : `about ${a.minutes} min`;
               const labels = a.questions.map((q) => q.label).filter(Boolean);
-              const meta = [status, kindWords(a), labels.length > 1 ? labels.join(" → ") : effortCue(a.questions.length, a.minutes)].filter(Boolean).join(" · ");
+              // fewer than two labels: the challenge count alone (the minutes are already in `status`)
+              const steps = labels.length > 1 ? labels.join(" → ") : `${a.questions.length} short challenge${a.questions.length === 1 ? "" : "s"}`;
+              const meta = [status, kindWords(a), steps].filter(Boolean).join(" · ");
               // The practice the page button is about has no second button: the primary is its button.
               const upNext = !finished && a.id === activity.id;
               return (

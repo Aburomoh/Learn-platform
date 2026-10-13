@@ -69,6 +69,17 @@ describe("TopicNext", () => {
     expect(document.querySelector("[data-primary-action]")!.getAttribute("href")).toContain(topic.activities[1].id);
   });
 
+  it.runIf(topic.activities.length > 1)("an unlabeled practice's row says its challenge count once, never the minutes twice (Reviewer, #685)", () => {
+    const bare = { ...topic, activities: topic.activities.map((a) => ({ ...a, questions: a.questions.map((q) => ({ ...q, label: undefined })) })) };
+    render(<TopicNext course={course} topic={bare} />);
+    const rows = within(screen.getByRole("region", { name: "Practices in this topic" })).getAllByRole("listitem");
+    for (const [i, a] of bare.activities.entries()) {
+      const meta = rows[i].querySelector("[class*='practiceMeta']")!.textContent!;
+      expect(meta).toBe(`about ${a.minutes} min · ${kindWords(a)} · ${a.questions.length} short challenge${a.questions.length === 1 ? "" : "s"}`);
+      expect(meta.match(/about \d+ min/g)).toHaveLength(1);
+    }
+  });
+
   it("topic finished: Next topic with Review beside it, or Review alone on the last topic", () => {
     act(() => {
       store().set((p) => topic.activities.reduce((acc, a) => completeActivity(startActivity(acc, a.id), a.id, true), p));
