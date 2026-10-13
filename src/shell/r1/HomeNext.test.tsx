@@ -5,7 +5,8 @@ import type { Course } from "@/content/schema";
 import { clearLocalData, getProgressStore } from "@/learner";
 import { completeQuestion, emptyProgress, startActivity } from "@/learner/progress";
 import { product } from "../../../config/product";
-import { HomeNext, pickCourse, remainingCue } from "./HomeNext";
+import { HomeNext, pickCourse, remainingCue, rowActionLabel } from "./HomeNext";
+import { courseAction } from "../primaryAction";
 
 const course = getCourse("ecet111")!;
 const firstTopic = course.modules[0].topics[0];
@@ -53,23 +54,46 @@ describe("HomeNext", () => {
     expect(screen.getByRole("heading", { level: 2, name: firstTopic.title })).toBeInTheDocument();
   });
 
-  it("returning: 'Pick up where you left off', Continue, the steps, and what is left", () => {
+  it("returning: 'Pick up where you left off', Continue and what is left; no challenge dots in the hero (#675)", () => {
     act(() => {
       getProgressStore(course.offeringId).set((p) => completeQuestion(startActivity(p, practice.id), practice.id, practice.questions[0].id));
     });
     render(<HomeNext courses={courses} />);
     expect(screen.getByRole("heading", { level: 1, name: "Pick up where you left off" })).toBeInTheDocument();
     expect(document.querySelector("[data-primary-action]")).toHaveTextContent("Continue");
-    const states = within(screen.getByRole("list", { name: "Challenges" })).getAllByRole("listitem").map((s) => s.getAttribute("data-state"));
-    expect(states.slice(0, 2)).toEqual(["done", "current"]);
+    expect(screen.queryByRole("list", { name: "Challenges" })).not.toBeInTheDocument();
     expect(screen.getByText(new RegExp(`Challenge 2 of ${practice.questions.length} · about \\d+ min left`))).toBeInTheDocument();
   });
 
-  it("lists every course as a plain row with a quiet 'Open course'", () => {
+  it("lists every course as a plain row with its own Start / Continue and a quiet 'Open course'; the catalogue is #courses (#675)", () => {
     render(<HomeNext courses={courses} />);
     const section = screen.getByRole("region", { name: courses.length === 1 ? "Your course" : "Your courses" });
+    expect(section.id).toBe("courses");
     const rows = within(section).getAllByRole("listitem");
     expect(rows).toHaveLength(courses.length);
     expect(within(rows[0]).getByRole("link", { name: `Open course: ${course.title}` }).getAttribute("href")).toMatch(/\/courses\/ecet111\/?$/);
+    // first visit: every row starts its first practice, by name
+    for (const [i, c] of courses.entries()) {
+      const first = c.modules[0].topics[0].activities[0];
+      const link = within(rows[i]).getByRole("link", { name: `Start · ${first.title}: ${c.title}` });
+      expect(link).toHaveTextContent(`Start · ${first.title}`);
+      expect(link.getAttribute("href")).toMatch(new RegExp(`^/courses/${c.id}/${c.modules[0].topics[0].id}/${first.id}/?$`));
+    }
+  });
+
+  it("returning: the row of the course in progress says Continue · its practice; the other course still says Start (#675)", () => {
+    const other = courses.find((c) => c.id !== course.id)!;
+    act(() => {
+      getProgressStore(course.offeringId).set((p) => completeQuestion(startActivity(p, practice.id), practice.id, practice.questions[0].id));
+    });
+    render(<HomeNext courses={courses} />);
+    const section = screen.getByRole("region", { name: "Your courses" });
+    const row = (c: Course) => section.querySelector(`[data-course='${c.id}']`)!;
+    expect(row(course).getAttribute("data-action")).toBe("continue");
+    expect(within(row(course) as HTMLElement).getByRole("link", { name: `Continue · ${practice.title}: ${course.title}` }).getAttribute("href")).toMatch(new RegExp(`^/courses/${course.id}/${firstTopic.id}/${practice.id}/?$`));
+    expect(row(other).getAttribute("data-action")).toBe("start");
+    expect(within(row(other) as HTMLElement).getByRole("link", { name: /^Start · / })).toBeInTheDocument();
+    // the label is the shared catalogue's, filled with the practice title
+    expect(rowActionLabel(courseAction(course, getProgressStore(course.offeringId).get()))).toBe(`Continue · ${practice.title}`);
   });
 });
