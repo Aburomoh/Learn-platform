@@ -3,6 +3,8 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { focusTarget } from "../shared/types";
 import { useScrollFade } from "../shared/useScrollFade";
+import { SupportiveText } from "@/l10n/SupportiveText";
+import { messageTemplate } from "@/tutor/messages";
 import styles from "./ColumnAddition.module.css";
 
 /** One step of the addition: a column (right to left), or the final carry brought down. */
@@ -196,7 +198,7 @@ export function ColumnAddition({ id, a, b, columns, stepIndex, onStep, state = "
             )}
           </span>
           <button type="submit" className="btn btn-primary" disabled={sum === "" || (needsCarry && carry === "")}>
-            Check step
+            <SupportiveText template={messageTemplate("ui.check.step")} inline />
           </button>
         </div>
       )}
