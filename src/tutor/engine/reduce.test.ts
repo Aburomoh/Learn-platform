@@ -403,3 +403,50 @@ describe("message catalog integrity", () => {
     expect(msg.text).not.toMatch(/\{/);
   });
 });
+
+describe("a diagnosed mistake counts as help already given (#700)", () => {
+  const dctx: ActivityContext = {
+    ...ctx,
+    hints: [
+      { rung: 2, text: "Not yet. Do it once more." },
+      { rung: 3, text: "Each step: divide by 2." },
+      { rung: 4, text: "Is it even or odd?" },
+    ],
+    misconceptionKeys: { swapped: "div.swapped" },
+    vars: { ...ctx.vars },
+  };
+  const wrong: LearningEvent = { type: "ANSWER_SUBMITTED", correct: false, misconceptionId: "swapped" };
+  const hintRungs = (actions: TutorAction[]) => actions.flatMap((a) => (a.type === "REVEAL_HINT" ? [a.rung] : []));
+
+  it("the first Hint after a diagnosis is not the generic nudge", () => {
+    const r = run([wrong, { type: "HINT_REQUESTED" }], initialTutorState, dctx);
+    expect(hintRungs(r.actions)).toEqual([3]);
+  });
+
+  it("the diagnosis is recorded and re-sent with the hint, so it stays visible", () => {
+    const r = run([wrong, { type: "HINT_REQUESTED" }], initialTutorState, dctx);
+    expect(r.state.diagnosis?.messageKey).toBe("div.swapped");
+    expect(r.actions.filter((a) => a.type === "DIAGNOSIS")).toHaveLength(2);
+  });
+
+  it("\"I am stuck\" after a diagnosis also starts above the generic nudge", () => {
+    const r = run([wrong, { type: "STUCK_REQUESTED" }], initialTutorState, dctx);
+    expect(hintRungs(r.actions)).toEqual([3]);
+  });
+
+  it("without a diagnosis the ladder starts at the generic nudge as before", () => {
+    const r = run([{ type: "ANSWER_SUBMITTED", correct: false }, { type: "HINT_REQUESTED" }], initialTutorState, dctx);
+    expect(hintRungs(r.actions)).toEqual([2]);
+  });
+
+  it("the diagnosis is cleared when the step completes", () => {
+    const r = run([wrong, { type: "STEP_COMPLETED" }], initialTutorState, dctx);
+    expect(r.state.diagnosis).toBeUndefined();
+  });
+
+  it("a ladder with nothing above the nudge still gives the nudge, never 'hints exhausted'", () => {
+    const only: ActivityContext = { ...dctx, hints: [{ rung: 2, text: "Not yet." }] };
+    const r = run([wrong, { type: "HINT_REQUESTED" }], initialTutorState, only);
+    expect(hintRungs(r.actions)).toEqual([2]);
+  });
+});

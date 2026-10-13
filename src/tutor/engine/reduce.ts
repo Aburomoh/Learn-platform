@@ -57,8 +57,10 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         s.expression = "concern";
         express("concern");
         const key = event.misconceptionId && misconceptionKey(ctx, event.misconceptionId);
-        if (key) say(key, event.vars);
-        else say(genericWrongKey(ctx, event, "wrong.first"), event.vars);
+        if (key) {
+          say(key, event.vars);
+          diagnose(s, out);
+        } else say(genericWrongKey(ctx, event, "wrong.first"), event.vars);
         out.push({ type: "REQUEST_RETRY" });
         break;
       }
@@ -78,8 +80,10 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       s.expression = "reassuring";
       express("reassuring");
       const key = event.misconceptionId && misconceptionKey(ctx, event.misconceptionId);
-      if (key) say(key, event.vars);
-      else say(genericWrongKey(ctx, event, "wrong.again"), event.vars);
+      if (key) {
+        say(key, event.vars);
+        diagnose(s, out);
+      } else say(genericWrongKey(ctx, event, "wrong.again"), event.vars);
       const h = nextHint(s, ctx);
       if (h) {
         grant(s, h.rung, out, h.text, ctx);
@@ -94,7 +98,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       // The ladder restarts for the next step; remember that help was used on this variant.
       // A correct step straight after Explain Slowly is the explanation clicking (#663): aha, then encouraging as usual.
       const clicked = s.afterExplanation;
-      s = { ...s, stage: "await_answer", attempts: 0, engaged: false, idlePrompted: false, afterExplanation: false, hintsEverUsed: s.hintsEverUsed || s.hintLevel > 0, hintLevel: 0, grantedRungs: [], lastMisconception: undefined, expression: clicked ? "aha" : "encouraging" };
+      s = { ...s, stage: "await_answer", attempts: 0, engaged: false, idlePrompted: false, afterExplanation: false, hintsEverUsed: s.hintsEverUsed || s.hintLevel > 0, hintLevel: 0, grantedRungs: [], lastMisconception: undefined, diagnosis: undefined, expression: clicked ? "aha" : "encouraging" };
       express(s.expression);
       if (ctx.reactions?.stepNext) sayText("step.next", ctx.reactions.stepNext);
       else say(stepNextKey(ctx));
@@ -221,7 +225,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         express("encouraging");
         say("retry.variant");
       } else {
-        s = { ...s, stage: "await_answer", explanationStep: 0, idlePrompted: false };
+        s = { ...s, stage: "await_answer", explanationStep: 0, idlePrompted: false, diagnosis: undefined };
         say("retry.same");
       }
       out.push({ type: "RESET_INTERACTION" });
@@ -307,6 +311,14 @@ function reflex(sinceStepMs: number | undefined): boolean {
   return sinceStepMs !== undefined && sinceStepMs < REFLEX_GUARD_MS;
 }
 
+/** Remember the named misconception so help builds on it (#700) and tell the view it stands on the step. */
+function diagnose(s: TutorState, out: TutorAction[]) {
+  const said = out[out.length - 1];
+  if (said?.type !== "SAY") return;
+  s.diagnosis = { messageKey: said.messageKey, text: said.text, template: said.template, vars: said.vars };
+  out.push({ type: "DIAGNOSIS", ...s.diagnosis });
+}
+
 function grant(s: TutorState, rung: number, out: TutorAction[], template: string, ctx: ActivityContext) {
   // "I am stuck" can grant a lower rung after a higher one (a wrong check granted 3): the level stays the highest granted
   s.hintLevel = Math.max(s.hintLevel, rung);
@@ -314,6 +326,8 @@ function grant(s: TutorState, rung: number, out: TutorAction[], template: string
   const text = fill(template, ctx.vars);
   out.push({ type: "REVEAL_HINT", rung, text, template, vars: ctx.vars });
   out.push({ type: "SAY", messageKey: `hint.rung-${rung}`, text, template, vars: ctx.vars });
+  // the diagnosis stays on the step (#700): the view keeps it as the first card, the hint is the next one
+  if (s.diagnosis) out.push({ type: "DIAGNOSIS", ...s.diagnosis });
 }
 
 /** Pointer targets may name the current step's element, e.g. "gate-{gateId}"; filled here. */
