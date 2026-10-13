@@ -1,13 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import type { Activity } from "@/content/schema";
+import type { Activity, Topic } from "@/content/schema";
 import { Notation } from "@/interactions/shared/Notation";
 import { PrimaryAction } from "@/shell/r1/PrimaryAction";
 import { UiText, useUiText } from "@/shell/r1/uiText";
 import { messageTemplate } from "@/tutor/messages";
 import type { PrimaryAction as NextAction } from "@/shell/primaryAction";
 import styles from "./Stage.module.css";
+
+/**
+ * The objectives a practice can vouch for (#713): only those its questions carry, each once, in the
+ * topic's order. A student who entered one practice directly is never told they can do the rest.
+ */
+export function practiceObjectives(topic: Pick<Topic, "objectives">, activity: Pick<Activity, "questions">): string[] {
+  const ids = new Set(activity.questions.map((q) => q.objectiveId));
+  return topic.objectives.filter((o) => ids.has(o.id)).map((o) => o.text);
+}
 
 export interface ActivitySummaryProps {
   activity: Activity;
