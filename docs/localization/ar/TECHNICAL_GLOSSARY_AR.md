@@ -8,6 +8,7 @@ Status: **complete working classification for owner/reviewer sign-off**. English
 - Keep Western digits, equations, Boolean symbols, signal labels, variable names, register labels and data values unchanged.
 - Terms in **English only** remain LTR-isolated inside Arabic prose and are not given an Arabic substitute.
 - Acronyms remain in English even where an Arabic explanation is provided elsewhere.
+- **No Arabic ending attached to an English term** (owner, 2026-10-13, #697). A dual «ين/ان», a plural, a tanween or a possessive suffix is never written straight after a Latin word: «Bitاً» renders broken (the tanween lands on the Latin letter and the alef joins the next word). Keep the English term bare and let the Arabic word beside it carry the agreement: «Bit واحدًا», «اثنين من الـ Inputs», «الـ Bits». Two English terms never meet across a full stop either: put an Arabic word between them (#701). `npm run l10n:drift` lists the strings that still break this rule until the list is empty.
 
 ## English + Arabic
 
