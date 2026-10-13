@@ -74196,7 +74196,7 @@
     "occurrences": 1,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "كل المقررات"
+    "arabic": "المقررات"
   },
   {
     "id": "catalog.ui.nav.courses-moved",
@@ -74358,7 +74358,7 @@
     "slots": [
       "{n}"
     ],
-    "arabic": "أخرى: {n}"
+    "arabic": "+{n}"
   },
   {
     "id": "catalog.ui.kind.base-to-decimal",
@@ -74633,7 +74633,7 @@
       "{attempts}",
       "{hints}"
     ],
-    "arabic": "{activity}. {challenges}، {attempts}، {hints}."
+    "arabic": "{activity} · {challenges} · {attempts} · {hints}"
   },
   {
     "id": "catalog.ui.summary.challenges.one",
@@ -74718,7 +74718,7 @@
     "slots": [
       "{n}"
     ],
-    "arabic": "تحديات احتاجت إلى تلميحات: {n}"
+    "arabic": "بمساعدة التلميحات: {n}"
   },
   {
     "id": "catalog.ui.summary.hints.other",
@@ -74735,7 +74735,7 @@
     "slots": [
       "{n}"
     ],
-    "arabic": "تحديات احتاجت إلى تلميحات: {n}"
+    "arabic": "بمساعدة التلميحات: {n}"
   },
   {
     "id": "catalog.ui.numeric.decimal",
