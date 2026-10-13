@@ -12,7 +12,8 @@ import { TutorCard } from "@/tutor/ui/TutorCard";
 import { product } from "../../../config/product";
 import { courseAction, type PrimaryAction as NextAction } from "../primaryAction";
 import { PageHeading } from "./PageHeading";
-import { PrimaryAction, effortCue } from "./PrimaryAction";
+import { PrimaryAction, effortLine } from "./PrimaryAction";
+import { LineText, RowActionLink, UiText, type UiLine } from "./uiText";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
 
@@ -34,10 +35,16 @@ export function pickCourse(courses: Course[], progressOf: (course: Course) => Of
   return inProgress[0] ?? all[0];
 }
 
-/** "Challenge 2 of 4 · about 5 min left": the share of the authored minutes still ahead, never tracked time. */
-export function remainingCue(done: number, total: number, minutes: number): string {
+/** "Challenge 2 of 4 · about 5 min left": the share of the authored minutes still ahead, never tracked time (the catalogue line, #710). */
+export function remainingLine(done: number, total: number, minutes: number): UiLine {
   const left = Math.max(1, Math.round((minutes * (total - done)) / total));
-  return `Challenge ${done + 1} of ${total} · about ${left} min left`;
+  return { key: "ui.effort.remaining", vars: { next: done + 1, total, left } };
+}
+
+/** The English of `remainingLine`, for tests. */
+export function remainingCue(done: number, total: number, minutes: number): string {
+  const line = remainingLine(done, total, minutes);
+  return resolveMessage(line.key, line.vars);
 }
 
 /** A course row's own action (#675): what the course page's button would do, named after its practice (the resolver's label, #673). */
@@ -93,11 +100,13 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
             primary={action.primary}
             secondary={action.secondary}
             effort={
-              finishedAll
-                ? "Completed. You can review any topic."
-                : action.kind === "continue"
-                  ? remainingCue(Math.min(done.length, activity.questions.length - 1), activity.questions.length, activity.minutes)
-                  : effortCue(activity.questions.length, activity.minutes)
+              finishedAll ? (
+                <UiText k="ui.effort.completed-all" />
+              ) : action.kind === "continue" ? (
+                <LineText line={remainingLine(Math.min(done.length, activity.questions.length - 1), activity.questions.length, activity.minutes)} />
+              ) : (
+                <LineText line={effortLine(activity.questions.length, activity.minutes)} />
+              )
             }
           />
         </div>
@@ -136,9 +145,7 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
                   </p>
                 </div>
                 <div className={styles.rowActions}>
-                  <Link href={own.primary.href} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`${rowActionLabel(own)}: ${c.title}`}>
-                    {rowActionLabel(own)} <span aria-hidden="true">→</span>
-                  </Link>
+                  <RowActionLink link={own.primary} title={c.title} className={`${styles.quiet} ${styles.rowAction}`} />
                   <Link href={`/courses/${c.id}/`} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`Open course: ${c.title}`}>
                     Open course <span aria-hidden="true">→</span>
                   </Link>
