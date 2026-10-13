@@ -2,7 +2,7 @@ export type { LearningEvent } from "./engine/events";
 export type { TutorAction, Expression } from "./engine/actions";
 export { EXPRESSIONS } from "./engine/actions";
 export type { TutorState, TutorStage, ActivityContext } from "./engine/state";
-export { initialTutorState, canRequestScaffold, nextHint, HESITATION_SECONDS } from "./engine/state";
+export { initialTutorState, canRequestScaffold, legacyWalkthroughLosesWork, lowestUngrantedHint, nextHint, IDLE_SECONDS, HESITATION_SECONDS, REFLEX_GUARD_MS } from "./engine/state";
 export { reduce, type ReduceResult } from "./engine/reduce";
 export { resolveMessage, hasMessage, messageKeys, messageTemplate, pluralKey, resolvePlural, untranslatedKeys, LOCALES, type MessageKey } from "./messages";
 export { gateWording } from "./gateVars";

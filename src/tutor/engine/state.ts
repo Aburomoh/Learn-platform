@@ -16,8 +16,13 @@ export interface TutorState {
   /** Index of the current Explain Slowly step while `stage === "explaining"`. */
   explanationStep: number;
   lastMisconception?: string;
-  /** One gentle prompt per attempt cycle. */
-  hesitationPrompted: boolean;
+  /**
+   * The student has engaged with the current step: a first edit, or "I am stuck" (#690, §2.1). A
+   * Check is engagement too, and shows as `attempts > 0`. Cleared when the step completes.
+   */
+  engaged: boolean;
+  /** One quiet idle prompt per attempt cycle. */
+  idlePrompted: boolean;
   /** Explain Slowly has just finished and no answer has been given since: the first correct one is an `aha` (#663). */
   afterExplanation: boolean;
   expression: Expression;
@@ -38,9 +43,16 @@ export interface ActivityContext {
   kind?: string;
   /** The question has another variant to retry on (new numbers). */
   hasOtherVariant?: boolean;
+  /** Index of the current step of a multi-step question (0 for the first step and for single-answer kinds). */
+  stepIndex?: number;
 }
 
-export const HESITATION_SECONDS = 45;
+/** Idle time that produces the quiet prompt (it opens nothing, #690). */
+export const IDLE_SECONDS = 45;
+/** @deprecated Use `IDLE_SECONDS`. */
+export const HESITATION_SECONDS = IDLE_SECONDS;
+/** A step shown less than this long ago ignores Hint and "I am stuck" taps, with no message (reflex guard, #690 H5). */
+export const REFLEX_GUARD_MS = 5000;
 
 export const initialTutorState: TutorState = {
   stage: "await_answer",
@@ -49,14 +61,33 @@ export const initialTutorState: TutorState = {
   grantedRungs: [],
   hintsEverUsed: false,
   explanationStep: 0,
-  hesitationPrompted: false,
+  engaged: false,
+  idlePrompted: false,
   afterExplanation: false,
   expression: "neutral",
 };
 
-/** Pedagogy gate: scaffolds open after an attempt or after visible hesitation. */
+/**
+ * Pedagogy gate for hints (#690, §2.2): a hint opens once the student has engaged with the step, by a
+ * first edit, a Check, or "I am stuck". Not after all fields are filled and not after a timer.
+ * Explain Slowly is not gated (§2.3).
+ */
 export function canRequestScaffold(s: TutorState): boolean {
-  return s.stage !== "complete" && s.stage !== "explaining" && (s.attempts > 0 || s.hesitationPrompted);
+  return s.stage !== "complete" && s.stage !== "explaining" && (s.attempts > 0 || s.engaged);
+}
+
+/**
+ * Interim (#690, §2.6): a legacy walkthrough walks the live numbers, so afterwards the question
+ * restarts with new numbers and at step 0. On a multi-step question past its first step that loses
+ * work, so the runner asks once before opening it. Not needed at step 0 or on single-answer kinds.
+ */
+export function legacyWalkthroughLosesWork(ctx: Pick<ActivityContext, "stepIndex">): boolean {
+  return (ctx.stepIndex ?? 0) > 0;
+}
+
+/** The lowest rung of this step's ladder not yet granted (rung 2 is usually still free after a wrong check granted 3). */
+export function lowestUngrantedHint(s: TutorState, ctx: ActivityContext): Hint | undefined {
+  return [...ctx.hints].sort((a, b) => a.rung - b.rung).find((h) => !s.grantedRungs.includes(h.rung));
 }
 
 export function nextHint(s: TutorState, ctx: ActivityContext): Hint | undefined {

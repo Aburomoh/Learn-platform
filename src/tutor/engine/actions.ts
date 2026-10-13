@@ -35,6 +35,10 @@ export type TutorAction =
   | { type: "ADVANCE_EXPLANATION"; step: number }
   | { type: "RESET_INTERACTION" }
   | { type: "REQUEST_RETRY" }
+  /** After "I am stuck": the two choices the tutor line ends with, "Show a hint" and "Explain slowly" (#690, §2.4 S2). */
+  | { type: "OFFER_HELP"; options: ("hint" | "explain-slowly")[] }
+  /** A legacy walkthrough restarts the question: ask once before it opens (#690, §2.6). The runner re-sends the request with `confirmed`. */
+  | { type: "CONFIRM_RESTART" }
   /** Move to another variant of the same question (new numbers), e.g. after Explain Slowly. */
   | { type: "SWITCH_VARIANT" }
   /** A step was completed: clear pointers and step-level hints, keep the question open. */

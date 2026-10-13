@@ -17,11 +17,14 @@ any explanation. Never reveal the solution after one wrong attempt.
 8. Guided explanation
 9. Full explanation (when appropriate)
 
-The tutor engine moves down the ladder based on attempts, hesitation, hint requests and known
-misconceptions (`TUTOR_ENGINE.md`). Rungs may be skipped when a misconception is recognised.
+The tutor engine moves down the ladder based on attempts, engagement, hint requests and known
+misconceptions (`TUTOR_ENGINE.md`). A hint opens once the student has engaged with the step (a first edit, a
+Check, or "I am stuck"); never after a timer and never only after all fields are filled. "Try once first" stays. Rungs may be skipped when a misconception is recognised.
 
 ## Explain Slowly
-Available on demand wherever appropriate. Genuinely slow: short explanation → interaction →
+Instruction, not a hint: available whenever a question is open, never gated by attempts, engagement or time
+(owner, #684). Until a step has a lesson, it opens today's per-variant walkthrough, which restarts the question
+afterwards with new numbers (a warning comes first on a later step of a multi-step question). Genuinely slow: short explanation → interaction →
 short explanation → visual change → question → response → continuation. Each step carries one
 idea and, where possible, one `PredictionBeforeReveal` question. No walls of text.
 

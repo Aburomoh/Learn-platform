@@ -6,7 +6,7 @@
 import { fill } from "@/content/template";
 import type { LearningEvent } from "./events";
 import type { Expression, TutorAction } from "./actions";
-import { canRequestScaffold, HESITATION_SECONDS, initialTutorState, nextHint, type ActivityContext, type TutorState } from "./state";
+import { canRequestScaffold, IDLE_SECONDS, initialTutorState, legacyWalkthroughLosesWork, lowestUngrantedHint, nextHint, REFLEX_GUARD_MS, type ActivityContext, type TutorState } from "./state";
 import { hasMessage, messageTemplate, resolveMessage } from "../messages";
 
 export interface ReduceResult {
@@ -35,7 +35,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
     case "ANSWER_SUBMITTED": {
       if (s.stage === "complete" || s.stage === "explaining") break;
       s.attempts += 1;
-      s.hesitationPrompted = false;
+      s.idlePrompted = false;
       const justExplained = s.afterExplanation;
       s.afterExplanation = false;
       if (event.correct) {
@@ -94,7 +94,7 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       // The ladder restarts for the next step; remember that help was used on this variant.
       // A correct step straight after Explain Slowly is the explanation clicking (#663): aha, then encouraging as usual.
       const clicked = s.afterExplanation;
-      s = { ...s, stage: "await_answer", attempts: 0, hesitationPrompted: false, afterExplanation: false, hintsEverUsed: s.hintsEverUsed || s.hintLevel > 0, hintLevel: 0, grantedRungs: [], lastMisconception: undefined, expression: clicked ? "aha" : "encouraging" };
+      s = { ...s, stage: "await_answer", attempts: 0, engaged: false, idlePrompted: false, afterExplanation: false, hintsEverUsed: s.hintsEverUsed || s.hintLevel > 0, hintLevel: 0, grantedRungs: [], lastMisconception: undefined, expression: clicked ? "aha" : "encouraging" };
       express(s.expression);
       if (ctx.reactions?.stepNext) sayText("step.next", ctx.reactions.stepNext);
       else say(stepNextKey(ctx));
@@ -103,8 +103,10 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
     }
 
     case "HINT_REQUESTED": {
+      if (reflex(event.sinceStepMs)) break;
       if (!canRequestScaffold(s)) {
-        if (s.stage === "await_answer") say("hint.try-first");
+        // "Try once first" stays (#690, H1), with the way out: say you are stuck.
+        if (s.stage === "await_answer") say("hint.try-first-or-stuck");
         break;
       }
       const h = nextHint(s, ctx);
@@ -121,9 +123,41 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
       break;
     }
 
+    case "ENGAGED": {
+      if (s.stage === "complete" || s.stage === "explaining") break;
+      s.engaged = true;
+      break;
+    }
+
+    case "STUCK_REQUESTED": {
+      if (reflex(event.sinceStepMs)) break;
+      if (s.stage === "complete" || s.stage === "explaining") break;
+      s.engaged = true;
+      // The lowest rung not yet granted, never skipping one; it is recorded like any hint (S2, S3).
+      const h = lowestUngrantedHint(s, ctx);
+      say("stuck.start");
+      if (h) {
+        s.expression = h.rung >= 6 ? "explaining" : h.rung === 4 ? "thinking" : "neutral";
+        express(s.expression);
+        grant(s, h.rung, out, h.text, ctx);
+        pointAt(h, out, ctx);
+      } else {
+        s.expression = "encouraging";
+        express("encouraging");
+        say("hints.exhausted");
+      }
+      say("stuck.offer");
+      out.push({ type: "OFFER_HELP", options: h ? ["hint", "explain-slowly"] : ["explain-slowly"] });
+      break;
+    }
+
     case "EXPLAIN_SLOWLY_REQUESTED": {
-      if (!canRequestScaffold(s)) {
-        if (s.stage === "await_answer") say("hint.try-first");
+      // Instruction, not a hint: never gated by attempts, engagement or time (#690, E1). Only a
+      // finished question or a walkthrough already open ignores it.
+      if (s.stage === "complete" || s.stage === "explaining") break;
+      if (legacyWalkthroughLosesWork(ctx) && !event.confirmed) {
+        say("explain.confirm-restart");
+        out.push({ type: "CONFIRM_RESTART" });
         break;
       }
       s.stage = "explaining";
@@ -187,18 +221,31 @@ export function reduce(state: TutorState, event: LearningEvent, ctx: ActivityCon
         express("encouraging");
         say("retry.variant");
       } else {
-        s = { ...s, stage: "await_answer", explanationStep: 0, hesitationPrompted: false };
+        s = { ...s, stage: "await_answer", explanationStep: 0, idlePrompted: false };
         say("retry.same");
       }
       out.push({ type: "RESET_INTERACTION" });
       break;
     }
 
+    case "IDLE": {
+      // A quiet line only: idle never opens a hint (#690, H2). Every input resets the runner's clock.
+      if (s.stage === "complete" || s.stage === "explaining" || s.idlePrompted) break;
+      if (event.seconds < IDLE_SECONDS) break;
+      s.idlePrompted = true;
+      // curious is retired (#663): idle reassures
+      s.expression = "reassuring";
+      express("reassuring");
+      say("idle.quiet");
+      break;
+    }
+
     case "HESITATION": {
-      if (s.stage === "complete" || s.stage === "explaining" || s.hesitationPrompted) break;
-      if (event.seconds < HESITATION_SECONDS) break;
-      s.hesitationPrompted = true;
-      // curious is retired (#663): hesitation reassures
+      // Legacy (see the event's note): the quiet line, and the old gate-opening until the runner sends ENGAGED.
+      if (s.stage === "complete" || s.stage === "explaining" || s.idlePrompted) break;
+      if (event.seconds < IDLE_SECONDS) break;
+      s.idlePrompted = true;
+      s.engaged = true;
       s.expression = "reassuring";
       express("reassuring");
       say("hesitation");
@@ -255,8 +302,14 @@ function misconceptionKey(ctx: ActivityContext, id: string): string | undefined 
   return key;
 }
 
+/** A step that appeared a moment ago ignores a Hint or "I am stuck" tap: a reflex double tap, not a request. */
+function reflex(sinceStepMs: number | undefined): boolean {
+  return sinceStepMs !== undefined && sinceStepMs < REFLEX_GUARD_MS;
+}
+
 function grant(s: TutorState, rung: number, out: TutorAction[], template: string, ctx: ActivityContext) {
-  s.hintLevel = rung;
+  // "I am stuck" can grant a lower rung after a higher one (a wrong check granted 3): the level stays the highest granted
+  s.hintLevel = Math.max(s.hintLevel, rung);
   s.grantedRungs = [...s.grantedRungs, rung];
   const text = fill(template, ctx.vars);
   out.push({ type: "REVEAL_HINT", rung, text, template, vars: ctx.vars });
