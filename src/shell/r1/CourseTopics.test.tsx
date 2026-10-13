@@ -2,8 +2,9 @@ import { afterEach, describe, expect, it } from "vitest";
 import { act, render, screen, within } from "@testing-library/react";
 import { getCourse } from "@/content";
 import { clearLocalData, getProgressStore } from "@/learner";
-import { completeActivity, completeQuestion, startActivity } from "@/learner/progress";
+import { completeActivity, completeQuestion, recordAttempt, skipQuestion, startActivity } from "@/learner/progress";
 import userEvent from "@testing-library/user-event";
+import { courseAction } from "../primaryAction";
 import { ChapterIndex, CourseTopics, chapterStatus, chapterTitle, topicStatus } from "./CourseTopics";
 
 const course = getCourse("ecet111")!;
@@ -25,18 +26,35 @@ describe("topicStatus", () => {
 
   it("not started: the effort cue for the whole topic, from authored values", () => {
     const text = first.activities.length > 1 ? `${first.activities.length} short practices · about ${minutes} min` : `${total} short challenges · about ${minutes} min`;
-    expect(topicStatus(first, { activities: {} })).toEqual({ text, completed: false, started: false });
+    expect(topicStatus(first, { activities: {} })).toMatchObject({ text, completed: false, started: false });
   });
 
   it("in progress: challenges done across the topic", () => {
     const a = first.activities[0];
     const p = completeQuestion(startActivity({ version: 1, offeringId: "x", activities: {}, concepts: {} }, a.id), a.id, a.questions[0].id);
-    expect(topicStatus(first, p)).toEqual({ text: `1 of ${total} challenges done`, completed: false, started: true });
+    expect(topicStatus(first, p)).toMatchObject({ text: `1 of ${total} challenges done`, completed: false, started: true });
+  });
+
+  it("visited only (started, no attempt, nothing done) is not started: the effort cue, as with no record (ADR-0013)", () => {
+    const a = first.activities[0];
+    const visited = startActivity({ version: 1, offeringId: "x", activities: {}, concepts: {} }, a.id);
+    expect(topicStatus(first, visited)).toMatchObject({ completed: false, started: false });
+    expect(topicStatus(first, visited).text).toBe(topicStatus(first, { activities: {} }).text);
+    // one attempt, nothing finished yet: in progress
+    const tried = recordAttempt(visited, { activityId: a.id, questionId: a.questions[0].id, conceptId: "c", correct: false, hintsUsed: 0 });
+    expect(topicStatus(first, tried)).toMatchObject({ text: expect.stringMatching(/^0 of \d+ challenges done/), started: true });
+  });
+
+  it("a skip with no attempt keeps its 'skipped ahead' marker, yet is not in progress: Start, not Continue (Reviewer on #704)", () => {
+    const a = first.activities[0];
+    const skipped = skipQuestion({ version: 1, offeringId: "x", activities: {}, concepts: {} }, a.id, a.questions[0].id);
+    expect(topicStatus(first, skipped)).toMatchObject({ text: `0 of ${first.activities.reduce((n, x) => n + x.questions.length, 0)} challenges done · skipped ahead`, completed: false, started: true });
+    expect(courseAction(course, skipped).kind).toBe("start");
   });
 
   it("completed only when every practice of the topic is", () => {
     const all = Object.fromEntries(first.activities.map((a) => [a.id, { status: "completed" as const, attempts: 1, hintsUsed: 0, independent: true, lastAt: 1 }]));
-    expect(topicStatus(first, { activities: all })).toEqual({ text: "Completed", completed: true, started: true });
+    expect(topicStatus(first, { activities: all })).toMatchObject({ text: "Completed", completed: true, started: true });
   });
 });
 
@@ -90,9 +108,20 @@ describe("CourseTopics", () => {
     expect(document.querySelectorAll("[data-primary-action]")).toHaveLength(1);
   });
 
-  it("a practice in progress makes its topic the next one, with Continue", () => {
+  it("a visited-only practice changes nothing: the first topic keeps the filled Start button (ADR-0013)", () => {
     act(() => {
       store().set((p) => startActivity(p, second.activities[0].id));
+    });
+    render(<CourseTopics course={course} />);
+    const rows = screen.getAllByRole("listitem");
+    expect(rows[0].querySelector("[data-primary-action]")).toHaveTextContent("Start");
+    expect(rows[1].querySelector("[data-primary-action]")).toBeNull();
+  });
+
+  it("a practice in progress makes its topic the next one, with Continue", () => {
+    const a = second.activities[0];
+    act(() => {
+      store().set((p) => recordAttempt(p, { activityId: a.id, questionId: a.questions[0].id, conceptId: "c", correct: false, hintsUsed: 0 }));
     });
     render(<CourseTopics course={course} />);
     const rows = screen.getAllByRole("listitem");
@@ -111,13 +140,16 @@ describe("chapters (#198 §9, #232)", () => {
     expect(chapterStatus(ch1, none)).toMatchObject({ state: "new", text: "Not started" });
     const started = { activities: { [ch1.topics[0].activities[0].id]: { status: "started" as const, attempts: 1, hintsUsed: 0, independent: false, lastAt: 1 } } };
     expect(chapterStatus(ch1, started)).toMatchObject({ state: "progress", text: `In progress · 0 of ${ch1.topics.length} topics done` });
+    // visited only: Not started (ADR-0013)
+    const visited = { activities: { [ch1.topics[0].activities[0].id]: { status: "started" as const, attempts: 0, hintsUsed: 0, independent: false, lastAt: 1 } } };
+    expect(chapterStatus(ch1, visited)).toMatchObject({ state: "new", text: "Not started" });
     expect(chapterStatus(ch1, { activities: done(ch1.topics.slice(0, 1)) })).toMatchObject({ state: "progress", done: 1 });
     expect(chapterStatus(ch1, { activities: done(ch1.topics) })).toMatchObject({ state: "done", text: "Completed" });
   });
 
   it("a comingSoon chapter (no topics) is Not started · Coming soon, never Completed (#562)", () => {
     const soon = { ...ch1, id: "soon", topics: [], comingSoon: true };
-    expect(chapterStatus(soon, none)).toEqual({ state: "new", text: "Not started · Coming soon", done: 0, total: 0 });
+    expect(chapterStatus(soon, none)).toMatchObject({ state: "new", text: "Not started · Coming soon", done: 0, total: 0 });
     expect(chapterStatus(soon, { activities: done(ch1.topics) })).toMatchObject({ state: "new" });
   });
 

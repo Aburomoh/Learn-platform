@@ -2,6 +2,7 @@
 
 import type { Course } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
+import { hasProgress } from "@/learner/progress";
 import { resolveMessage } from "@/tutor/messages";
 import { TutorCard, type TutorCardProps } from "@/tutor/ui/TutorCard";
 import { product } from "../../../config/product";
@@ -22,7 +23,7 @@ export interface CourseTutorProps {
 export function CourseTutor({ course, messageKey = "page.course.intro", size }: CourseTutorProps) {
   const ready = useHydrated();
   const [progress] = useOfferingProgress(course.offeringId);
-  const started = Object.values(progress.activities).some((a) => a.status !== "new");
+  const started = course.modules.some((m) => m.topics.some((t) => t.activities.some((a) => hasProgress(progress.activities[a.id], a))));
   return (
     <TutorCard
       name={product.owner.shortName}

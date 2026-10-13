@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Course } from "@/content/schema";
 import { getProgressStore } from "@/learner";
-import { emptyProgress, type OfferingProgress } from "@/learner/progress";
+import { effectiveDone, effectiveStatus, emptyProgress, hasProgress, type OfferingProgress } from "@/learner/progress";
 // the message catalogue and the card directly, not the tutor barrels: Home must not carry the
 // engine or the kinds' logic (#675 size trim)
 import { resolveMessage } from "@/tutor/messages";
@@ -12,7 +12,12 @@ import { TutorCard } from "@/tutor/ui/TutorCard";
 import { product } from "../../../config/product";
 import { courseAction, type PrimaryAction as NextAction } from "../primaryAction";
 import { PageHeading } from "./PageHeading";
-import { PrimaryAction, effortCue } from "./PrimaryAction";
+import { PrimaryAction, effortLine } from "./PrimaryAction";
+import { LineText, RowActionLink, UiText, useUiText, type UiLine } from "./uiText";
+import { messageTemplate, pluralKey } from "@/tutor/messages";
+import { useArabic } from "@/l10n/arabic";
+import { isArabic } from "@/l10n/bidi";
+import l10n from "@/l10n/l10n.module.css";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
 
@@ -22,7 +27,7 @@ interface Pick {
   action: NextAction;
 }
 
-/** The course to lead with: the one with the most recently touched practice in progress, else the first. */
+/** The course to lead with (ADR-0013 rule 5): the one whose practice in progress has the newest meaningful `lastAt`, else the first. */
 export function pickCourse(courses: Course[], progressOf: (course: Course) => OfferingProgress): Pick {
   const all = courses.map((course) => {
     const progress = progressOf(course);
@@ -34,10 +39,16 @@ export function pickCourse(courses: Course[], progressOf: (course: Course) => Of
   return inProgress[0] ?? all[0];
 }
 
-/** "Challenge 2 of 4 · about 5 min left": the share of the authored minutes still ahead, never tracked time. */
-export function remainingCue(done: number, total: number, minutes: number): string {
+/** "Challenge 2 of 4 · about 5 min left": the share of the authored minutes still ahead, never tracked time (the catalogue line, #710). */
+export function remainingLine(done: number, total: number, minutes: number): UiLine {
   const left = Math.max(1, Math.round((minutes * (total - done)) / total));
-  return `Challenge ${done + 1} of ${total} · about ${left} min left`;
+  return { key: "ui.effort.remaining", vars: { next: done + 1, total, left } };
+}
+
+/** The English of `remainingLine`, for tests. */
+export function remainingCue(done: number, total: number, minutes: number): string {
+  const line = remainingLine(done, total, minutes);
+  return resolveMessage(line.key, line.vars);
 }
 
 /** A course row's own action (#675): what the course page's button would do, named after its practice (the resolver's label, #673). */
@@ -63,16 +74,24 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
   const { topic, activity } = action;
   const chapter = course.modules.find((m) => m.topics.some((t) => t.id === topic.id));
   const record = progress.activities[activity.id];
-  const done = record?.completedQuestions ?? [];
-  const returning = courses.some((c) => Object.values(progressOf(c).activities).some((a) => a.status !== "new"));
+  const done = [...effectiveDone(activity, record).completed];
+  // a visited-only or explained-only record is not "returning" (ADR-0013)
+  const returning = courses.some((c) => {
+    const p = progressOf(c);
+    return c.modules.some((m) => m.topics.some((t) => t.activities.some((a) => hasProgress(p.activities[a.id], a))));
+  });
   const finishedAll = action.kind === "review";
+  const { t } = useUiText();
+  // the course row's counts («المواضيع: 29 · المنجز: 1») read right to left once their Arabic is in (QA on #714)
+  const { translate } = useArabic();
+  const countsArabic = isArabic(translate(messageTemplate("ui.home.topics.other")));
 
   return (
     <div className={`${styles.column} ${styles.bands}`} style={ready ? undefined : { visibility: "hidden" }} aria-busy={!ready} data-home={returning ? "returning" : "first"}>
       {returning ? (
-        <PageHeading eyebrow="Welcome back" title={finishedAll ? "You have finished every topic" : "Pick up where you left off"} />
+        <PageHeading eyebrow={<UiText k="ui.home.welcome-back" />} title={<UiText k={finishedAll ? "ui.home.finished-all" : "ui.home.pick-up"} />} />
       ) : (
-        <PageHeading eyebrow={product.tagline} title="Start here" route={`Practice for ${product.owner.displayName}'s courses. No account needed.`} />
+        <PageHeading eyebrow={product.tagline} title={<UiText k="ui.home.start-here" />} route={<UiText k="ui.home.first-route" vars={{ owner: product.owner.displayName }} />} />
       )}
 
       <section className={styles.panel} aria-labelledby="next-h">
@@ -89,11 +108,13 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
             primary={action.primary}
             secondary={action.secondary}
             effort={
-              finishedAll
-                ? "Completed. You can review any topic."
-                : action.kind === "continue"
-                  ? remainingCue(Math.min(done.length, activity.questions.length - 1), activity.questions.length, activity.minutes)
-                  : effortCue(activity.questions.length, activity.minutes)
+              finishedAll ? (
+                <UiText k="ui.effort.completed-all" />
+              ) : action.kind === "continue" ? (
+                <LineText line={remainingLine(Math.min(done.length, activity.questions.length - 1), activity.questions.length, activity.minutes)} />
+              ) : (
+                <LineText line={effortLine(activity.questions.length, activity.minutes)} />
+              )
             }
           />
         </div>
@@ -110,14 +131,14 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
 
       <section id="courses" className={styles.chapter} aria-labelledby="courses-h">
         <h2 id="courses-h" className={styles.h2}>
-          {courses.length === 1 ? "Your course" : "Your courses"}
+          <UiText k={courses.length === 1 ? "ui.home.your-course" : "ui.home.your-courses"} />
         </h2>
         <ol className={styles.topicList}>
           {courses.map((c) => {
             const topics = c.modules.flatMap((m) => m.topics);
             const p = progressOf(c);
-            const finished = topics.filter((t) => t.activities.every((a) => p.activities[a.id]?.status === "completed")).length;
-            const started = topics.filter((t) => t.activities.some((a) => (p.activities[a.id]?.status ?? "new") !== "new")).length - finished;
+            const finished = topics.filter((t) => t.activities.every((a) => effectiveStatus(a, p.activities[a.id]) === "completed")).length;
+            const started = topics.filter((t) => t.activities.some((a) => hasProgress(p.activities[a.id], a))).length - finished;
             const own = c.id === course.id ? action : courseAction(c, p);
             return (
               <li key={c.id} className={styles.practiceRow} data-course={c.id} data-action={own.kind}>
@@ -126,17 +147,29 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
                   <h3 className={styles.topicTitle}>{c.title}</h3>
                   <p className={styles.topicRoute}>{c.summary}</p>
                   <p className={`${styles.topicStatus} ${styles.statusMuted}`}>
-                    {c.modules.length} chapter{c.modules.length === 1 ? "" : "s"} · {topics.length} topic{topics.length === 1 ? "" : "s"}
-                    {finished > 0 ? ` · ${finished} done` : ""}
-                    {started > 0 ? ` · ${started} started` : ""}
+                    <span dir={countsArabic ? "rtl" : undefined} lang={countsArabic ? "ar" : undefined} className={countsArabic ? `${l10n.ar} ${l10n.inline}` : undefined} data-counts>
+                      <UiText k={pluralKey("ui.home.chapters", c.modules.length, "en")} vars={{ n: c.modules.length }} />
+                      {" · "}
+                      <UiText k={pluralKey("ui.home.topics", topics.length, "en")} vars={{ n: topics.length }} />
+                      {finished > 0 && (
+                        <>
+                          {" · "}
+                          <UiText k="ui.home.done" vars={{ n: finished }} />
+                        </>
+                      )}
+                      {started > 0 && (
+                        <>
+                          {" · "}
+                          <UiText k="ui.home.started" vars={{ n: started }} />
+                        </>
+                      )}
+                    </span>
                   </p>
                 </div>
                 <div className={styles.rowActions}>
-                  <Link href={own.primary.href} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`${rowActionLabel(own)}: ${c.title}`}>
-                    {rowActionLabel(own)} <span aria-hidden="true">→</span>
-                  </Link>
-                  <Link href={`/courses/${c.id}/`} className={`${styles.quiet} ${styles.rowAction}`} aria-label={`Open course: ${c.title}`}>
-                    Open course <span aria-hidden="true">→</span>
+                  <RowActionLink link={own.primary} title={c.title} className={`${styles.quiet} ${styles.rowAction}`} />
+                  <Link href={`/courses/${c.id}/`} className={`${styles.quiet} ${styles.rowAction}`} aria-label={t("ui.home.open-course", { title: c.title })}>
+                    <UiText k="ui.home.open-course-short" /> <span aria-hidden="true">→</span>
                   </Link>
                 </div>
               </li>

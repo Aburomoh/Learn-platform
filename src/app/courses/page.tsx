@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageFrame } from "@/shell/r1/PageFrame";
 import { PageHeading } from "@/shell/r1/PageHeading";
-import { resolveMessage } from "@/tutor/messages";
+import { UiText } from "@/shell/r1/uiText";
 
 export const metadata: Metadata = { title: "All courses" };
 
@@ -16,10 +16,10 @@ export default function CoursesRedirect() {
     <>
       <meta httpEquiv="refresh" content="0; url=/#courses" />
       <PageFrame demo={false}>
-        <PageHeading title={resolveMessage("ui.nav.all-courses")} route={resolveMessage("ui.nav.courses-moved")} />
+        <PageHeading title={<UiText k="ui.nav.all-courses" />} route={<UiText k="ui.nav.courses-moved" />} />
         <p>
           <Link href="/#courses" className="btn btn-primary">
-            {resolveMessage("ui.nav.go-courses")}
+            <UiText k="ui.nav.go-courses" />
           </Link>
         </p>
       </PageFrame>

@@ -7,17 +7,17 @@
  */
 import type { Hint, InteractionSpec, Variant } from "./schema";
 import type { TemplateVars } from "./template";
-import { kinds } from "@/kinds";
+import { isMultiStep, kindLoaders, kindLogic, type RegisteredKind } from "@/kinds";
 import type { StepContract } from "@/kinds/types";
 
-/** Spec kinds that are answered one step at a time. */
-export const MULTI_STEP_KINDS = Object.entries(kinds)
-  .filter(([, logic]) => "steps" in logic)
-  .map(([kind]) => kind) as InteractionSpec["kind"][];
+/** Spec kinds that are answered one step at a time (their logic must be loaded, see `loadAllKinds`). */
+export function multiStepKinds(): InteractionSpec["kind"][] {
+  return (Object.keys(kindLoaders) as RegisteredKind[]).filter(isMultiStep);
+}
 
 /** The kind's step contract (ADR-0007), from the registry; none for single-answer kinds. */
 function contractOf(spec: InteractionSpec): StepContract<InteractionSpec> | undefined {
-  const logic: { steps?: unknown } = kinds[spec.kind];
+  const logic: { steps?: unknown } = kindLogic(spec.kind);
   return logic.steps as StepContract<InteractionSpec> | undefined;
 }
 

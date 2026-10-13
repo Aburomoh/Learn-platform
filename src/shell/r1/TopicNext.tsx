@@ -1,13 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import type { Course, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
-import { kindWords } from "../kindWords";
-import { practiceAction, topicAction } from "../primaryAction";
-import { resolveMessage } from "@/tutor/messages";
+import { effectiveDone, inProgress } from "@/learner/progress";
+import { topicAction } from "../primaryAction";
 import { ChallengeSteps, stepsFrom } from "./ChallengeSteps";
-import { PrimaryAction, effortCue } from "./PrimaryAction";
+import { PrimaryAction, effortLine } from "./PrimaryAction";
+import { LineText, UiText, useUiText } from "./uiText";
+import { PracticeRows } from "./TopicNavigator";
+import { pluralKey } from "@/tutor/messages";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
 
@@ -25,65 +26,38 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
   const action = topicAction(course, topic, progress);
   const { activity } = action;
   const record = progress.activities[activity.id];
-  const done = record?.status === "completed" ? activity.questions.map((q) => q.id) : (record?.completedQuestions ?? []);
+  // a finished practice that gained questions shows them open (§6.1 rule 4)
+  const done = [...effectiveDone(activity, record).completed];
   const finished = action.kind === "next-topic" || action.kind === "review";
   const several = topic.activities.length > 1;
+  const { t } = useUiText();
 
   return (
     <div className={styles.next} style={ready ? undefined : { visibility: "hidden" }} aria-busy={!ready} data-action={action.kind}>
       <PrimaryAction
         primary={action.primary}
         secondary={action.secondary}
-        caption={action.kind !== "review" ? resolveMessage("ui.action.recommended") : undefined}
-        effort={finished ? "Completed. You can review it any time." : several ? `About ${activity.minutes} min` : effortCue(activity.questions.length, activity.minutes)}
+        caption={action.kind !== "review" ? <UiText k="ui.action.recommended" /> : undefined}
+        effort={finished ? <UiText k="ui.effort.completed-topic" /> : several ? <UiText k="ui.effort.minutes-lead" vars={{ n: activity.minutes }} /> : <LineText line={effortLine(activity.questions.length, activity.minutes)} />}
       />
       {!finished && (
         <div className={styles.stepsBlock}>
           {/* with several practices, say which one the steps belong to */}
           {several && (
             <p className={styles.stepsLabel}>
-              {activity.title} · {activity.questions.length} short challenge{activity.questions.length === 1 ? "" : "s"}
+              <UiText k={pluralKey("ui.topic.practice-challenges", activity.questions.length, "en")} vars={{ title: activity.title, n: activity.questions.length }} />
             </p>
           )}
-          <ChallengeSteps steps={stepsFrom(activity.questions, done, record?.status === "started")} label={several ? `Challenges of ${activity.title}` : "Challenges"} />
+          <ChallengeSteps steps={stepsFrom(activity.questions, done, inProgress(record, activity))} label={several ? t("ui.topic.challenges-of", { title: activity.title }) : t("ui.topic.challenges")} />
         </div>
       )}
 
       {topic.activities.length > 1 && (
-        <section className={styles.practices} aria-labelledby="practices-h">
+        <section id="practices" className={styles.practices} aria-labelledby="practices-h">
           <h2 id="practices-h" className={styles.h2}>
-            Practices in this topic
+            <UiText k="ui.topic.practices-in" />
           </h2>
-          <ol className={styles.practiceList}>
-            {topic.activities.map((a) => {
-              const own = practiceAction(course, topic, a, progress);
-              const count = progress.activities[a.id]?.completedQuestions?.length ?? 0;
-              // two compact lines (epic #670, QW5 + owner refinement 1): the name, then its status, kind in
-              // plain words and the step labels, so the student knows what a practice is before entering
-              const status = own.kind === "review" ? "Completed" : own.kind === "continue" ? `${count} of ${a.questions.length} challenges done` : `about ${a.minutes} min`;
-              const labels = a.questions.map((q) => q.label).filter(Boolean);
-              // fewer than two labels: the challenge count alone (the minutes are already in `status`)
-              const steps = labels.length > 1 ? labels.join(" → ") : `${a.questions.length} short challenge${a.questions.length === 1 ? "" : "s"}`;
-              const meta = [status, kindWords(a), steps].filter(Boolean).join(" · ");
-              // The practice the page button is about has no second button: the primary is its button.
-              const upNext = !finished && a.id === activity.id;
-              return (
-                <li key={a.id} className={styles.practiceRow} data-status={own.kind} data-up-next={upNext || undefined} data-kinds={kindWords(a)}>
-                  <div className={styles.practiceText}>
-                    <h3 className={styles.topicTitle}>{a.title}</h3>
-                    <p className={`${styles.practiceMeta} ${own.kind === "review" ? styles.topicDone : ""}`}>{meta}</p>
-                  </div>
-                  {upNext ? (
-                    <span className={styles.upNext}>{own.kind === "continue" ? "In progress" : "Up next"}</span>
-                  ) : (
-                    <Link href={own.link.href} className={`${styles.quiet} ${styles.rowAction} ${styles.rowActionWrap}`}>
-                      {own.link.label} <span aria-hidden="true">→</span>
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
-          </ol>
+          <PracticeRows course={course} topic={topic} progress={progress} upNextId={finished ? undefined : activity.id} />
         </section>
       )}
     </div>

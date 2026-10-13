@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { courses, getActivity, listActivityParams } from "./index";
 import { additionResult, additionSteps, additionStepVars, bitsToValue, complementBits, divisionSteps, evaluateCircuit, gateOrder, grade, groupBits, valueToBits } from "./grade";
-import { hintsForStep, MULTI_STEP_KINDS, stepCount, stepTag, stepVars } from "./steps";
+import { hintsForStep, multiStepKinds, stepCount, stepTag, stepVars } from "./steps";
 import { contextFromVariant } from "@/tutor";
 import { InteractionSpec, MultipleChoiceSpec, NumericSpec, VariantSchema } from "./schema";
 import { addition1101 } from "./fixtures/columnAddition";
@@ -10,6 +10,9 @@ import { hex26, octal88 } from "./fixtures/bitGrouping";
 import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue29, placeValue45 } from "./fixtures/placeValue45";
+
+// every kind's logic is loaded in vitest.setup.ts (#683)
+const MULTI_STEP_KINDS = multiStepKinds();
 import { resolveMessage } from "@/tutor/messages";
 import { equivalent, formatCube, isPOS, isSOP, literalCount, mintermsOf, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
@@ -525,7 +528,7 @@ describe("content registry", () => {
   it("flip-flop equations (#297): each question's minterms are its table's 1-rows; next states by the equation", () => {
     const x = getActivity(COURSE, "flip-flops", "flip-flop-equations")!.activity;
     const mts = x.questions.slice(0, 3).map((q) => (q.variants[0].spec.kind === "expression" ? q.variants[0].spec.minterms : []));
-    expect(mts).toEqual([[1, 4, 5, 6], [1, 2], [2, 3]]); // JK, T, D (pack ch5-parti §3)
+    expect(mts).toEqual([[2, 3], [1, 2], [1, 4, 5, 6]]); // D, T, JK: simplest first (#692; pack ch5-parti §3)
     const picked = x.questions[3].variants.map(({ spec }) => (spec.kind === "multiple-choice" ? spec.options.find((o) => o.id === spec.correctOptionId)!.text : ""));
     expect(picked).toEqual(["1", "1", "0"]);
     // every JK set catches the swapped equation (JQ + KQ′): it gives the other answer
@@ -1029,6 +1032,25 @@ describe("authored truth is internally consistent", () => {
 
   it("every practice stands alone: no prompt points back to an earlier circuit or design (#568)", () => {
     for (const { path, variant } of allVariants()) expect(variant.prompt, path).not.toMatch(/\bthe same (circuit|design|diagram|table|map|figure)/i);
+  });
+
+  it("a practice's title and summary never name numbers that a variant switch replaces (#693)", () => {
+    // After Explain Slowly the practice goes on with another number set; a heading such as "Exercise: 15 − 4" would then mislead.
+    // A number in the title is fine only when every variant keeps it (a fixed range such as 0 to 15, a case number, a quantum).
+    const found: string[] = [];
+    for (const course of courses)
+      for (const m of course.modules)
+        for (const t of m.topics)
+          for (const a of t.activities) {
+            // a question's variants are the number sets (#141); a number is "in" a variant when its prompt or its vars carry it
+            const has = (v: Variant, n: string) => new RegExp(`\\b${n}\\b`).test(v.prompt) || Object.values(v.vars ?? {}).some((x) => String(x) === n);
+            const heading = `${a.title} ${a.summary}`;
+            for (const n of heading.match(/\b\d{2,}\b/g) ?? []) {
+              const replaced = a.questions.some((q) => q.variants.some((v) => has(v, n)) && !q.variants.every((v) => has(v, n)));
+              if (replaced) found.push(`${t.id}/${a.id}: "${a.title}" names ${n}, which a variant switch replaces`);
+            }
+          }
+    expect(found).toEqual([]);
   });
 
   it("a prompt with a back-reference cue (now, next, earlier, again, the same) names the quantity it works on (#672)", () => {

@@ -7,14 +7,18 @@ import { HintReveal } from "@/interactions/HintReveal/HintReveal";
 import { canRequestScaffold } from "@/tutor";
 import { resolveMessage } from "@/tutor";
 import { TutorPanel, TutorPosePreload, useFocusEffects } from "@/tutor/ui";
-import { useOfferingProgress, usePrefs, getProgressStore, startActivity, recordAttempt, completeActivity, completeQuestion, markExplained, skipQuestion, skippedAhead, flushPendingWrites } from "@/learner";
+import { effectiveDone, effectiveStatus } from "@/learner/progress";
+import { useOfferingProgress, usePrefs, getProgressStore, recordAttempt, completeActivity, completeQuestion, markExplained, skipQuestion, skippedAhead, flushPendingWrites } from "@/learner";
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
-import { ActivitySummary } from "./ActivitySummary";
+import { UiText, useUiText } from "@/shell/r1/uiText";
+import { ReturnOffer } from "./ReturnOffer";
+import { ActivitySummary, practiceObjectives } from "./ActivitySummary";
+import { replayPreHydrationInputs } from "./preHydration";
 import { KindPrefetch } from "@/kinds/ui";
 import { useHydrated } from "@/shell/useHydrated";
 import { RESUME_ATTR } from "./resumeMarker";
-import { ChallengeSteps, type ChallengeStep } from "@/shell/r1";
+import { ChallengeSteps, type ChallengeStep } from "@/shell/r1/ChallengeSteps";
 import { practiceHref, skipOffer, topicAction } from "@/shell/primaryAction";
 import { SkipMenu } from "./SkipMenu";
 import styles from "./Stage.module.css";
@@ -36,8 +40,8 @@ function isReview(): boolean {
 /** Where this visit starts: Continue resumes, Review or a finished practice starts at challenge 1. */
 function startState(offeringId: string, activity: Activity): RunnerState {
   const record = getProgressStore(offeringId).get().activities[activity.id];
-  if (isReview() || !record || record.status === "completed") return initialRunnerState(activity);
-  return resumeRunnerState(activity, record.completedQuestions ?? []);
+  if (isReview() || !record || effectiveStatus(activity, record) === "completed") return initialRunnerState(activity);
+  return resumeRunnerState(activity, [...effectiveDone(activity, record).completed]);
 }
 
 /**
@@ -92,20 +96,28 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
   const [state, dispatch] = useReducer(reducer, initial);
   const [progress, updateProgress] = useOfferingProgress(offeringId);
   const [prefs] = usePrefs();
+  const { t } = useUiText();
   const stageRef = useRef<HTMLDivElement>(null);
   const { apply } = useFocusEffects(stageRef);
 
   const question = activity.questions[state.qIndex];
   const variant = currentVariant(activity, state);
 
-  // Open once: tutor greeting + progress "started".
+  // Input made before hydration (#708): put back through React's change path right after the
+  // hydration commit, each field committed on its own (`flushSync`, which a layout effect could
+  // not do), so a tick or typed digits never vanish and Check turns on.
+  useEffect(() => {
+    replayPreHydrationInputs();
+  }, []);
+
+  // Open once: tutor greeting. Nothing is written to progress on mount (ADR-0013): a look at a
+  // practice is not study; the first attempt or finished challenge creates the record.
   const opened = useRef(false);
   useEffect(() => {
     if (opened.current) return;
     opened.current = true;
     dispatch({ type: "OPEN" });
-    updateProgress((p) => startActivity(p, activity.id));
-  }, [activity.id, updateProgress]);
+  }, []);
 
   // Apply DOM effects after render, once per effect batch.
   const appliedSeq = useRef(0);
@@ -196,7 +208,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
     const i = activity.questions.findIndex((q, k) => k < state.qIndex && !state.completed[k] && ids.includes(q.id));
     return i >= 0 ? { index: i, label: activity.questions[i].label ?? `Challenge ${i + 1}` } : undefined;
   })();
-  const skippedBefore = skippedHere ? undefined : topic.activities.find((a, i) => i < topic.activities.findIndex((x) => x.id === activity.id) && skippedAhead(progress.activities[a.id]));
+  const skippedBefore = skippedHere ? undefined : topic.activities.find((a, i) => i < topic.activities.findIndex((x) => x.id === activity.id) && skippedAhead(progress.activities[a.id], a));
 
   // One marker per challenge: finished ones done, the one on screen current.
   const steps: ChallengeStep[] = activity.questions.map((q, i) => ({
@@ -214,11 +226,13 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         <div className={styles.layout}>
           <ActivitySummary
             activity={activity}
-            objectives={topic.objectives.map((o) => o.text)}
+            objectives={practiceObjectives(topic, activity)}
             attempts={activityProgress?.attempts ?? 0}
             hintsUsed={state.hintsUsedTotal}
             next={topicAction(course, topic, finished)}
             topicHref={`/courses/${course.id}/${topic.id}/`}
+            practicesHref={topic.activities.length > 1 ? `/courses/${course.id}/${topic.id}/#practices` : undefined}
+            courseHref={`/courses/${course.id}/`}
             onRestart={() => act({ type: "RESTART" })}
           />
           <div className={styles.tutor}>
@@ -240,10 +254,11 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
       <div className={styles.stage} ref={stageRef} data-testid="learning-stage" data-stage={stage}>
         <div className={styles.stageHead}>
           <p className={styles.eyebrow}>
-            Challenge {state.qIndex + 1} of {activity.questions.length}
+            <UiText k="ui.stage.challenge-of" vars={{ k: state.qIndex + 1, n: activity.questions.length }} />
             {question.label ? ` · ${question.label}` : ""}
           </p>
-          <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} onSkip={doSkip} />
+          {/* while a walkthrough runs or after a correct answer the hint panel is gone, so the ⋯ menu stays reachable up here */}
+          {(stage === "explaining" || stage === "complete") && <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} target={skip.target} onSkip={doSkip} />}
         </div>
 
         <QuestionView
@@ -259,25 +274,24 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         />
 
         {state.last && !state.last.result.correct && skippedHere && stage !== "explaining" && (
-          <p className={styles.returnOffer}>
-            Stuck? You skipped{" "}
+          <ReturnOffer k="ui.return.challenge" slot="label" value={skippedHere.label}>
             <button type="button" className={styles.returnLink} onClick={() => act({ type: "GO_TO_QUESTION", index: skippedHere.index })}>
               {skippedHere.label}
             </button>
-            ; it leads here. Go back any time.
-          </p>
+          </ReturnOffer>
         )}
         {state.last && !state.last.result.correct && skippedBefore && stage !== "explaining" && (
-          <p className={styles.returnOffer}>
-            Stuck? You skipped ahead in <a href={practiceHref(course, topic, skippedBefore)}>{skippedBefore.title}</a>; it covers this. Go back any time.
-          </p>
+          <ReturnOffer k="ui.return.practice" slot="title" value={skippedBefore.title}>
+            <a href={practiceHref(course, topic, skippedBefore)}>{skippedBefore.title}</a>
+          </ReturnOffer>
         )}
 
         {stage !== "explaining" && stage !== "complete" && (
           <HintReveal
             revealed={state.hints}
             canRequest={scaffoldsOpen && state.tutor.hintLevel < 9}
-            lockedReason={!scaffoldsOpen ? resolveMessage("ui.stage.try-first") : undefined}
+            lockedReason={!scaffoldsOpen ? t("ui.stage.try-first") : undefined}
+            skipMenu={<SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} target={skip.target} onSkip={doSkip} />}
             course={course.id}
             onRequest={() => act({ type: "HINT" })}
             onExplainSlowly={scaffoldsOpen ? () => act({ type: "EXPLAIN" }) : undefined}
@@ -285,14 +299,14 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         )}
 
         {stage === "complete" && (
-          <div className={styles.actions} role="group" aria-label="Next steps">
+          <div className={styles.actions} role="group" aria-label={t("ui.stage.next-steps")}>
             {hasAnotherVariant(activity, state) && (
               <button type="button" className="btn" onClick={() => act({ type: "RETRY_VARIANT" })}>
-                Try a similar one
+                <UiText k="ui.stage.try-similar" />
               </button>
             )}
             <button type="button" className="btn btn-primary" onClick={() => act({ type: "NEXT_QUESTION" })}>
-              {state.completed.every(Boolean) ? "Finish" : "Next challenge"}
+              <UiText k={state.completed.every(Boolean) ? "ui.stage.finish" : "ui.stage.next-challenge"} />
             </button>
           </div>
         )}

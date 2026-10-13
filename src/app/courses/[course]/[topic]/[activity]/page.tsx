@@ -1,12 +1,15 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getActivity, listActivityParams } from "@/content";
-import { Footer, TopBar } from "@/shell/r1";
+import { Footer, TopBar } from "@/shell/r1/Chrome";
 import { LocationLine } from "@/shell/r1/LocationLine";
+import { TopicNavigator } from "@/shell/r1/TopicNavigator";
 import { chapterShort } from "@/shell/location";
 import shell from "@/shell/r1/r1.module.css";
+import { KindLogicGate } from "@/kinds/logicGate";
 import { ActivityRunner } from "@/stage/ActivityRunner";
 import { ResumeScript } from "@/stage/ResumeScript";
+import { PreInputScript } from "@/stage/PreInputScript";
 
 type Params = { course: string; topic: string; activity: string };
 
@@ -43,10 +46,17 @@ export default async function ActivityPage({ params }: { params: Promise<Params>
         <div className={shell.stageWhere}>
           <LocationLine segments={location} />
           <h1 className={shell.stageTitle}>{activity.title}</h1>
+          {/* S2 (#680): the topic's practices, collapsed; a navigator, never a stage control */}
+          <TopicNavigator course={course} topic={topic} activity={activity} />
         </div>
         {/* before the stage, so it runs before the stage can paint (see ResumeScript.tsx) */}
         <ResumeScript offeringId={course.offeringId} activityId={activity.id} />
-        <ActivityRunner course={course} topic={topic} activity={activity} />
+        {/* records a tap or digits made before hydration, so the runner can keep them (#708, preHydration.ts) */}
+        <PreInputScript />
+        {/* only this practice's kind logic reaches the browser, preloaded with the page (#683) */}
+        <KindLogicGate kinds={activity.questions.flatMap((q) => q.variants.map((v) => v.spec.kind))}>
+          <ActivityRunner course={course} topic={topic} activity={activity} />
+        </KindLogicGate>
       </main>
       <Footer demo={activity.authority === "DEMO"} />
     </>

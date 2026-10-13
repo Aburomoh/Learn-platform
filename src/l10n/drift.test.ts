@@ -14,7 +14,7 @@ import { en } from "@/tutor/messages/en";
  */
 const DIR = path.resolve(process.cwd(), "docs/localization/ar");
 const REPORT = path.join(DIR, "UNTRANSLATED.md");
-const arabic = JSON.parse(readFileSync(path.join(DIR, "source-texts.ar.json"), "utf8")) as { english: string; arabic?: string }[];
+const arabic = JSON.parse(readFileSync(path.join(DIR, "source-texts.ar.json"), "utf8")) as { id: string; english: string; arabic?: string }[];
 const translated = new Set(arabic.filter((e) => e.arabic?.trim()).map((e) => e.english));
 
 interface Placement {
@@ -45,6 +45,26 @@ export function supportivePlacements(): Placement[] {
               for (const [k, r] of Object.entries(v.reactions ?? {})) if (typeof r === "string") add(`${base}.reactions.${k}`, "feedback", r);
             }
   return out;
+}
+
+/**
+ * Arabic strings where one sentence ends with an English term and the next begins with one (#701):
+ * the two Latin runs sit side by side and read as one English phrase, which can reverse a correction.
+ * The LRM/RLM between them does not prevent it; an Arabic word has to.
+ */
+export function mergedEnglishRuns(): { id: string; arabic: string }[] {
+  const re = /[A-Za-z0-9′'’][.!?؟؛]\s*[‎‏]*\s*[A-Za-z]/;
+  return arabic.filter((e) => re.test(e.arabic ?? "")).map((e) => ({ id: e.id, arabic: e.arabic! }));
+}
+
+/**
+ * Arabic strings with an Arabic ending attached to an English term (#686 batch 3): «Bitاً», «Inputين», «Jobان».
+ * The tanween lands on the Latin letter and the alef joins the next word, so the term renders broken. The
+ * glossary has no rule for endings on an English term; the owner decides, so this is information.
+ */
+export function attachedEndings(): { id: string; arabic: string }[] {
+  const re = /[A-Za-z][ء-يً-ْ]/;
+  return arabic.filter((e) => re.test(e.arabic ?? "")).map((e) => ({ id: e.id, arabic: e.arabic! }));
 }
 
 export function driftReport(): { markdown: string; distinct: number; missing: number; placements: number; catalogMissing: string[] } {
@@ -91,6 +111,18 @@ export function driftReport(): { markdown: string; distinct: number; missing: nu
     "| Topic | Strings |",
     "|---|---|",
     ...count((p) => `${p.course} / ${p.topic}`).map(([k, n]) => `| ${k} | ${n} |`),
+    "",
+    `## English terms that meet across a full stop (#701): ${mergedEnglishRuns().length}`,
+    "",
+    "Arabic strings (already approved) where a sentence ends with an English term and the next begins with one, so the two read as one English phrase. Information for the owner and the Auditor: proposed fixes go through #686; nothing was edited here.",
+    "",
+    ...mergedEnglishRuns().map((m) => `- \`${m.id}\`: ${m.arabic}`),
+    "",
+    `## Arabic endings attached to an English term (#686 batch 3): ${attachedEndings().length}`,
+    "",
+    "Strings where an Arabic ending (dual «ين»/«ان», tanween) is written straight after an English term, which renders broken at the join. Information for the owner and the Auditor; nothing was edited here.",
+    "",
+    ...attachedEndings().map((m) => `- \`${m.id}\`: ${m.arabic}`),
     "",
     "## The strings",
     "",

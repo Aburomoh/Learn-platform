@@ -24,17 +24,24 @@ export const EXPRESSIONS: Expression[] = [
 
 export type TutorAction =
   /** `text` is the filled English; `template` and `vars` let the UI render it in the learner's language (ADR-0011). */
-  | { type: "SAY"; messageKey: string; text: string; template: string; vars: TemplateVars }
+  | { type: "SAY"; messageKey: string; text: string; template: string; vars: TemplateVars; unchecked?: boolean }
+  /** A misconception was named on this step (#700). It stays true until the step completes; the view keeps it visible beside any hint. */
+  | { type: "DIAGNOSIS"; messageKey: string; text: string; template: string; vars: TemplateVars }
   | { type: "CHANGE_EXPRESSION"; expression: Expression }
   | { type: "FOCUS"; target: string }
   | { type: "HIGHLIGHT"; target: string }
   | { type: "PULSE"; target: string }
   | { type: "WAIT"; ms: number }
   | { type: "ASK"; stepId: string }
-  | { type: "REVEAL_HINT"; rung: number; text: string; template: string; vars: TemplateVars }
+  /** `unchecked`: granted before any Check on this step (#717). `text` is already softened; a view that renders `template` in another language applies `softenNudge` to its result. */
+  | { type: "REVEAL_HINT"; rung: number; text: string; template: string; vars: TemplateVars; unchecked?: boolean }
   | { type: "ADVANCE_EXPLANATION"; step: number }
   | { type: "RESET_INTERACTION" }
   | { type: "REQUEST_RETRY" }
+  /** After "I am stuck": the two choices the tutor line ends with, "Show a hint" and "Explain slowly" (#690, §2.4 S2). */
+  | { type: "OFFER_HELP"; options: ("hint" | "explain-slowly")[] }
+  /** A legacy walkthrough restarts the question: ask once before it opens (#690, §2.6). The runner re-sends the request with `confirmed`. */
+  | { type: "CONFIRM_RESTART" }
   /** Move to another variant of the same question (new numbers), e.g. after Explain Slowly. */
   | { type: "SWITCH_VARIANT" }
   /** A step was completed: clear pointers and step-level hints, keep the question open. */

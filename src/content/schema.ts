@@ -138,6 +138,12 @@ export const QuestionSchema = z.object({
   label: z.string().min(1).max(24).optional(),
   conceptId: id,
   objectiveId: id,
+  /**
+   * Question ids (live or retired) whose stored completion counts as this question's own (learning
+   * architecture §6.1, #692). Resolved at read time by `effectiveDone`, never written to storage. A split
+   * question's parts and a scaffold added before an L3 declare the id they came from.
+   */
+  creditedBy: z.array(id).min(1).optional(),
   variants: z.array(VariantSchema).min(1),
 });
 

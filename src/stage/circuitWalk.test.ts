@@ -31,15 +31,16 @@ describe("runner reducer: gate-by-gate circuit walk", () => {
 
   it("hints describe the gate being asked and point at it, without giving later gates away", () => {
     let s = run([{ type: "OPEN" }, gate(0, 1), gate(1, 0), { type: "HINT" }, { type: "HINT" }, { type: "HINT" }, { type: "HINT" }]);
-    expect(s.hints.map((h) => h.rung)).toEqual([2, 3, 4, 5]);
-    expect(s.hints[1].text).toBe("AND gives 1 only when both inputs are 1.");
-    expect(s.hints[3].text).toBe("This is the gate. Its inputs are A = 1 and the NOT output = 1.");
+    // the wrong check names the mistake, so the ladder starts above the generic nudge (#700)
+    expect(s.hints.map((h) => h.rung)).toEqual([3, 4, 5, 6]);
+    expect(s.hints[0].text).toBe("AND gives 1 only when both inputs are 1.");
+    expect(s.hints[2].text).toBe("This is the gate. Its inputs are A = 1 and the NOT output = 1.");
     expect(s.effects).toContainEqual({ type: "HIGHLIGHT", target: "gate-g1" });
     expect(s.hints.map((h) => h.text).join(" ")).not.toMatch(/OR|Y =/);
     // the ladder restarts on the next gate
     s = run([gate(1, 1), gate(2, 0), { type: "HINT" }], s);
     expect(s.hints).toHaveLength(1);
-    expect(s.hints[0].text).toContain("OR gate");
+    expect(s.hints[0].text).toContain("OR gives 1");
   });
 
   it("the output gate completes the question", () => {
