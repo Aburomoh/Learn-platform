@@ -369,7 +369,8 @@ function exTableVariant(e: Exercise): VariantInput {
   ];
   return {
     id: e.id,
-    prompt: `Chapter 5 exercise (${e.name}): ${e.given}. Fill the state table: next A, next B${e.output ? `, then ${e.output[0]}` : ""}.`,
+    // the equations come from the two questions before; they are shown, so this one stands alone (#568 type B, #692)
+    prompt: `Chapter 5 exercise (${e.name}): ${e.given}.${e.given.startsWith("A(t+1)") ? "" : ` The state equations are A(t+1) = ${show(e.next[0])} and B(t+1) = ${show(e.next[1])}.`} Fill the state table one column at a time, using the equations: next A, next B${e.output ? `, then ${e.output[0]}` : ""}.`,
     spec: { kind: "truth-table", inputs: vars, columns, inputGroups: [{ label: "Present state", span: 2 }, { label: "Input", span: e.inputs.length }] },
     hints: [
       { rung: 2, text: "Not yet. Work out {columnLabel} on each row from that row's values." },

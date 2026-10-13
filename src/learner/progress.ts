@@ -118,18 +118,26 @@ export function skipQuestion(p: OfferingProgress, activityId: string, questionId
  * record with meaningful progress, an attempt or a done question. A visited-only or explained-only
  * record (`started`, no attempt, nothing done: the shape older builds wrote on mount) reads as `new`.
  */
-export function inProgress(a: ActivityProgress | undefined): boolean {
-  return !!a && a.status === "started" && (a.attempts > 0 || (a.completedQuestions?.length ?? 0) > 0);
+export function inProgress(a: ActivityProgress | undefined, activity?: EffectiveActivity): boolean {
+  if (!a || a.status !== "started") return false;
+  // with the practice given, a done question is a live one, directly or by credit (§6.1, ADR-0013 rule 7)
+  const done = activity ? effectiveDone(activity, a).completed.size : (a.completedQuestions?.length ?? 0);
+  return a.attempts > 0 || done > 0;
 }
 
 /** Meaningful progress of any kind: in progress or completed. What "returning" and "started" mean on the course rows. */
-export function hasProgress(a: ActivityProgress | undefined): boolean {
-  return !!a && (a.status === "completed" || inProgress(a));
+export function hasProgress(a: ActivityProgress | undefined, activity?: EffectiveActivity): boolean {
+  return !!a && (a.status === "completed" || inProgress(a, activity));
 }
 
-/** A practice the student skipped ahead in (#623), or one left by the first skip (#579). */
-export function skippedAhead(a: ActivityProgress | undefined): boolean {
-  return !!a && a.status !== "completed" && (a.status === "skipped" || (a.skippedQuestions?.length ?? 0) > 0);
+/**
+ * A practice the student skipped ahead in (#623), or one left by the first skip (#579). With the
+ * practice given, only its live questions count: a retired id in the stored list gives no badge (§6.1).
+ */
+export function skippedAhead(a: ActivityProgress | undefined, activity?: EffectiveActivity): boolean {
+  if (!a || a.status === "completed") return false;
+  if (a.status === "skipped") return true;
+  return activity ? effectiveDone(activity, a).skipped.size > 0 : (a.skippedQuestions?.length ?? 0) > 0;
 }
 
 /** The first hidden skip (#579): the practices left behind become `skipped`; a completed one is untouched. Kept for stored data; no longer written (#623). */
@@ -158,10 +166,45 @@ export function completeQuestion(p: OfferingProgress, activityId: string, questi
  * Index of the first question not yet finished, in activity order: where Continue resumes.
  * 0 with no record; null when every question is finished (the caller offers Review / Next topic).
  */
-export function firstUnfinishedQuestion(activity: { questions: { id: string }[] }, progress?: ActivityProgress): number | null {
-  const done = new Set(progress?.completedQuestions ?? []);
-  const i = activity.questions.findIndex((q) => !done.has(q.id));
+export function firstUnfinishedQuestion(activity: EffectiveActivity, progress?: ActivityProgress): number | null {
+  const { completed } = effectiveDone(activity, progress);
+  const i = activity.questions.findIndex((q) => !completed.has(q.id));
   return i < 0 ? null : i;
+}
+
+/** What `effectiveDone` needs of a practice: its live questions, each with the ids it is credited by. */
+export interface EffectiveActivity {
+  questions: { id: string; creditedBy?: readonly string[] }[];
+}
+
+/**
+ * The one reader of a practice's stored progress (learning architecture §6.1, #692). Stored lists are
+ * never rewritten, so unknown (retired) ids stay in them; every reader goes through here.
+ * - `completed`: live question ids that are done, directly or by `creditedBy` (a stored completion of a listed id).
+ * - `skipped`: live question ids skipped and not done. A retired id gives no credit and no badge.
+ */
+export function effectiveDone(activity: EffectiveActivity, record?: Pick<ActivityProgress, "completedQuestions" | "skippedQuestions">): { completed: Set<string>; skipped: Set<string> } {
+  const stored = new Set(record?.completedQuestions ?? []);
+  const skippedStored = new Set(record?.skippedQuestions ?? []);
+  const completed = new Set<string>();
+  const skipped = new Set<string>();
+  for (const q of activity.questions) {
+    if (stored.has(q.id) || (q.creditedBy ?? []).some((id) => stored.has(id))) completed.add(q.id);
+    else if (skippedStored.has(q.id)) skipped.add(q.id);
+  }
+  return { completed, skipped };
+}
+
+/**
+ * The practice's status as readers see it: a stored `completed` stays completed when the practice gains
+ * questions (§6.1 rule 4); a started one whose live questions are all done, by credit or not, reads
+ * completed until the next write (rule 6). The stored record is never changed.
+ */
+export function effectiveStatus(activity: EffectiveActivity, record?: Pick<ActivityProgress, "status" | "completedQuestions" | "skippedQuestions">): ActivityStatus {
+  if (!record) return "new";
+  if (record.status === "completed") return "completed";
+  if (record.status !== "new" && activity.questions.length > 0 && effectiveDone(activity, record).completed.size === activity.questions.length) return "completed";
+  return record.status;
 }
 
 /**

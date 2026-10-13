@@ -248,6 +248,7 @@ export const concurrentProgrammingTopic: TopicInput = {
   activities: [
     { id: "kinds", title: "Sequential or concurrent", summary: "What each kind of evaluation does.", authority: "DEMO", minutes: 4, questions: [sequentialOrConcurrent] },
     { id: "sequential-steps", title: "Sequential steps", summary: "One operation per step.", authority: "DEMO", minutes: 6, questions: [sequentialSteps] },
-    { id: "concurrent-steps", title: "Concurrent steps and processors", summary: "The longest chain and the widest step.", authority: "DEMO", minutes: 10, questions: [concurrentSteps, step1, step2, processors] },
+    // the levels come before the whole chain (#692, §5 item 18)
+    { id: "concurrent-steps", title: "Concurrent steps and processors", summary: "The longest chain and the widest step.", authority: "DEMO", minutes: 10, questions: [step1, step2, concurrentSteps, processors] },
   ],
 };
