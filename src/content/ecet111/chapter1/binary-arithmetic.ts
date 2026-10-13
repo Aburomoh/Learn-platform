@@ -468,7 +468,7 @@ const complementSteps = (sets: SubtractionSet[], prefix: string): TopicInput["ac
 
 const subtractionExercisePositive: TopicInput["activities"][number] = {
   id: "subtraction-exercise-positive",
-  title: "Exercise: 15 − 4",
+  title: "Exercise: 4-bit subtraction, a positive result",
   summary: "Subtract by adding the 2's complement, on your own: the end carry tells you the sign.",
   authority: "DEMO",
   minutes: 10,
@@ -480,7 +480,7 @@ const subtractionExercisePositive: TopicInput["activities"][number] = {
 
 const subtractionExerciseNegative: TopicInput["activities"][number] = {
   id: "subtraction-exercise-negative",
-  title: "Exercise: 10 − 14",
+  title: "Exercise: 4-bit subtraction, a negative result",
   summary: "A smaller number minus a larger one: no end carry, so the result is negative.",
   authority: "DEMO",
   minutes: 12,
@@ -616,7 +616,7 @@ export const binaryArithmeticTopic: TopicInput = {
     {
       id: "binary-addition",
       title: "Binary addition",
-      summary: "The four rules, then 1101 + 0111 column by column, then a check in decimal.",
+      summary: "The four rules, then a sum column by column, then a check in decimal.",
       authority: "DEMO",
       minutes: 12,
       questions: [

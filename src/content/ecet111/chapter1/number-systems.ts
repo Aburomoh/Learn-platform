@@ -90,7 +90,7 @@ function groupingVariant(value: number, size: 3 | 4): VariantInput {
 
 const conversionExercise: TopicInput["activities"][number] = {
   id: "conversion-exercise",
-  title: "Exercise: 88 and 73",
+  title: "Exercise: convert to binary, octal and hexadecimal",
   summary: "The same four steps on new numbers: divide, read off, then octal and hexadecimal by grouping.",
   authority: "DEMO",
   minutes: 12,
