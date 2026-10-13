@@ -12,6 +12,7 @@ import { TopBar, TopicRow } from "./Chrome";
 import { LocationLine } from "./LocationLine";
 import { PrimaryAction } from "./PrimaryAction";
 import { TopicNext } from "./TopicNext";
+import { HomeNext } from "./HomeNext";
 import { UiText } from "./uiText";
 
 // Navigation, summary and numeric strings through the Arabic layer (#705, ADR-0011). The Arabic here
@@ -195,6 +196,22 @@ describe("UiText and the resolver's labels", () => {
     for (const el of document.querySelectorAll("[class*='pair']")) expect(el.querySelector("bdi[dir='ltr']")).not.toBeNull();
   });
 
+  it("a label with a long value (a list of titles) is never a nowrap pair; the Home counts read right to left in Arabic (QA on #714)", () => {
+    _setArabicMap(SHARED, { [messageTemplate("ui.topic.practices")]: "التمارين: {titles}", [messageTemplate("ui.home.topics.other")]: "المواضيع: {n}", [messageTemplate("ui.home.chapters.other")]: "الفصول: {n}" });
+    act(() => {
+      _setPrefs({ locale: "ar" });
+    });
+    const titles = multi.activities.map((a) => a.title).join(" · ");
+    render(<UiText k="ui.topic.practices" vars={{ titles }} />);
+    expect(document.querySelector("[class*='pair']")).toBeNull();
+    expect(document.body.textContent).toContain(`التمارين: ${titles}`);
+    render(<HomeNext courses={[course]} />);
+    const counts = document.querySelector("[data-counts]")!;
+    expect(counts).toHaveAttribute("dir", "rtl");
+    expect(counts).toHaveAttribute("lang", "ar");
+    expect(counts.textContent).toMatch(/الفصول: \d+ · المواضيع: \d+/);
+  });
+
   it("the rest of the chrome reads its #702 keys: Home headings, the footer, the skip menu's destination and the hint panel (#705)", async () => {
     _setArabicMap(SHARED, {
       [messageTemplate("ui.home.start-here")]: "ابدأ من هنا",
@@ -209,7 +226,6 @@ describe("UiText and the resolver's labels", () => {
     act(() => {
       _setPrefs({ locale: "ar" });
     });
-    const { HomeNext } = await import("./HomeNext");
     const { Footer } = await import("./Chrome");
     const { HintReveal } = await import("@/interactions/HintReveal/HintReveal");
     const { SkipMenu } = await import("@/stage/SkipMenu");

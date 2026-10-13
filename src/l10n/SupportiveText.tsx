@@ -9,6 +9,8 @@ import styles from "./l10n.module.css";
 
 /** A trailing "label: " of an Arabic run, kept on one line with the number that follows (#705). */
 const LABEL_TAIL = /(\S+:\s)$/;
+/** Only a short value (a count, a number, one token) is kept with its label; a list or a sentence wraps as usual (QA on #714). */
+const SHORT_VALUE = /^\S{1,12}$/;
 
 /**
  * Arabic text as React children with each English run isolated LTR; never raw HTML. A label:value
@@ -28,7 +30,7 @@ export function BidiText({ text }: { text: string }) {
       continue;
     }
     const next = runs[i + 1];
-    const following = next && "ltr" in next ? next : undefined;
+    const following = next && "ltr" in next && SHORT_VALUE.test(next.ltr) ? next : undefined;
     const m = following ? run.rtl.match(LABEL_TAIL) : null;
     if (!m || !following) {
       out.push(<Fragment key={i}>{run.rtl}</Fragment>);

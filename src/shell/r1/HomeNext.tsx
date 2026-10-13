@@ -14,7 +14,10 @@ import { courseAction, type PrimaryAction as NextAction } from "../primaryAction
 import { PageHeading } from "./PageHeading";
 import { PrimaryAction, effortLine } from "./PrimaryAction";
 import { LineText, RowActionLink, UiText, useUiText, type UiLine } from "./uiText";
-import { pluralKey } from "@/tutor/messages";
+import { messageTemplate, pluralKey } from "@/tutor/messages";
+import { useArabic } from "@/l10n/arabic";
+import { isArabic } from "@/l10n/bidi";
+import l10n from "@/l10n/l10n.module.css";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
 
@@ -79,6 +82,9 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
   });
   const finishedAll = action.kind === "review";
   const { t } = useUiText();
+  // the course row's counts («المواضيع: 29 · المنجز: 1») read right to left once their Arabic is in (QA on #714)
+  const { translate } = useArabic();
+  const countsArabic = isArabic(translate(messageTemplate("ui.home.topics.other")));
 
   return (
     <div className={`${styles.column} ${styles.bands}`} style={ready ? undefined : { visibility: "hidden" }} aria-busy={!ready} data-home={returning ? "returning" : "first"}>
@@ -141,21 +147,23 @@ export function HomeNext({ courses, share }: { courses: Course[]; share?: ReactN
                   <h3 className={styles.topicTitle}>{c.title}</h3>
                   <p className={styles.topicRoute}>{c.summary}</p>
                   <p className={`${styles.topicStatus} ${styles.statusMuted}`}>
-                    <UiText k={pluralKey("ui.home.chapters", c.modules.length, "en")} vars={{ n: c.modules.length }} />
-                    {" · "}
-                    <UiText k={pluralKey("ui.home.topics", topics.length, "en")} vars={{ n: topics.length }} />
-                    {finished > 0 && (
-                      <>
-                        {" · "}
-                        <UiText k="ui.home.done" vars={{ n: finished }} />
-                      </>
-                    )}
-                    {started > 0 && (
-                      <>
-                        {" · "}
-                        <UiText k="ui.home.started" vars={{ n: started }} />
-                      </>
-                    )}
+                    <span dir={countsArabic ? "rtl" : undefined} lang={countsArabic ? "ar" : undefined} className={countsArabic ? `${l10n.ar} ${l10n.inline}` : undefined} data-counts>
+                      <UiText k={pluralKey("ui.home.chapters", c.modules.length, "en")} vars={{ n: c.modules.length }} />
+                      {" · "}
+                      <UiText k={pluralKey("ui.home.topics", topics.length, "en")} vars={{ n: topics.length }} />
+                      {finished > 0 && (
+                        <>
+                          {" · "}
+                          <UiText k="ui.home.done" vars={{ n: finished }} />
+                        </>
+                      )}
+                      {started > 0 && (
+                        <>
+                          {" · "}
+                          <UiText k="ui.home.started" vars={{ n: started }} />
+                        </>
+                      )}
+                    </span>
                   </p>
                 </div>
                 <div className={styles.rowActions}>
