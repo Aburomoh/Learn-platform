@@ -91,7 +91,7 @@ export function StageControls({
               className={`btn btn-quiet ${styles.chip}`}
               onClick={onExplain}
             >
-              {T("ui.stage.explain")}
+              {T("ui.hint.explain")}
             </button>
           )}
           {children}
@@ -105,7 +105,7 @@ export function StageControls({
             onClick={onHint}
             data-control="hint"
           >
-            {hasHints ? T("ui.stage.another-hint") : T("ui.stage.hint")}
+            {hasHints ? T("ui.hint.another") : T("ui.hint.button")}
           </button>
           <button
             type="button"
@@ -133,7 +133,7 @@ export function StageControls({
             >
               <path d="M12 6.5c-1.6-1.3-3.8-1.7-7-1.5v13c3.2-.2 5.4.2 7 1.5 1.6-1.3 3.8-1.7 7-1.5v-13c-3.2-.2-5.4.2-7 1.5zM12 6.5v13" />
             </svg>
-            {T("ui.stage.explain")}
+            {T("ui.hint.explain")}
           </button>
           {children}
         </div>

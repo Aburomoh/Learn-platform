@@ -11,7 +11,9 @@ import { effectiveDone, effectiveStatus } from "@/learner/progress";
 import { useOfferingProgress, usePrefs, getProgressStore, recordAttempt, completeActivity, completeQuestion, markExplained, skipQuestion, skippedAhead, flushPendingWrites } from "@/learner";
 import { createRunnerReducer, initialRunnerState, resumeRunnerState, currentVariant, hasAnotherVariant, questionViewKey, type RunnerState } from "./runnerReducer";
 import { QuestionView } from "./QuestionView";
-import { ActivitySummary } from "./ActivitySummary";
+import { UiText, useUiText } from "@/shell/r1/uiText";
+import { ReturnOffer } from "./ReturnOffer";
+import { ActivitySummary, practiceObjectives } from "./ActivitySummary";
 import { replayPreHydrationInputs } from "./preHydration";
 import { KindPrefetch } from "@/kinds/ui";
 import { useHydrated } from "@/shell/useHydrated";
@@ -96,6 +98,7 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
   const [state, dispatch] = useReducer(reducer, initial);
   const [progress, updateProgress] = useOfferingProgress(offeringId);
   const [prefs] = usePrefs();
+  const { t } = useUiText();
   const stageRef = useRef<HTMLDivElement>(null);
   const { apply } = useFocusEffects(stageRef);
 
@@ -244,11 +247,13 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         <div className={styles.layout}>
           <ActivitySummary
             activity={activity}
-            objectives={topic.objectives.map((o) => o.text)}
+            objectives={practiceObjectives(topic, activity)}
             attempts={activityProgress?.attempts ?? 0}
             hintsUsed={state.hintsUsedTotal}
             next={topicAction(course, topic, finished)}
             topicHref={`/courses/${course.id}/${topic.id}/`}
+            practicesHref={topic.activities.length > 1 ? `/courses/${course.id}/${topic.id}/#practices` : undefined}
+            courseHref={`/courses/${course.id}/`}
             onRestart={() => act({ type: "RESTART" })}
           />
           <div className={styles.tutor}>
@@ -270,11 +275,11 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
       <div className={styles.stage} ref={stageRef} data-testid="learning-stage" data-stage={stage} data-engaged={state.tutor.engaged || state.tutor.attempts > 0 || undefined} onInput={onEdit} onChange={onEdit}>
         <div className={styles.stageHead}>
           <p className={styles.eyebrow}>
-            Challenge {state.qIndex + 1} of {activity.questions.length}
+            <UiText k="ui.stage.challenge-of" vars={{ k: state.qIndex + 1, n: activity.questions.length }} />
             {question.label ? ` · ${question.label}` : ""}
           </p>
-          {/* while a walkthrough runs or after a correct answer the help row is gone, so the ⋯ menu stays reachable up here (as on main) */}
-          {(stage === "explaining" || stage === "complete") && <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} onSkip={doSkip} />}
+          {/* while a walkthrough runs or after a correct answer the hint panel is gone, so the ⋯ menu stays reachable up here */}
+          {(stage === "explaining" || stage === "complete") && <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} target={skip.target} onSkip={doSkip} />}
         </div>
 
         <QuestionView
@@ -291,18 +296,16 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
         />
 
         {state.last && !state.last.result.correct && skippedHere && stage !== "explaining" && (
-          <p className={styles.returnOffer}>
-            Stuck? You skipped{" "}
+          <ReturnOffer k="ui.return.challenge" slot="label" value={skippedHere.label}>
             <button type="button" className={styles.returnLink} onClick={() => act({ type: "GO_TO_QUESTION", index: skippedHere.index })}>
               {skippedHere.label}
             </button>
-            ; it leads here. Go back any time.
-          </p>
+          </ReturnOffer>
         )}
         {state.last && !state.last.result.correct && skippedBefore && stage !== "explaining" && (
-          <p className={styles.returnOffer}>
-            Stuck? You skipped ahead in <a href={practiceHref(course, topic, skippedBefore)}>{skippedBefore.title}</a>; it covers this. Go back any time.
-          </p>
+          <ReturnOffer k="ui.return.practice" slot="title" value={skippedBefore.title}>
+            <a href={practiceHref(course, topic, skippedBefore)}>{skippedBefore.title}</a>
+          </ReturnOffer>
         )}
 
         {stage !== "explaining" && stage !== "complete" && (
@@ -319,20 +322,20 @@ function Runner({ course, topic, activity, initial }: ActivityRunnerProps & { in
               onConfirmExplain={() => act({ type: "EXPLAIN", confirmed: true })}
               onCancelExplain={() => act({ type: "CANCEL_EXPLAIN" })}
             >
-              <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} onSkip={doSkip} />
+              <SkipMenu allowed={skip.allowed} targetLabel={skip.targetLabel} target={skip.target} onSkip={doSkip} />
             </StageControls>
           </>
         )}
 
         {stage === "complete" && (
-          <div className={styles.actions} role="group" aria-label="Next steps">
+          <div className={styles.actions} role="group" aria-label={t("ui.stage.next-steps")}>
             {hasAnotherVariant(activity, state) && (
               <button type="button" className="btn" onClick={() => act({ type: "RETRY_VARIANT" })}>
-                Try a similar one
+                <UiText k="ui.stage.try-similar" />
               </button>
             )}
             <button type="button" className="btn btn-primary" onClick={() => act({ type: "NEXT_QUESTION" })}>
-              {state.completed.every(Boolean) ? "Finish" : "Next challenge"}
+              <UiText k={state.completed.every(Boolean) ? "ui.stage.finish" : "ui.stage.next-challenge"} />
             </button>
           </div>
         )}

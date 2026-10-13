@@ -3,7 +3,7 @@ import styles from "./r1.module.css";
 
 export interface PageHeadingProps {
   /** Where am I: e.g. "ECET 111 · Chapter 1". */
-  eyebrow?: string;
+  eyebrow?: ReactNode;
   /** What am I learning: the page's h1. */
   title: ReactNode;
   /** One route line under the title, e.g. "Today: Decimal → Binary → Octal → Hex". A catalogue string renders as `<UiText>` (#705). */

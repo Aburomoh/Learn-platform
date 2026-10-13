@@ -2205,7 +2205,7 @@
       "deadlock-basics/deadlock-or-starvation/dl.q.deadlock-starvation/v4#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "Deadlock (الجمود) هو تشابك على مستوى النظام يبدأ عندما تتوقف Jobان أو أكثر، وكل واحدة تنتظر Resource (مورداً) تحتفظ به أخرى. أما Starvation (التجويع) فهو تأجيل Job واحدة إلى أجل غير محدد بينما تستمر بقية الـ Jobs."
+    "arabic": "Deadlock (الجمود) هو تشابك على مستوى النظام يبدأ عندما تتوقف 2 Jobs أو أكثر، وكل واحدة تنتظر Resource (مورداً) تحتفظ به أخرى. أما Starvation (التجويع) فهو تأجيل Job واحدة إلى أجل غير محدد بينما تستمر بقية الـ Jobs."
   },
   {
     "id": "cpet181.deadlock-basics.deadlock-or-starvation.dl.q.deadlock-starvation.v1.explanation[1].say",
@@ -10698,7 +10698,7 @@
       "magnetic-tape/count-gaps/tp.q.irg/v4#hints[1]"
     ],
     "slots": [],
-    "arabic": "الـ Gap (الفجوة) تقع بين Recordين. عُدّ الأماكن بين السجلات المتجاورة، لا السجلات نفسها."
+    "arabic": "الـ Gap (الفجوة) تقع بين Record وآخر. عُدّ الأماكن بين السجلات المتجاورة، لا السجلات نفسها."
   },
   {
     "id": "cpet181.magnetic-tape.count-gaps.tp.q.irg.v1.hints[2]",
@@ -12671,7 +12671,7 @@
       "multiprocessing/parallel/cf.q.parallel/v4#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "CPUان أو أكثر ينفذان تعليمات في الوقت نفسه."
+    "arabic": "2 CPUs أو أكثر تنفّذ تعليمات في الوقت نفسه."
   },
   {
     "id": "cpet181.multiprocessing.parallel.cf.q.parallel.v4.hints[1]",
@@ -12707,7 +12707,7 @@
       "multiprocessing/parallel/cf.q.parallel/v4#hints[2]"
     ],
     "slots": [],
-    "arabic": "Executes Two or More Instructions at the Same Time (تنفذ تعليمتين أو أكثر في الوقت نفسه). CPUان أو أكثر ينفذان تعليمات في الوقت نفسه."
+    "arabic": "Executes Two or More Instructions at the Same Time (تنفذ تعليمتين أو أكثر في الوقت نفسه). 2 CPUs أو أكثر تنفّذ تعليمات في الوقت نفسه."
   },
   {
     "id": "cpet181.optical-solid-state.cd-types.op.q.cd-types.v1.explanation[0].say",
@@ -16868,7 +16868,7 @@
       "paging-segmentation/virtual-memory/vm.q.virtual/v1#hints[2]"
     ],
     "slots": [],
-    "arabic": "يمكن أن تكون Job أكبر من Main Memory. Job Size غير محدود بحجم Main Memory."
+    "arabic": "يمكن أن تكون Job أكبر من Main Memory، إذ إنّ Job Size غير محدود بحجم Main Memory."
   },
   {
     "id": "cpet181.paging-segmentation.virtual-memory.vm.q.virtual.v2.explanation[1].say",
@@ -22108,7 +22108,7 @@
       "synchronization/readers-writers/sy.q.rw/v1#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "Readerان يمكنهما مشاركة الـ File: مسموح."
+    "arabic": "يمكن لـ 2 Readers مشاركة الـ File: مسموح."
   },
   {
     "id": "cpet181.synchronization.readers-writers.sy.q.rw.v1.hints[1]",
@@ -22148,7 +22148,7 @@
       "synchronization/readers-writers/sy.q.rw/v1#hints[2]"
     ],
     "slots": [],
-    "arabic": "Yes. Readerان يمكنهما مشاركة الـ File: مسموح."
+    "arabic": "نعم. يمكن لـ 2 Readers مشاركة الـ File: مسموح."
   },
   {
     "id": "cpet181.synchronization.readers-writers.sy.q.rw.v2.explanation[1].say",
@@ -24344,7 +24344,7 @@
       "cpet181/paged-translation"
     ],
     "slots": [],
-    "arabic": "هذا هو الجزء الآخر من الـ Address. Page Number هو Quotient وDisplacement هو Remainder."
+    "arabic": "هذا هو الجزء الآخر من الـ Address. فالـ Page Number هو Quotient، والـ Displacement هو Remainder."
   },
   {
     "id": "ecet111.analysis.analysis-diagram.an.q.diagram.cd.explanation[0].say",
@@ -29467,7 +29467,7 @@
       "binary-arithmetic/binary-addition/ba.q.two/v-sum#hints[0]"
     ],
     "slots": [],
-    "arabic": "ليس بعد. Binary لديه فقط Digitان: 0 و1."
+    "arabic": "ليس بعد. Binary لديه 2 Digits فقط: 0 و1."
   },
   {
     "id": "ecet111.binary-arithmetic.binary-addition.ba.q.zero.v-sum.hints[1]",
@@ -39559,7 +39559,7 @@
       "derived-gates/derived-gates/dg.q.nand/vab#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "A·B: AND للـ Inputين."
+    "arabic": "A·B: AND للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nand.vab.explanation[2].ask.afterWrong",
@@ -39818,7 +39818,7 @@
       "derived-gates/derived-gates/dg.q.nand/vpq#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "P·Q: AND للـ Inputين."
+    "arabic": "P·Q: AND للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nand.vpq.explanation[2].ask.prompt",
@@ -39891,7 +39891,7 @@
       "derived-gates/derived-gates/dg.q.nand/vxy#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "x·y: AND للـ Inputين."
+    "arabic": "x·y: AND للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nand.vxy.explanation[2].ask.prompt",
@@ -39964,7 +39964,7 @@
       "derived-gates/derived-gates/dg.q.nor/vab#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "A + B: OR للـ Inputين."
+    "arabic": "A + B: OR للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nor.vab.explanation[2].ask.prompt",
@@ -40059,7 +40059,7 @@
       "derived-gates/derived-gates/dg.q.nor/vpq#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "P + Q: OR للـ Inputين."
+    "arabic": "P + Q: OR للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nor.vpq.explanation[2].ask.prompt",
@@ -40132,7 +40132,7 @@
       "derived-gates/derived-gates/dg.q.nor/vxy#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "x + y: OR للـ Inputين."
+    "arabic": "x + y: OR للـ Inputs الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.nor.vxy.explanation[2].ask.prompt",
@@ -40454,7 +40454,7 @@
       "derived-gates/derived-gates/dg.q.xnor/vab#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "A·B + A′·B′: OR للـ Productين."
+    "arabic": "A·B + A′·B′: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.xnor.vab.explanation[6].say",
@@ -40586,7 +40586,7 @@
       "derived-gates/derived-gates/dg.q.xnor/vpq#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "P·Q + P′·Q′: OR للـ Productين."
+    "arabic": "P·Q + P′·Q′: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.xnor.vxy.explanation[3].ask.prompt",
@@ -40695,7 +40695,7 @@
       "derived-gates/derived-gates/dg.q.xnor/vxy#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "x·y + x′·y′: OR للـ Productين."
+    "arabic": "x·y + x′·y′: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.xor.vab.explanation[1].ask.prompt",
@@ -40876,7 +40876,7 @@
       "derived-gates/derived-gates/dg.q.xor/vab#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "A·B′ + A′·B: OR للـ Productين."
+    "arabic": "A·B′ + A′·B: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.xor.vab.explanation[6].say",
@@ -41079,7 +41079,7 @@
       "derived-gates/derived-gates/dg.q.xor/vpq#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "P·Q′ + P′·Q: OR للـ Productين."
+    "arabic": "P·Q′ + P′·Q: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.derived-gates.derived-gates.dg.q.xor.vxy.explanation[1].ask.prompt",
@@ -41260,7 +41260,7 @@
       "derived-gates/derived-gates/dg.q.xor/vxy#explanation[5].say"
     ],
     "slots": [],
-    "arabic": "x·y′ + x′·y: OR للـ Productين."
+    "arabic": "x·y′ + x′·y: OR للـ Products الاثنين."
   },
   {
     "id": "ecet111.design.design-excitation.dz.q.jk-inputs.down.explanation[1].ask.afterCorrect",
@@ -44868,7 +44868,7 @@
       "flip-flops/flip-flop-equations/ff.q.eq-t/et#hints[2]"
     ],
     "slots": [],
-    "arabic": "أي Gate تعطي 1 عندما يختلف Inputان؟"
+    "arabic": "أي Gate تعطي 1 عندما تختلف قيمتا الـ Inputs؟"
   },
   {
     "id": "ecet111.flip-flops.flip-flop-equations.ff.q.eq-t.et.hints[3]",
@@ -46685,7 +46685,7 @@
       "full-adder/full-adder-table/fa.q.row/v011#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 0 + 1 + 1 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 0 + 1 + 1 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.row.v011.hints[4]",
@@ -46776,7 +46776,7 @@
       "full-adder/full-adder-table/fa.q.row/v100#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 1 + 0 + 0 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 1 + 0 + 0 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.row.v100.hints[4]",
@@ -46876,7 +46876,7 @@
       "full-adder/full-adder-table/fa.q.row/v100#explanation[1].ask.prompt"
     ],
     "slots": [],
-    "arabic": "وعند كتابته على شكل Bitين يكون…"
+    "arabic": "وعند كتابته على شكل 2 Bits يكون…"
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.row.v111.explanation[1].say",
@@ -46969,7 +46969,7 @@
       "full-adder/full-adder-table/fa.q.row/v111#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 1 + 1 + 1 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 1 + 1 + 1 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.row.v111.hints[3]",
@@ -47029,7 +47029,7 @@
       "full-adder/full-adder-table/fa.q.table/vtable#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "كل Row يجمع 3 Bits. احسب عدد الـ 1s، ثم اكتب العدد على شكل Bitين: Co على اليسار وS على اليمين."
+    "arabic": "كل Row يجمع 3 Bits. احسب عدد الـ 1s، ثم اكتب العدد على شكل 2 Bits: Co على اليسار وS على اليمين."
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.table.vtable.explanation[1].ask.afterCorrect",
@@ -47145,7 +47145,7 @@
       "full-adder/full-adder-table/fa.q.table/vtable#hints[1]"
     ],
     "slots": [],
-    "arabic": "احسب عدد الـ 1s في الـ Row: 0 أو 1 أو 2 أو 3. اكتب هذا العدد بالنظام Binary (الثنائي) على شكل Bitين."
+    "arabic": "احسب عدد الـ 1s في الـ Row: 0 أو 1 أو 2 أو 3. اكتب هذا العدد بالنظام Binary (الثنائي) على شكل 2 Bits."
   },
   {
     "id": "ecet111.full-adder.full-adder-table.fa.q.table.vtable.hints[2]",
@@ -47272,7 +47272,7 @@
       "half-adder/half-adder/ha.q.add/v01#explanation[1].ask.prompt"
     ],
     "slots": [],
-    "arabic": "0 + 1 على شكل Bitين هو…"
+    "arabic": "0 + 1 على شكل 2 Bits هو…"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v01.explanation[1].say",
@@ -47330,7 +47330,7 @@
       "half-adder/half-adder/ha.q.add/v01#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 0 + 1 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 0 + 1 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v01.hints[4]",
@@ -47387,7 +47387,7 @@
       "half-adder/half-adder/ha.q.add/v10#explanation[1].ask.prompt"
     ],
     "slots": [],
-    "arabic": "1 + 0 على شكل Bitين هو…"
+    "arabic": "1 + 0 على شكل 2 Bits هو…"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v10.explanation[1].say",
@@ -47423,7 +47423,7 @@
       "half-adder/half-adder/ha.q.add/v10#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 1 + 0 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 1 + 0 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v10.hints[4]",
@@ -47467,7 +47467,7 @@
       "half-adder/half-adder/ha.q.add/v10#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "الـ Half Adder يجمع Bitين، مثل Column واحد من عمليات الجمع Binary (الثنائية) في Chapter 1، لكن من دون Carry داخل إليه."
+    "arabic": "الـ Half Adder يجمع 2 Bits، مثل Column واحد من عمليات الجمع Binary (الثنائية) في Chapter 1، لكن من دون Carry داخل إليه."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v11.explanation[1].ask.afterCorrect",
@@ -47523,7 +47523,7 @@
       "half-adder/half-adder/ha.q.add/v11#explanation[1].ask.prompt"
     ],
     "slots": [],
-    "arabic": "1 + 1 على شكل Bitين هو…"
+    "arabic": "1 + 1 على شكل 2 Bits هو…"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v11.explanation[1].say",
@@ -47582,7 +47582,7 @@
       "half-adder/half-adder/ha.q.add/v10#hints[0]"
     ],
     "slots": [],
-    "arabic": "ليس بعد. اجمع الـ Bitين كما فعلت في Chapter 1."
+    "arabic": "ليس بعد. اجمع الـ Bits الاثنين كما فعلت في Chapter 1."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v11.hints[1]",
@@ -47622,7 +47622,7 @@
       "half-adder/half-adder/ha.q.add/v11#hints[2]"
     ],
     "slots": [],
-    "arabic": "ما ناتج 1 + 1 عند كتابته على شكل Bitين؟"
+    "arabic": "ما ناتج 1 + 1 عند كتابته على شكل 2 Bits؟"
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.add.v11.hints[3]",
@@ -47753,7 +47753,7 @@
       "half-adder/half-adder/ha.q.gates/vc#hints[2]"
     ],
     "slots": [],
-    "arabic": "C = 1 في Row واحد فقط: عندما يكون كلا Inputين يساوي 1."
+    "arabic": "C = 1 في Row واحد فقط: عندما يكون كل Input يساوي 1."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.gates.vc.hints[3]",
@@ -47963,7 +47963,7 @@
       "half-adder/half-adder/ha.q.table/vtable#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "كل Row يجمع A + B. اكتب الناتج على شكل Bitين: C على اليسار وS على اليمين."
+    "arabic": "كل Row يجمع A + B. اكتب الناتج على شكل 2 Bits: C على اليسار وS على اليمين."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.table.vtable.explanation[1].ask.afterCorrect",
@@ -48244,7 +48244,7 @@
       "half-adder/half-adder/ha.q.walk/v10#explanation[2].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "AND يعطي 1 فقط عندما يكون كلا Inputين يساوي 1، لذلك C = 0."
+    "arabic": "AND يعطي 1 فقط عندما يكون كل Input يساوي 1، لذلك C = 0."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.walk.v01.explanation[2].say",
@@ -48366,7 +48366,7 @@
       "half-adder/half-adder/ha.q.walk/v10#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "يدخل A وB إلى كلا Gateين في الوقت نفسه: XOR ينتج S، وAND ينتج C."
+    "arabic": "يدخل A وB إلى الـ XOR والـ AND في الوقت نفسه: XOR ينتج S، وAND ينتج C."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.walk.v11.explanation[1].ask.afterCorrect",
@@ -48479,7 +48479,7 @@
       "half-adder/half-adder/ha.q.walk/v11#explanation[2].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "AND يعطي 1 فقط عندما يكون كلا Inputين يساوي 1، لذلك C = 1."
+    "arabic": "AND يعطي 1 فقط عندما يكون كل Input يساوي 1، لذلك C = 1."
   },
   {
     "id": "ecet111.half-adder.half-adder.ha.q.walk.v11.explanation[2].ask.prompt",
@@ -49719,7 +49719,7 @@
       "kmap-expression/expression-to-map/km.q.expand/exy#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "أي Product ينقصه Variable واحد يمثل Mintermين، واحداً لكل قيمة لذلك Variable."
+    "arabic": "أي Product ينقصه Variable واحد يمثل 2 Minterms، واحداً لكل قيمة لذلك Variable."
   },
   {
     "id": "ecet111.kmap-expression.expression-to-map.km.q.expand.e3.explanation[2].say",
@@ -50332,7 +50332,7 @@
       "design/design-problem/dz.q.problem-maps/py#explanation[1].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "Group من 4 Cells يلغي Variableين، لذلك يبقى 2."
+    "arabic": "Group من 4 Cells يلغي 2 Variables، لذلك يبقى 2."
   },
   {
     "id": "ecet111.kmap-four.kmap-four.km.q.four.m45.explanation[1].say",
@@ -50665,7 +50665,7 @@
       "kmap-dont-cares/kmap-dont-cares/km.q.dont-care/d2467#explanation[1].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "Group من 4 Cells يلغي Variableين، لذلك يبقى Variable واحد."
+    "arabic": "Group من 4 Cells يلغي 2 Variables، لذلك يبقى Variable واحد."
   },
   {
     "id": "ecet111.kmap-three.kmap-three.km.q.three.m023467.explanation[1].ask.prompt",
@@ -51507,7 +51507,7 @@
       "latches/latches/lt.q.nand/n001#explanation[2].say"
     ],
     "slots": [],
-    "arabic": "وجودهما معاً عند 0 يجبر كلا Outputين على 1، لذلك لا تعود Q وQ′ متكاملتين: هذه حالة Invalid."
+    "arabic": "وجودهما معاً عند 0 يجبر كل Output على 1، لذلك لا تعود Q وQ′ متكاملتين: هذه حالة Invalid."
   },
   {
     "id": "ecet111.latches.latches.lt.q.nand.n001.hints[3]",
@@ -51527,7 +51527,7 @@
       "latches/latches/lt.q.nand/n001#hints[3]"
     ],
     "slots": [],
-    "arabic": "Set = Reset = 0 حالة Invalid: كلا Outputين يصبح 1."
+    "arabic": "Set = Reset = 0 حالة Invalid: كل Output يصبح 1."
   },
   {
     "id": "ecet111.latches.latches.lt.q.nand.n010.explanation[0].say",
@@ -51853,7 +51853,7 @@
       "latches/latches/lt.q.nand/n110#hints[2]"
     ],
     "slots": [],
-    "arabic": "هل كلا Inputين يساوي 1؟ إذاً هل يتم إجبار أي NAND على قيمة معينة؟"
+    "arabic": "هل كل Input يساوي 1؟ إذاً هل يتم إجبار أي NAND على قيمة معينة؟"
   },
   {
     "id": "ecet111.laws-and-rules.laws-and-rules.br.q.law.vlaw-a.explanation[1].ask.afterCorrect",
@@ -53535,7 +53535,7 @@
       "logic-gates/gate-tables/bg.q.and/vand-ab#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "AND يعطي 1 فقط عندما تكون كل Inputs = 1. وجود Inputين يعطي 4 Rows: 2^2."
+    "arabic": "AND يعطي 1 فقط عندما تكون كل Inputs = 1. وجود 2 Inputs يعطي 4 Rows: 2^2."
   },
   {
     "id": "ecet111.logic-gates.gate-tables.bg.q.and.vand-xy.explanation[1].ask.afterCorrect",
@@ -53962,7 +53962,7 @@
       "logic-gates/gate-tables/bg.q.or/vor-ab#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "OR يعطي 1 عندما يكون Input واحد على الأقل = 1. وجود Inputين يعطي 4 Rows: 2^2."
+    "arabic": "OR يعطي 1 عندما يكون Input واحد على الأقل = 1. وجود 2 Inputs يعطي 4 Rows: 2^2."
   },
   {
     "id": "ecet111.logic-gates.gate-tables.bg.q.or.vor-xy.explanation[1].ask.afterCorrect",
@@ -54179,7 +54179,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-and#explanation[2].ask.afterCorrect"
     ],
     "slots": [],
-    "arabic": "صحيح، 0. AND يحتاج أن يكون كلا Inputين = 1."
+    "arabic": "صحيح، 0. AND يحتاج أن يكون كل Input = 1."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-and.explanation[2].ask.afterWrong",
@@ -54259,7 +54259,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-and#explanation[3].say"
     ],
     "slots": [],
-    "arabic": "إذن الـ Gate الذي يعطي 1 فقط عندما يكون كلا Inputين = 1 هو AND."
+    "arabic": "إذن الـ Gate الذي يعطي 1 فقط عندما يكون كل Input = 1 هو AND."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-and.hints[0]",
@@ -54401,7 +54401,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-and#hints[6]"
     ],
     "slots": [],
-    "arabic": "الـ Gate الذي يحتاج كلا Inputين هو AND."
+    "arabic": "الـ Gate الذي يحتاج الـ Inputs الاثنين معاً هو AND."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-and.hints[7]",
@@ -54421,7 +54421,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-and#hints[7]"
     ],
     "slots": [],
-    "arabic": "AND يعطي Output = 1 فقط عندما يكون كلا Inputين = 1."
+    "arabic": "AND يعطي Output = 1 فقط عندما يكون كل Input = 1."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-not.explanation[0].say",
@@ -54443,7 +54443,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-not#explanation[0].say"
     ],
     "slots": [],
-    "arabic": "AND وOR يجمعان Inputين أو أكثر. هناك Gate واحد يعمل على Input واحد فقط."
+    "arabic": "AND وOR يجمعان 2 Inputs أو أكثر. هناك Gate واحد يعمل على Input واحد فقط."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-not.explanation[1].ask.afterCorrect",
@@ -54562,7 +54562,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-not#hints[1]"
     ],
     "slots": [],
-    "arabic": "AND وOR وNAND وNOR تأخذ Inputين أو أكثر. هناك Basic Gate واحدة فقط تأخذ Input واحداً."
+    "arabic": "AND وOR وNAND وNOR تأخذ 2 Inputs أو أكثر. هناك Basic Gate واحدة فقط تأخذ Input واحداً."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-not.hints[2]",
@@ -54681,7 +54681,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-or#explanation[2].say"
     ],
     "slots": [],
-    "arabic": "إذن OR يعطي 0 فقط عندما يكون كلا Inputين = 0."
+    "arabic": "إذن OR يعطي 0 فقط عندما يكون كل Input = 0."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.identify.v-or.hints[0]",
@@ -54840,7 +54840,7 @@
       "logic-gates/predict-gate-output/lg.q.identify/v-or#hints[7]"
     ],
     "slots": [],
-    "arabic": "OR يعطي Output = 0 فقط عندما يكون كلا Inputين = 0."
+    "arabic": "OR يعطي Output = 0 فقط عندما يكون كل Input = 0."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v000.explanation[0].say",
@@ -54943,7 +54943,7 @@
       "logic-gates/predict-gate-output/lg.q.predict/v000#explanation[3].ask.afterCorrect"
     ],
     "slots": [],
-    "arabic": "صحيح. كلا Inputين = 0، لذلك OR يعطي 0."
+    "arabic": "صحيح. كل Input = 0، لذلك OR يعطي 0."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v000.explanation[3].ask.afterWrong",
@@ -54963,7 +54963,7 @@
       "logic-gates/predict-gate-output/lg.q.predict/v000#explanation[3].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "كلا Inputين = 0، لذلك OR يعطي 0."
+    "arabic": "كل Input = 0، لذلك OR يعطي 0."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v000.explanation[3].say",
@@ -55249,7 +55249,7 @@
       "logic-gates/predict-gate-output/lg.q.predict/v101#explanation[2].ask.afterCorrect"
     ],
     "slots": [],
-    "arabic": "صحيح، كلا Inputين = 1، لذلك الناتج 1."
+    "arabic": "صحيح، كل Input = 1، لذلك الناتج 1."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v101.explanation[2].ask.afterWrong",
@@ -55270,7 +55270,7 @@
       "logic-gates/predict-gate-output/lg.q.predict/v101#explanation[2].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "كلا Inputين = 1، لذلك AND gate يعطي 1."
+    "arabic": "كل Input = 1، لذلك AND gate يعطي 1."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v101.explanation[2].ask.prompt",
@@ -55531,7 +55531,7 @@
     "slots": [
       "gateInputs"
     ],
-    "arabic": "هذا هو الـ Gate. Inputs الخاصة به هي {gateInputs}."
+    "arabic": "هذا هو الـ Gate، ومداخله (Inputs) هي {gateInputs}."
   },
   {
     "id": "ecet111.logic-gates.predict-gate-output.lg.q.predict.v101.hints[4]",
@@ -57790,7 +57790,7 @@
     "slots": [
       "dataVar"
     ],
-    "arabic": "ليس بعد. انظر فقط إلى الـ Rowين في هذا الزوج: {dataVar} = 0، ثم {dataVar} = 1."
+    "arabic": "ليس بعد. انظر فقط إلى الـ Rows الاثنين في هذا الزوج: {dataVar} = 0، ثم {dataVar} = 1."
   },
   {
     "id": "ecet111.multiplexers.mux-functions.mx.q.pairs.f3.hints[1]",
@@ -60233,7 +60233,7 @@
     "slots": [
       "value"
     ],
-    "arabic": "لتحويل {value} إلى Binary (ثنائي)، نقسم على 2 مراراً. كل Remainder (باقٍ) يصبح Bitاً واحداً."
+    "arabic": "لتحويل {value} إلى Binary (ثنائي)، نقسم على 2 مراراً. كل Remainder (باقٍ) يصبح Bit واحداً."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.divide.v26.explanation[1].ask.afterCorrect",
@@ -60671,7 +60671,7 @@
       "number-systems/conversion-exercise/ns.x.divide/v73#hints[1]"
     ],
     "slots": [],
-    "arabic": "في كل خطوة: اقسم على 2. الناتج الصحيح يذهب إلى الـ Row أسفل، وما يتبقى (0 أو 1) يُكتب بجانب العدد."
+    "arabic": "في كل خطوة: اقسم على 2. ناتج القسمة دون الكسر يذهب إلى الـ Row أسفل، وما يتبقى (0 أو 1) يُكتب بجانب العدد."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.divide.v26.hints[2]",
@@ -61117,7 +61117,7 @@
     "slots": [
       "value"
     ],
-    "arabic": "اقسم {value} على 2 مراراً. كل Remainder يصبح Bitاً واحداً."
+    "arabic": "اقسم {value} على 2 مراراً. كل Remainder يصبح Bit واحداً."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.divide.v75.explanation[1].ask.afterCorrect",
@@ -62174,7 +62174,7 @@
       "number-systems/decimal-to-binary/ns.q.hex/v26#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "الـ Group اليسرى تحتوي Bitاً واحداً فقط."
+    "arabic": "الـ Group اليسرى فيها Bit واحد فقط."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.hex.v26.explanation[2].ask.afterCorrect",
@@ -62440,7 +62440,7 @@
       "number-systems/decimal-to-binary/ns.q.hex/v37#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "الـ Group اليسرى فيها Bitان فقط."
+    "arabic": "الـ Group اليسرى فيها 2 Bits فقط."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.hex.v37.explanation[2].ask.afterWrong",
@@ -63390,7 +63390,7 @@
       "number-systems/decimal-to-binary/ns.q.octal/v26#explanation[1].ask.prompt"
     ],
     "slots": [],
-    "arabic": "الـ Group اليسرى 11 تحتوي Bitين فقط. ماذا نفعل؟"
+    "arabic": "الـ Group اليسرى 11 فيها 2 Bits فقط. ماذا نفعل؟"
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.octal.v26.explanation[1].say",
@@ -63410,7 +63410,7 @@
       "number-systems/decimal-to-binary/ns.q.octal/v26#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "من اليمين: 010 هي Group واحدة. يتبقى Bitان: 11."
+    "arabic": "من اليمين: 010 هي Group واحدة. يتبقى 2 Bits: 11."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.octal.v26.explanation[2].ask.afterCorrect",
@@ -64044,7 +64044,7 @@
       "number-systems/decimal-to-binary/ns.q.octal/v37#explanation[1].ask.afterCorrect"
     ],
     "slots": [],
-    "arabic": "صحيح. كلا Groupين مكتملان."
+    "arabic": "صحيح. كل Group مكتملة."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.octal.v37.explanation[1].ask.afterWrong",
@@ -64064,7 +64064,7 @@
       "number-systems/decimal-to-binary/ns.q.octal/v37#explanation[1].ask.afterWrong"
     ],
     "slots": [],
-    "arabic": "6 Bits = 2 × 3، لذلك كلا Groupين مكتملان بالفعل."
+    "arabic": "6 Bits = 2 × 3، لذلك كل Group مكتملة بالفعل."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.octal.v37.explanation[1].ask.prompt",
@@ -64101,7 +64101,7 @@
       "number-systems/decimal-to-binary/ns.q.octal/v37#explanation[1].say"
     ],
     "slots": [],
-    "arabic": "ستة Bits تكوّن بالضبط Groupين، كل واحدة من 3."
+    "arabic": "ستة Bits تكوّن بالضبط 2 Groups، كل واحدة من 3."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.octal.v37.explanation[2].ask.afterCorrect",
@@ -70156,7 +70156,7 @@
       "ecet111/binary-arithmetic"
     ],
     "slots": [],
-    "arabic": "هذا هو 2's Complement. ‏1's Complement يعكس الـ Bits فقط؛ لا يضيف شيئاً."
+    "arabic": "هذا هو 2's Complement. أمّا 1's Complement فيعكس الـ Bits فقط، ولا يضيف شيئًا."
   },
   {
     "id": "tutor.cx.bar-misplaced",
@@ -70547,7 +70547,7 @@
       "ecet111/analysis"
     ],
     "slots": [],
-    "arabic": "انظر مرة أخرى إلى علامتي AND وOR. ‏AND يحتاج كل الأجزاء = 1؛ أما OR فيكفيه جزء واحد."
+    "arabic": "انظر مرة أخرى إلى علامتي AND وOR. فـ AND يحتاج كل الأجزاء = 1، أمّا OR فيكفيه جزء واحد."
   },
   {
     "id": "tutor.expr.unreadable",
@@ -70710,7 +70710,7 @@
       "ecet111/timing"
     ],
     "slots": [],
-    "arabic": "T لا تُنسخ إلى Q. ‏T = 1 يعني Complement: ما قيمة Q′ هنا؟"
+    "arabic": "T لا تُنسخ إلى Q. فـ T = 1 يعني Complement: ما قيمة Q′ هنا؟"
   },
   {
     "id": "tutor.ff.zero-rows",
@@ -71136,7 +71136,7 @@
       "ecet111/half-adder"
     ],
     "slots": [],
-    "arabic": "انظر إلى AND gate مرة أخرى. يحتاج كلا Inputين = 1."
+    "arabic": "انظر إلى AND gate مرة أخرى. يحتاج أن يكون كل Input = 1."
   },
   {
     "id": "tutor.lg.check-not",
@@ -71199,7 +71199,7 @@
       "ecet111/half-adder"
     ],
     "slots": [],
-    "arabic": "انظر إلى XOR gate مرة أخرى. يعطي 1 فقط عندما يكون Inputاه مختلفين."
+    "arabic": "انظر إلى XOR gate مرة أخرى. يعطي 1 فقط عندما تختلف قيمتا الـ Inputs."
   },
   {
     "id": "tutor.lg.nand-inverted",
@@ -71220,7 +71220,7 @@
       "ecet111/logic-gates"
     ],
     "slots": [],
-    "arabic": "NAND هو عكس AND. فكّر ماذا يعطي عندما يكون كلا Inputين = 1."
+    "arabic": "NAND هو عكس AND. فكّر ماذا يعطي عندما يكون كل Input = 1."
   },
   {
     "id": "tutor.lg.nand-not",
@@ -71241,7 +71241,7 @@
       "ecet111/logic-gates"
     ],
     "slots": [],
-    "arabic": "NAND يأخذ Inputين. أي Gate يأخذ Inputاً واحداً فقط ويعكسه؟"
+    "arabic": "NAND يأخذ 2 Inputs. أي Gate يأخذ Input واحداً فقط ويعكسه؟"
   },
   {
     "id": "tutor.lg.nor-inverted",
@@ -71365,7 +71365,7 @@
       "ecet111/latches"
     ],
     "slots": [],
-    "arabic": "وجود كلا Inputين عند 0 ليس \"No change\" في NAND Latch: كلا NAND outputs يُجبران على 1. ما نوع الحالة التي ينتجها ذلك؟"
+    "arabic": "وجود كل Input عند 0 ليس \"No change\" في NAND Latch: كل NAND output يُجبر على 1. ما نوع الحالة التي ينتجها ذلك؟"
   },
   {
     "id": "tutor.mt.not-canonical",
@@ -71460,7 +71460,7 @@
       "ecet111/multiplexers"
     ],
     "slots": [],
-    "arabic": "F ليست متساوية في الـ Rowين من هذا الزوج، لذلك لا يمكن أن يعطيها Constant. أي شكل من الـ Variable يطابقها؟"
+    "arabic": "F ليست متساوية في الـ Rows الاثنين من هذا الزوج، لذلك لا يمكن أن يعطيها Constant. أي شكل من الـ Variable يطابقها؟"
   },
   {
     "id": "tutor.mx.pair-swapped",
@@ -71499,7 +71499,7 @@
       "ecet111/multiplexers"
     ],
     "slots": [],
-    "arabic": "F متساوية في الـ Rowين من هذا الزوج، لذلك الـ Input لا يعتمد على الـ Variable. ما الـ Constant المناسب؟"
+    "arabic": "F متساوية في الـ Rows الاثنين من هذا الزوج، لذلك الـ Input لا يعتمد على الـ Variable. ما الـ Constant المناسب؟"
   },
   {
     "id": "tutor.ns.bits-reversed",
@@ -72150,7 +72150,7 @@
       "ecet111/three-jk"
     ],
     "slots": [],
-    "arabic": "انظر مرة أخرى إلى علامتي AND وOR. ‏AND يحتاج كل الأجزاء = 1؛ أما OR فيكفيه جزء واحد."
+    "arabic": "انظر مرة أخرى إلى علامتي AND وOR. فـ AND يحتاج كل الأجزاء = 1، أمّا OR فيكفيه جزء واحد."
   },
   {
     "id": "tutor.tt.not-missing",
@@ -72985,7 +72985,7 @@
     "occurrences": 0,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "AND يعطي 1 فقط عندما يكون كلا Inputين = 1."
+    "arabic": "AND يعطي 1 فقط عندما يكون كل Input = 1."
   },
   {
     "id": "tutor.gate.rule.NAND",
@@ -73005,7 +73005,7 @@
     "occurrences": 0,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "NAND هو AND يتبعه NOT: يعطي 0 فقط عندما يكون كلا Inputين = 1."
+    "arabic": "NAND هو AND يتبعه NOT: يعطي 0 فقط عندما يكون كل Input = 1."
   },
   {
     "id": "tutor.gate.rule.NOR",
@@ -73025,7 +73025,7 @@
     "occurrences": 0,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "NOR هو OR يتبعه NOT: يعطي 1 فقط عندما يكون كلا Inputين = 0."
+    "arabic": "NOR هو OR يتبعه NOT: يعطي 1 فقط عندما يكون كل Input = 0."
   },
   {
     "id": "tutor.gate.rule.NOT",
@@ -73079,7 +73079,7 @@
     "occurrences": 0,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "XOR يعطي 1 عندما يكون Inputاه مختلفين."
+    "arabic": "XOR يعطي 1 عندما تختلف قيمتا الـ Inputs."
   },
   {
     "id": "tutor.hesitation",
@@ -74152,5 +74152,2277 @@
     "occurrence_ids": [],
     "slots": [],
     "arabic": "لم نصل بعد. إليك تذكيراً بالفكرة."
+  },
+  {
+    "id": "catalog.ui.nav.here",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "You are here",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Accessible name of the location line.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "أنت هنا"
+  },
+  {
+    "id": "catalog.ui.nav.show-path",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Show the whole path",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. The ellipsis button on phones.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اعرض المسار كاملًا"
+  },
+  {
+    "id": "catalog.ui.nav.all-courses",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "All courses",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Owner decision 1 on #697: المقررات, no hybrid form.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "المقررات"
+  },
+  {
+    "id": "catalog.ui.nav.courses-moved",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "The courses are listed on the home page.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Owner decision 1 on #697.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "المقررات معروضة في الصفحة الرئيسية."
+  },
+  {
+    "id": "catalog.ui.nav.go-courses",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Go to the courses",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Owner decision 1 on #697.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اذهب إلى المقررات"
+  },
+  {
+    "id": "catalog.ui.action.start",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Start · {title}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. {title} stays English, LTR-isolated (owner decision 5 on #697).",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{title}"
+    ],
+    "arabic": "ابدأ · {title}"
+  },
+  {
+    "id": "catalog.ui.action.continue",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Continue · {title}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. {title} stays English, LTR-isolated.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{title}"
+    ],
+    "arabic": "تابع · {title}"
+  },
+  {
+    "id": "catalog.ui.action.review",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Review · {title}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. {title} stays English, LTR-isolated.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{title}"
+    ],
+    "arabic": "راجع · {title}"
+  },
+  {
+    "id": "catalog.ui.action.next-topic",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Next topic · {title}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Topic stays English (owner, 2026-10-13).",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{title}"
+    ],
+    "arabic": "الموضوع التالي · {title}"
+  },
+  {
+    "id": "catalog.ui.action.open-topic",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Open topic",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Topic stays English (owner, 2026-10-13).",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "افتح الموضوع"
+  },
+  {
+    "id": "catalog.ui.action.recommended",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Recommended next",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Owner decision 2 on #697.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "الخطوة التالية المقترحة"
+  },
+  {
+    "id": "catalog.ui.topic.practices",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Practices: {titles}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Owner decision 2 on #697: تمرين / تمارين. Titles stay English.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{titles}"
+    ],
+    "arabic": "التمارين: {titles}"
+  },
+  {
+    "id": "catalog.ui.row.more",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "+{n} more",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Label:value form (owner decision 4 on #697).",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "+{n}"
+  },
+  {
+    "id": "catalog.ui.kind.base-to-decimal",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Step-by-step sum",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. The place-value sum.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "جمع خطوة بخطوة"
+  },
+  {
+    "id": "catalog.ui.kind.bit-grouping",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Group the bits",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Bit stays English (glossary).",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "جمّع الـ Bits"
+  },
+  {
+    "id": "catalog.ui.kind.circuit-predict",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Read the circuit",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اقرأ الدائرة"
+  },
+  {
+    "id": "catalog.ui.kind.column-addition",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Add column by column",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اجمع عمودًا عمودًا"
+  },
+  {
+    "id": "catalog.ui.kind.cpu-schedule",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Draw the schedule",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. The Gantt chart.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "ارسم مخطط الجدولة"
+  },
+  {
+    "id": "catalog.ui.kind.derivation",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Step-by-step derivation",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اشتقاق خطوة بخطوة"
+  },
+  {
+    "id": "catalog.ui.kind.device",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Read the device",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Generic component (a decoder or multiplexer), not the course concept Device (owner decision 3 on #697).",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اقرأ المكوّن"
+  },
+  {
+    "id": "catalog.ui.kind.expression",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Write the expression",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Expression (تعبير), glossary.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اكتب التعبير"
+  },
+  {
+    "id": "catalog.ui.kind.kmap",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "K-map",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. English only (glossary).",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "K-map"
+  },
+  {
+    "id": "catalog.ui.kind.memory-map",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Memory map",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Memory (الذاكرة), glossary.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "خريطة الذاكرة"
+  },
+  {
+    "id": "catalog.ui.kind.multiple-choice",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Choose the answer",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اختر الإجابة"
+  },
+  {
+    "id": "catalog.ui.kind.numeric",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Type the number",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اكتب العدد"
+  },
+  {
+    "id": "catalog.ui.kind.place-value",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Place value",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Glossary.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "القيمة المكانية"
+  },
+  {
+    "id": "catalog.ui.kind.repeated-division",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Step-by-step division",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "قسمة خطوة بخطوة"
+  },
+  {
+    "id": "catalog.ui.kind.state-diagram",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "State diagram",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. State (حالة), glossary.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "مخطط الحالات"
+  },
+  {
+    "id": "catalog.ui.kind.timing",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Timing diagram",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "مخطط التوقيت"
+  },
+  {
+    "id": "catalog.ui.kind.truth-table",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Fill the table",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. The action is fill the table.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "املأ الجدول"
+  },
+  {
+    "id": "catalog.ui.summary.line",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{activity}: {challenges}, {attempts}, {hints}.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Arabic comma.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{activity}",
+      "{challenges}",
+      "{attempts}",
+      "{hints}"
+    ],
+    "arabic": "{activity} · {challenges} · {attempts} · {hints}"
+  },
+  {
+    "id": "catalog.ui.summary.challenges.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} challenge",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Label:value, same string for one and other (owner decision 4 on #697).",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "التحديات: {n}"
+  },
+  {
+    "id": "catalog.ui.summary.challenges.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} challenges",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Same as one.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "التحديات: {n}"
+  },
+  {
+    "id": "catalog.ui.summary.attempts.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} attempt",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Same as other.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "المحاولات: {n}"
+  },
+  {
+    "id": "catalog.ui.summary.attempts.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} attempts",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Label:value.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "المحاولات: {n}"
+  },
+  {
+    "id": "catalog.ui.summary.hints.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "hints used on {n} challenge",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Label:value. The zero form is already approved.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "بمساعدة التلميحات: {n}"
+  },
+  {
+    "id": "catalog.ui.summary.hints.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "hints used on {n} challenges",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Same as one.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "بمساعدة التلميحات: {n}"
+  },
+  {
+    "id": "catalog.ui.numeric.decimal",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "digits 0 to 9",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "أرقام من 0 إلى 9"
+  },
+  {
+    "id": "catalog.ui.numeric.decimal.signed",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "digits 0 to 9, a leading minus sign",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "أرقام من 0 إلى 9، وإشارة ناقص في البداية"
+  },
+  {
+    "id": "catalog.ui.numeric.decimal.places.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "digits 0 to 9, and up to {n} decimal place after the point",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Label:value; الفاصلة as the glossary's binary point.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "أرقام من 0 إلى 9. أقصى عدد للمنازل العشرية بعد الفاصلة: {n}"
+  },
+  {
+    "id": "catalog.ui.numeric.decimal.places.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "digits 0 to 9, and up to {n} decimal places after the point",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Same as one.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "أرقام من 0 إلى 9. أقصى عدد للمنازل العشرية بعد الفاصلة: {n}"
+  },
+  {
+    "id": "catalog.ui.numeric.decimal.signed-places.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "digits 0 to 9, a leading minus sign, and up to {n} decimal place after the point",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Label:value.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "أرقام من 0 إلى 9، وإشارة ناقص في البداية. أقصى عدد للمنازل العشرية بعد الفاصلة: {n}"
+  },
+  {
+    "id": "catalog.ui.numeric.decimal.signed-places.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "digits 0 to 9, a leading minus sign, and up to {n} decimal places after the point",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Same as one.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "أرقام من 0 إلى 9، وإشارة ناقص في البداية. أقصى عدد للمنازل العشرية بعد الفاصلة: {n}"
+  },
+  {
+    "id": "catalog.hint.try-first-or-stuck",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Give it one try first, or tell me you are stuck.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. Extends the approved «جرّب مرة واحدة أولاً».",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "جرّب مرة واحدة أولاً، أو أخبرني أنك عالق."
+  },
+  {
+    "id": "catalog.idle.quiet",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Take your time. If you are stuck, say so.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "خذ وقتك. وإذا كنت عالقًا فقل لي."
+  },
+  {
+    "id": "catalog.stuck.start",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "That is fine. Let us look at this step together.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "لا بأس. لنلقِ نظرة على هذه الخطوة معًا."
+  },
+  {
+    "id": "catalog.stuck.offer",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Want another hint, or shall I explain it slowly?",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "هل تريد تلميحًا آخر، أم أشرح لك الأمر ببطء؟"
+  },
+  {
+    "id": "catalog.explain.confirm-restart",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "This walks through a worked example. Afterwards you start this question again with new numbers. Go ahead?",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner decisions on #697 applied; draft until the owner approves. ",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "هذا شرح بمثال محلول. بعده تبدأ هذا السؤال من جديد بأرقام جديدة. هل نتابع؟"
+  },
+  {
+    "id": "catalog.ui.topic.practice-challenges.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{title} · {n} short challenge",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. title stays English.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{title}",
+      "{n}"
+    ],
+    "arabic": "{title} · التحديات القصيرة: {n}"
+  },
+  {
+    "id": "catalog.ui.topic.practice-challenges.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{title} · {n} short challenges",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. same string as one.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{title}",
+      "{n}"
+    ],
+    "arabic": "{title} · التحديات القصيرة: {n}"
+  },
+  {
+    "id": "catalog.ui.topic.challenges-of",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Challenges of {title}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. list name.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{title}"
+    ],
+    "arabic": "تحديات {title}"
+  },
+  {
+    "id": "catalog.ui.topic.challenges",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Challenges",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. list name.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "التحديات"
+  },
+  {
+    "id": "catalog.ui.home.welcome-back",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Welcome back",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "أهلًا بعودتك"
+  },
+  {
+    "id": "catalog.ui.home.pick-up",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Pick up where you left off",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "أكمل من حيث توقفت"
+  },
+  {
+    "id": "catalog.ui.home.finished-all",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "You have finished every topic",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "أنهيت كل المواضيع"
+  },
+  {
+    "id": "catalog.ui.home.start-here",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Start here",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "ابدأ من هنا"
+  },
+  {
+    "id": "catalog.ui.home.your-course",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Your course",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "مقررك"
+  },
+  {
+    "id": "catalog.ui.home.your-courses",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Your courses",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "مقرراتك"
+  },
+  {
+    "id": "catalog.ui.home.open-course",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Open course: {title}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. accessible name.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{title}"
+    ],
+    "arabic": "افتح المقرر: {title}"
+  },
+  {
+    "id": "catalog.ui.foot.demo",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Demo content",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "محتوى تجريبي"
+  },
+  {
+    "id": "catalog.ui.foot.optional",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Optional practice, not graded",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تدريب اختياري، بلا درجات"
+  },
+  {
+    "id": "catalog.ui.foot.local",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Progress stays in this browser",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. the owner picks between this and «يُحفظ تقدّمك في هذا المتصفح فقط».",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "يُحفظ تقدّمك في هذا المتصفح فقط"
+  },
+  {
+    "id": "catalog.ui.profile.menu",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Profile and settings",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. accessible name.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "الملف الشخصي والإعدادات"
+  },
+  {
+    "id": "catalog.ui.profile.guest",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Guest",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "ضيف"
+  },
+  {
+    "id": "catalog.ui.profile.you-are-guest",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "You are a guest.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "أنت ضيف."
+  },
+  {
+    "id": "catalog.ui.profile.local",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Your progress stays in this browser. Nothing is sent to a server.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "يبقى تقدّمك في هذا المتصفح. لا يُرسل أي شيء إلى خادم."
+  },
+  {
+    "id": "catalog.ui.profile.appearance",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Appearance",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "المظهر"
+  },
+  {
+    "id": "catalog.ui.profile.light",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Light",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "فاتح"
+  },
+  {
+    "id": "catalog.ui.profile.dark",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Dark",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "داكن"
+  },
+  {
+    "id": "catalog.ui.profile.system",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Match device",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. the user's own device.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "حسب الجهاز"
+  },
+  {
+    "id": "catalog.ui.profile.settings",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Settings",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "الإعدادات"
+  },
+  {
+    "id": "catalog.ui.nav.language",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Language",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. accessible name.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اللغة"
+  },
+  {
+    "id": "catalog.ui.nav.chapters",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Chapters",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. Chapter stays English (owner, #697).",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "Chapters"
+  },
+  {
+    "id": "catalog.ui.topic.how-it-works",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "How it works",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "كيف يعمل"
+  },
+  {
+    "id": "catalog.ui.stage.challenge-of",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Challenge {k} of {n}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{k}",
+      "{n}"
+    ],
+    "arabic": "التحدي {k} من {n}"
+  },
+  {
+    "id": "catalog.ui.stage.next-steps",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Next steps",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. accessible name.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "الخطوات التالية"
+  },
+  {
+    "id": "catalog.ui.stage.try-similar",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Try a similar one",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "جرّب سؤالًا مشابهًا"
+  },
+  {
+    "id": "catalog.ui.stage.next-challenge",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Next challenge",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "التحدي التالي"
+  },
+  {
+    "id": "catalog.ui.stage.finish",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Finish",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "إنهاء"
+  },
+  {
+    "id": "catalog.ui.hint.button",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Hint",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تلميح"
+  },
+  {
+    "id": "catalog.ui.hint.another",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Another hint",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تلميح آخر"
+  },
+  {
+    "id": "catalog.ui.hint.explain",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Explain slowly",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اشرح ببطء"
+  },
+  {
+    "id": "catalog.ui.hint.list",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Hints",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. accessible name.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "التلميحات"
+  },
+  {
+    "id": "catalog.ui.hint.rung-2",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Nudge",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تلميح أولي"
+  },
+  {
+    "id": "catalog.ui.hint.rung-3",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Concept",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "المفهوم"
+  },
+  {
+    "id": "catalog.ui.hint.rung-4",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Question",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. same English as the Question section name, so one Arabic.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "السؤال"
+  },
+  {
+    "id": "catalog.ui.hint.rung-5",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Look here",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "انظر هنا"
+  },
+  {
+    "id": "catalog.ui.hint.rung-7",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Similar example",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "مثال مشابه"
+  },
+  {
+    "id": "catalog.ui.hint.rung-8",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Guided",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. Auditor §8b change 5.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "حلّ موجّه"
+  },
+  {
+    "id": "catalog.ui.hint.rung-9",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Full explanation",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "الشرح الكامل"
+  },
+  {
+    "id": "catalog.ui.check.button",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Check",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تحقّق"
+  },
+  {
+    "id": "catalog.ui.check.step",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Check step",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تحقّق من الخطوة"
+  },
+  {
+    "id": "catalog.ui.check.bits",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Check bits",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. Bit stays English (glossary).",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تحقّق من الـ Bits"
+  },
+  {
+    "id": "catalog.ui.check.groups",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Check groups",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تحقّق من المجموعات"
+  },
+  {
+    "id": "catalog.ui.check.digit",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Check digit",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تحقّق من الرقم"
+  },
+  {
+    "id": "catalog.ui.explain.section",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Explanation",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. accessible name.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "الشرح"
+  },
+  {
+    "id": "catalog.ui.question.section",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Question",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. accessible name.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "السؤال"
+  },
+  {
+    "id": "catalog.ui.explain.step",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Step {k} of {n}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{k}",
+      "{n}"
+    ],
+    "arabic": "الخطوة {k} من {n}"
+  },
+  {
+    "id": "catalog.ui.explain.continue",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Continue",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تابع"
+  },
+  {
+    "id": "catalog.ui.explain.now-i-try",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Now I try",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "الآن أجرّب أنا"
+  },
+  {
+    "id": "catalog.ui.skip.more",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "More",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. accessible name.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "المزيد"
+  },
+  {
+    "id": "catalog.ui.skip.to-next",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Skip to next question",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تخطَّ إلى السؤال التالي"
+  },
+  {
+    "id": "catalog.ui.skip.confirm-note",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Skip this question? You can come back any time. This goes to {targetLabel}.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. label:value.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{targetLabel}"
+    ],
+    "arabic": "تخطّي هذا السؤال؟ يمكنك العودة إليه في أي وقت. الوجهة: {targetLabel}."
+  },
+  {
+    "id": "catalog.ui.skip.confirm",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Confirm skip",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. accessible name.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تأكيد التخطي"
+  },
+  {
+    "id": "catalog.ui.skip.go",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Skip",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تخطَّ"
+  },
+  {
+    "id": "catalog.ui.skip.cancel",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Cancel",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "إلغاء"
+  },
+  {
+    "id": "catalog.ui.skip.target.question",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "the next question",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "السؤال التالي"
+  },
+  {
+    "id": "catalog.ui.skip.target.practice",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "the next practice, {title}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. title stays English.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{title}"
+    ],
+    "arabic": "التمرين التالي: {title}"
+  },
+  {
+    "id": "catalog.ui.skip.target.topic",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "the next topic, {title}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. title stays English.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{title}"
+    ],
+    "arabic": "الموضوع التالي: {title}"
+  },
+  {
+    "id": "catalog.ui.skip.target.course",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "the course page",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "صفحة المقرر"
+  },
+  {
+    "id": "catalog.ui.return.challenge",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Stuck? You skipped {label}; it leads here. Go back any time.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. Auditor §8b changes 1 and 2; the wording of «Stuck?» is for the owner together with the I'm-stuck button.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{label}"
+    ],
+    "arabic": "هل تواجه صعوبة؟ لقد تخطّيت {label}؛ وهو يمهّد لهذا السؤال. يمكنك الرجوع في أي وقت."
+  },
+  {
+    "id": "catalog.ui.return.practice",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Stuck? You skipped ahead in {title}; it covers this. Go back any time.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13, owner chose (a) on #702: chrome joins the batch; Auditor checked on #697 (sections 8, 8b). Draft until the owner approves. Auditor §8b changes 1 and 3.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{title}"
+    ],
+    "arabic": "هل تواجه صعوبة؟ لقد تخطّيت جزءًا في {title}؛ وفيه شرح لهذا. يمكنك الرجوع في أي وقت."
+  },
+  {
+    "id": "catalog.ui.status.completed",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Completed",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "مكتمل"
+  },
+  {
+    "id": "catalog.ui.status.not-started",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Not started",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "لم تبدأه بعد"
+  },
+  {
+    "id": "catalog.ui.status.coming-soon",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Not started · Coming soon",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "لم تبدأه بعد · قريبًا"
+  },
+  {
+    "id": "catalog.ui.status.challenges-done",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{done} of {total} challenges done",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{done}",
+      "{total}"
+    ],
+    "arabic": "التحديات المنجزة: {done} من {total}"
+  },
+  {
+    "id": "catalog.ui.status.challenges-done-skipped",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{done} of {total} challenges done · skipped ahead",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{done}",
+      "{total}"
+    ],
+    "arabic": "التحديات المنجزة: {done} من {total} · تخطّيت بعضها"
+  },
+  {
+    "id": "catalog.ui.status.chapter-progress.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "In progress · {done} of {n} topic done",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{done}",
+      "{n}"
+    ],
+    "arabic": "جارٍ · المواضيع المنجزة: {done} من {n}"
+  },
+  {
+    "id": "catalog.ui.status.chapter-progress.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "In progress · {done} of {n} topics done",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{done}",
+      "{n}"
+    ],
+    "arabic": "جارٍ · المواضيع المنجزة: {done} من {n}"
+  },
+  {
+    "id": "catalog.ui.effort.practices",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} short practices · about {minutes} min",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}",
+      "{minutes}"
+    ],
+    "arabic": "التمارين القصيرة: {n} · المدة: نحو {minutes} د"
+  },
+  {
+    "id": "catalog.ui.effort.challenges.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} short challenge · about {minutes} min",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}",
+      "{minutes}"
+    ],
+    "arabic": "التحديات القصيرة: {n} · المدة: نحو {minutes} د"
+  },
+  {
+    "id": "catalog.ui.effort.challenges.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} short challenges · about {minutes} min",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}",
+      "{minutes}"
+    ],
+    "arabic": "التحديات القصيرة: {n} · المدة: نحو {minutes} د"
+  },
+  {
+    "id": "catalog.ui.effort.short-challenges.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} short challenge",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "التحديات القصيرة: {n}"
+  },
+  {
+    "id": "catalog.ui.effort.short-challenges.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} short challenges",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "التحديات القصيرة: {n}"
+  },
+  {
+    "id": "catalog.ui.effort.minutes",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "about {n} min",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "المدة: نحو {n} د"
+  },
+  {
+    "id": "catalog.ui.effort.minutes-lead",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "About {n} min",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "المدة: نحو {n} د"
+  },
+  {
+    "id": "catalog.ui.effort.remaining",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Challenge {next} of {total} · about {left} min left",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{next}",
+      "{total}",
+      "{left}"
+    ],
+    "arabic": "التحدي {next} من {total} · المتبقي: نحو {left} د"
+  },
+  {
+    "id": "catalog.ui.effort.completed-topic",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Completed. You can review it any time.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اكتمل. يمكنك مراجعته في أي وقت."
+  },
+  {
+    "id": "catalog.ui.effort.completed-all",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Completed. You can review any topic.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اكتمل. يمكنك مراجعة أي موضوع."
+  },
+  {
+    "id": "catalog.ui.row.in-progress",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "In progress",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "جارٍ"
+  },
+  {
+    "id": "catalog.ui.row.up-next",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Up next",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "التالي"
+  },
+  {
+    "id": "catalog.ui.topic.practices-in",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Practices in this topic",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "التمارين في هذا الموضوع"
+  },
+  {
+    "id": "catalog.ui.summary.title",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Practice complete",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "اكتمل التمرين"
+  },
+  {
+    "id": "catalog.ui.summary.again",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Practise again",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "تدرّب مرة أخرى"
+  },
+  {
+    "id": "catalog.ui.summary.back",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Back to topic",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13; the key is in #710's catalogue, the English is exactly what it renders. Owner chose (a) on #702; Auditor checked on #697. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "العودة إلى الموضوع"
+  },
+  {
+    "id": "catalog.ui.home.first-route",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Practice for {owner}'s courses. No account needed.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{owner}"
+    ],
+    "arabic": "تدريب على مقررات {owner}. لا حاجة إلى حساب."
+  },
+  {
+    "id": "catalog.ui.home.chapters.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} chapter",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "Chapters: {n}"
+  },
+  {
+    "id": "catalog.ui.home.chapters.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} chapters",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "Chapters: {n}"
+  },
+  {
+    "id": "catalog.ui.home.topics.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} topic",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "المواضيع: {n}"
+  },
+  {
+    "id": "catalog.ui.home.topics.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} topics",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "المواضيع: {n}"
+  },
+  {
+    "id": "catalog.ui.home.done",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} done",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "المنجزة: {n}"
+  },
+  {
+    "id": "catalog.ui.home.started",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} started",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "الجارية: {n}"
+  },
+  {
+    "id": "catalog.ui.home.open-course-short",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Open course",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [],
+    "arabic": "افتح المقرر"
+  },
+  {
+    "id": "catalog.ui.stage.challenge-n",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Challenge {n}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ],
+    "arabic": "التحدي {n}"
   }
 ]

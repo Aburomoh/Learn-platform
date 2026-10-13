@@ -84,6 +84,9 @@ test("guest flow: walked division with feedback, hints, Explain Slowly, retry, r
   // 2. a wrong step: short feedback, no advance, tutor thinks
   await divisionStep(page, 13, 6, 0);
   await expect(page.getByRole("status").filter({ hasText: "Not correct yet." })).toBeVisible();
+  // the result 6 is right and only the remainder is marked (#723): the mark never contradicts the tutor
+  await expect(page.getByLabel("13 divided by 2: remainder")).toHaveClass(/wrong/);
+  await expect(page.getByLabel("13 divided by 2: result")).not.toHaveClass(/wrong/);
   await expect(stage).toHaveAttribute("data-stage", "await_retry");
   await expect(page.locator("[data-expression='concern']:visible")).toBeVisible(); // try_again on the first wrong answer (#663)
   await expect(page.getByLabel("13 divided by 2: result")).toBeVisible();

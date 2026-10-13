@@ -2,6 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { focusTarget } from "../shared/types";
+import { SupportiveText } from "@/l10n/SupportiveText";
+import { messageTemplate } from "@/tutor/messages";
 import styles from "./DivisionChain.module.css";
 
 export interface ChainStep {
@@ -20,6 +22,8 @@ export interface DivisionChainProps {
   onStep?: (quotient: number, remainder: number) => void;
   /** Feedback for the last submitted step. */
   state?: "idle" | "incorrect";
+  /** Which cell the last wrong step got wrong, when the grader can tell (#723); both when it is the pair. */
+  wrongField?: "quotient" | "remainder" | "both";
   disabled?: boolean;
   /** Show LSB / MSB labels and the reading direction beside the remainders. */
   showOrder?: boolean;
@@ -37,7 +41,7 @@ const at = (row: number, column: number, span = 1): React.CSSProperties => ({ gr
  * remainder beside the current number, then checks that single step. Rows appear one at a time
  * so the length of the chain is not given away.
  */
-export function DivisionChain({ id, steps, stepIndex, onStep, state = "idle", disabled = false, showOrder = false, attention }: DivisionChainProps) {
+export function DivisionChain({ id, steps, stepIndex, onStep, state = "idle", wrongField = "both", disabled = false, showOrder = false, attention }: DivisionChainProps) {
   const [quotient, setQuotient] = useState("");
   const [remainder, setRemainder] = useState("");
   const qId = useId();
@@ -62,7 +66,9 @@ export function DivisionChain({ id, steps, stepIndex, onStep, state = "idle", di
   }
 
   const onlyDigits = (v: string, max: number) => v.replace(/\D/g, "").slice(0, max);
-  const wrong = state === "incorrect" ? styles.wrong : "";
+  // the mark sits on what is wrong, never on a cell the tutor says is right (#723)
+  const wrongQuotient = state === "incorrect" && wrongField !== "remainder" ? styles.wrong : "";
+  const wrongRemainder = state === "incorrect" && wrongField !== "quotient" ? styles.wrong : "";
 
   return (
     <form className={styles.root} onSubmit={submit} data-diagram={id} aria-label="Repeated division by 2">
@@ -105,7 +111,7 @@ export function DivisionChain({ id, steps, stepIndex, onStep, state = "idle", di
                 <input
                   id={qId}
                   ref={quotientRef}
-                  className={`${styles.input} ${wrong} mono`}
+                  className={`${styles.input} ${wrongQuotient} mono`}
                   inputMode="numeric"
                   autoComplete="off"
                   value={quotient}
@@ -119,7 +125,7 @@ export function DivisionChain({ id, steps, stepIndex, onStep, state = "idle", di
                 </label>
                 <input
                   id={rId}
-                  className={`${styles.input} ${wrong} mono`}
+                  className={`${styles.input} ${wrongRemainder} mono`}
                   inputMode="numeric"
                   autoComplete="off"
                   value={remainder}
@@ -171,7 +177,7 @@ export function DivisionChain({ id, steps, stepIndex, onStep, state = "idle", di
             {active.dividend} ÷ 2: write the <em>result below</em> and the <em>remainder beside it</em>
           </span>
           <button type="submit" className="btn btn-primary" disabled={quotient === "" || remainder === ""}>
-            Check step
+            <SupportiveText template={messageTemplate("ui.check.step")} inline />
           </button>
         </div>
       )}

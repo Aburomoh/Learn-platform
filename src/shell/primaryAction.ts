@@ -132,6 +132,8 @@ export interface SkipOffer {
   href?: string;
   /** What the skip goes to, in words, for the confirmation. */
   targetLabel: string;
+  /** The same, as a catalogue key and slots, for the Arabic layer (#705). */
+  target: { key: string; vars?: Record<string, string | number> };
 }
 
 /**
@@ -142,14 +144,14 @@ export interface SkipOffer {
  * is never completed by a skip.
  */
 export function skipOffer(course: Course, topic: Topic, activity: Activity, qIndex: number): SkipOffer {
-  if (qIndex + 1 < activity.questions.length) return { allowed: true, kind: "question", targetLabel: "the next question" };
+  if (qIndex + 1 < activity.questions.length) return { allowed: true, kind: "question", targetLabel: "the next question", target: { key: "ui.skip.target.question" } };
   const i = topic.activities.findIndex((a) => a.id === activity.id);
   const nextPractice = i >= 0 ? topic.activities[i + 1] : undefined;
-  if (nextPractice) return { allowed: true, kind: "practice", href: practiceHref(course, topic, nextPractice), targetLabel: `the next practice, ${nextPractice.title}` };
+  if (nextPractice) return { allowed: true, kind: "practice", href: practiceHref(course, topic, nextPractice), targetLabel: `the next practice, ${nextPractice.title}`, target: { key: "ui.skip.target.practice", vars: { title: nextPractice.title } } };
   const topics = topicsOf(course);
   const next = topics[topics.findIndex((t) => t.id === topic.id) + 1];
-  if (next) return { allowed: true, kind: "topic", href: topicHref(course, next), targetLabel: `the next topic, ${next.title}` };
-  return { allowed: true, kind: "course", href: courseHref(course), targetLabel: "the course page" };
+  if (next) return { allowed: true, kind: "topic", href: topicHref(course, next), targetLabel: `the next topic, ${next.title}`, target: { key: "ui.skip.target.topic", vars: { title: next.title } } };
+  return { allowed: true, kind: "course", href: courseHref(course), targetLabel: "the course page", target: { key: "ui.skip.target.course" } };
 }
 
 /** A small button on a topic row of the course page: its own Start / Continue / Review. */

@@ -6,7 +6,14 @@ import type { ExplainProps, PracticeProps } from "../types";
 import type { RepeatedDivisionAnswer } from "./logic";
 import type { RepeatedDivisionSpec } from "./spec";
 
-export function Practice({ variant, prompt, state, stepIndex, locked, onSubmit }: PracticeProps<RepeatedDivisionSpec, RepeatedDivisionAnswer>) {
+/** The cell a wrong step got wrong, from the grader's named mistake (#723): the other cell is never marked. */
+export function wrongFieldOf(misconceptionId: string | undefined): "quotient" | "remainder" | "both" {
+  if (misconceptionId === "div.remainder") return "remainder";
+  if (misconceptionId === "div.quotient") return "quotient";
+  return "both";
+}
+
+export function Practice({ variant, prompt, state, last, stepIndex, locked, onSubmit }: PracticeProps<RepeatedDivisionSpec, RepeatedDivisionAnswer>) {
   const { spec } = variant;
   const finished = state === "correct";
   return (
@@ -18,6 +25,7 @@ export function Practice({ variant, prompt, state, stepIndex, locked, onSubmit }
         steps={spec.steps}
         stepIndex={finished ? spec.steps.length : stepIndex}
         state={state === "incorrect" ? "incorrect" : "idle"}
+        wrongField={wrongFieldOf(last?.result.misconceptionId)}
         disabled={locked}
         onStep={(quotient, remainder) => onSubmit({ kind: "repeated-division", step: stepIndex, quotient, remainder })}
       />
