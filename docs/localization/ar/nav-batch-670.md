@@ -14,7 +14,7 @@ What is already covered: all 229 non-`ui.*` catalog keys have Arabic in the appr
 |---|---|---|---|
 | `ui.nav.here` | You are here | أنت هنا | Accessible name of the location line. Auditor proposal on #676. |
 | `ui.nav.show-path` | Show the whole path | اعرض المسار كاملًا | The "…" button on phones. |
-| `ui.nav.all-courses` | All courses | كل المقررات | Owner decision 1: المقررات, no hybrid form. |
+| `ui.nav.all-courses` | All courses | المقررات | Owner decision 1; Auditor 3a: shorter, so the clipped header link keeps its meaning. Destination is the courses list. |
 | `ui.nav.courses-moved` | The courses are listed on the home page. | المقررات معروضة في الصفحة الرئيسية. | Owner decision 1. |
 | `ui.nav.go-courses` | Go to the courses | اذهب إلى المقررات | Owner decision 1. |
 
@@ -33,7 +33,7 @@ The location line itself («ECET 111 · Chapter 1 · Binary arithmetic») needs 
 | `ui.action.open-topic` | Open topic | افتح الـ Topic | |
 | `ui.action.recommended` | Recommended next | الخطوة التالية المقترحة | Owner decision 2. |
 | `ui.topic.practices` | Practices: {titles} | التمارين: {titles} | Owner decision 2: تمرين / تمارين. Titles stay English. |
-| `ui.row.more` | +{n} more | أخرى: {n} | Label:value form (owner decision 4); avoids a leading + in RTL. |
+| `ui.row.more` | +{n} more | +{n} | Auditor 3b: «أخرى: n» reads «1 :أخرى» at the end of an English list; «+n» needs no plural. UI: nowrap. |
 
 ## 3. The kind of a practice, in plain words (#673, PR #685)
 
@@ -65,13 +65,13 @@ These are on main already and have no Arabic, because the pre-catalog versions h
 
 | Key | English | Proposed Arabic | Notes |
 |---|---|---|---|
-| `ui.summary.line` | {activity}: {challenges}, {attempts}, {hints}. | {activity}. {challenges}، {attempts}، {hints}. | Arabic comma; a full stop after the title, so label:value parts do not follow a colon (QA 3c). |
+| `ui.summary.line` | {activity}: {challenges}, {attempts}, {hints}. | {activity} · {challenges} · {attempts} · {hints} | Middle dot, as the location line uses; no colon after the title (Auditor 3c). |
 | `ui.summary.challenges.one` | {n} challenge | التحديات: {n} | |
 | `ui.summary.challenges.other` | {n} challenges | التحديات: {n} | The package already says التحدي. |
 | `ui.summary.attempts.one` | {n} attempt | المحاولات: {n} | |
 | `ui.summary.attempts.other` | {n} attempts | المحاولات: {n} | |
-| `ui.summary.hints.one` | hints used on {n} challenge | تحديات احتاجت إلى تلميحات: {n} | Zero form is already approved: «لم تحتج إلى تلميحات». |
-| `ui.summary.hints.other` | hints used on {n} challenges | تحديات احتاجت إلى تلميحات: {n} | |
+| `ui.summary.hints.one` | hints used on {n} challenge | بمساعدة التلميحات: {n} | Zero form is already approved: «لم تحتج إلى تلميحات». |
+| `ui.summary.hints.other` | hints used on {n} challenges | بمساعدة التلميحات: {n} | |
 | `ui.numeric.decimal` | digits 0 to 9 | أرقام من 0 إلى 9 | |
 | `ui.numeric.decimal.signed` | digits 0 to 9, a leading minus sign | أرقام من 0 إلى 9، وإشارة ناقص في البداية | |
 | `ui.numeric.decimal.places.one` | digits 0 to 9, and up to {n} decimal place after the point | أرقام من 0 إلى 9. أقصى عدد للمنازل العشرية بعد الفاصلة: {n} | Spoken by a screen reader: «الفاصلة» as in the glossary's binary point. |
