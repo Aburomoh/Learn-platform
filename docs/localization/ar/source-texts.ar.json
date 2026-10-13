@@ -75924,7 +75924,7 @@
     "occurrences": 1,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "لم يبدأ بعد"
+    "arabic": "لم تبدأه بعد"
   },
   {
     "id": "catalog.ui.status.coming-soon",
@@ -75939,7 +75939,7 @@
     "occurrences": 1,
     "occurrence_ids": [],
     "slots": [],
-    "arabic": "لم يبدأ بعد · قريبًا"
+    "arabic": "لم تبدأه بعد · قريبًا"
   },
   {
     "id": "catalog.ui.status.challenges-done",
