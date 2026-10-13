@@ -10,7 +10,7 @@ import { join, relative, sep } from "node:path";
 import { gzipSync } from "node:zlib";
 
 const OUT = process.argv[2] ?? "out";
-const BUDGET_KB = 200; // gzipped, COST_RULES "M1 budget"
+const BUDGET_KB = 200; // gzipped, COST_RULES "M1 budget": an advisory warning, not a gate
 const CHUNK = /\/_next\/static\/chunks\/[\w.\-/]+?\.js/g;
 const NOMODULE = /<script[^>]*src="([^"]+)"[^>]*noModule/gi;
 
@@ -56,7 +56,7 @@ function kindOf(chunk) {
 }
 
 const lines = [
-  `### First-load JS per route (budget ${BUDGET_KB} kB gzip)`,
+  `### First-load JS per route (advisory warning above ${BUDGET_KB} kB gzip)`,
   "",
   "| Route | Chunks | Raw kB | Gzip kB | |",
   "|---|---:|---:|---:|---|",

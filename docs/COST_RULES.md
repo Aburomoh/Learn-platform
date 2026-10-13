@@ -20,8 +20,15 @@ infrastructure without justification, analytics SDKs.
 
 ## M1 budget
 Zero server functions, zero external requests after page load, zero paid services.
-Bundle: keep first-load JS for the stage route well under 200 kB gzipped; CI prints the size
-per route (`scripts/size-report.mjs`, step summary, report only).
+
+**Experience budget (owner, 2026-10-13, Option C on #683):** a practice page is usable in ≤ 3 s on
+a throttled mid-range phone over slow 4G, measured with `scripts/throttled-load.mjs` (Pixel 7,
+Slow 4G, 4× CPU, cold cache, median of 5). It reports `stage` (challenge on screen) and `hydrated`
+(responds to input); record both.
+
+**Size warning (advisory, not a gate):** first-load JS over 200 kB gzip on any route is a warning.
+CI prints the size per route (`scripts/size-report.mjs`, step summary, report only). A PR that
+crosses it, or adds > 10 kB gzip to the activity route, says why. No uncontrolled growth.
 
 ## Baseline — 2026-10-03, `c817572` (#50)
 First-load JS, gzip -9, excluding the `noModule` legacy polyfill (39 kB, never fetched by modern browsers):
@@ -54,3 +61,10 @@ on screen, `hydrated` = React attached (both from navigation start):
 
 Main regression is not size: since #144 the exported HTML holds an empty stage frame, so the question
 waits for JS on slow phones (+~1.8 s). Tracked in #158.
+
+## Re-measure — 2026-10-13, #683 (lazy per-kind logic)
+Activity pages now load only their kinds' logic (`KindLogicGate`), and import the shell directly.
+Heaviest activity route **199.8 → 183.8 kB** gzip (16.2 kB under the warning). Throttled phone,
+two A/B rounds, local server: `stage` ≈ 1.8 s and `hydrated` ≈ 4.0–4.3 s both before and after
+(differences within run-to-run noise), ~15–19 kB less transferred. `hydrated` misses the 3 s
+budget before and after this change.

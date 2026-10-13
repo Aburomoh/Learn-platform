@@ -1,15 +1,17 @@
-import { describe, expect, it } from "vitest";
-import { kinds, isRegisteredKind } from "./index";
+import { describe, expect, it, vi } from "vitest";
+import { kindLoaders, isRegisteredKind } from "./index";
 import { courses } from "@/content";
 import { detectorsByKind, kindSpecs } from "./specs";
 import { kindUI } from "./ui";
+import { kindLogicGate } from "./logicGate";
 
-const names = Object.keys(kinds).sort();
+const names = Object.keys(kindLoaders).sort();
 
 describe("kind registry (ADR-0008)", () => {
   it("every registered kind has a spec, logic and lazy views under the same name", () => {
     expect(kindSpecs.map((spec) => spec.shape.kind.value).sort()).toEqual(names);
     expect(Object.keys(kindUI).sort()).toEqual(names);
+    expect(Object.keys(kindLogicGate).sort()).toEqual(names);
     for (const name of names) expect(isRegisteredKind(name)).toBe(true);
     expect(isRegisteredKind("toString")).toBe(false);
   });
@@ -52,5 +54,18 @@ describe("kind registry (ADR-0008)", () => {
           if (m.detect.type === "equals") continue;
           expect(own[variant.spec.kind].has(m.detect.type), `${variant.id}: ${m.id} uses ${m.detect.type}, not a ${variant.spec.kind} detector`).toBe(true);
         }
+  });
+});
+
+describe("lazy kind logic (#683)", () => {
+  it("hands out a kind's logic only once it is loaded", async () => {
+    vi.resetModules();
+    const fresh = await import("./index");
+    expect(() => fresh.kindLogic("numeric")).toThrow(/not loaded/);
+    await fresh.loadKinds(["numeric", "kmap", "numeric", "not-a-kind"]);
+    expect(typeof fresh.kindLogic("kmap").grade).toBe("function");
+    expect(fresh.isMultiStep("kmap")).toBe(true);
+    expect(fresh.isMultiStep("numeric")).toBe(false);
+    expect(() => fresh.kindLogic("timing")).toThrow(/not loaded/);
   });
 });

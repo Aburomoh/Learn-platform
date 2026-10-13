@@ -1,8 +1,9 @@
 /**
  * Deterministic grading against content. Components never grade themselves; the ActivityRunner
  * calls `grade` and passes the result to the tutor engine. Course truth lives in the spec.
+ * The kind's logic must be loaded first (`loadKinds`, #683); the runner does that before it renders.
  */
-import { kinds, type KindAnswer, type RegisteredKind } from "@/kinds";
+import { kindLogic, type KindAnswer, type RegisteredKind } from "@/kinds";
 import type { GradeResult } from "@/kinds/types";
 import type { Variant } from "./schema";
 
@@ -20,6 +21,6 @@ export function grade(variant: Variant, answer: Answer): GradeResult {
     throw new Error(`Answer kind ${answer.kind} does not match spec kind ${kind}`);
   }
   // one cast at the dispatch: the kinds match (checked above), TypeScript cannot correlate them
-  const logic = kinds[kind] as { grade(variant: Variant, answer: Answer): GradeResult };
+  const logic = kindLogic(kind) as { grade(variant: Variant, answer: Answer): GradeResult };
   return logic.grade(variant, answer);
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { courses, getActivity, listActivityParams } from "./index";
 import { additionResult, additionSteps, additionStepVars, bitsToValue, complementBits, divisionSteps, evaluateCircuit, gateOrder, grade, groupBits, valueToBits } from "./grade";
-import { hintsForStep, MULTI_STEP_KINDS, stepCount, stepTag, stepVars } from "./steps";
+import { hintsForStep, multiStepKinds, stepCount, stepTag, stepVars } from "./steps";
 import { contextFromVariant } from "@/tutor";
 import { InteractionSpec, MultipleChoiceSpec, NumericSpec, VariantSchema } from "./schema";
 import { addition1101 } from "./fixtures/columnAddition";
@@ -10,6 +10,9 @@ import { hex26, octal88 } from "./fixtures/bitGrouping";
 import { fill } from "./template";
 import type { CircuitSpec, Variant } from "./schema";
 import { placeValue29, placeValue45 } from "./fixtures/placeValue45";
+
+// every kind's logic is loaded in vitest.setup.ts (#683)
+const MULTI_STEP_KINDS = multiStepKinds();
 import { resolveMessage } from "@/tutor/messages";
 import { equivalent, formatCube, isPOS, isSOP, literalCount, mintermsOf, parseBool } from "./boolean";
 import { gateCount } from "./ecet111/chapter2/simplification";
