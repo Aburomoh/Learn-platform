@@ -60671,7 +60671,7 @@
       "number-systems/conversion-exercise/ns.x.divide/v73#hints[1]"
     ],
     "slots": [],
-    "arabic": "في كل خطوة: اقسم على 2. الناتج الصحيح يذهب إلى الـ Row أسفل، وما يتبقى (0 أو 1) يُكتب بجانب العدد."
+    "arabic": "في كل خطوة: اقسم على 2. ناتج القسمة دون الكسر يذهب إلى الـ Row أسفل، وما يتبقى (0 أو 1) يُكتب بجانب العدد."
   },
   {
     "id": "ecet111.number-systems.decimal-to-binary.ns.q.divide.v26.hints[2]",
