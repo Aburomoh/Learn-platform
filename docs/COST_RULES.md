@@ -21,10 +21,17 @@ infrastructure without justification, analytics SDKs.
 ## M1 budget
 Zero server functions, zero external requests after page load, zero paid services.
 
-**Experience budget (owner, 2026-10-13, Option C on #683):** a practice page is usable in ≤ 3 s on
-a throttled mid-range phone over slow 4G, measured with `scripts/throttled-load.mjs` (Pixel 7,
-Slow 4G, 4× CPU, cold cache, median of 5). It reports `stage` (challenge on screen) and `hydrated`
-(responds to input); record both.
+**Experience budget (owner, 2026-10-13, #683 Option C, refined in #699):** "usable" means the
+student can answer. Profile: Pixel 7, Slow 4G (562.5 ms RTT, 1.47 Mbps), 4× CPU, cold cache, median
+of 5, against the deployed site (production or a Vercel preview), on a quiet machine.
+- **Primary: can answer.** From navigation start until the first intended answer input (tap an
+  option, type into the first answer field) gets its visible response from the app (e.g. Check
+  turns on). A challenge the student can see but not use is not usable. Desired **~3 s**. This is
+  a target, not a release blocker: a clean measurement above it opens a performance task and does
+  not block educational or navigation work.
+- **Secondary: challenge visible** (diagnostic). `scripts/throttled-load.mjs` reports it as `stage`;
+  its `hydrated` is only a lower bound for the primary metric. Record both metrics.
+- No kB-only optimisation that does not improve the primary metric.
 
 **Size warning (advisory, not a gate):** first-load JS over 200 kB gzip on any route is a warning.
 CI prints the size per route (`scripts/size-report.mjs`, step summary, report only). A PR that
@@ -68,3 +75,8 @@ Heaviest activity route **199.8 → 183.8 kB** gzip (16.2 kB under the warning).
 two A/B rounds, local server: `stage` ≈ 1.8 s and `hydrated` ≈ 4.0–4.3 s both before and after
 (differences within run-to-run noise), ~15–19 kB less transferred. `hydrated` misses the 3 s
 budget before and after this change.
+
+## Re-measure — 2026-10-13, production `80921ee` (#699)
+Deployed site, profile above, two rounds of 5 (median of 10): challenge visible 2.0–2.2 s, can
+answer 4.4–5.0 s (heaviest ECET111, typical ECET111, typical CPET181). Locally, main (`5ccfa7b`) is
+within noise of `80921ee`. Details and the startup plan: #699.

@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { act, render, screen, within } from "@testing-library/react";
 import { getCourse } from "@/content";
 import { getProgressStore, clearLocalData } from "@/learner";
-import { completeActivity, completeQuestion, startActivity } from "@/learner/progress";
+import { completeActivity, completeQuestion, markExplained, startActivity } from "@/learner/progress";
 import { kindWords } from "../kindWords";
 import { TopicNext } from "./TopicNext";
 
@@ -30,6 +30,18 @@ describe("TopicNext", () => {
     const steps = within(screen.getByRole("list", { name: /^Challenges/ })).getAllByRole("listitem");
     expect(steps).toHaveLength(first.questions.length);
     expect(steps.every((s) => s.getAttribute("data-state") === "todo")).toBe(true);
+  });
+
+  it("visited only, or explained only: Start, every step not started, the row says Up next (ADR-0013)", () => {
+    act(() => {
+      store().set((p) => markExplained(startActivity(p, first.id), first.id));
+    });
+    render(<TopicNext course={course} topic={topic} />);
+    expect(document.querySelector("[data-primary-action]")).toHaveTextContent(`Start · ${first.title}`);
+    expect(document.querySelector("[data-action]")).toHaveAttribute("data-action", "start");
+    const steps = within(screen.getByRole("list", { name: /^Challenges/ })).getAllByRole("listitem");
+    expect(steps.every((s) => s.getAttribute("data-state") === "todo")).toBe(true);
+    if (topic.activities.length > 1) expect(screen.getByText("Up next")).toBeInTheDocument();
   });
 
   it("started: Continue, finished challenges done and the next one current", () => {

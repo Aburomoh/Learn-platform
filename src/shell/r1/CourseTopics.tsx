@@ -1,6 +1,6 @@
 "use client";
 
-import { skippedAhead } from "@/learner/progress";
+import { effectiveDone, effectiveStatus, hasProgress, skippedAhead } from "@/learner/progress";
 import { useEffect, type MouseEvent, type ReactNode } from "react";
 import type { Course, Module, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
@@ -23,16 +23,18 @@ export function topicStatus(
     a,
     r: progress.activities[a.id],
   }));
-  if (records.every(({ r }) => r?.status === "completed"))
+  if (records.every(({ a, r }) => effectiveStatus(a, r) === "completed"))
     return { text: "Completed", completed: true, started: true };
-  if (records.some(({ r }) => r && r.status !== "new")) {
-    const skipped = records.some(({ r }) => skippedAhead(r));
+  // in progress once a practice has meaningful progress (ADR-0013); a visit alone is not started.
+  // A skip is not progress either, but the record of one is kept in view: "skipped ahead" (#623) stays.
+  if (records.some(({ a, r }) => hasProgress(r, a) || skippedAhead(r, a))) {
+    const skipped = records.some(({ a, r }) => skippedAhead(r, a));
     const done = records.reduce(
       (n, { a, r }) =>
         n +
-        (r?.status === "completed"
+        (effectiveStatus(a, r) === "completed"
           ? a.questions.length
-          : (r?.completedQuestions?.length ?? 0)),
+          : effectiveDone(a, r).completed.size),
       0,
     );
     return {

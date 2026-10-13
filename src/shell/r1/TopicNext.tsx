@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Course, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
+import { effectiveDone, inProgress } from "@/learner/progress";
 import { kindWords } from "../kindWords";
 import { practiceAction, topicAction } from "../primaryAction";
 import { resolveMessage } from "@/tutor/messages";
@@ -25,7 +26,8 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
   const action = topicAction(course, topic, progress);
   const { activity } = action;
   const record = progress.activities[activity.id];
-  const done = record?.status === "completed" ? activity.questions.map((q) => q.id) : (record?.completedQuestions ?? []);
+  // a finished practice that gained questions shows them open (§6.1 rule 4)
+  const done = [...effectiveDone(activity, record).completed];
   const finished = action.kind === "next-topic" || action.kind === "review";
   const several = topic.activities.length > 1;
 
@@ -45,7 +47,7 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
               {activity.title} · {activity.questions.length} short challenge{activity.questions.length === 1 ? "" : "s"}
             </p>
           )}
-          <ChallengeSteps steps={stepsFrom(activity.questions, done, record?.status === "started")} label={several ? `Challenges of ${activity.title}` : "Challenges"} />
+          <ChallengeSteps steps={stepsFrom(activity.questions, done, inProgress(record, activity))} label={several ? `Challenges of ${activity.title}` : "Challenges"} />
         </div>
       )}
 
@@ -57,7 +59,7 @@ export function TopicNext({ course, topic }: { course: Course; topic: Topic }) {
           <ol className={styles.practiceList}>
             {topic.activities.map((a) => {
               const own = practiceAction(course, topic, a, progress);
-              const count = progress.activities[a.id]?.completedQuestions?.length ?? 0;
+              const count = effectiveDone(a, progress.activities[a.id]).completed.size;
               // two compact lines (epic #670, QW5 + owner refinement 1): the name, then its status, kind in
               // plain words and the step labels, so the student knows what a practice is before entering
               const status = own.kind === "review" ? "Completed" : own.kind === "continue" ? `${count} of ${a.questions.length} challenges done` : `about ${a.minutes} min`;

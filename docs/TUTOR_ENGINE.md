@@ -90,6 +90,10 @@ attention-left, attention-right` (placeholders until approved assets exist).
    `ctx.stepIndex > 0`; then the first `EXPLAIN_SLOWLY_REQUESTED` says `explain.confirm-restart` and emits
    `CONFIRM_RESTART`, and the runner re-sends it with `confirmed: true`.
 
+### A diagnosed mistake counts as help given (#700)
+
+When a wrong answer names a misconception, the engine remembers it (`state.diagnosis`) and sends a `DIAGNOSIS` action, again with every hint granted while it stands. The generic nudge rungs (<= 2) are then skipped, so Hint and "I am stuck" never answer with something vaguer than the diagnosis; if the ladder has nothing above rung 2 the nudge is still given. The diagnosis clears when the step completes, on a retry and on a new variant. The view keeps `tutor.diagnosis` visible beside the hint cards (UI, #691).
+
 ## Adapter
 ```ts
 interface ConversationalTutorAdapter { respond(input: TutorTurnInput): Promise<TutorAction[]> }
