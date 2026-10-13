@@ -8,7 +8,7 @@ for (const [name, viewport] of Object.entries(VIEWPORTS)) {
 
     test("home lists two courses", async ({ page }) => {
       await page.goto("/");
-      await expect(page.getByRole("link", { name: /Introduction to Digital System Design/ })).toBeVisible();
+      await expect(page.getByRole("link", { name: /^Open course: Introduction to Digital System Design/ })).toBeVisible();
       await expect(page.locator('a[href*="/courses/cpet181"]').first()).toBeVisible();
       await checkScreen(page);
     });

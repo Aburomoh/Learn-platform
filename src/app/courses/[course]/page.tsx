@@ -1,7 +1,11 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { courses, getCourse } from "@/content";
-import { ChapterIndex, CourseTopics, CourseTutor, PageFrame, PageHeading } from "@/shell/r1";
+// direct imports, not the shell barrel (#675 size trim: the barrel would add MeetCard's figures here)
+import { ChapterIndex, CourseTopics } from "@/shell/r1/CourseTopics";
+import { CourseTutor } from "@/shell/r1/CourseTutor";
+import { PageFrame } from "@/shell/r1/PageFrame";
+import { PageHeading } from "@/shell/r1/PageHeading";
 
 type Params = { course: string };
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { courses } from "@/content";
-import { PageFrame, PageHeading } from "@/shell/r1";
+import { PageFrame } from "@/shell/r1/PageFrame";
+import { PageHeading } from "@/shell/r1/PageHeading";
 import { SettingsForm } from "@/shell/SettingsForm";
 
 export const metadata: Metadata = { title: "Settings" };

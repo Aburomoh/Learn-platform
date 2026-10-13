@@ -2,8 +2,8 @@
 
 import type { Course } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
-import { resolveMessage } from "@/tutor";
-import { TutorCard, type TutorCardProps } from "@/tutor/ui";
+import { resolveMessage } from "@/tutor/messages";
+import { TutorCard, type TutorCardProps } from "@/tutor/ui/TutorCard";
 import { product } from "../../../config/product";
 import { useHydrated } from "../useHydrated";
 
