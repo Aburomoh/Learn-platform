@@ -118,13 +118,16 @@ export function skipQuestion(p: OfferingProgress, activityId: string, questionId
  * record with meaningful progress, an attempt or a done question. A visited-only or explained-only
  * record (`started`, no attempt, nothing done: the shape older builds wrote on mount) reads as `new`.
  */
-export function inProgress(a: ActivityProgress | undefined): boolean {
-  return !!a && a.status === "started" && (a.attempts > 0 || (a.completedQuestions?.length ?? 0) > 0);
+export function inProgress(a: ActivityProgress | undefined, activity?: EffectiveActivity): boolean {
+  if (!a || a.status !== "started") return false;
+  // with the practice given, a done question is a live one, directly or by credit (§6.1, ADR-0013 rule 7)
+  const done = activity ? effectiveDone(activity, a).completed.size : (a.completedQuestions?.length ?? 0);
+  return a.attempts > 0 || done > 0;
 }
 
 /** Meaningful progress of any kind: in progress or completed. What "returning" and "started" mean on the course rows. */
-export function hasProgress(a: ActivityProgress | undefined): boolean {
-  return !!a && (a.status === "completed" || inProgress(a));
+export function hasProgress(a: ActivityProgress | undefined, activity?: EffectiveActivity): boolean {
+  return !!a && (a.status === "completed" || inProgress(a, activity));
 }
 
 /**

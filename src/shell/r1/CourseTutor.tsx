@@ -23,7 +23,7 @@ export interface CourseTutorProps {
 export function CourseTutor({ course, messageKey = "page.course.intro", size }: CourseTutorProps) {
   const ready = useHydrated();
   const [progress] = useOfferingProgress(course.offeringId);
-  const started = Object.values(progress.activities).some(hasProgress);
+  const started = Object.values(progress.activities).some((a) => hasProgress(a));
   return (
     <TutorCard
       name={product.owner.shortName}

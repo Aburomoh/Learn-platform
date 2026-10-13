@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { effectiveDone, effectiveStatus, firstUnfinishedQuestion, skippedAhead, type ActivityProgress } from "./progress";
+import { effectiveDone, effectiveStatus, firstUnfinishedQuestion, hasProgress, inProgress, skippedAhead, type ActivityProgress } from "./progress";
 import { resumeRunnerState } from "@/stage/runnerReducer";
 import type { Activity } from "@/content/schema";
 
@@ -66,5 +66,16 @@ describe("effectiveDone: the one reader of stored question ids (#692, §6.1)", (
   it("no record reads new; a record with nothing done keeps its status", () => {
     expect(effectiveStatus(qs("a"), undefined)).toBe("new");
     expect(effectiveStatus(qs("a"), rec({}))).toBe("started");
+  });
+});
+
+describe("in progress counts done questions through effectiveDone (ADR-0013 rule 7, #692)", () => {
+  it("a retired id alone is not progress; a credited one is", () => {
+    const a = qs(["new", ["old"]], "other");
+    const retired = rec({ completedQuestions: ["gone"] });
+    expect(inProgress(retired, a)).toBe(false);
+    expect(inProgress(retired)).toBe(true); // stored length only, without the practice
+    expect(inProgress(rec({ completedQuestions: ["old"] }), a)).toBe(true);
+    expect(hasProgress(rec({ status: "completed" }), a)).toBe(true);
   });
 });
