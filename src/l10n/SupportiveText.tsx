@@ -42,10 +42,14 @@ export interface SupportiveTextProps {
 export function SupportiveText({ template, vars = {}, course, inline = false }: SupportiveTextProps) {
   const { translate } = useArabic(course);
   const text = translate(template);
-  if (text === template || !isArabic(text)) return <Notation text={fill(template, vars)} />;
+  if (text === template) return <Notation text={fill(template, vars)} />;
+  // the translation may hold no Arabic letter of its own ("+{n}", "{activity} · {attempts}"): it is
+  // still the owner's text, and its direction follows what the filled line holds (#710)
+  const filled = fill(text, vars);
+  if (!isArabic(filled)) return <Notation text={filled} />;
   return (
     <span dir="rtl" lang="ar" className={`${styles.ar} ${inline ? styles.inline : ""}`}>
-      <BidiText text={fill(text, vars)} />
+      <BidiText text={filled} />
     </span>
   );
 }

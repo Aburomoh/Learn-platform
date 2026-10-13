@@ -7,8 +7,8 @@
 
 export type BidiRun = { ltr: string } | { rtl: string };
 
-/** One LTR run: starts and ends on a letter, digit, bracket or prime; may hold operators, spaces and notation inside. */
-const LTR_RUN = /[A-Za-z0-9(\[][A-Za-z0-9 _^'′()\[\]{}+\-−×÷*\/=.,:→←↔⊕<>≤≥%]*[A-Za-z0-9)\]'′]|[A-Za-z0-9]/g;
+/** One LTR run: starts and ends on a letter, digit, bracket or prime; may hold operators, spaces, notation and the list dot (`A · B`, #705) inside. */
+const LTR_RUN = /[A-Za-z0-9(\[][A-Za-z0-9 _^'′()\[\]{}+\-−×÷*\/=.,:→←↔⊕<>≤≥%·]*[A-Za-z0-9)\]'′]|[A-Za-z0-9]/g;
 
 /** Splits text into alternating Arabic (rtl) and isolated LTR runs, in order. Empty runs are dropped. */
 export function splitBidi(text: string): BidiRun[] {

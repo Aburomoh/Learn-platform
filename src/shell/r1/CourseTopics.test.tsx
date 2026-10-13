@@ -26,13 +26,13 @@ describe("topicStatus", () => {
 
   it("not started: the effort cue for the whole topic, from authored values", () => {
     const text = first.activities.length > 1 ? `${first.activities.length} short practices · about ${minutes} min` : `${total} short challenges · about ${minutes} min`;
-    expect(topicStatus(first, { activities: {} })).toEqual({ text, completed: false, started: false });
+    expect(topicStatus(first, { activities: {} })).toMatchObject({ text, completed: false, started: false });
   });
 
   it("in progress: challenges done across the topic", () => {
     const a = first.activities[0];
     const p = completeQuestion(startActivity({ version: 1, offeringId: "x", activities: {}, concepts: {} }, a.id), a.id, a.questions[0].id);
-    expect(topicStatus(first, p)).toEqual({ text: `1 of ${total} challenges done`, completed: false, started: true });
+    expect(topicStatus(first, p)).toMatchObject({ text: `1 of ${total} challenges done`, completed: false, started: true });
   });
 
   it("visited only (started, no attempt, nothing done) is not started: the effort cue, as with no record (ADR-0013)", () => {
@@ -54,7 +54,7 @@ describe("topicStatus", () => {
 
   it("completed only when every practice of the topic is", () => {
     const all = Object.fromEntries(first.activities.map((a) => [a.id, { status: "completed" as const, attempts: 1, hintsUsed: 0, independent: true, lastAt: 1 }]));
-    expect(topicStatus(first, { activities: all })).toEqual({ text: "Completed", completed: true, started: true });
+    expect(topicStatus(first, { activities: all })).toMatchObject({ text: "Completed", completed: true, started: true });
   });
 });
 
@@ -149,7 +149,7 @@ describe("chapters (#198 §9, #232)", () => {
 
   it("a comingSoon chapter (no topics) is Not started · Coming soon, never Completed (#562)", () => {
     const soon = { ...ch1, id: "soon", topics: [], comingSoon: true };
-    expect(chapterStatus(soon, none)).toEqual({ state: "new", text: "Not started · Coming soon", done: 0, total: 0 });
+    expect(chapterStatus(soon, none)).toMatchObject({ state: "new", text: "Not started · Coming soon", done: 0, total: 0 });
     expect(chapterStatus(soon, { activities: done(ch1.topics) })).toMatchObject({ state: "new" });
   });
 

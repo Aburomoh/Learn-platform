@@ -6,25 +6,27 @@ import type { Course, Module, Topic } from "@/content/schema";
 import { useOfferingProgress } from "@/learner";
 import type { OfferingProgress } from "@/learner/progress";
 import { courseAction, topicHref, topicRowLink } from "../primaryAction";
-import { resolveMessage } from "@/tutor/messages";
 import { TopicRow } from "./Chrome";
+import { LineText, UiText, useUiText, type UiLine } from "./uiText";
+import { pluralKey, resolveMessage } from "@/tutor/messages";
 import { PreviewBoard, parsePreview } from "./PreviewBoard";
-import { effortCue } from "./PrimaryAction";
 import { useHydrated } from "../useHydrated";
 import styles from "./r1.module.css";
 
-/** Topic-level status line: nothing about single practices (that is the topic page's job). */
+const line = (key: string, vars?: UiLine["vars"]) => ({ text: resolveMessage(key, vars), line: { key, vars } });
+
+/** Topic-level status line: nothing about single practices (that is the topic page's job). `text` is the English; `line` renders through the Arabic layer (#710). */
 export function topicStatus(
   topic: Topic,
   progress: Pick<OfferingProgress, "activities">,
-): { text: string; completed: boolean; started: boolean } {
+): { text: string; line: UiLine; completed: boolean; started: boolean } {
   const total = topic.activities.reduce((n, a) => n + a.questions.length, 0);
   const records = topic.activities.map((a) => ({
     a,
     r: progress.activities[a.id],
   }));
   if (records.every(({ a, r }) => effectiveStatus(a, r) === "completed"))
-    return { text: "Completed", completed: true, started: true };
+    return { ...line("ui.status.completed"), completed: true, started: true };
   // in progress once a practice has meaningful progress (ADR-0013); a visit alone is not started.
   // A skip is not progress either, but the record of one is kept in view: "skipped ahead" (#623) stays.
   if (records.some(({ a, r }) => hasProgress(r, a) || skippedAhead(r, a))) {
@@ -38,18 +40,18 @@ export function topicStatus(
       0,
     );
     return {
-      text: `${done} of ${total} challenges done${skipped ? " · skipped ahead" : ""}`,
+      ...line(skipped ? "ui.status.challenges-done-skipped" : "ui.status.challenges-done", { done, total }),
       completed: false,
       started: true,
     };
   }
   // Not started: a topic of several practices is not one long sitting, so count practices (Pedagogy, #172).
   const minutes = topic.activities.reduce((n, a) => n + a.minutes, 0);
-  const text =
+  const cue =
     topic.activities.length > 1
-      ? `${topic.activities.length} short practices · about ${minutes} min`
-      : effortCue(total, minutes);
-  return { text, completed: false, started: false };
+      ? line("ui.effort.practices", { n: topic.activities.length, minutes })
+      : line(pluralKey("ui.effort.challenges", total, "en"), { n: total, minutes });
+  return { ...cue, completed: false, started: false };
 }
 
 /** The first and last tile of a topic's preview chain, small enough for a row; nothing if it is not a chain. */
@@ -70,27 +72,27 @@ export type ChapterState = "new" | "progress" | "done";
 export function chapterStatus(
   chapter: Module,
   progress: Pick<OfferingProgress, "activities">,
-): { state: ChapterState; text: string; done: number; total: number } {
+): { state: ChapterState; text: string; line: UiLine; done: number; total: number } {
   // a chapter without topics yet (CPET181 C2–C9, #562): never "Completed" (0 of 0)
   if (chapter.comingSoon || chapter.topics.length === 0)
     return {
       state: "new",
-      text: "Not started · Coming soon",
+      ...line("ui.status.coming-soon"),
       done: 0,
       total: 0,
     };
   const statuses = chapter.topics.map((t) => topicStatus(t, progress));
   const done = statuses.filter((t) => t.completed).length;
   const total = statuses.length;
-  if (done === total) return { state: "done", text: "Completed", done, total };
+  if (done === total) return { state: "done", ...line("ui.status.completed"), done, total };
   if (statuses.some((t) => t.started))
     return {
       state: "progress",
-      text: `In progress · ${done} of ${total} topic${total === 1 ? "" : "s"} done`,
+      ...line(pluralKey("ui.status.chapter-progress", total, "en"), { done, n: total }),
       done,
       total,
     };
-  return { state: "new", text: "Not started", done, total };
+  return { state: "new", ...line("ui.status.not-started"), done, total };
 }
 
 /** "Chapter 2 · Boolean Algebra and Logic Gates" → "Boolean Algebra and Logic Gates": the number has its own tile. */
@@ -176,7 +178,7 @@ export function CourseTopics({ course }: { course: Course }) {
                     data-state={status.state}
                   >
                     <StatusShape state={status.state} />
-                    {status.text}
+                    <LineText line={status.line} />
                   </span>
                 </span>
                 <span className={styles.chapterBar} aria-hidden="true">
@@ -199,7 +201,7 @@ export function CourseTopics({ course }: { course: Course }) {
                         title={topic.title}
                         href={topicHref(course, topic)}
                         route={topic.summary}
-                        status={topicState.text}
+                        status={<LineText line={topicState.line} />}
                         statusMuted={!topicState.started}
                         completed={topicState.completed}
                         visual={
@@ -210,7 +212,7 @@ export function CourseTopics({ course }: { course: Course }) {
                         reserveVisual
                         practices={topic.activities.map((a) => a.title)}
                         action={isNext ? next.primary : topicRowLink(course, topic, progress)}
-                        caption={isNext && next.kind !== "review" ? resolveMessage("ui.action.recommended") : undefined}
+                        caption={isNext && next.kind !== "review" ? <UiText k="ui.action.recommended" /> : undefined}
                         emphasis={isNext ? "primary" : "quiet"}
                       />
                     );
@@ -246,6 +248,7 @@ export function ChapterIndex({
   const [progress] = useOfferingProgress(course.offeringId);
   const ready = useHydrated();
   const next = courseAction(course, progress);
+  const { t } = useUiText();
   return (
     <div className={styles.rail}>
       <nav
@@ -269,7 +272,7 @@ export function ChapterIndex({
                   <StatusShape state={status.state} />
                   <span>
                     {i + 1} · {chapterTitle(chapter)}
-                    <span className="sr-only">, {status.text}</span>
+                    <span className="sr-only">, {t(status.line.key, status.line.vars)}</span>
                   </span>
                 </a>
               </li>
