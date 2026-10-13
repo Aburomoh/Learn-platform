@@ -583,3 +583,35 @@ test("three-JK table on a phone: next-state A is filled with A B C x, JA and KA 
   expect((await seen()).names).toHaveLength(7);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 });
+
+test("fixed partitions on a phone: the job label sits in the job's share, the waste column fits without a scroll bar (#668)", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/courses/cpet181/fixed-partitions/fixed-partitions/");
+  const place = async (name: string) => {
+    await page.getByRole("radio", { name }).check({ force: true });
+    await page.getByRole("button", { name: "Place job" }).click();
+  };
+  // first-fit, partitions 100 25 25 50, jobs 30 50 30 25: J1 takes the first partition
+  await place("Partition 1, 100 KB");
+  const p1 = page.locator("[data-column$='-before'] [data-block='0']");
+  await expect(p1).toContainText("J1 · 30 KB");
+  const geometry = await p1.evaluate((block) => {
+    const share = block.querySelector("[class*='fill']")!.getBoundingClientRect();
+    const label = block.querySelector("[class*='text']")!.getBoundingClientRect();
+    const caption = block.querySelector("[class*='sub']")!.getBoundingClientRect();
+    return { labelInShare: label.top >= share.top && label.bottom <= share.bottom, captionBelow: caption.top >= share.bottom, blockText: block.textContent };
+  });
+  expect(geometry.labelInShare).toBe(true);
+  expect(geometry.captionBelow).toBe(true);
+  await expect(page.getByRole("list", { name: "Key" })).toHaveText(/Job.*Free.*Wasted/);
+  await place("Partition 4, 50 KB");
+  await place("Waits");
+  await place("Partition 2, 25 KB");
+  // the waste column: no horizontal scroll in the table's box, none on the page
+  const table = page.getByRole("table", { name: "Partition table" });
+  await expect(table.getByRole("textbox", { name: "Internal waste of partition 1" })).toBeVisible();
+  await expect(table.getByRole("columnheader", { name: "Internal waste" })).toBeVisible();
+  const box = await table.evaluate((t) => ({ scroll: t.parentElement!.scrollWidth - t.parentElement!.clientWidth }));
+  expect(box.scroll).toBeLessThanOrEqual(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+});

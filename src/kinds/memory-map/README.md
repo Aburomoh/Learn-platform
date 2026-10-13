@@ -24,6 +24,13 @@ current goal, so "see inside" (the split, the merge, the waste numbers) appears 
 check that asks it. Registers: `register` in the truth module is bytes (×1024); `registerUnit: "KB"`
 asks for the move in KB.
 
+Drawing (#668): shape and colour together, never colour alone. OS is neutral grey; a job's share is
+solid blue (`--mem-job`) with its label inside; a free block or partition is a neutral hatch; the
+leftover inside a busy fixed partition is a warm hatch (`--mem-waste`) holding the "Partition n ·
+size" caption and, once asked, "waste N". A busy partition grows past the proportional height when
+needed so the label and caption never overlap; a key (Job · Free · Wasted) sits under the column.
+Tokens and their AA pairs: `src/styles/tokens.css`, `tokens.test.ts`.
+
 ## Detectors
 `block-too-small`, `first-fit-as-best`, `best-fit-as-first`, `waits-though-fits`, `waste-as-size`,
 `largest-hole-only`, `no-merge`, `partial-merge`, `merge-wrong-start`, `merged-busy`, `gap-left`,

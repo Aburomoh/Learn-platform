@@ -90,6 +90,16 @@
   --signal-low: var(--text-muted);
   --pending-opacity: 0.45;
 
+  /* memory-map (#668): OS neutral, job share calm blue, free a neutral hatch, internal waste a warm hatch */
+  --mem-os: #e6e3de;
+  --mem-job: #d5e4f0;
+  --mem-job-edge: #4f7699;
+  --mem-free: #fffdfa;
+  --mem-free-line: #e6e0d7;
+  --mem-waste: #fbecd8;
+  --mem-waste-line: #ebcc9f;
+  --mem-waste-text: #6e420e;
+
   /* one elevated element per page uses --shadow-2; everything else is flat or --shadow-1 */
   --shadow-1: 0 1px 2px rgba(60, 40, 20, 0.05), 0 2px 8px rgba(60, 40, 20, 0.06);
   --shadow-2: 0 2px 4px rgba(60, 40, 20, 0.05), 0 10px 28px rgba(60, 40, 20, 0.09);
@@ -121,6 +131,14 @@
   --warning-bg: #3a2e14;
   --highlight-soft: rgba(244, 201, 93, 0.2);
   --signal-high: #5eead4;
+  --mem-os: #35322e;
+  --mem-job: #233a4e;
+  --mem-job-edge: #8fb8e0;
+  --mem-free: #25221e;
+  --mem-free-line: #3b3631;
+  --mem-waste: #37291b;
+  --mem-waste-line: #563f26;
+  --mem-waste-text: #f0c690;
   --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.4), 0 10px 28px rgba(0, 0, 0, 0.35);
 }
@@ -150,6 +168,14 @@
     --warning-bg: #3a2e14;
     --highlight-soft: rgba(244, 201, 93, 0.2);
     --signal-high: #5eead4;
+    --mem-os: #35322e;
+    --mem-job: #233a4e;
+    --mem-job-edge: #8fb8e0;
+    --mem-free: #25221e;
+    --mem-free-line: #3b3631;
+    --mem-waste: #37291b;
+    --mem-waste-line: #563f26;
+    --mem-waste-text: #f0c690;
     --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.4), 0 10px 28px rgba(0, 0, 0, 0.35);
   }
