@@ -16,13 +16,15 @@ const FILE = path.resolve(process.cwd(), "src/content/question-ids.snapshot.json
 const RETIRED_WITHOUT_CREDIT: Record<string, string> = {};
 
 const live: Record<string, string[]> = {};
-const credited = new Set<string>();
+// credit is resolved per practice (effectiveDone reads one practice's record), so it is keyed by practice
+const credited: Record<string, Set<string>> = {};
 for (const c of courses)
   for (const m of c.modules)
     for (const t of m.topics)
       for (const a of t.activities) {
-        live[`${c.id}/${a.id}`] = a.questions.map((q) => q.id);
-        for (const q of a.questions) for (const id of q.creditedBy ?? []) credited.add(id);
+        const key = `${c.id}/${a.id}`;
+        live[key] = a.questions.map((q) => q.id);
+        credited[key] = new Set(a.questions.flatMap((q) => q.creditedBy ?? []));
       }
 
 describe("question ids are permanent (#692)", () => {
@@ -40,7 +42,7 @@ describe("question ids are permanent (#692)", () => {
   it("every snapshot id is still live, credited by a live question, or retired with a reason", () => {
     const gone: string[] = [];
     for (const [activity, ids] of Object.entries(snapshot))
-      for (const id of ids) if (!live[activity]?.includes(id) && !credited.has(id) && !RETIRED_WITHOUT_CREDIT[id]) gone.push(`${activity}: ${id}`);
+      for (const id of ids) if (!live[activity]?.includes(id) && !credited[activity]?.has(id) && !RETIRED_WITHOUT_CREDIT[id]) gone.push(`${activity}: ${id}`);
     expect(gone).toEqual([]);
   });
 
@@ -54,7 +56,7 @@ describe("question ids are permanent (#692)", () => {
     for (const id of Object.keys(RETIRED_WITHOUT_CREDIT)) expect(Object.values(live).flat(), id).not.toContain(id);
   });
 
-  it("creditedBy never names the question itself and has no duplicates", () => {
+  it("creditedBy names ids of the same practice (live or in the snapshot), never itself, no duplicates", () => {
     const bad: string[] = [];
     for (const c of courses)
       for (const m of c.modules)
@@ -62,7 +64,9 @@ describe("question ids are permanent (#692)", () => {
           for (const a of t.activities)
             for (const q of a.questions) {
               const ids = q.creditedBy ?? [];
-              if (ids.includes(q.id) || new Set(ids).size !== ids.length) bad.push(`${a.id}/${q.id}`);
+              const known = new Set([...(snapshot[`${c.id}/${a.id}`] ?? []), ...live[`${c.id}/${a.id}`]]);
+              if (ids.includes(q.id) || new Set(ids).size !== ids.length) bad.push(`${a.id}/${q.id}: itself or duplicate`);
+              for (const id of ids) if (!known.has(id)) bad.push(`${a.id}/${q.id}: ${id} was never a question of this practice`);
             }
     expect(bad).toEqual([]);
   });
