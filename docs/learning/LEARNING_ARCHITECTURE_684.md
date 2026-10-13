@@ -765,39 +765,32 @@ ADR-0007 needs **no** amendment (§3.1).
 
 ---
 
-## 9. Implementation order (Pedagogy's suggestion; the Lead finalises)
+## 9. Implementation order (Lead, final; Pedagogy's suggestion adopted with owners and parallel lanes)
 
-1. **Gate rules** (§2.1–2.4, tutor engine and runner only):
-   - Explain Slowly ungated;
-   - engagement signal, and typing resets idle;
-   - "I'm stuck";
-   - the 45 s idle no longer gates.
+Owner confirmation recorded on #684 (2026-10-13): **Explain Slowly is always available**; "Try once first" stays for Hint only.
+Every step is one PR from main (no stacks). Reviewer on every PR; QA on every behaviour change; the Auditor steers throughout.
 
-   Smallest change, largest relief. This step includes:
-   - the new engine events (§2.1);
-   - the `onInput` / `engageOn` part of the ADR-0008 amendment (§4.5);
-   - the interim stated in §2.6: legacy walkthroughs keep the variant switch and the reset, behind a one-time warning when
-     `stepIndex > 0`.
+| # | Work | Owner | Depends on | Runs alongside |
+|---|---|---|---|---|
+| 1 | **Gate rules** (§2.1–2.4, §2.6 interim): Explain Slowly ungated; engagement (`onInput`, `engageOn`, Check-only for single-pick kinds); typing resets idle; "I'm stuck"; 45 s idle only prompts; the one-time warning before a legacy walkthrough resets. ADR-0008 amendment part 1 (Lead) | UI (runner/kinds) + Content (engine events, tutor messages) | — | nav Phase 1 (#674) |
+| 2 | **Id rules** (§6.1): `creditedBy`, `effectiveDone`, id snapshot test. Then the cheap reorders (§5 items 3, 18) and the `an.q.ex-table` prompt | Content | — | 1 |
+| 3 | **Chunk changes** (§3, §3.1): K-map 1s-first/per term, truth-table 8-row blocks, three-JK split, cpu-schedule one job per step, chunk-named Check labels | UI (kind views) + Content (steps/grading) | 2 (ids) | nav S1 (#677) |
+| 4 | **Lesson ADR + schema + case A detour** (`Lesson`, `lessonRefs`, `alsoNeeds`, `#q=…&lesson=…` grammar shared with nav S3 #679, no variant switch when a section exists). ADR-0008 amendment part 2 + lesson ADR (Lead) | UI (LessonView, detour) + Content (schema, tests) | 1; UX §7 | nav S2 (#680) |
+| 5 | **Pilot lessons + P1 audit questions**: `minterms` with L1/L2 (owner's Σ example), `flip-flops › excitation`, CPU-scheduling chart reading. Pedagogy and the Auditor review the pilot before scaling | Content (lessons), Pedagogy (sign-off) | 4, 2 | — |
+| 6 | **Migration**: CPET 181 lessons chapter by chapter, then ECET 111's two-screen topics | Content | 5 approved | — |
+| 7 | **Draft persistence (case B)** after an ADR-0005 amendment: return across routes, mid-step Continue | UI | 4; nav S1 merged | 6 |
+| 8 | Retire `variant.explanation` per question as lesson coverage completes | Content | 6 | — |
 
-   The owner confirms that point 3 on #684 supersedes the 2026-10-11 "Try once first" reversal for Explain Slowly.
-2. **Id rules, then cheap content fixes.** First the `creditedBy` field, the `effectiveDone` helper and the id snapshot test
-   (§6.1). Then the reorders (§5 items 3, 18) and the `an.q.ex-table` prompt.
-3. **Chunk changes** (§3): K-map "1s first" / per term, truth-table 8-row blocks, three-JK split, cpu-schedule one job per step.
-   All are step-count changes inside kinds (§3.1). The three-JK split and the reorders first need the §6.1 id rules
-   (`creditedBy`, reader helper, id snapshot test).
-4. **Lesson ADR and schema** (`Lesson`, `lessonRefs`, `alsoNeeds`, tests), plus the **case A detour**: no variant switch when a
-   section exists. UX §7 decided first.
-5. **Pilot lessons with the P1 audit:**
-   - `minterms` (#1, #2), with its L1 and L2;
-   - `flip-flops › excitation` (#4);
-   - CPU-scheduling chart reading (#16).
-
-   Pedagogy and the Auditor review the pilot with learners' evidence before scaling.
-6. **Migration script and the CPET 181 lessons**, chapter by chapter, then ECET 111's two-screen topics (§6).
-7. **Draft persistence (case B)** after the ADR-0005 amendment: return across routes and mid-step Continue.
-8. Retire `variant.explanation` per question as its coverage completes.
+Interplay with epic #670: the resume rules (#677) and the `explained` rule (§12.3 there) are shared. Declared entries (#679) use the same fragment grammar as step 4. The Arabic for every new label goes to the owner batch (#676, #686) before release. Performance follows the owner's experience budget (≤3 s usable on a throttled phone, #683); size is a warning only.
 
 ---
 
 ## 10. Educational Integrity Auditor (Lead, see #684)
 
+Set up by ADR-0012 (#688): charter `agents/educational_auditor.md`, prompt 6 in `agents/SESSION_PROMPTS.md`. For this architecture the Auditor:
+- **steers** each step's PRs from the learner's view (engagement feels natural, not a formality; chunks are meaningful and don't invite guessing; lessons rebuild understanding, with evidence from their check screens; return lands exactly where the learner left);
+- **audits** the pilot lessons (step 5) with Pedagogy before migration scales, and every release on the live site;
+- watches the evidence-volume effect of smaller steps (§3.1) and the interim legacy-walkthrough warning (§2.6);
+- offers Arabic for lesson text and new labels as proposals (#686); only owner-approved Arabic ships.
+
+Its findings never block merges or releases; a CRITICAL EDUCATIONAL RISK gets a prompt Lead response (Accept-fix | Scheduled | Waived), listed in the owner's release note.
