@@ -317,20 +317,18 @@ UI added nine keys in #714 that section 8c did not have. Same rules: label:value
 
 Not drafted here (course text or other scope): the objective lists of "You can now", question prompts, the labels drawn inside the figures and interactions, and the settings page (`SettingsForm.tsx`, long explanatory text). Say if the owner wants any of them as a further addendum.
 
-## 9. Arabic endings on English terms (#686 batch 3, Auditor)
+## 9. Arabic endings on English terms (#686 batch 3): decided
 
-Found in QA's round-3 render: «Bitاً» renders as «Bitً», because the tanween lands on the Latin "t" and the alef joins the next word. The glossary has no rule for endings on an English term. The Auditor proposes four corrections and asks the owner for a rule; nothing here is applied to #702 until the owner decides.
+Owner, 2026-10-13 (#697): the glossary rule is **no Arabic ending attached to an English term** (added to `TECHNICAL_GLOSSARY_AR.md`). The four broken strings are fixed in this batch (applied in #702):
 
-| Id | Current | Proposed |
-|---|---|---|
-| `…ns.q.divide.v26.explanation[0].say` | … كل Remainder (باقٍ) يصبح Bitاً واحداً. | … كل Remainder (باقٍ) يصبح Bit واحدًا. |
-| `…ns.q.divide.v75.explanation[0].say` (7 places) | اقسم {value} على 2 مراراً. كل Remainder يصبح Bitاً واحداً. | اقسم {value} على 2 مراراً. كل Remainder يصبح Bit واحدًا. |
-| `…ns.q.hex.v26.explanation[1].say` | الـ Group اليسرى تحتوي Bitاً واحداً فقط. | الـ Group اليسرى فيها Bit واحد فقط. |
-| `tutor.lg.nand-not` | NAND يأخذ Inputين. أي Gate يأخذ Inputاً واحداً فقط ويعكسه؟ | NAND يأخذ اثنين من الـ Inputs. أي Gate يأخذ Input واحدًا فقط ويعكسه؟ |
+| Id | Fixed Arabic |
+|---|---|
+| `…ns.q.divide.v26.explanation[0].say` | … كل Remainder (باقٍ) يصبح Bit واحدًا. |
+| `…ns.q.divide.v75.explanation[0].say` | اقسم {value} على 2 مراراً. كل Remainder يصبح Bit واحدًا. |
+| `…ns.q.hex.v26.explanation[1].say` | الـ Group اليسرى فيها Bit واحد فقط. |
+| `tutor.lg.nand-not` | NAND يأخذ اثنين من الـ Inputs. أي Gate يأخذ Input واحدًا فقط ويعكسه؟ |
 
-**Owner decision:** adopt "no Arabic ending on an English term" as a rule in the glossary, so new strings follow it?
-
-**How many strings have it.** `npm run l10n:drift` now lists the strings with an Arabic ending attached straight to an English term (UNTRANSLATED.md, "Arabic endings attached to an English term"): **80** approved strings, almost all the dual («Inputين», «Bitين», «Productين», «Jobان», «Readerان», «Digitان», «CPUان») on top of the four above. If the owner adopts the rule, the Auditor can propose the fixes for all of them in one batch; I would apply them to the package and keep the list in the drift report until it is empty.
+The remaining approved strings with an ending attached (76 after these four, listed by `npm run l10n:drift`) come in the **next** batch: the Auditor proposes, Content applies, and they do not block this release.
 
 ## Still to come (added as the PRs land)
 
@@ -339,6 +337,8 @@ Found in QA's round-3 render: «Bitاً» renders as «Bitً», because the tanw
 - The practice navigator's status words and "Steps before this one".
 
 ## Decisions applied (owner, #697)
+
+8. Owner, 2026-10-13: the instructor's name stays in English in Arabic mode (`ui.home.first-route`, the tutor's name label). The changed division hint is moot (#718 kept the approved string). The four endings fixes of §9 are in this batch; the glossary rule is adopted.
 
 1. المقررات; no «الـ + English plural». 2. «الخطوة التالية المقترحة»; تمرين / تمارين. 3. «المكوّن» for a generic component; «Device (جهاز)» for the course concept. 4. Label:value plurals. 5. Titles stay English. 6. RTL rendering is checked by QA on the draft strings PR.
 
