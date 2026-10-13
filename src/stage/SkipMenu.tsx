@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { UiText, useUiText } from "@/shell/r1/uiText";
 import styles from "./Stage.module.css";
 
 export interface SkipMenuProps {
@@ -8,6 +9,8 @@ export interface SkipMenuProps {
   allowed: boolean;
   /** What the skip goes to, in words: "the next question", "the next practice, …" or "the next topic, …". */
   targetLabel: string;
+  /** The destination as a catalogue key and slots (#705); the English `targetLabel` is the fallback. */
+  target?: { key: string; vars?: Record<string, string | number> };
   onSkip: () => void;
 }
 
@@ -18,7 +21,9 @@ export interface SkipMenuProps {
  * and focus returns to the button. While the skip is locked nothing is rendered at all: no ⋯, no
  * hint about how to unlock it (Lead on #601; the owner wants it hard to find).
  */
-export function SkipMenu({ allowed, targetLabel, onSkip }: SkipMenuProps) {
+export function SkipMenu({ allowed, targetLabel, target, onSkip }: SkipMenuProps) {
+  const { t } = useUiText();
+  const destination = target ? t(target.key, target.vars) : targetLabel;
   const [open, setOpen] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const panelId = useId();
@@ -52,18 +57,20 @@ export function SkipMenu({ allowed, targetLabel, onSkip }: SkipMenuProps) {
         }
       }}
     >
-      <button ref={buttonRef} type="button" className={styles.moreButton} aria-haspopup="true" aria-expanded={open} aria-controls={panelId} aria-label="More" onClick={() => (open ? close() : setOpen(true))}>
+      <button ref={buttonRef} type="button" className={styles.moreButton} aria-haspopup="true" aria-expanded={open} aria-controls={panelId} aria-label={t("ui.skip.more")} onClick={() => (open ? close() : setOpen(true))}>
         <span aria-hidden="true">⋯</span>
       </button>
       {open && (
         <div id={panelId} className={styles.morePanel}>
           {!confirming ? (
             <button type="button" className="btn btn-quiet" onClick={() => setConfirming(true)}>
-              Skip to next question
+              <UiText k="ui.skip.to-next" />
             </button>
           ) : (
-            <div className={styles.moreConfirm} role="group" aria-label="Confirm skip">
-              <p className={styles.moreNote}>Skip this question? You can come back any time. This goes to {targetLabel}.</p>
+            <div className={styles.moreConfirm} role="group" aria-label={t("ui.skip.confirm")}>
+              <p className={styles.moreNote}>
+                <UiText k="ui.skip.confirm-note" vars={{ targetLabel: destination }} />
+              </p>
               <div className={styles.moreActions}>
                 <button
                   type="button"
@@ -74,10 +81,10 @@ export function SkipMenu({ allowed, targetLabel, onSkip }: SkipMenuProps) {
                     onSkip();
                   }}
                 >
-                  Skip
+                  <UiText k="ui.skip.go" />
                 </button>
                 <button type="button" className="btn btn-quiet" onClick={close}>
-                  Cancel
+                  <UiText k="ui.skip.cancel" />
                 </button>
               </div>
             </div>

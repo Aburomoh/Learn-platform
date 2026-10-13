@@ -885,6 +885,48 @@
   gap: var(--space-4);
 }
 
+/* the practice page's navigator (S2, #680): a quiet disclosure under the location line, the stage keeps the fold */
+.navigator {
+  font-size: var(--text-sm);
+}
+
+.navigatorSummary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  color: var(--accent);
+  font-weight: 650;
+  cursor: pointer;
+  list-style: none;
+}
+
+.navigatorSummary::-webkit-details-marker {
+  display: none;
+}
+
+.navigatorChevron {
+  width: 0.5em;
+  height: 0.5em;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--dur-fast, 120ms);
+}
+
+.navigator[open] .navigatorChevron {
+  transform: rotate(-135deg);
+}
+
+.navigatorList {
+  padding-block: var(--space-2) var(--space-3);
+}
+
+.practiceRow[data-current] {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
 .practices {
   display: grid;
   gap: var(--space-3);

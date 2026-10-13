@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Topic } from "@/content/schema";
 import { Notation } from "@/interactions/shared/Notation";
 import { FigureView } from "@/kinds/shared/figures/FigureView";
+import { UiText } from "./uiText";
 import styles from "./r1.module.css";
 
 /**
@@ -19,7 +20,7 @@ export function MeetCard({ id, meet }: { id: string; meet: NonNullable<Topic["me
     <div className={styles.meet}>
       <FigureView id={`${id}-meet`} figure={meet.figure} revealed marks />
       <button type="button" className={`btn btn-quiet ${styles.meetToggle}`} aria-expanded={open} aria-controls={listId} onClick={() => setOpen((o) => !o)}>
-        How it works
+        <UiText k="ui.topic.how-it-works" />
       </button>
       <ol id={listId} className={styles.callouts} data-open={open}>
         {meet.callouts.map((text, i) => (

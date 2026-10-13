@@ -48,9 +48,17 @@ export function TopBar({ back }: { back?: ActionLink }) {
 export function Footer({ demo }: { demo: boolean }) {
   return (
     <footer className={styles.foot}>
-      {demo && <span className={styles.demoDot}>Demo content</span>}
-      <span>Optional practice, not graded</span>
-      <span>Progress stays in this browser</span>
+      {demo && (
+        <span className={styles.demoDot}>
+          <UiText k="ui.foot.demo" />
+        </span>
+      )}
+      <span>
+        <UiText k="ui.foot.optional" />
+      </span>
+      <span>
+        <UiText k="ui.foot.local" />
+      </span>
     </footer>
   );
 }
