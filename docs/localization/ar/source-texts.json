@@ -72367,5 +72367,147 @@
     "occurrences": 1,
     "occurrence_ids": [],
     "slots": []
+  },
+  {
+    "id": "catalog.ui.home.first-route",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Practice for {owner}'s courses. No account needed.",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{owner}"
+    ]
+  },
+  {
+    "id": "catalog.ui.home.chapters.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} chapter",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ]
+  },
+  {
+    "id": "catalog.ui.home.chapters.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} chapters",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ]
+  },
+  {
+    "id": "catalog.ui.home.topics.one",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} topic",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ]
+  },
+  {
+    "id": "catalog.ui.home.topics.other",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} topics",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ]
+  },
+  {
+    "id": "catalog.ui.home.done",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} done",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ]
+  },
+  {
+    "id": "catalog.ui.home.started",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "{n} started",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ]
+  },
+  {
+    "id": "catalog.ui.home.open-course-short",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Open course",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": []
+  },
+  {
+    "id": "catalog.ui.stage.challenge-n",
+    "course": "shared",
+    "chapter": "(component text)",
+    "topic": "(any topic using this interaction)",
+    "type": "ui-label",
+    "source_file": "src/tutor/messages/en.ts",
+    "english": "Challenge {n}",
+    "technical_terms": [],
+    "notes": "Proposed 2026-10-13 for #714's nine keys. Label:value, one string for one and other. Draft until the owner approves.",
+    "occurrences": 1,
+    "occurrence_ids": [],
+    "slots": [
+      "{n}"
+    ]
   }
 ]
