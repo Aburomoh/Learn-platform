@@ -1,0 +1,605 @@
+{
+  "cpet181/address": [
+    "dk.q.address"
+  ],
+  "cpet181/address-parts": [
+    "vm.q.parts"
+  ],
+  "cpet181/addresses": [
+    "vm.q.addresses"
+  ],
+  "cpet181/all-four": [
+    "dl.q.all-four"
+  ],
+  "cpet181/arrows": [
+    "dl.q.arrows"
+  ],
+  "cpet181/blocking": [
+    "tp.q.blocking"
+  ],
+  "cpet181/bridge-gateway": [
+    "nt.q.bridge-gateway"
+  ],
+  "cpet181/cases": [
+    "dl.q.cases"
+  ],
+  "cpet181/cd-types": [
+    "op.q.cd-types"
+  ],
+  "cpet181/choose": [
+    "nt.q.choose"
+  ],
+  "cpet181/choosing": [
+    "ro.q.factors"
+  ],
+  "cpet181/circle": [
+    "dl.q.circular"
+  ],
+  "cpet181/classic-problems": [
+    "sy.q.cooperation",
+    "sy.q.buffer"
+  ],
+  "cpet181/client-server": [
+    "nw.q.client-server"
+  ],
+  "cpet181/compaction": [
+    "rl.q.compact"
+  ],
+  "cpet181/compaction-terms": [
+    "rl.q.registers",
+    "rl.q.addresses"
+  ],
+  "cpet181/compare": [
+    "cm.q.fcfs",
+    "cm.q.sjn",
+    "cm.q.srt",
+    "cm.q.best"
+  ],
+  "cpet181/concurrent-steps": [
+    "cc.q.concurrent",
+    "cc.q.step-1",
+    "cc.q.step-2",
+    "cc.q.processors"
+  ],
+  "cpet181/configuration-traits": [
+    "cf.q.traits"
+  ],
+  "cpet181/configurations": [
+    "cf.q.configurations"
+  ],
+  "cpet181/count-gaps": [
+    "tp.q.irg",
+    "tp.q.ibg"
+  ],
+  "cpet181/deadlock-or-starvation": [
+    "dl.q.deadlock-starvation"
+  ],
+  "cpet181/deallocation": [
+    "dm.q.deallocation"
+  ],
+  "cpet181/device-types": [
+    "dm.q.types"
+  ],
+  "cpet181/discs": [
+    "op.q.discs"
+  ],
+  "cpet181/disk-pros-cons": [
+    "dk.q.disk-pros-cons"
+  ],
+  "cpet181/dynamic-placement": [
+    "dy.q.first",
+    "dy.q.best"
+  ],
+  "cpet181/ethics": [
+    "sc.q.ethics"
+  ],
+  "cpet181/factors": [
+    "tp.q.factors"
+  ],
+  "cpet181/facts": [
+    "nt.q.facts"
+  ],
+  "cpet181/fcfs": [
+    "fs.q.fcfs"
+  ],
+  "cpet181/file-manager": [
+    "fm.q.duties"
+  ],
+  "cpet181/five-managers": [
+    "mg.q.charge",
+    "mg.q.duty",
+    "mg.q.shared"
+  ],
+  "cpet181/fixed-partitions": [
+    "fx.q.first",
+    "fx.q.best",
+    "fx.q.efficient"
+  ],
+  "cpet181/fragmentation": [
+    "vm.q.fragmentation"
+  ],
+  "cpet181/frame-and-address": [
+    "pg.q.frame-start",
+    "pg.q.physical"
+  ],
+  "cpet181/front-end": [
+    "cp.q.prefix",
+    "cp.q.prefix-third",
+    "cp.q.front-code"
+  ],
+  "cpet181/gap-kinds": [
+    "tp.q.gap-kinds"
+  ],
+  "cpet181/gui-vs-command-line": [
+    "ui.q.input",
+    "ui.q.strength"
+  ],
+  "cpet181/hardware-categories": [
+    "hw.q.sort",
+    "hw.q.cpu",
+    "hw.q.secondary"
+  ],
+  "cpet181/hdd-ssd": [
+    "ss.q.hdd-ssd"
+  ],
+  "cpet181/heads": [
+    "dk.q.heads"
+  ],
+  "cpet181/hierarchy": [
+    "fm.q.terms",
+    "fm.q.names"
+  ],
+  "cpet181/identify": [
+    "cm.q.identify"
+  ],
+  "cpet181/kinds": [
+    "cc.q.kind"
+  ],
+  "cpet181/media": [
+    "dm.q.media"
+  ],
+  "cpet181/memory-schemes": [
+    "mt.q.contiguous",
+    "mt.q.single",
+    "mt.q.fragmentation",
+    "mt.q.fit",
+    "mt.q.four-schemes"
+  ],
+  "cpet181/methods": [
+    "cp.q.method"
+  ],
+  "cpet181/name-the-condition": [
+    "dl.q.conditions"
+  ],
+  "cpet181/organizations": [
+    "ro.q.identify",
+    "ro.q.traits"
+  ],
+  "cpet181/os-types": [
+    "ty.q.describe",
+    "ty.q.example",
+    "ty.q.deadline"
+  ],
+  "cpet181/page-and-displacement": [
+    "pg.q.page-number",
+    "pg.q.displacement"
+  ],
+  "cpet181/pages": [
+    "pg.q.pages",
+    "pg.q.waste"
+  ],
+  "cpet181/pages-and-frames": [
+    "vm.q.page-frame"
+  ],
+  "cpet181/paging-vs-segmentation": [
+    "vm.q.paging-segmentation",
+    "vm.q.pros-cons"
+  ],
+  "cpet181/parallel": [
+    "cf.q.parallel"
+  ],
+  "cpet181/partition-kinds": [
+    "mt.q.partitions",
+    "mt.q.deallocation"
+  ],
+  "cpet181/policies": [
+    "sc.q.criteria",
+    "sc.q.preemptive",
+    "sc.q.sjn-srt",
+    "sc.q.fcfs",
+    "sc.q.quantum",
+    "sc.q.suits-batch",
+    "sc.q.suits-other"
+  ],
+  "cpet181/priority": [
+    "pr.q.priority"
+  ],
+  "cpet181/processes-and-schedulers": [
+    "sc.q.program",
+    "sc.q.interrupt",
+    "sc.q.schedulers",
+    "sc.q.bound"
+  ],
+  "cpet181/protection": [
+    "sc.q.protection"
+  ],
+  "cpet181/quantum": [
+    "rr.q.quantum"
+  ],
+  "cpet181/races": [
+    "dl.q.race"
+  ],
+  "cpet181/ram-vs-rom": [
+    "rr.q.stands",
+    "rr.q.what",
+    "rr.q.use",
+    "rr.q.volatility"
+  ],
+  "cpet181/readers-writers": [
+    "sy.q.rw"
+  ],
+  "cpet181/record-types": [
+    "fm.q.records"
+  ],
+  "cpet181/recovery": [
+    "rc.q.recovery"
+  ],
+  "cpet181/release": [
+    "dy.q.case1",
+    "dy.q.case2",
+    "dy.q.case3"
+  ],
+  "cpet181/repeated-characters": [
+    "cp.q.run-count",
+    "cp.q.run-code"
+  ],
+  "cpet181/round-robin": [
+    "rr.q.build"
+  ],
+  "cpet181/searching": [
+    "ro.q.read",
+    "ro.q.block"
+  ],
+  "cpet181/segment-address": [
+    "sg.q.physical"
+  ],
+  "cpet181/sequential-steps": [
+    "cc.q.sequential"
+  ],
+  "cpet181/shape": [
+    "tp.q.shape",
+    "tp.q.mixed"
+  ],
+  "cpet181/sjn": [
+    "fs.q.sjn"
+  ],
+  "cpet181/srt": [
+    "st.q.srt"
+  ],
+  "cpet181/ssd-flash": [
+    "ss.q.ssd-flash"
+  ],
+  "cpet181/starvation": [
+    "st.q.starvation"
+  ],
+  "cpet181/states-and-pcb": [
+    "sc.q.states",
+    "sc.q.pcb"
+  ],
+  "cpet181/switching": [
+    "sw.q.switching"
+  ],
+  "cpet181/sync": [
+    "sy.q.synchronization"
+  ],
+  "cpet181/tables": [
+    "vm.q.tables"
+  ],
+  "cpet181/tape-vs-disk": [
+    "tp.q.tape-disk"
+  ],
+  "cpet181/terms": [
+    "nw.q.terms"
+  ],
+  "cpet181/tracks": [
+    "dk.q.tracks"
+  ],
+  "cpet181/traits": [
+    "tp.q.traits"
+  ],
+  "cpet181/translate": [
+    "pg.q.whole"
+  ],
+  "cpet181/types": [
+    "nt.q.types"
+  ],
+  "cpet181/virtual-memory": [
+    "vm.q.virtual"
+  ],
+  "cpet181/what-is-an-os": [
+    "os.q.what",
+    "os.q.software"
+  ],
+  "cpet181/wireless": [
+    "wl.q.standards"
+  ],
+  "ecet111/analysis-diagram": [
+    "an.q.diagram"
+  ],
+  "ecet111/analysis-exercises": [
+    "an.q.ex-next-a",
+    "an.q.ex-next-b",
+    "an.q.ex-table",
+    "an.q.ex-diagram"
+  ],
+  "ecet111/analysis-inputs": [
+    "an.q.input",
+    "an.q.output"
+  ],
+  "ecet111/analysis-state": [
+    "an.q.next-a",
+    "an.q.next-b"
+  ],
+  "ecet111/analysis-table": [
+    "an.q.table"
+  ],
+  "ecet111/binary-addition": [
+    "ba.q.zero",
+    "ba.q.one",
+    "ba.q.two",
+    "ba.q.add",
+    "ba.q.check-a",
+    "ba.q.check-b",
+    "ba.q.check-sum"
+  ],
+  "ecet111/binary-addition-8bit": [
+    "ba8.q.add",
+    "ba8.q.check-sum"
+  ],
+  "ecet111/binary-point": [
+    "dr.q.point"
+  ],
+  "ecet111/circuit-to-expression": [
+    "cx.q.read"
+  ],
+  "ecet111/complements": [
+    "ba.q.ones",
+    "ba.q.twos-rule",
+    "ba.q.plus-one"
+  ],
+  "ecet111/conversion-exercise": [
+    "ns.x.divide",
+    "ns.x.read",
+    "ns.x.octal",
+    "ns.x.hex"
+  ],
+  "ecet111/de-morgan": [
+    "dm.q.rule",
+    "dm.q.steps"
+  ],
+  "ecet111/decimal-to-binary": [
+    "ns.q.divide",
+    "ns.q.read",
+    "ns.q.octal",
+    "ns.q.octal-check",
+    "ns.q.hex",
+    "ns.q.hex-check"
+  ],
+  "ecet111/decoder-functions": [
+    "dc.q.function"
+  ],
+  "ecet111/decoders": [
+    "dc.q.predict",
+    "dc.q.minterm",
+    "dc.q.table"
+  ],
+  "ecet111/derived-gates": [
+    "dg.q.nand",
+    "dg.q.nor",
+    "dg.q.xor",
+    "dg.q.xnor",
+    "dg.q.rows"
+  ],
+  "ecet111/design-excitation": [
+    "dz.q.t-inputs",
+    "dz.q.jk-inputs"
+  ],
+  "ecet111/design-maps": [
+    "dz.q.dt-maps",
+    "dz.q.jk-maps"
+  ],
+  "ecet111/design-problem": [
+    "dz.q.problem-table",
+    "dz.q.problem-maps",
+    "dz.q.problem-trace"
+  ],
+  "ecet111/design-state-table": [
+    "dz.q.state-table"
+  ],
+  "ecet111/digit-replacement": [
+    "dr.q.oct-bits",
+    "dr.q.oct-check",
+    "dr.q.hex-bits",
+    "dr.q.hex-check",
+    "dr.q.hex16"
+  ],
+  "ecet111/encoders": [
+    "dc.q.code",
+    "dc.q.or"
+  ],
+  "ecet111/expression-to-circuit": [
+    "cx.q.first",
+    "cx.q.next",
+    "cx.q.last"
+  ],
+  "ecet111/expression-to-map": [
+    "km.q.expand",
+    "km.q.from-expression"
+  ],
+  "ecet111/flip-flop-equations": [
+    "ff.q.eq-jk",
+    "ff.q.eq-t",
+    "ff.q.eq-d",
+    "ff.q.next"
+  ],
+  "ecet111/flip-flop-tables": [
+    "ff.q.row",
+    "ff.q.sr",
+    "ff.q.jk",
+    "ff.q.d",
+    "ff.q.t"
+  ],
+  "ecet111/full-adder-algebra": [
+    "fa.q.algebra"
+  ],
+  "ecet111/full-adder-kmap": [
+    "fa.q.kmap"
+  ],
+  "ecet111/full-adder-sigma": [
+    "fa.q.rows",
+    "fa.q.sigma"
+  ],
+  "ecet111/full-adder-table": [
+    "fa.q.row",
+    "fa.q.table"
+  ],
+  "ecet111/gate-tables": [
+    "bg.q.and",
+    "bg.q.or",
+    "bg.q.not"
+  ],
+  "ecet111/half-adder": [
+    "ha.q.add",
+    "ha.q.table",
+    "ha.q.gates",
+    "ha.q.walk"
+  ],
+  "ecet111/hex-digits": [
+    "ns.t.digit",
+    "ns.t.bits",
+    "ns.t.back"
+  ],
+  "ecet111/kmap-algebra": [
+    "km.q.algebra"
+  ],
+  "ecet111/kmap-anatomy": [
+    "km.q.cell",
+    "km.q.region"
+  ],
+  "ecet111/kmap-dont-cares": [
+    "km.q.dont-care"
+  ],
+  "ecet111/kmap-four": [
+    "km.q.four"
+  ],
+  "ecet111/kmap-three": [
+    "km.q.three"
+  ],
+  "ecet111/kmap-three-exercises": [
+    "km.q.three-exercise"
+  ],
+  "ecet111/latches": [
+    "lt.q.nand",
+    "lt.q.gated"
+  ],
+  "ecet111/laws-and-rules": [
+    "br.q.law",
+    "br.q.rule-or",
+    "br.q.rule-and",
+    "br.q.rule-more",
+    "br.q.simplify"
+  ],
+  "ecet111/minterms": [
+    "mt.q.spot",
+    "mt.q.canonical",
+    "mt.q.expand",
+    "mt.q.sigma",
+    "mt.q.table"
+  ],
+  "ecet111/multiplexers": [
+    "mx.q.predict",
+    "mx.q.route",
+    "mx.q.term"
+  ],
+  "ecet111/mux-functions": [
+    "mx.q.wiring",
+    "mx.q.pairs"
+  ],
+  "ecet111/place-value": [
+    "pv.q.weight",
+    "pv.q.place",
+    "pv.q.binary",
+    "pv.q.octal",
+    "pv.q.hex"
+  ],
+  "ecet111/predict-gate-output": [
+    "lg.q.predict",
+    "lg.q.identify"
+  ],
+  "ecet111/simplification": [
+    "sm.q.derive",
+    "sm.q.gates"
+  ],
+  "ecet111/sop-and-pos": [
+    "sp.q.form",
+    "sp.q.to-table",
+    "sp.q.pick",
+    "sp.q.to-sop"
+  ],
+  "ecet111/subtraction-8bit-negative": [
+    "sb8n.q.ones",
+    "sb8n.q.plus-one",
+    "sb8n.q.add",
+    "sb8n.q.end-carry",
+    "sb8n.q.re-ones",
+    "sb8n.q.re-plus-one",
+    "sb8n.q.size"
+  ],
+  "ecet111/subtraction-8bit-positive": [
+    "sb8p.q.ones",
+    "sb8p.q.plus-one",
+    "sb8p.q.add",
+    "sb8p.q.end-carry",
+    "sb8p.q.result"
+  ],
+  "ecet111/subtraction-exercise-negative": [
+    "subn.q.ones",
+    "subn.q.plus-one",
+    "subn.q.add",
+    "subn.q.end-carry",
+    "subn.q.re-ones",
+    "subn.q.re-plus-one",
+    "subn.q.size"
+  ],
+  "ecet111/subtraction-exercise-positive": [
+    "subx.q.ones",
+    "subx.q.plus-one",
+    "subx.q.add",
+    "subx.q.end-carry",
+    "subx.q.result"
+  ],
+  "ecet111/subtraction-positive": [
+    "sub.q.divide",
+    "sub.q.read",
+    "sub.q.ones",
+    "sub.q.plus-one",
+    "sub.q.add",
+    "sub.q.end-carry",
+    "sub.q.result"
+  ],
+  "ecet111/three-jk-diagram": [
+    "j3.q.diagram"
+  ],
+  "ecet111/three-jk-table": [
+    "j3.q.table"
+  ],
+  "ecet111/three-jk-timing": [
+    "j3.q.timing"
+  ],
+  "ecet111/timing-diagrams": [
+    "tm.q.sr",
+    "tm.q.d",
+    "tm.q.jk",
+    "tm.q.t"
+  ]
+}
