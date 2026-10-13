@@ -301,6 +301,20 @@ They are in draft PR #702 (maps rebuilt) with a catalog key each in `src/tutor/m
 
 New wording to check: «لم تبدأه بعد», «قريبًا», «التالي» (a row that is next), «اكتمل. يمكنك مراجعة أي موضوع.».
 
+### 8e. Nine more keys from #714
+
+UI added nine keys in #714 that section 8c did not have. Same rules: label:value, one string for `one` and `other`, «Chapter» stays English, English titles and the owner's name stay as they are.
+
+| Key | English | Arabic | Notes |
+|---|---|---|---|
+| `ui.home.first-route` | Practice for {owner}'s courses. No account needed. | تدريب على مقررات {owner}. لا حاجة إلى حساب. | {owner} is the instructor's name, LTR-isolated. |
+| `ui.home.chapters.one/.other` | {n} chapter(s) | Chapters: {n} | «Chapter» stays English. |
+| `ui.home.topics.one/.other` | {n} topic(s) | المواضيع: {n} | |
+| `ui.home.done` | {n} done | المنجز: {n} | On a course row, next to the counts above. |
+| `ui.home.started` | {n} started | جارٍ: {n} | «جارٍ» as for «In progress». |
+| `ui.home.open-course-short` | Open course | افتح المقرر | The visible link text. |
+| `ui.stage.challenge-n` | Challenge {n} | التحدي {n} | |
+
 Not drafted here (course text or other scope): the objective lists of "You can now", question prompts, the labels drawn inside the figures and interactions, and the settings page (`SettingsForm.tsx`, long explanatory text). Say if the owner wants any of them as a further addendum.
 
 ## Still to come (added as the PRs land)
