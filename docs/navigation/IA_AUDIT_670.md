@@ -126,9 +126,9 @@ practice. A student wanting best-fit is neither skipping nor strong; they are na
 | Level | Route | Answers | Lists | Primary (filled) | Up control |
 |---|---|---|---|---|---|
 | Home | `/` | What should I do now? | One "next" panel per **active course**; the catalogue below | Continue / Start here | — |
-| Courses | `/courses/` (new, thin) | Which course? | Each course with its own Continue / Start | none (one quiet action per row) | ← Home (logo) |
-| Course | `/courses/<c>/` | Which chapter and topic? | Chapters → topics, each topic with its practice names in one muted line | the recommended topic | **← Courses** |
-| Topic | `/courses/<c>/<t>/` | Which practice? | All practices with their challenge labels | the recommended practice, captioned "Recommended" | ← course (code + short title) |
+| Courses (catalogue) | `/#courses` on Home (no new page; §12.2) | Which course? | Each course with its own Continue / Start | none (one quiet action per row) | — (it is Home) |
+| Course | `/courses/<c>/` | Which chapter and topic? | Chapters → topics, each topic with its practice names **and kinds** in one muted line | the recommended topic | **← All courses** (`/#courses`) |
+| Topic | `/courses/<c>/<t>/` | Which practice? | All practices with their **kind**, challenge labels and, for declared entries only, a secondary "Start at: <label>" | the recommended practice, captioned "Recommended" | ← course (code + short title) |
 | Practice | `/courses/<c>/<t>/<a>/` | The work | Challenge strip; a compact **topic navigator** (other practices) behind one disclosure | Check / Next challenge | ← topic |
 
 Rules that make this "guide, not trap":
@@ -146,7 +146,8 @@ Rules that make this "guide, not trap":
 - **Browser Back** is untouched; nothing in the shell calls `history.back()` (keep `Chrome.tsx` as a fixed
   parent link, as today).
 - **Up** stays in the top bar as "← parent", one level, as built. On the course page the parent becomes
-  "← Courses" (`/courses/`). At 390 the label is the *short* parent name (topic title, course code).
+  "← All courses" (`/#courses`, Home's catalogue, which QW10 brings above the fold; `/courses/` redirects there).
+  At 390 the label is the *short* parent name (topic title, course code).
 - **Where am I** is a **location line under the top bar** on topic and practice pages:
   `ECET 111 · Chapter 1 · Binary arithmetic` — each segment a link; the last segment is the current topic on a
   practice page (on the topic page it is plain text). Targets: course segment → `/courses/<c>/`; **chapter
@@ -163,8 +164,17 @@ Rules that make this "guide, not trap":
 
 Serve "practise X" at the two levels where X lives:
 
-**(a) Find the practice** — the topic page lists every practice as a row *with its challenge labels in one
-muted line*: "Subtraction by 2's complement · Divide by 2 → Read off → 1's complement → +1 → Add → …".
+**(a) Find the practice** — the topic page lists every practice as a row *with its kind in plain words and its
+challenge labels in one muted line* (§12.1): "Subtraction by 2's complement · **Step-by-step** · Divide by 2 →
+Read off → 1's complement → +1 → Add → …"; "Fixed partitions · **Memory map** · First-fit → Best-fit → Which is
+more efficient". Kind words map from the question kinds in content (`spec.kind`: multiple-choice → "Choose",
+numeric → "Enter a number", truth-table → "Fill the table", column-addition / repeated-division / bit-grouping /
+derivation → "Step-by-step", kmap → "K-map", memory-map → "Memory map", cpu-schedule → "Schedule chart",
+timing → "Timing diagram", state-diagram → "State diagram", circuit-predict / device → "Circuit", expression →
+"Write the expression"; a practice with several kinds shows the first two). A practice that is a declared
+entry carrier (§8.4) adds one **secondary** link inside the row, "Start at: Best-fit", under the primary
+"Start ·" action and visibly smaller; free selection of the practice and entry into a step never share a
+control (§12.4).
 The course page topic row gets the practice *titles* in one muted line ("Binary addition · 1's and 2's
 complement · Subtraction by 2's complement · Exercise 15 − 4 · …", truncated with "+3 more" at 390). This
 alone makes journey C a 3-tap scan with no misleading jump, and journey D a visible "Best-fit is in Fixed
@@ -310,9 +320,10 @@ navigator; the disclosure is a `<details>` so it works without JS (same pattern 
 
 ### 7.1 Meaningful progress (definition)
 A practice has **meaningful progress** when at least one of these has happened in it:
-`attempts > 0` (`recordAttempt`), a `completedQuestions` entry (`completeQuestion`), or `explained`
-(`markExplained`). Opening the page is not progress. Skipping a question is not progress (it is recorded, but it
-makes nothing "current"). Browsing Home, Courses, course or topic pages writes nothing (already true).
+`attempts > 0` (`recordAttempt`) or a `completedQuestions` entry (`completeQuestion`). Opening the page is not
+progress. **Opening Explain Slowly is not progress** (owner, §12.3): `markExplained` keeps recording `explained`
+for the skip gate but does not make a practice current. Skipping a question is not progress (it is recorded,
+but it makes nothing "current"). Browsing Home, Courses, course or topic pages writes nothing (already true).
 
 Consequence for writers: `startActivity` should **not** run on mount. It can run lazily on the first attempt
 (the attempt writer already creates the record if absent, `progress.ts:67`), which removes the mount write
@@ -322,10 +333,10 @@ migration** (ADR-0005 stays at v1). The "revive a skipped practice" branch (`pro
 first-attempt moment.
 
 ### 7.2 Resume target rules
-- **Timestamp source: `lastAt`, written only by meaningful writers.** `recordAttempt`, `completeQuestion`,
-  `completeActivity` and `markExplained` keep bumping `lastAt`; **`skipQuestion` stops bumping it** (it still
-  records `skippedQuestions`), the mount write goes (§7.1) and the skipped-revive branch moves to the first
-  attempt. After that, `lastAt` *is* the last meaningful event per practice, with no format change. Chosen over
+- **Timestamp source: `lastAt`, written only by meaningful writers.** `recordAttempt`, `completeQuestion` and
+  `completeActivity` keep bumping `lastAt`; **`skipQuestion` and `markExplained` stop bumping it** (they still
+  record `skippedQuestions` / `explained`), the mount write goes (§7.1) and the skipped-revive branch moves to
+  the first attempt. After that, `lastAt` *is* the last meaningful event per practice, with no format change. Chosen over
   "newest concept-evidence `at`" because evidence carries a `questionId` but no activity id (`progress.ts:9-15`),
   so it would need a content lookup for the per-course Continue and give one clock for active-course and another
   for Continue. Old records whose `lastAt` was bumped by a skip are accepted as they are (a skip happens inside a
@@ -359,8 +370,9 @@ ECET111; the CPET181 row shows "Start · …". If they answer one CPET181 challe
 the ECET111 row shows "Continue · Subtraction by 2's complement, challenge 3". Both are honest.
 
 ### 7.3 Tests this needs
-Unit: `progress.test.ts` (`skipQuestion` leaves `lastAt` unchanged; no record on mount), `primaryAction.test.ts`
-(visited-only never Continue), `HomeNext.test.tsx` (active-course rule, per-row actions), runner tests (`#q=`
+Unit: `progress.test.ts` (`skipQuestion` and `markExplained` leave `lastAt` unchanged; no record on mount),
+`primaryAction.test.ts` (visited-only never Continue; a record with `explained` but `attempts 0` and no
+`completedQuestions` never Continue and never makes its course active), `HomeNext.test.tsx` (active-course rule, per-row actions), runner tests (`#q=`
 beats a started record; Continue after a declared-entry visit lands on the first unfinished in order). E2E (`e2e/smoke.spec.ts`): journey F at 390 and 1280; Continue still resumes at the first unfinished
 challenge (existing test at l.311 must keep passing since `completedQuestions` is untouched).
 
@@ -406,7 +418,7 @@ map (ADR-0011 §3; `scripts/build-l10n.mjs`) and need Arabic from the owner's pa
 |---|---|---|---|
 | QW1 | Course-page topic row action: "Open topic →" (to the topic page) when the topic has > 1 practice; "Start · {practice}" otherwise | `src/shell/r1/CourseTopics.tsx` (`quietAction`), `primaryAction.ts` (`topicRowAction`) | RC4, C |
 | QW2 | Labels name the destination: "Start · {title}", "Continue · {title}", "Open · {code}"; aria-labels already do this, make the visible text match | `CourseTopics.tsx`, `TopicNext.tsx`, `HomeNext.tsx:126`, `ActivitySummary.tsx` | RC5 |
-| QW3 | "← Courses" up link on the course page; thin `/courses/` page reusing Home's course list | `src/app/courses/[course]/page.tsx`, new `src/app/courses/page.tsx` | G, IA2 |
+| QW3 | "← All courses" up link on the course page → `/#courses` (Home catalogue, `id="courses"` on the list section); `/courses/` redirects to `/#courses` (static export: a tiny `src/app/courses/page.tsx` that only redirects, or a `vercel.json` redirect). No catalogue page (§12.2) | `src/app/courses/[course]/page.tsx`, `HomeNext.tsx` (section id), redirect | G, IA2 |
 | QW4 | Practice page: visible title + location line (course code · chapter · topic as links) above the strip | `[activity]/page.tsx`, `Chrome.tsx` or a new `LocationLine` in `src/shell/r1/` | E, RC3 |
 | QW5 | Topic rows (topic page) show their challenge labels in one muted line; course rows show practice titles (+N more) | `TopicNext.tsx:55-75`, `CourseTopics.tsx` TopicRow `route` | RC2, C, D |
 | QW6 | Multi-practice topics: "Practices: …" line instead of "Today: …" built from practice 1 only | `[topic]/page.tsx:33-34` | RC5 |
@@ -441,7 +453,7 @@ tutor engine or stage internals (#110 constraints).
 Phase 0 (content, parallel)   QW8 restate the 5 gaps + extend the context guard        [Content → Reviewer]
 Phase 1 (quick wins, 1 PR each, UI Engineer)
    QW1 + QW2 destination labels ──┐
-   QW3 ← Courses + /courses/      ├─ all need Arabic strings via the shared map (package addendum from owner)
+   QW3 ← All courses → /#courses  ├─ all need Arabic strings via the shared map (one owner batch, §12)
    QW4 location line + title     ─┤
    QW5 + QW6 label lines          │
    QW7 Recommended caption        │
@@ -471,7 +483,40 @@ Resume correctness (S1 + e2e F), **Structural not moved buttons: met only by S3*
 subtraction step visible; S3 makes them enterable without ⋯ skip), Home fold (QW10 + S6), Arabic strings and
 no storage format change (all phases; S1 and S3 carry ADR amendments, not format changes).
 
+Owner's work split (#670, 2026-10-13): Content (QW8 + guard, Arabic batch) · UI A (QW1, QW2, QW5, QW6, QW7 +
+kinds) · UI B (QW4 + "All courses") · UI C (QW9, QW10 + size trim) · then S1 (ADR-0005 first), S2, 4a, S3,
+S4, S5, S6 throughout. Each child PR from main, none stacked.
+
 Expected step counts after Phases 1–3 (same measuring rules as §2): C = 3 taps, 0–1 scroll, subtraction step
 reachable by its labelled entry in 4 taps (after S3); D = 4 taps (Open CPET 181 → Chapter 2 → Fixed partitions
 → Start · Fixed partitions) with best-fit visible as "challenge 2" and, after S3, a direct entry; E shows
 course · chapter · topic · title at 390; F never switches course on a look; G = 1 tap at every level.
+
+---
+
+## 12. Owner refinements (2026-10-13)
+
+Owner decision on #670: model approved; these four are **required** in implementation and the earlier
+sections were adjusted to match.
+
+1. **Practice kind visible before entry.** Every practice row on the course and topic pages (and in the
+   S2 navigator) shows its kind in plain words beside its name and step labels: "Step-by-step", "Fill the
+   table", "Memory map", "Choose", "Schedule chart", … (mapping in §4.3a, derived from `spec.kind`, no new
+   content field). Lands with UI A (QW1, QW2, QW5, QW6, QW7).
+2. **No new `/courses/` page by default.** "← All courses" on the course page goes to Home's catalogue,
+   `/#courses` (QW10 brings it above the fold); `/courses/` redirects to `/#courses`. A thin page is added only
+   if the anchor fails in practice. §4.1, §4.2 and QW3 updated; the "Courses" alternative row in §5 is
+   superseded by this.
+3. **An explanation alone is not meaningful.** Meaningful = an attempt or a completed question.
+   `markExplained` still records `explained` (skip gate) but does not bump `lastAt`, never makes a practice
+   Continue and never makes its course active. §7.1, §7.2 and the §7.3 tests updated; goes into the ADR-0005
+   amendment before S1.
+4. **Free practice selection stays distinct from step entry.** Practices are freely selectable everywhere.
+   Steps are entered only through content-declared entries (S3) and look different: a secondary
+   "Start at: Best-fit" link inside the practice's row, under the primary action, never the primary choice,
+   never a filled button. §4.1, §4.3 updated.
+
+Also from the owner: the Content Engineer drafts every new label from the approved glossary and rules
+(`docs/localization/ar`), and the Lead sends **one batch** for approval before release; the largest page is
+trimmed as part of the quick wins (the 200 kB limit is raised only if trimming proves impractical, via the
+Lead).
