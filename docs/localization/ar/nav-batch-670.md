@@ -315,6 +315,17 @@ UI added nine keys in #714 that section 8c did not have. Same rules: label:value
 | `ui.home.open-course-short` | Open course | افتح المقرر | The visible link text. |
 | `ui.stage.challenge-n` | Challenge {n} | التحدي {n} | |
 
+### 8f. Four keys from #719 (the practice navigator and the summary exits)
+
+QA: without these the navigator stays English in عربي. Label:value, no brackets (the owner's plural rule; #720 on brackets).
+
+| Key | English | Arabic | Notes |
+|---|---|---|---|
+| `ui.nav.practices-count` | Practices in this topic ({k} of {n}) | التمارين في هذا الموضوع: {k} من {n} | Same words as the heading in 8d. |
+| `ui.row.here` | Here | هنا | The current practice's row, no link. |
+| `ui.summary.another` | Another practice in this topic | تمرين آخر في هذا الموضوع | |
+| `ui.summary.course-map` | Course map | خريطة المقرر | |
+
 Not drafted here (course text or other scope): the objective lists of "You can now", question prompts, the labels drawn inside the figures and interactions, and the settings page (`SettingsForm.tsx`, long explanatory text). Say if the owner wants any of them as a further addendum.
 
 ## 9. Arabic endings on English terms (#686 batch 3): decided
