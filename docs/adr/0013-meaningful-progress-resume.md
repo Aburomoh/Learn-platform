@@ -31,17 +31,32 @@ The shape stays v1; no field is added, renamed or migrated. Only meanings change
    *visited only* by rules 4–5; a `lastAt` once bumped by a skip or an explanation is accepted
    as it is (the error is bounded to that session). No migration, no rewrite.
 7. **Readers count done questions through one helper** (`effectiveDone`, #687 §6.1) once it
-   lands; until then `completedQuestions` is read as today. Resume order is unchanged: the first
-   unfinished question in content order; `?review=1` (and a declared `#q=` entry, S3) still wins.
+   lands; until then `completedQuestions` is read as today. The predicate in rule 8 counts done
+   questions through it too, so a credited split never reads as "not started". Resume order is
+   unchanged: the first unfinished question in content order; `?review=1` (and a declared `#q=`
+   entry, S3) still wins.
+8. **One predicate for "in progress", used by every reader of `started`:**
+   `inProgress(record)` = `status === "started"` and (`attempts > 0` or at least one done
+   question). A visited-only or explained-only record reads as `new` everywhere: `courseAction`
+   and `pickCourse` (rules 4–5), `practiceAction` and `topicAction` (the topic page's filled
+   button and the row actions), Home's heading ("Pick up where you left off" vs "Start here") and
+   its "N started" count, `topicStatus` / `chapterStatus` (course page rows and chapter state),
+   `CourseTutor`'s started message, and `TopicNext`'s current-step marker. No reader tests
+   `status !== "new"` on its own any more.
 
 ## Consequences
 Journey E: a direct URL, a look and leaving changes nothing on Home; one checked answer makes
 that practice Continue in that course. Journey F: browsing another course never switches the
 greeting; answering there does. A student who only reads explanations is not "in progress".
-`ActivityRunner` drops its mount write; `primaryAction`, `HomeNext` and `progress` gain the
-meaningful-progress test. Tests: `progress.test.ts` (skip and explain leave `lastAt`; no record
-on mount), `primaryAction.test.ts` (visited-only and explained-only never Continue nor active),
-`HomeNext.test.tsx` (active-course rule), e2e journeys E and F at 390 and 1280.
+`ActivityRunner` drops its mount write; `inProgress` lives in `src/learner/progress.ts` and is
+the only in-progress test in `primaryAction.ts`, `HomeNext.tsx`, `CourseTopics.tsx`,
+`CourseTutor.tsx` and `TopicNext.tsx`. Tests: `progress.test.ts` (skip and explain leave
+`lastAt`; no record on mount; `inProgress` on visited-only, explained-only, attempted and
+done-question records), `primaryAction.test.ts` (visited-only and explained-only never Continue
+nor active), `HomeNext.test.tsx` (active-course rule; a visited-only record keeps "Start here"
+and no "started" count), `CourseTopics.test.tsx` and `TopicNext.test.tsx` (visited-only reads as
+not started on the course rows, the chapter state and the topic page), e2e journeys E and F at
+390 and 1280.
 
 ## Alternatives considered
 Newest concept-evidence `at` as the clock: evidence has no activity id, so Continue would need a
