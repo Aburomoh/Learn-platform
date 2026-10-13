@@ -35,6 +35,8 @@ describe("a nudge before any Check carries no verdict (#717)", () => {
     expect(softenNudge("Not quite. Look at the signs again.")).toBe("Look at the signs again.");
     expect(softenNudge("ليس بعد. احسب 26 ÷ 2 بدقة.")).toBe("احسب 26 ÷ 2 بدقة.");
     expect(softenNudge("ليس تماماً. انظر مرة أخرى.")).toBe("انظر مرة أخرى.");
+    expect(softenNudge("Not that one. Count the inputs first.")).toBe("Count the inputs first.");
+    expect(softenNudge("ليس هذا. احسب عدد Inputs أولاً.")).toBe("احسب عدد Inputs أولاً.");
     expect(softenNudge("Each step: divide by 2.")).toBe("Each step: divide by 2.");
     expect(softenNudge("It is not yet time.")).toBe("It is not yet time.");
   });
