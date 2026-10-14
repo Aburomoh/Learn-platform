@@ -30,3 +30,4 @@ Status: Accepted · Date: YYYY-MM-DD · Owner: <role>
 | 0011 | Arabic for supportive text, English for everything else |
 | 0012 | Educational Integrity & Learner Experience Auditor (amends 0010) |
 | 0013 | Meaningful progress: what `started` and `lastAt` mean (amends 0005) |
+| 0014 | Declared entries: a self-contained question may be opened directly (amends 0007, 0008) |
