@@ -72,6 +72,7 @@ const policyHints: HintInput[] = [
 const MIS: Record<string, Misconception> = {
   arrival: { id: "cs.arrival-ignored", title: "Ran a job before it arrived", nudgeKey: "cs.arrival-ignored", detect: { type: "arrival-ignored" } },
   fcfsUnderSjn: { id: "cs.fcfs-under-sjn", title: "Earliest arrival taken instead of the shortest", nudgeKey: "cs.fcfs-under-sjn", detect: { type: "fcfs-under-sjn" } },
+  sjnUnderFcfs: { id: "cs.sjn-under-fcfs", title: "Shortest job taken instead of the earliest arrival", nudgeKey: "cs.sjn-under-fcfs", detect: { type: "sjn-under-fcfs" } },
   longest: { id: "cs.longest-first", title: "The longest job taken", nudgeKey: "cs.longest-first", detect: { type: "longest-first" } },
   notPreempted: { id: "cs.not-preempted", title: "A running job not preempted", nudgeKey: "cs.not-preempted", detect: { type: "not-preempted" } },
   preemptedNon: { id: "cs.preempted-nonpreemptive", title: "A non-preemptive job stopped early", nudgeKey: "cs.preempted-nonpreemptive", detect: { type: "preempted-nonpreemptive" } },
@@ -82,7 +83,7 @@ const MIS: Record<string, Misconception> = {
   avgCount: { id: "cs.average-wrong-count", title: "Divided by the wrong count", nudgeKey: "cs.average-wrong-count", detect: { type: "average-wrong-count" } },
 };
 const MIS_BY_POLICY: Record<Policy, Misconception[]> = {
-  fcfs: [MIS.arrival, MIS.preemptedNon],
+  fcfs: [MIS.arrival, MIS.sjnUnderFcfs, MIS.preemptedNon],
   sjn: [MIS.arrival, MIS.fcfsUnderSjn, MIS.longest, MIS.preemptedNon],
   srt: [MIS.arrival, MIS.fcfsUnderSjn, MIS.longest, MIS.notPreempted],
   priority: [MIS.arrival, MIS.priorityReversed, MIS.preemptedNon],
@@ -102,6 +103,13 @@ export interface ScheduleCase {
 
 const PHASE_NAMES = "then each job's finish time and turnaround time, then the average turnaround";
 
+/** The tie rule where the step is asked, so the first step tests FCFS and not a convention (#728). */
+function tieRule(c: ScheduleCase): string {
+  if (c.policy !== "fcfs") return "";
+  const first = Math.min(...c.jobs.map((j) => j.arrival));
+  return c.jobs.filter((j) => j.arrival === first).length > 1 ? " Jobs that arrive together run in table order." : "";
+}
+
 export function scheduleVariant(c: ScheduleCase): VariantInput {
   const phases = c.phases ?? ["timeline", "finish", "turnaround", "average"];
   const identify = c.mode === "identify";
@@ -111,7 +119,7 @@ export function scheduleVariant(c: ScheduleCase): VariantInput {
     (identify
       ? "The Gantt chart below was drawn by one scheduling algorithm. Which algorithm was it?"
       : wholeProcedure
-        ? `${NAME[c.policy]}${c.quantum ? `, quantum ${c.quantum} ms` : ""}: build the Gantt chart one segment at a time (which job runs next, then until when), ${PHASE_NAMES}.`
+        ? `${NAME[c.policy]}${c.quantum ? `, quantum ${c.quantum} ms` : ""}: build the Gantt chart one segment at a time (which job runs next, then until when), ${PHASE_NAMES}.${tieRule(c)}`
         : `${NAME[c.policy]}${c.quantum ? `, quantum ${c.quantum} ms` : ""}: the chart is drawn. Give each job's finish time and turnaround time, then the average turnaround.`);
   const byStep: Record<string, HintInput[]> = identify
     ? { policy: policyHints, quantum: [{ rung: 2, text: "Not yet. How long is the longest box that is cut off before its job finishes?" }, { rung: 3, text: "In Round Robin every box is at most one quantum long, so the quantum is the length of the longest full box." }, { rung: 9, text: "The quantum is {quantum} {unit}." }] }

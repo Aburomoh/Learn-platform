@@ -312,6 +312,7 @@ export const en = {
   "mm.register-sign": "The job moved toward the OS, so its relocation register is negative.",
   "mm.register-unit": "Check the unit: the register is asked in K here.",
   "cs.arrival-ignored": "Check the arrival times: a job cannot run before it arrives, and the CPU is not idle while a job is waiting.",
+  "cs.sjn-under-fcfs": "That is Shortest Job Next. First Come First Served takes the earliest arrival; equal arrivals go in table order.",
   "cs.fcfs-under-sjn": "This algorithm does not take the earliest arrival. Among the arrived jobs, which has the least CPU time?",
   "cs.longest-first": "That is the longest job. This algorithm picks the shortest.",
   "cs.not-preempted": "A job has arrived that should take the CPU, or the quantum has run out. Check before you let the running job continue.",
