@@ -4,6 +4,6 @@
 
 | Key | English | Proposed Arabic | Notes |
 |---|---|---|---|
-| `cs.sjn-under-fcfs` | That is Shortest Job Next. First Come First Served takes the earliest arrival; equal arrivals go in table order. | هذه هي Shortest Job Next. أما First Come First Served فتختار Earliest Arrival، وإذا تساوى الوصول يُستخدم ترتيب الجدول. | Mirror of the approved `cs.fcfs-under-sjn`. «تساوى الوصول … ترتيب الجدول» as in the approved FCFS rule. |
+| `cs.sjn-under-fcfs` | That is Shortest Job Next. First Come First Served takes the earliest arrival; equal arrivals go in table order. | هذه هي Shortest Job Next. أمّا First Come First Served فتختار الـ Job الأسبق وصولاً، وإذا تساوى الوصول يُستخدم ترتيب الجدول. | Mirror of the approved `cs.fcfs-under-sjn`. «تساوى الوصول … ترتيب الجدول» as in the approved FCFS rule. |
 
 The tie rule added to the FCFS step prompt ("Jobs that arrive together run in table order.") is question text, which stays English.
